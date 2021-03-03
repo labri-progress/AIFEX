@@ -35,7 +35,7 @@ AIFEX is composed of two main components:
     * website : this container manages website configuraitons
 
 
-## Citing GumTree
+## Citing AIFEX
 
 We are researchers, therefore if you use AIFEX in an academic work we would be really glad if you cite our seminal paper using the following bibtex:
 
