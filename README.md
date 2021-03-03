@@ -6,7 +6,9 @@ It starts and trains an AI model that will guide you while your are testing your
 
 ## Run the AIFEX server
 
-AIFEX is designed as a docker compose platform. To deploy it, just run. 
+AIFEX is designed as a docker compose platform. 
+
+To run it, you have to have a Docker Server that supports docker-compose, then just execute: 
 
     ./dev.sh
 
