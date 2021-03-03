@@ -1,0 +1,9 @@
+[
+    {
+        "signature":"clickInsideBody",
+        "eventType":"click",
+        "querySelector":"body", 
+        "isMulti":false,
+        "selectorAsSignature":true
+    }
+]

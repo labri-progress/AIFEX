@@ -1,0 +1,38 @@
+.analyze-head {
+    height: 50px;
+    font-weight: bold;
+    text-align: left;
+    background-color: #cccccc;
+}
+
+.Action {
+    color:blue;
+    display: inline-block;
+}
+
+.Comment {
+    color:red;
+    display: inline-block;
+}
+
+.kind {
+    font-weight: bold;
+}
+
+.value {
+    font-style: italic;
+}
+
+.exploration {
+    border:1px solid black;
+}
+
+video {
+    max-width: 85%;
+    height: auto;
+  }
+
+#evaluator-graph {
+    border: solid;
+    background: white;
+}

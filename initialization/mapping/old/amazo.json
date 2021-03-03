@@ -1,0 +1,167 @@
+[
+    {
+        "match": {
+            "event":"click"
+        },
+        "output": {
+            "prefix":"AddToBasket",
+            "suffix": "index"
+        }
+    },
+    {
+        "match": {
+            "event":"click",
+            "selector": "#lpTitle"
+        }, 
+        "output": {
+            "prefix":"ClickProductTitle",
+            "suffix":"innerText"
+        }
+    },
+    {
+        "match": {
+            "event":"click",
+            "selector":"#hBskt"
+        },
+        "output": {
+            "prefix":"BasketButtonClick"
+        }
+    },
+    {
+        "match": {
+            "event":"change",
+            "selector":"#facetsList label"
+        },
+        "output": {
+            "prefix":"FilterClick",
+            "suffix":"index"
+        }       
+    },
+    {
+        "match": {
+            "event":"click",
+            "selector":"#lpBloc img.prdtBImg"
+        },
+        "output": {
+            "prefix":"ItemPictureClick",
+            "suffix":"index"
+        }
+    },
+    {
+        "match": {
+            "event":"click",
+            "selector":"div.prdtBILDetails > a"
+        },
+        "output": {
+            "prefix": "ItemTitleClick",
+            "suffix": "index"
+        }
+    },
+    {
+        "match": {
+            "event":"click",
+            "selector":".bSummaryOrderLink"
+        },
+        "output": {
+            "prefix":"OrderClick"
+        }
+    },
+    {
+        "match": {
+            "event":"change",
+            "selector":"div.bProductLineDescBottomQuantity.jsBProductLineDescBottomQuantity > select"
+        },
+        "output": {
+            "prefix":"QuantitySelect",
+            "suffix":"value"
+        }
+    },
+    {
+        "match": {
+            "event":"click",
+            "selector":"div.bProductLineDescBloc > div.bProductLineDescBottom > form > span:nth-child(7)"
+        },
+        "output": {
+            "prefix": "RemoveItemClick",
+            "suffix": "index"
+        }
+    },
+    {
+        "match": {
+            "event":"click",
+            "selector":".hSrcInput > input"
+        },
+        "output": {
+            "prefix":"SearchClick"
+        }
+    },
+    {
+        "match": {
+            "event":"keyup",
+            "code":"Enter",
+            "selector":".hSrcInput > input"
+        },
+        "output": {
+            "prefix":"Search",
+            "suffix":"value"
+        }
+    },
+    {
+        "match": {
+            "event":"click",
+            "selector":".hSrcComp > ul > li"
+        },
+        "output": {
+            "prefix":"SearchSelect",
+            "suffix":"index"
+        }
+    },
+    {
+        "match": {
+            "event":"click",
+            "selector": "#hFull > div.hSearch > div.hSrcInput > button"
+        },
+        "output": {
+            "prefix":"SearchButtonClick"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "selector": ".btGreen.btF"
+        },
+        "output": {
+            "prefix": "ShowBasket"
+        } 
+    },
+    {
+        "match": {
+            "event": "click",
+            "selector":"#lpBloc div.prdtBILDetails > div.prdtBILDesc.jsPrdtBILLink"
+        },
+        "output": {
+            "prefix": "ShowDescription",
+            "suffix": "index"
+        }
+    },
+    {
+        "match": {
+            "event": "change",
+            "selector":"#lpSort > form > select"
+        },
+        "output": {
+            "prefix": "ChangeSortMode",
+            "suffix":"value"
+        }
+    },
+    {
+        "match": {
+            "event": "change",
+            "selector": "#lpBloc div.prdtBILDetails div.prdtBILTwoSel select"
+        },
+        "output": {
+            "prefix": "ChangeSize",
+            "suffix":"value"
+        }       
+    }
+]

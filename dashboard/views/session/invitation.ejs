@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/head %>
+    </head>
+    <body>
+        <% include ../partials/nav %>
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="display-4">AIFEX invitation</h1>
+                <hr class="my-4"></hr>
+                <p>You have been invited to join a test session.</p>
+                <h3>Participate</h3>
+                <ul>
+                    <li>Install the extension <a href="/documentation-extension" target="_blank"><i class="fas fa-question-circle"></i></a></li>
+                    <li>Open the extension and enter this URL <input type="text" id="sessionId" value="<%=serverURL %>" readonly> </input><button id="copy" class="btn btn-primary">copy</button></li>
+                    <li>Invite your collaborators to join the session, just give them the URL of this page.</li>
+                </ul>
+                
+                <h3>Dashboard</h3>
+                Go to the session details  <a href="dashboard/session/view/<%=connectionCode%>">here</a>.
+            </div>
+        </div>   
+    </div>
+        
+    
+    <script defer>
+        function copy() {
+            var copyText = document.getElementById("sessionId");
+            copyText.select();
+            document.execCommand("copy");
+        }
+        document.getElementById("copy").addEventListener("click", copy);
+    </script>
+    
+    </body>
+</html>

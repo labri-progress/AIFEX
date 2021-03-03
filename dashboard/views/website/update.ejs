@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../partials/head %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js"></script>
+    <script src="/static/monaco.js"></script>
+</head>
+
+<body>
+    <% include ../partials/nav %>
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">AIFEX </h1>
+            <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
+            <hr class="my-4"></hr>
+            <h1>Update a WebSite <a href="/documentation-website" target="_blank"><i class="fas fa-question-circle"></i></a></h1>
+            <% if (successMessage) { %>
+                <div class="alert alert-success" role="alert">
+                    <h4>Success</h4>
+                    <p><%= successMessage %> : <a role="button" class="btn btn-success" href="/dashboard/session/start?webSiteId=<%=webSite.id%>&webSiteName=<%=webSite.name%>">Start Session</a></p>
+                    <hr>
+                    Or go back to : <a role="button" class="btn btn-primary" href="/"> Home</a>
+                    <a role="button" class="btn btn-primary" href="/account/account">Dashboard</a>
+                    
+                </div>
+            <% } %>
+            <% if (errorMessage) { %>
+            <div class="alert alert-danger" role="alert">
+                Error : <%= errorMessage %>
+            </div>
+            <% } %>
+            <form action="/dashboard/website/update" method="post" encType="multipart/form-data" id="form-container">
+                <input id="id" name="id" value="<%= webSite.id%>" hidden></input>
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">Name</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="name" id="name" value="<%= webSite.name %>">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="websiteURL" class="col-sm-2 col-form-label">URL</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="url" id="url"
+                            value="<%= webSite.url %>">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="mappingList" class="col-sm-2 col-form-label">mappingList</label>
+                    <div class="col-sm-10" style="resize: vertical;overflow: auto;height:400px;border:1px solid grey"
+                        id="monaco" htmlFormId="form-container" formFieldName="mappingList" >
+                        <div id="monaco-code" style="display: none;"><% if (Array.isArray(webSite.mappingList)) { %><%-
+                            JSON.stringify(webSite.mappingList.map(rule => {
+                                return {
+                                    match: rule.match,
+                                    output:rule.output,
+                                    context:rule.context,
+                                    description: rule.description
+                                };
+                            }), undefined, 4) %>
+                        <% } else { %>
+                            <%- webSite.mappingList %>
+                        <% } %>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

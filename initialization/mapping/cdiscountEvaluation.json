@@ -1,0 +1,340 @@
+[
+    {
+        "match": {
+            "event": "click",
+            "css": "input.btGreen.btS.jsValidForm"
+        },
+        "output": {
+            "prefix": "CliquerAjouterAuPanier",
+            "suffix": "index"
+        },
+        "description": "Cliquez sur le bouton 'Ajouter au panier', depuis la liste des produit"
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#fpAddBsk"
+        },
+        "output": {
+            "prefix": "CliquerAjouterAuPanierPageProduit"
+        },
+        "description": "Cliquer sur 'Ajouter au panier', depuis la page d'un produit. Pour acceder a la fiche d'un produit, cliquer sur ton titre ou son image."
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#lpTitle"
+        },
+        "output": {
+            "prefix": "ClickProductTitle",
+            "suffix": "innerText"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#hBskt"
+        },
+        "output": {
+            "prefix": "cliquerBoutonPanier"
+        },
+        "description": "Cliquez sur l'icone du panier, en haut a droite."
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#hLayers div.ovBskt.hidethis > div > div > a"
+        },
+        "output": {
+            "prefix": "CliquerDropDownAjouterAuPanier"
+        },
+        "description": "Placez le curseur de la souris sur l'icon panier en haut a droite, et cliquez sur le bouton 'Voir mon panier'"
+    },
+    {
+        "match": {
+            "event": "change",
+            "css": ".jsFacetTitle"
+        },
+        "output": {
+            "prefix": "FilterCategoryClick",
+            "suffix": "innerText"
+        }
+    },
+    {
+        "match": {
+            "event": "change",
+            "css": ".mgFList > li"
+        },
+        "output": {
+            "prefix": "FilterClick",
+            "suffix": "innerText"
+        },
+        "description": "Ajoutez un filtre"
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#lpBloc img.prdtBImg"
+        },
+        "output": {
+            "prefix": "ItemPictureClick",
+            "suffix": "index"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "div.prdtBILDetails > a"
+        },
+        "output": {
+            "prefix": "ItemTitleClick",
+            "suffix": "index"
+        },
+        "description": "Cliquez sur le titre d'un produit"
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": ".bSummaryOrderLink"
+        },
+        "output": {
+            "prefix": "OrderClick"
+        },
+        "description": "Cliquez sur Choisir ma livraison"
+    },
+    {
+        "match": {
+            "event": "change",
+            "css": "div.bProductLineDescBottomQuantity.jsBProductLineDescBottomQuantity > select"
+        },
+        "output": {
+            "prefix": "QuantitySelect",
+            "suffix": "value"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "div.bProductLineDescBloc > div.bProductLineDescBottom > form > span:nth-child(7)"
+        },
+        "output": {
+            "prefix": "RemoveItemClick",
+            "suffix": "index"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": ".hSrcInput > input"
+        },
+        "output": {
+            "prefix": "SearchClick"
+        }
+    },
+    {
+        "match": {
+            "event": "keydown",
+            "key": "Enter",
+            "css": ".hSrcInput > input"
+        },
+        "output": {
+            "prefix": "Search",
+            "suffix": "value"
+        },
+        "description": "Faites une recherche en tapant un texte, puis appuyez sur la touche entrée."
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": ".hSrcComp > ul > li"
+        },
+        "output": {
+            "prefix": "ClickPropositionRecherche",
+            "suffix": "index"
+        },
+        "description": "Cliquez sur une proposition de recherche"
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#hFull > div.hSearch > div.hSrcInput > button"
+        },
+        "output": {
+            "prefix": "SearchButtonClick"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#raContent a.btGreen.btF"
+        },
+        "output": {
+            "prefix": "CliquerVoirMonPanier"
+        },
+        "description": "Le bouton 'Voir mon panier'"
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#lpBloc div.prdtBILDetails > div.prdtBILDesc.jsPrdtBILLink"
+        },
+        "output": {
+            "prefix": "ShowDescription",
+            "suffix": "index"
+        },
+        "description": "Cliquez sur la description d'un produit."
+    },
+    {
+        "match": {
+            "event": "change",
+            "css": "#lpSort > form > select"
+        },
+        "output": {
+            "prefix": "ChangeSortMode",
+            "suffix": "value"
+        }
+    },
+    {
+        "match": {
+            "event": "change",
+            "css": "#lpBloc div.prdtBILDetails div.prdtBILTwoSel select"
+        },
+        "output": {
+            "prefix": "ChangeSize",
+            "suffix": "value"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#hFull > div.hLogo"
+        },
+        "output": {
+            "prefix": "ClickLogo"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": ".mgFLinkSeeMore"
+        },
+        "output": {
+            "prefix": "FilterSeeMore",
+            "suffix": "index"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": ".mgFLinkSeeLess"
+        },
+        "output": {
+            "prefix": "FilterSeeLess",
+            "suffix": "index"
+        },
+        "description": "Cliquez sur un type de filtre"
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#NavigationForm > ul.mvSrcLk > li:nth-child(1) > ul > li"
+        },
+        "output": {
+            "prefix": "FilterSeeLess",
+            "suffix": "innerText"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": ".mvPreviousCategories"
+        },
+        "output": {
+            "prefix": "PreviousCategories",
+            "suffix": "innerText"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#lpArboDyn > ul >li"
+        },
+        "output": {
+            "prefix": "arboDyn",
+            "suffix": "innerText"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "li.cPdtItem"
+        },
+        "output": {
+            "prefix": "productItem",
+            "suffix": "index"
+        },
+        "description": "Cliquez sur un produit dans un rayon."
+    },
+    {
+        "match": {
+            "event": "mouseover",
+            "css": ".fpZoomPic"
+        },
+        "output": {
+            "prefix": "pictureover",
+            "suffix": "index"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": ".bcBack"
+        },
+        "output": {
+            "prefix": "backToOffer"
+        }
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#headerServices > div.showDepartments.jsShowDepartments"
+        },
+        "output": {
+            "prefix": "CliquerTousNosProduits"
+        },
+        "description": "Cliquez sur 'Tous nos produits', cela ne fonctionne que si la page de votre navigateur est suffsament petite."
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#olMain > nav > ul > li > a"
+        },
+        "output": {
+            "prefix": "CliquerRayon",
+            "suffix": "innerText"
+        },
+        "description": "Cliquez sur le rayon informatique."
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "#menuV ul > li > a"
+        },
+        "output": {
+            "prefix": "ClickerSousRayon",
+            "suffix": "innerText"
+        },
+        "description": "Cliquez sur PC portables"
+    },
+    {
+        "match": {
+            "event": "click",
+            "css": "div.hubHorizontalNavImgList.financialServicesSelector > ul > li"
+        },
+        "output": {
+            "prefix": "CliquerCategorie",
+            "suffix": "innerText"
+        },
+        "description": "Cliquez sur une categorie parmi les plus recherchées."
+    }
+]

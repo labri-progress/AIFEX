@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "$id": "http://aifex.fr/schemas/aifex.json",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "match": {
+                "type": "object",
+                "properties": {
+                    "event": {
+                        "type": "string",
+                        "enum": ["abort", "afterprint", "animationend", "animationiteration", "animationstart", "beforeprint", "beforeunload", "blur", "canplay", "canplaythrough", "change", "click", "contextmenu", "copy", "cut", "dblclick", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "durationchange", "ended", "error", "focus", "focusin", "focusout", "fullscreenchange", "fullscreenerror", "hashchange", "input", "invalid", "keydown", "keypress", "keyup", "load", "loadeddata", "loadedmetadata", "loadstart", "message", "mousedown", "mouseenter", "mouseleave", "mousemove", "mouseover", "mouseout", "mouseup", "mousewheel", "offline", "online", "open", "pagehide", "pageshow", "paste", "pause", "play", "playing", "popstate", "progress", "ratechange", "resize", "reset", "scroll", "search", "seeked", "seeking", "select", "show", "stalled", "storage", "submit", "suspend", "timeupdate", "toggle", "touchcancel", "touchend", "touchmove", "touchstart", "transitionend", "unload", "volumechange", "waiting", "wheel"]
+                    },
+                    "css": {
+                        "type": "string"
+                    },
+                    "xpath": {
+                        "type": "string"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "key": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["event"]
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "prefix": {
+                        "type": "string"
+                    },
+                    "suffix": {
+                        "type": "string",
+                        "enum": ["value", "index", "innerText", "cssSelector"]
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["prefix"]
+            },
+            "context": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "css": {
+                        "type": "string"
+                    },
+                    "xpath": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "description": {
+                "type": "string"
+            }
+        },
+        "additionalProperties": false,
+        "required": ["match", "output"]
+    }
+}

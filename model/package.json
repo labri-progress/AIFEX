@@ -1,0 +1,51 @@
+{
+  "name": "model",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --inspect -r ts-node/register ./test/domain/*Test.ts",
+    "start": "node ./dist/index.js",
+    "compile": "tsc",
+    "dev": "./node_modules/nodemon/bin/nodemon.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/amqplib": "^0.5.16",
+    "@types/bluebird": "^3.5.33",
+    "@types/body-parser": "^1.19.0",
+    "@types/chai": "^4.2.14",
+    "@types/express": "^4.17.9",
+    "@types/mocha": "^5.2.7",
+    "@types/morgan": "^1.9.2",
+    "@types/node": "^14.14.10",
+    "@types/node-fetch": "^2.5.7",
+    "@types/shortid": "0.0.29",
+    "@types/source-map-support": "^0.5.3",
+    "chai": "^4.2.0",
+    "concurrently": "^5.0.2",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.6",
+    "source-map-support": "^0.5.16",
+    "ts-node": "^8.10.2",
+    "tslint-strict-null-checks": "^1.0.1",
+    "typescript": "^3.7.3"
+  },
+  "dependencies": {
+    "@types/socket.io": "^2.1.4",
+    "amqp-ts": "^1.8.0",
+    "body-parse": "^0.1.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.7.1",
+    "morgan": "^1.9.1",
+    "node-fetch": "^2.6.1",
+    "shortid": "^2.2.15",
+    "socket.io": "^2.3.0",
+    "winston": "^3.3.3",
+    "winston-elasticsearch": "^0.12.3"
+  }
+}

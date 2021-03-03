@@ -1,0 +1,103 @@
+[
+    {
+        "signature":"AddToBasket",
+        "eventType":"click",
+        "querySelector":"input.btGreen.btS.jsValidForm", 
+        "isMulti":true
+    },
+    {
+        "signature":"BasketButtonClick",
+        "eventType":"click",
+        "querySelector":"#hBskt", 
+        "isMulti":false
+    },
+    {
+        "signature":"FilterClick",
+        "eventType":"change",
+        "querySelector":"#facetsList label",
+        "isMulti":true
+    },
+    {
+        "signature":"ItemPictureClick",
+        "eventType":"click",
+        "querySelector":"#lpBloc img.prdtBImg",
+        "isMulti":true
+    },
+    {
+        "signature":"ItemTitleClick",
+        "eventType":"click",
+        "querySelector":"div.prdtBILDetails > a",
+        "isMulti":true
+    },
+    {
+        "signature":"OrderClick",
+        "eventType":"click",
+        "querySelector":".bSummaryOrderLink",
+        "isMulti":false
+    },
+    {
+        "signature":"QuantitySelect",
+        "eventType":"change",
+        "querySelector":"div.bProductLineDescBottomQuantity.jsBProductLineDescBottomQuantity > select",
+        "isMulti":false,
+        "addValue":true
+    },
+    {
+        "signature":"RemoveItemClick",
+        "eventType":"click",
+        "querySelector":"div.bProductLineDescBloc > div.bProductLineDescBottom > form > span:nth-child(7)",
+        "isMulti":true
+    },
+    {
+        "signature":"SearchClick",
+        "eventType":"click",
+        "querySelector":".hSrcInput > input",
+        "isMulti":false
+    },
+    {
+        "signature":"Search",
+        "eventType":"keyup",
+        "eventCode":"Enter",
+        "querySelector":".hSrcInput > input",
+        "isMulti":false,
+        "addValue":true
+    },
+    {
+        "signature":"SearchSelect",
+        "eventType":"click",
+        "querySelector":".hSrcComp > ul > li",
+        "isMulti":true
+    },
+    {
+        "signature":"SearchButtonClick",
+        "eventType":"click",
+        "querySelector": "#hFull > div.hSearch > div.hSrcInput > button",
+        "isMulti": false
+    },
+    {
+        "signature": "ShowBasket",
+        "eventType": "click",
+        "querySelector": ".btGreen.btF",
+        "isMulti": false
+    },
+    {
+        "signature": "ShowDescription",
+        "eventType": "click",
+        "querySelector":"#lpBloc div.prdtBILDetails > div.prdtBILDesc.jsPrdtBILLink",
+        "isMulti": true
+    },
+    {
+        "signature": "ChangeSortMode",
+        "eventType": "change",
+        "querySelector":"#lpSort > form > select",
+        "isMulti": false,
+        "addValue": true
+    },
+    {
+        "signature": "ChangeSize",
+        "eventType": "change",
+        "querySelector": "#lpBloc div.prdtBILDetails div.prdtBILTwoSel select",
+        "isMulti": true,
+        "addValue": true
+    }
+]

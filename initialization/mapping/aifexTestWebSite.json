@@ -1,0 +1,44 @@
+[
+    {
+        "match": {
+            "css": "body > a:nth-child(4)",
+            "event": "click"
+        },
+        "output": {
+            "prefix": "GotoA"
+        }
+    },
+    {
+        "match": {
+            "xpath": "//*[@id='button']",
+            "event": "click"
+        },
+        "output": {
+            "prefix": "ClickButton"
+        }
+    },
+    {
+        "match": {
+            "css": "span",
+            "event": "click"
+        },
+        "output": {
+            "prefix": "clickFooter"
+        },
+        "context": {
+            "css": "#foot"
+        }
+    },
+    {
+        "match": {
+            "css": "span",
+            "event": "click"
+        },
+        "output": {
+            "prefix": "clickHeader"
+        },
+        "context": {
+            "xpath": "/html/body/header"
+        }
+    }
+]

@@ -1,0 +1,58 @@
+  [ 
+    {
+      "signature": "idCivilité-madame",
+      "eventType": "change",
+      "isMulti": false,
+      "querySelector": "#mat-radio-2 > label"
+    },
+    {
+      "signature": "idCivilité-monsieur",
+      "eventType": "change",
+      "isMulti": false,
+      "querySelector": "#mat-radio-3 > label"
+    },
+    {
+      "signature": "telephoneFermer",
+      "eventType": "click",
+      "isMulti": false,
+      "querySelector": "#bloc-016c4876-cb19-4663-bf63-48ad48729151 > div > div.card-body > div > cs-data-grid-crud.ng-tns-c32-5.widget-racine.sur-1-colonnes.ng-star-inserted > div > div.sousFormulaire > cs-formulaire > div > form > div > barre-actions > div > button"
+    },
+    {
+      "signature": "telephoneValiderEtFermer",
+      "eventType": "click",
+      "isMulti": false,
+      "querySelector": "#bloc-016c4876-cb19-4663-bf63-48ad48729151 > div > div.card-body > div > cs-data-grid-crud.ng-tns-c32-5.widget-racine.sur-1-colonnes.ng-star-inserted > div > div.sousFormulaire > cs-formulaire > div > form > div > barre-actions > div > bouton-menu > dx-drop-down-button"
+    },
+    {
+      "signature": "RIBFermer",
+      "eventType": "click",
+      "isMulti": false,
+      "querySelector": "#bloc-016c4877-3591-4035-ad04-5f75ba1df4ef > div > div.card-body > div > cs-data-grid-crud > div > div.sousFormulaire > cs-formulaire > div > form > div > barre-actions > div > button"
+    },
+    {
+      "signature": "RIBValiderEtFermer",
+      "eventType": "click",
+      "isMulti": false,
+      "querySelector": "#bloc-016c4877-3591-4035-ad04-5f75ba1df4ef > div > div.card-body > div > cs-data-grid-crud > div > div.sousFormulaire > cs-formulaire > div > form > div > barre-actions > div > bouton-menu > dx-drop-down-button"
+    },
+    {
+      "signature": "TypeTéléphone$mobile",
+      "eventType": "click",
+      "isMulti": false,
+      "querySelector": "#mat-radio-7 > label"
+    },
+    {
+      "signature": "Nature$Professionnel",
+      "eventType": "click",
+      "isMulti": false,
+      "querySelector": "#mat-radio-9 > label"
+    },
+    {
+      "signature": "Nature$Personnel",
+      "eventType": "change",
+      "isMulti": false,
+      "querySelector": "#mat-radio-8 > label"
+    }
+
+    
+]

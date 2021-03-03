@@ -1,0 +1,44 @@
+{
+  "name": "evaluator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r ts-node/register --inspect ./test/*/*Test.ts ",
+    "start": "node ./dist/index.js",
+    "compile": "tsc",
+    "dev": "nodemon",
+    "grammar": "antlr4 -visitor -Xexact-output-dir -Dlanguage=JavaScript -visitor ./src/domain/grammar/StepGrammar.g4 -o ./src/_infra/stepParser",
+    "toPDF": "./test/graph/dotsToPDF.sh"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/antlr4": "^4.7.2",
+    "@types/chai": "^4.2.15",
+    "@types/express": "^4.17.11",
+    "@types/mocha": "^5.2.7",
+    "@types/morgan": "^1.9.2",
+    "@types/node": "^14.14.31",
+    "@types/shortid": "^0.0.29",
+    "@types/socket.io": "^2.1.13",
+    "@types/source-map-support": "^0.5.3",
+    "chai": "^4.3.0",
+    "mocha": "^6.2.2",
+    "nodemon": "^1.19.4",
+    "source-map-support": "^0.5.19",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.9.9"
+  },
+  "dependencies": {
+    "antlr4": "~4.8.0",
+    "body-parser": "^1.19.0",
+    "debug": "^4.3.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.7.1",
+    "morgan": "^1.10.0",
+    "shortid": "^2.2.15",
+    "winston": "^3.3.3",
+    "winston-elasticsearch": "^0.12.3"
+  }
+}

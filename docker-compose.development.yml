@@ -1,0 +1,103 @@
+version: "3.3"
+services:
+
+  website:
+    build:
+      context: website/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      -  NODE_ENV=development
+    ports:
+      - 5005:5005
+    volumes:
+      - ./website/src/:/app/src
+
+  session:
+    build:
+      context: session/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      -  NODE_ENV=development
+    ports:
+      - 5006:5006
+    volumes:
+      - ./session/src/:/app/src
+
+  model:
+    build:
+      context: model/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      -  NODE_ENV=development
+    ports:
+      - 5007:5007
+    volumes:
+      - ./model/src/:/app/src
+
+  evaluator:
+    build:
+      context: evaluator/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      -  NODE_ENV=development
+    volumes:
+      - ./evaluator/src/:/app/src
+    ports:
+        - 5010:5010
+
+  account:
+    build:
+      context: account/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      -  NODE_ENV=development
+    ports:
+      - 5008:5008
+    volumes:
+      - ./account/src/:/app/src
+
+  dashboard:
+    build:
+      context: dashboard/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 80:80
+    volumes:
+      - ./dashboard/routes/:/app/routes
+      - ./dashboard/views/:/app/views
+      - ./dashboard/public/:/app/public
+    
+  printer:
+    build:
+      context: printer/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      -  NODE_ENV=development
+    ports:
+      - 5009:5009
+    volumes:
+      - ./printer/src/:/app/src
+
+  initialization:
+    build:
+      context: initialization/
+      dockerfile: ./Dockerfile
+    environment:
+      -  NODE_ENV=development
+    depends_on:
+      - "website"
+      - "account"
+      
+  mongo:
+    ports:
+      - 27017:27017
+
+  rabbitmq:
+    ports:
+      - 15672:15672
+  
+  kibana:
+    ports:
+        - 5601:5601

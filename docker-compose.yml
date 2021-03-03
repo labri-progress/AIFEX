@@ -1,0 +1,131 @@
+version: "3.3"
+services:
+
+  website:
+    build:
+      context: website/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    depends_on:
+      - "mongo"
+    restart: always
+    
+  session:
+    build:
+      context: session/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    depends_on:
+      - "mongo"
+      - "website"
+    restart: always
+    volumes:
+      - screenshot:/app/screenshot
+      - video:/app/video
+
+  model:
+    build:
+      context: model/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    depends_on:
+      - "mongo"
+      - "session"
+    restart: always
+
+  evaluator:
+    build:
+      context: evaluator/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    depends_on:
+      - "mongo"
+      - "session"
+    restart: always
+
+  account:
+    build:
+      context: account/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    depends_on:
+      - "mongo"
+    ports:
+      - 5008:5008
+    restart: always
+
+  printer:
+    build:
+      context: printer/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      -  NODE_ENV=${NODE_ENV}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    depends_on:
+      - "website"
+      - "session"
+    restart: always
+
+  dashboard:
+    build:
+      context: dashboard/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PROTOCOL=${PROTOCOL}
+      - HOST_ADDR=${HOST_ADDR}
+      - PLUGIN_INFO=${PLUGIN_INFO}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    restart: always
+    volumes:
+      - screenshot:/app/public/screenshot
+      - video:/app/public/video
+
+  rabbitmq:
+    image: rabbitmq:3.8.5
+    restart: always
+    
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    volumes:
+      - db-data:/data/db
+    command: --quiet --logpath /data/db/mongod.log
+
+  elasticsearch:
+    image: elasticsearch:7.10.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kibana:
+    image: kibana:7.10.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
+    
+
+volumes:
+  screenshot:
+  video:
+  db-data:
+    

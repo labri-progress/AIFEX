@@ -1,0 +1,51 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js"></script>
+<script>
+    fetch('/static/schema.json')
+        .then(res => res.json())
+        .then((schema) => {
+            require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' } })
+            require(['vs/editor/editor.main'], function () {
+                let code = String.raw`<% if (Array.isArray(webSite.mappingList)) { %><%-
+                            JSON.stringify(webSite.mappingList.map(rule => {
+                                return {
+                                    match: rule.match,
+                                    output:rule.output,
+                                    context:rule.context
+                                };
+                            }), undefined, 4) %>
+                          <% } else { %>
+                            <%- webSite.mappingList %>
+                          <% } %>`
+
+                let modelUri = monaco.Uri.parse("json://aifex.fr/model"); // unique URI for our model
+                let model = monaco.editor.createModel(code, "json", modelUri);
+                let config = {
+                    schemas: [{
+                        uri: "json://aifex.fr/schema.json",
+                        fileMatch: [modelUri.toString()],
+                        schema
+                    }],
+                    validate: true,
+                    allowComments: false
+                }
+
+                monaco.languages.json.jsonDefaults.setDiagnosticsOptions(config)
+                let editor = monaco.editor.create(document.getElementById('mappingList'), {
+                    model: model,
+                    formatOnType: true,
+                    formatOnPaste: true,
+                    automaticLayout: true,
+                    autoIndent: "full"
+                })
+
+                form.addEventListener("formdata", e => {
+                    let value = editor.getValue();
+                    e.formData.append('mappingList', value);
+                });
+            });
+        })
+
+</script>
+
+
+

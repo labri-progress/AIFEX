@@ -1,0 +1,17 @@
+[
+    {
+        "name":"cdiscount",
+        "mappingFiles": ["cdiscount.json"],
+        "url":"https://www.cdiscount.com/"
+    },
+    {
+        "name": "cdiscountEvaluation",
+        "mappingFiles": ["cdiscountEvaluation.json"],
+        "url":"https://www.cdiscount.com/"
+    },
+    {
+        "name": "aifexTestWebSite",
+        "mappingFiles": ["aifexTestWebSite.json"],
+        "url":"http://localhost:8080/"
+    }
+]

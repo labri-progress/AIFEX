@@ -1,0 +1,3 @@
+(ClickDepartment$Informatique or (ShowDepartments ClickDepartment$Informatique))
+ClickSideMenuItem ClickCategorie => (AddToBasket or ClickProductPageAddToBasket)
+(BasketButtonClick or ClickBasketDropdownShowBasket or ShowBasket)

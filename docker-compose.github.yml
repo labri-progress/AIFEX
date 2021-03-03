@@ -1,0 +1,114 @@
+version: "3.3"
+services:
+
+  website:
+    build:
+      context: website/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      -  NODE_ENV=github
+    depends_on:
+      - "mongo"
+    ports:
+      - 5005:5005
+    
+  session:
+    build:
+      context: session/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      -  NODE_ENV=github
+    depends_on:
+      - "mongo"
+      - "website"
+    ports:
+      - 5006:5006
+    volumes:
+      - screenshot:/app/screenshot
+      - video:/app/public/video
+    restart: always
+
+  model:
+    build:
+      context: model/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      -  NODE_ENV=github
+    depends_on:
+      - "mongo"
+      - "session"
+    ports:
+      - 5007:5007
+    restart: always
+
+  account:
+    build:
+      context: account/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      -  NODE_ENV=github
+    depends_on:
+      - "mongo"
+    ports:
+      - 5008:5008
+    restart: always
+
+  evaluator:
+    build:
+      context: evaluator/
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - ./model/src/:/app/src
+    ports:
+      - 5010:5010
+  
+  dashboard:
+    build:
+      context: dashboard/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      -  NODE_ENV=github
+    ports:
+      - 80:80
+    volumes:
+      - screenshot:/app/public/screenshot
+      - video:/app/public/video
+  
+
+  initialization:
+    build:
+      context: initialization/
+      dockerfile: ./Dockerfile
+    command: npm start
+    depends_on:
+      - "website"
+      - "account"
+    
+  test:
+    build:
+      context: test/
+      dockerfile: ./Dockerfile.github
+    environment:
+      -  NODE_ENV=github
+    depends_on:
+      - "mongo"
+      - "session"
+      - "website"
+      - "dashboard"  
+
+
+  rabbitmq:
+    image: rabbitmq:3.8.5
+    restart: always
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    volumes:
+      - db-data:/data/db
+
+volumes:
+    screenshot:
+    video:
+    db-data:

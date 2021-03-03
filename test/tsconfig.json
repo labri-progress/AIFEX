@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"lib": ["es5", "es6", "dom"],
+		"esModuleInterop": true,
+		"noImplicitAny": false,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"outDir": "dist",
+		"sourceMap": true,
+		"allowJs": true,
+		"strictFunctionTypes": true
+	},
+	"include": ["routes", "e2e"]
+}

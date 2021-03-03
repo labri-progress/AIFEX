@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/head %>
+
+        <script src="//d3js.org/d3.v5.min.js"></script>
+        <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+        <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js"></script>
+
+    </head>
+    <body>
+        <% include ../partials/nav %>
+
+            <div class="container jumbotron">
+                <h1>Scenario </h1>
+                <p class="lead text-muted">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
+                
+                <% if (errorMessage) { %>
+                    <div class="alert alert-danger" role="alert">
+                        Error : <%= errorMessage %>
+                    </div>
+                <% } %>
+
+
+
+                <p>You can specify a scenario for your explorations. 
+                    AIFEX checks that the explorations follow the workflow you are interested in.
+                    <ol>
+                        <li>Define a scenario for your webSite by indicating the main actions and indicate how you want to link them.</li>
+                        <li>Start a test session with your webSite.</li>
+                        <li>View the workflow directly in your browser with the browser extension.</li>
+                    </ol>
+                    You can define your scenario by writing an expression in the text box below. This expression will be used to check the validity of your explorations.
+                    The expression uses two kind of words : 
+                    <ul>
+                        <li>actions, like those you defined in your mapping list, but also start and end.</li>
+                        <li>operators, that link the actions together.</li>
+                    </ul>
+                    You can use the following operations, and combine them. For the example, we consider that we have defined three actions with prefix action1, action2 and action3   
+                    <ul>
+                        <li> action1 : the exploration must be just action1. </li>
+                        <li> action1$myValue : action must appear with the suffix myValue. </li>
+                        <li> action1 action2 : action2 must appear right after action1. </li>
+                        <li> action1 => action2 : action2 must appear after action1, but you can make other actions. Eg: action1 action3 action2.</li>
+                        <li> action1 or action2 : You can do both action1 or action2. </li>
+                        <li> action1+ : you must do action1 at least one time, or more. Eg: action1 action1.</li>
+                        <li> action1[3] : you must do action1 exactly three times.</li>
+                        <li> !action1 : you must not do action1.</li>
+                        <li> (action1 or action2)+ => action3 : You can combine the operators with parenthesis.</li>
+                    </ul>
+                </p>
+
+
+                
+                <div class="row">
+                    <div class="col-sm-6">
+
+                        <% if (isUpdate) { %>
+                            <form action="/dashboard/evaluation/update" method="post" encType="multipart/form-data" id="form-container">
+                        <% } else { %>
+                            <form action="/dashboard/evaluation/create" method="post" encType="multipart/form-data" id="form-container">
+                        <% } %>
+
+
+                        <div class="form-group">
+                            <label for="scenario-description" class="col-form-label">Description</label>
+                            <textarea id="scenario-description" name="description" class="form-control"><%=description%></textarea>
+                        </div>
+                        <div class="form-group row">
+                            <select id="actionSelect" class="form-control col-sm-4">
+                                <% for (action of actionList) { %>
+                                        <option><%= action %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                                <input id="webSiteIdInput" name="webSiteId" type="hidden" value="<%= webSite.id %>">
+                                <div class="form-group">
+                                    <div style="resize: vertical;overflow: auto;height:400px;border:1px solid grey"
+                                        id="monaco-evaluator" htmlFormId="form-container" formFieldName="evaluatorExpression" >
+                                        <div id="evaluator-code" formEditor style="display: none;" initValue="<%= evaluatorExpression %>">
+                                            <% if (evaluatorExpression) { %>
+                                                <%= evaluatorExpression %>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                        
+                                    <p id="validateText"></p>
+                                    <button id="evaluator-validate-button" type="button" class="btn btn-secondary">Validate</button>
+                                    <span id="validity-badge-success" class="badge badge-success">Valid</span>
+                                    <span id="validity-badge-failure" class="badge badge-danger">Invalid</span>
+                                </div>
+
+                                <div class="form-group">
+                                    
+                                </div>
+
+                            <% if (isUpdate) { %>
+                                <button id="createEvaluatorButton" type="submit" class="btn btn-primary">Update evaluator</button>
+                            <% } else { %>
+                                <button id="createEvaluatorButton" type="submit" class="btn btn-primary">Create evaluator</button>
+                            <% } %>
+                        </form>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div id="evaluator-graph" style="text-align: center;"></div>
+                    </div>
+                </div>
+        </div>
+    </div>       
+
+        <% include evaluator-monaco %>
+        <% include ./evaluation-script %>
+
+    </body>
+
+    
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <% include ../partials/head %>
+  </head>
+  <body>
+    <% include ../partials/nav %>
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">AIFEX </h1>
+            <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
+            <hr class="my-4"></hr>
+            <h2>Browser Extension (Chrome and Firefox)</h2>
+            <p>Our platform comes with a Browser Extension (Chrome and Firefox). It helps testers by:</p>
+
+            <ul>
+              <li>Monitoring of all the interactions performed by the testers, and send them to the AI;</li>
+              <li>Asking to the AI predictions for the next interactions;</li>
+              <li>Visually highlighting the DOM elements to render the predictions returned by the AI.</li>
+            </ul>
+
+            You can download the plugin from
+            <ul>
+              <li id="store_sources"> Extension Stores </li>
+                <ul id="store_list">
+                </ul>
+              <li>Direct download :</li>
+              <p>
+                <% if (PLUGIN_INFO) { %>
+                  <a href="static/chromeExtension.zip"> Chrome Extension (version <%= PLUGIN_INFO.version %>)</a>
+                  <br>
+                  <a href="static/firefoxExtension.zip"> Firefox Extension (version <%= PLUGIN_INFO.version %>)</a>
+                <% } else { %>
+                  <a href="static/chromeExtension.zip"> Chrome Extension </a>
+                  <br>
+                  <a href="static/firefoxExtension.zip"> Firefox Extension </a>
+                <% }  %>
+              </p>
+            </ul>
+        </div>
+    </div>
+    <script >  
+      const stores = <%- JSON.stringify(stores) %>;
+      const hostname = window.location.hostname;
+      const storesForHost = stores.filter(store => store.aifex_host === hostname);
+
+      if (storesForHost.length > 0) {
+        const ul = document.getElementById("store_list");
+        for (const store of storesForHost) {
+          const li = document.createElement("li");
+          li.innerHTML = `<a href=${store.url}> ${store.name} </a>`
+          ul.appendChild(li)
+        }
+      } else {
+        document.getElementById("store_sources").hidden = true;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,992 @@
+[
+  {
+    "signature": "numéro",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-e7b6-4586-9fa8-c66c38a5ebf7']",
+    "addValue": true
+  },
+  {
+    "signature": "idCivilité$Madame",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idCivilité'] mat-radio-button:nth-child(1)",
+    "addValue": false
+  },
+  {
+    "signature": "idCivilité$Monsieur",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idCivilité'] mat-radio-button:nth-child(2)",
+    "addValue": false
+  },
+  {
+    "signature": "nomPatronymique",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-e8d1-4dab-bc36-544e6a7527a3']"
+  },
+  {
+    "signature": "nomUsage",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-e965-4141-951d-01a572993f2a']"
+  },
+  {
+    "signature": "prénom1",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-e9fa-412a-861c-0068dfd26ef9']"
+  },
+  {
+    "signature": "prénom2",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-ea87-458a-b60a-9cdcefa07d27']"
+  },
+  {
+    "signature": "prénom3",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-eb24-427c-84fd-3be537f8a737']"
+  },
+  {
+    "signature": "pseudonyme",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-ebb3-4baf-911b-e40aaffbdeb0']"
+  },
+  {
+    "signature": "dateNaissance",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-ec46-4619-8c06-39e5f1c97b2b']"
+  },
+  {
+    "signature": "date",
+    "eventType": "click",
+    "isMulti": true,
+    "addInnerText": true,
+    "querySelector": ".dx-calendar-cell"
+  },
+  {
+    "signature": "idPaysNaissance",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-ecdb-4404-86ed-8c715356ffe8']",
+    "addValue": true
+  },
+  {
+    "signature": "idPaysNaissanceClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-ecdb-4404-86ed-8c715356ffe8']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "idLieuNaissanceClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-866c-4892-845f-5a3b6891a851']"
+  },
+  {
+    "signature": "idLieuNaissance",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-866c-4892-845f-5a3b6891a851']"
+  },
+  {
+    "signature": "datagrid",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": "div.dx-datagrid-rowsview table > tbody > tr",
+    "addInnerText": true
+  },
+  {
+    "signature": "lieuNaissanceAffiché",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-eeb8-443b-bd1f-ca67b139545c']"
+  },
+  {
+    "signature": "idNationalité",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-ef53-4352-b4cc-fb726f7dc853']",
+    "addValue": true
+  },
+  {
+    "signature": "idNationalitéClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-ef53-4352-b4cc-fb726f7dc853']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "décédé",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bc-eff2-4c0a-bdd6-b336bca8f7b8']",
+    "addInnerText": true
+  },
+  {
+    "signature": "dateDécès",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f09f-4ea7-94ce-b6d5772a509a']"
+  },
+  {
+    "signature": "postitObservation",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f13d-4b7e-a7a5-45eef8b92e4e']"
+  },
+  {
+    "signature": "défaut-0",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bc-f487-4739-ad3d-de4ae0778c7f']",
+    "addInnerText": true
+  },
+  {
+    "signature": "idTypeAdresse",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f4dd-4b5a-962a-185a679fd7f7']",
+    "addValue": true
+  },
+  {
+    "signature": "idTypeAdresseClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f4dd-4b5a-962a-185a679fd7f7']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "numéro",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f532-480f-93db-c5d1a42b131f']"
+  },
+  {
+    "signature": "idComplémentNuméro",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f593-4de7-891d-410e971162d3']",
+    "addValue": true
+  },
+  {
+    "signature": "idComplémentNuméroClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f593-4de7-891d-410e971162d3']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "idTypeVoie",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f5e4-4d14-9756-89e6a0018613']",
+    "addValue": true
+  },
+  {
+    "signature": "idTypeVoieClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f5e4-4d14-9756-89e6a0018613']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "libelléVoie",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f647-4869-9b08-0a0e240562d2']"
+  },
+  {
+    "signature": "complémentAdresse",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f69f-4969-8f43-c0c3e03a43f8']"
+  },
+  {
+    "signature": "intérieurBâtiment",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f6fa-446a-b0e5-b4ccf23d37d6']"
+  },
+  {
+    "signature": "extérieurBâtiment",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f758-4d8e-aa80-ada165f5e1c9']"
+  },
+  {
+    "signature": "idPays",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f7bb-4ac2-b830-713e79a5411d']",
+    "addValue": true
+  },
+  {
+    "signature": "idPaysClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f7bb-4ac2-b830-713e79a5411d']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "idCommuneClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-9080-41b3-91b1-b35c3caa31bb']"
+  },
+  {
+    "signature": "idCommune",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-9080-41b3-91b1-b35c3caa31bb']"
+  },
+  {
+    "signature": "datagrid",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": "div.dx-datagrid-rowsview table > tbody > tr",
+    "addInnerText": true
+  },
+  {
+    "signature": "communeAffichée",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f88f-42b3-9a94-050d5a8e1ffe']"
+  },
+  {
+    "signature": "dateEffet",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f8ff-46eb-b7a3-915df44289bd']"
+  },
+  {
+    "signature": "dateFin",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bc-f967-4f08-bce0-eec204407e23']",
+    "addValue": true
+  },
+  {
+    "signature": "iban",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-94c4-4a37-9043-3c598ba1e8f3']"
+  },
+  {
+    "signature": "bic",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-9505-47c4-8540-336c314483bc']"
+  },
+  {
+    "signature": "titulaire",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-9545-4cb1-a956-ff4be01bc46a']"
+  },
+  {
+    "signature": "défaut-1",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-9593-4e31-ae2f-432598561798']",
+    "addInnerText": true
+  },
+  {
+    "signature": "domiciliationBancaire",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-95d5-4a3c-9097-c32203e1393c']"
+  },
+  {
+    "signature": "idType$Fixe",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idType'] mat-radio-button:nth-child(1)",
+    "addValue": false
+  },
+  {
+    "signature": "idType$Mobile",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idType'] mat-radio-button:nth-child(2)",
+    "addValue": false
+  },
+  {
+    "signature": "idNature$Personnel",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idNature'] mat-radio-button:nth-child(1)",
+    "addValue": false
+  },
+  {
+    "signature": "idNature$Professionnel",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idNature'] mat-radio-button:nth-child(2)",
+    "addValue": false
+  },
+  {
+    "signature": "idIndicatif",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-995e-4ead-b657-f40903c2ed51']",
+    "addValue": true
+  },
+  {
+    "signature": "idIndicatifClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-995e-4ead-b657-f40903c2ed51']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "numéro",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-99a8-4896-9978-3eb55e898666']"
+  },
+  {
+    "signature": "défaut-2",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-99f1-43b3-ac12-4b4671fbc398']",
+    "addInnerText": true
+  },
+  {
+    "signature": "idNature$Personnel",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idNature'] mat-radio-button:nth-child(1)",
+    "addValue": false
+  },
+  {
+    "signature": "idNature$Professionnel",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idNature'] mat-radio-button:nth-child(2)",
+    "addValue": false
+  },
+  {
+    "signature": "défaut-3",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-9cb3-4cce-889d-6f3a0570e5de']",
+    "addInnerText": true
+  },
+  {
+    "signature": "idNature",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-066c-4fd8-91b6-6a94de4c3896']",
+    "addValue": true
+  },
+  {
+    "signature": "idNatureClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-066c-4fd8-91b6-6a94de4c3896']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "url",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-06ce-4742-8799-00a9163eac58']"
+  },
+  {
+    "signature": "idNature$Personnel",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idNature'] mat-radio-button:nth-child(1)",
+    "addValue": false
+  },
+  {
+    "signature": "idNature$Professionnel",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idNature'] mat-radio-button:nth-child(2)",
+    "addValue": false
+  },
+  {
+    "signature": "urlAdresse",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-0951-49ef-8671-bf32df6e2372']"
+  },
+  {
+    "signature": "défaut-4",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-09b4-4dc7-afbd-d5f740914331']",
+    "addInnerText": true
+  },
+  {
+    "signature": "idNature$Personnel",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idNature'] mat-radio-button:nth-child(1)",
+    "addValue": false
+  },
+  {
+    "signature": "idNature$Professionnel",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[ng-reflect-name='idNature'] mat-radio-button:nth-child(2)",
+    "addValue": false
+  },
+  {
+    "signature": "idIndicatif",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-0c2d-47bb-85f1-109d3833c81b']",
+    "addValue": true
+  },
+  {
+    "signature": "idIndicatifClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-0c2d-47bb-85f1-109d3833c81b']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "numéro",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-0cb0-43cc-bf2c-5921a53450cd']"
+  },
+  {
+    "signature": "défaut-5",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-0d1d-49f6-b237-396b8dea9519']",
+    "addInnerText": true
+  },
+  {
+    "signature": "téléphone",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-0ece-44ff-87ab-0c2f22cb348e']",
+    "addInnerText": true
+  },
+  {
+    "signature": "email",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-0f67-4c1b-be47-be4cf6d1f841']",
+    "addInnerText": true
+  },
+  {
+    "signature": "fax",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-0fff-4c4f-b191-b46a5a35c6af']",
+    "addInnerText": true
+  },
+  {
+    "signature": "relationPartenaire",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-10a3-48e7-ab0e-b8620670e1d6']",
+    "addInnerText": true
+  },
+  {
+    "signature": "idRefCentreIntérêt",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-ab02-4d5b-8b04-f5aedfadd087']",
+    "addValue": true
+  },
+  {
+    "signature": "idRefCentreIntérêtClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-ab02-4d5b-8b04-f5aedfadd087']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "observations",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-ab4c-429f-ae95-d86f25876d5f']"
+  },
+  {
+    "signature": "idCompétence",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-adbe-419c-9564-0b1ec0ec7ab3']",
+    "addValue": true
+  },
+  {
+    "signature": "idCompétenceClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-adbe-419c-9564-0b1ec0ec7ab3']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "libellé",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-ae08-4cec-a5d8-c6ce72b401cd']"
+  },
+  {
+    "signature": "idDiplôme",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-18f4-4f44-9879-358b98c7d74d']",
+    "addValue": true
+  },
+  {
+    "signature": "idDiplômeClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-18f4-4f44-9879-358b98c7d74d']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "descriptif",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-1946-4681-834e-72d06a107fa9']"
+  },
+  {
+    "signature": "diplômeObtenu",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id='016d01bd-1999-4dc8-a400-f1918e15df6a']",
+    "addInnerText": true
+  },
+  {
+    "signature": "etablissement",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-1a43-4b3b-b769-23d02f4301b3']"
+  },
+  {
+    "signature": "libellé",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-20cb-44f7-a013-83ea55fb5d3f']"
+  },
+  {
+    "signature": "organisme",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-2123-41d6-bc39-aae955d9b11d']"
+  },
+  {
+    "signature": "dateFin",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-2173-45c0-ade7-3aff0f7a4267']"
+  },
+  {
+    "signature": "idUnitéTemps",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-221c-4053-acd4-4b8e32b7b7f6']",
+    "addValue": true
+  },
+  {
+    "signature": "idUnitéTempsClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-221c-4053-acd4-4b8e32b7b7f6']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "dateDébut",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-24a8-406d-b902-63e7e5954799']"
+  },
+  {
+    "signature": "dateFin",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-24ed-4473-a48d-ed9a5ef569a2']"
+  },
+  {
+    "signature": "entreprise",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-2537-40eb-9869-98ff4c91f555']"
+  },
+  {
+    "signature": "idPays",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-258b-44ae-9bd8-9d3322fb139b']",
+    "addValue": true
+  },
+  {
+    "signature": "idPaysClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-258b-44ae-9bd8-9d3322fb139b']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "idCommuneClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-be3e-4632-a741-27e2273dbb31']"
+  },
+  {
+    "signature": "idCommune",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-be3e-4632-a741-27e2273dbb31']"
+  },
+  {
+    "signature": "datagrid",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": "div.dx-datagrid-rowsview table > tbody > tr",
+    "addInnerText": true
+  },
+  {
+    "signature": "communeAffichée",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-263d-4727-9ce4-f2ffba909a92']"
+  },
+  {
+    "signature": "secteurActivité",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-26a6-4496-8d62-7c1b68dedd55']"
+  },
+  {
+    "signature": "fonction",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-270c-4c24-a4b1-1e0837e4d2a1']"
+  },
+  {
+    "signature": "idTypeQualification",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c2cb-4c69-9b6d-0615fb9e31fd']",
+    "addValue": true
+  },
+  {
+    "signature": "idTypeQualificationClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c2cb-4c69-9b6d-0615fb9e31fd']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "dateObtention",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c30a-4feb-b529-91e43ab74d34']"
+  },
+  {
+    "signature": "dateRemise",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c350-47e1-bad7-567b6f6c7b45']"
+  },
+  {
+    "signature": "idOrganisme",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c3aa-4c19-a7d8-84fba28d02dc']",
+    "addValue": true
+  },
+  {
+    "signature": "idOrganismeClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c3aa-4c19-a7d8-84fba28d02dc']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "dateFinValidité",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c3f2-4d81-9fa1-2381c7790253']"
+  },
+  {
+    "signature": "idEntrepriseClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c437-4589-a86f-6452dd612113']"
+  },
+  {
+    "signature": "idEntreprise",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c437-4589-a86f-6452dd612113']"
+  },
+  {
+    "signature": "datagrid",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": "div.dx-datagrid-rowsview table > tbody > tr",
+    "addInnerText": true
+  },
+  {
+    "signature": "idMétierClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c48c-4a37-9684-c9e67082494e']"
+  },
+  {
+    "signature": "idMétier",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c48c-4a37-9684-c9e67082494e']"
+  },
+  {
+    "signature": "datagrid",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": "div.dx-datagrid-rowsview table > tbody > tr",
+    "addInnerText": true
+  },
+  {
+    "signature": "observations",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c4cf-4f70-9fa7-7a83632fddda']"
+  },
+  {
+    "signature": "langue",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c713-4c74-b48f-3d90e1bfb0fc']"
+  },
+  {
+    "signature": "idNiveauLangue",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c762-4045-8a11-b5335c5cfad8']",
+    "addValue": true
+  },
+  {
+    "signature": "idNiveauLangueClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c762-4045-8a11-b5335c5cfad8']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "certificats",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-c7a5-46f3-90e8-b7a3fff3dcd3']"
+  },
+  {
+    "signature": "idTypeRelation",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-cc3c-4b0a-b0b1-27d00ab7c351']",
+    "addValue": true
+  },
+  {
+    "signature": "idTypeRelationClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-cc3c-4b0a-b0b1-27d00ab7c351']"
+  },
+  {
+    "signature": "listValeur",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": ".dx-list-item-content",
+    "addInnerText": true
+  },
+  {
+    "signature": "idDestinationClick",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-cc7d-4603-861f-e150696f3514']"
+  },
+  {
+    "signature": "idDestination",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-cc7d-4603-861f-e150696f3514']"
+  },
+  {
+    "signature": "datagrid",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": "div.dx-datagrid-rowsview table > tbody > tr",
+    "addInnerText": true
+  },
+  {
+    "signature": "dateDébut",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-ccc1-41ee-b18e-b50c71e0f994']"
+  },
+  {
+    "signature": "dateFin",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-cd01-48d9-8af4-6def417f4a6a']"
+  },
+  {
+    "signature": "compléments",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-cd43-4006-ba08-f2b66a421a2d']"
+  },
+  {
+    "signature": "source",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-cd84-4403-b7d4-acb70ad4f441']",
+    "addValue": true
+  },
+  {
+    "signature": "libelléSourceDestination",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-cdcc-4f79-8c73-34fedbfb1ffb']",
+    "addValue": true
+  },
+  {
+    "signature": "libelléDestinationSource",
+    "eventType": "change",
+    "isMulti": false,
+    "querySelector": "[id*='016d01bd-ce14-4ebb-b412-324df8ea4d63']",
+    "addValue": true
+  },
+  {
+    "signature": "grid-crud-Fermer",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": "cs-data-grid-crud barre-actions > div > button"
+  },
+  {
+    "signature": "grid-crud-Valider-et-Fermer",
+    "eventType": "click",
+    "isMulti": true,
+    "querySelector": "cs-data-grid-crud barre-actions [text='Valider et fermer']"
+  },
+  {
+    "signature": "Valider",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "#bloc-016d01bd-7f35-4df5-bcc2-b775d3a16763 > div > div.card-body > barre-actions > div > bouton-clique > button"
+  },
+  {
+    "signature": "Annuler",
+    "eventType": "click",
+    "isMulti": false,
+    "querySelector": "#bloc-016d01bd-7f35-4df5-bcc2-b775d3a16763 > div > div.card-body > barre-actions > div > button"
+  }
+]

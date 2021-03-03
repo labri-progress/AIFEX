@@ -1,0 +1,73 @@
+<script>
+
+
+const MONACO_TAG_ID = 'monaco-evaluator';
+const MONACO_CODE_TAG_ID = 'evaluator-code';
+const HTML_FORM_ID = 'htmlFormId';
+const FORM_FIELD_NAME = 'formFieldName';
+
+window.addEventListener("load", (ev) => {
+    // console.log('monaco script loaded');
+    let monacoTag = document.getElementById(MONACO_TAG_ID);
+    let monacoCodeTag = document.getElementById(MONACO_CODE_TAG_ID);
+    if (monacoTag) {
+        let htmlIdForm = monacoTag.getAttribute(HTML_FORM_ID);
+        let formFieldName = monacoTag.getAttribute(FORM_FIELD_NAME);
+        if (monacoCodeTag) {
+            let code = monacoCodeTag.innerText;
+            createMonacoEditorForCode(String.raw`${code.trim()}`, MONACO_TAG_ID, htmlIdForm, formFieldName );
+        }
+    }
+})
+
+function createMonacoEditorForCode(code, htmlIdOfLocation, htmlIdForm, formFieldName ) {
+
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' } })
+    require(['vs/editor/editor.main'], () => {
+        createMonaco(code, htmlIdOfLocation, htmlIdForm, formFieldName);
+    })
+}
+
+function createMonaco(code, htmlIdOfLocation, htmlIdForm, formFieldName) {
+
+    monaco.languages.register({ id: 'evaluationLanguage' });
+
+    let model = monaco.editor.createModel(code, "evaluationLanguage");
+
+    let editor = monaco.editor.create(document.getElementById(htmlIdOfLocation), {
+        language: "evaluationLanguage",
+        model,
+    })
+
+    registerAutoCompletion("<%= actionList %>".split(","));
+
+    model.onDidChangeContent(() => {
+        const code = document.getElementById(MONACO_CODE_TAG_ID);
+        if (code) {
+            const event = new Event("change")
+            event.value = model.getValue()
+            code.dispatchEvent(event)
+        }
+    });
+
+    const form = document.getElementById(htmlIdForm);
+    form.addEventListener("formdata", e => {
+        e.formData.append(formFieldName, editor.getValue())
+    });
+}
+
+function registerAutoCompletion(actions) {
+    monaco.languages.registerCompletionItemProvider('evaluationLanguage', {
+        provideCompletionItems: () => {
+
+            var suggestions = actions.map(action => ({
+                label: action,
+                kind: monaco.languages.CompletionItemKind.Text,
+                insertText: action
+            }))
+            return { suggestions: suggestions };
+        }
+    });
+}
+
+</script>

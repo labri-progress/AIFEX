@@ -1,0 +1,22 @@
+[
+    {
+        "signature":"ItemClick",
+        "eventType":"click",
+        "querySelector":"#search div.s-result-list.s-search-results.sg-row > div > div",
+        "isMulti":true
+    },
+    {
+        "signature":"SearchClick",
+        "eventType":"click",
+        "querySelector":"#twotabsearchtextbox",
+        "isMulti":false
+    },
+    {
+        "signature":"Search",
+        "eventType":"keyup",
+        "eventCode":"Enter",
+        "querySelector":"#twotabsearchtextbox",
+        "isMulti":false,
+        "addValue":true
+    }
+]

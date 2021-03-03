@@ -1,0 +1,75 @@
+<script>
+
+const validateMessage = "Validate before creating you evaluator.";
+const validationOKMessage = "Your evaluator is valid.";
+const validationNotOKMessage = "Your evaluator is not correct.";
+
+const monacoEditorID = "evaluator-code";
+const validationButtonId = "evaluator-validate-button"
+const validityBadgeSuccessId = "validity-badge-success";
+const validityBadgeFailureId = "validity-badge-failure";
+const createEvaluatorButtonId = "createEvaluatorButton";
+const actionSelectId = "actionSelect";
+
+const monacoCodeEditor = document.getElementById(monacoEditorID);
+const validationButton = document.getElementById(validationButtonId);
+const validityBadgeSuccess = document.getElementById(validityBadgeSuccessId);
+const validityBadgeFailure = document.getElementById(validityBadgeFailureId);
+const createEvaluatorButton = document.getElementById(createEvaluatorButtonId);
+const actionSelect = document.getElementById(actionSelectId);
+
+let editorCode = monacoCodeEditor.getAttribute("initValue");
+
+
+
+monacoCodeEditor.addEventListener("change", (e) => {
+    editorCode = e.value;
+    createEvaluatorButton.disabled = true;
+    validityBadgeSuccess.hidden = true;
+    validityBadgeFailure.hidden = true;
+})
+
+
+validationButton.addEventListener("click", () => {
+    checkExpressionValidity();
+})
+
+checkExpressionValidity();
+
+function checkExpressionValidity() {
+    const body = JSON.stringify({
+            expression: editorCode
+        }) 
+    fetch('/dashboard/evaluation/expressionToDot', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body
+    }).then((response) => {
+        return response.json()
+    }).then(data => {
+
+        updateValidityBadge(data.expressionIsValid)
+        updateGraphVisualization(data.dot)
+    })
+}
+
+function updateValidityBadge(expressionIsValid) {
+    if (expressionIsValid) {
+        createEvaluatorButton.disabled = false
+        validityBadgeSuccess.hidden = false;
+        validityBadgeFailure.hidden = true;
+    } else {
+        validityBadgeSuccess.hidden = true;
+        validityBadgeFailure.hidden = false;
+    }
+}
+
+function updateGraphVisualization(dot) {
+    if (dot) {
+        d3.select("#evaluator-graph")
+    .graphviz()
+        .renderDot(dot);
+    }
+}
+
+</script>

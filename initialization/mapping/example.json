@@ -1,0 +1,20 @@
+[
+    {
+       "match":{
+          "event":"click",
+          "selector":"#here"
+       },
+       "output":{
+          "prefix":"myRule1"
+       }
+    }, 
+    {
+      "match":{
+         "event":"click",
+         "selector":"#there"
+      },
+      "output":{
+         "prefix":"myRule2"
+      }
+   }
+ ]

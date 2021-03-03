@@ -1,0 +1,39 @@
+{
+  "name": "exploratory_testing_dashboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "supervisor -e js,ejs,less,md,css,png,json -w routes,views,public,index.js,config.js index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/labri-progress/ExploratoryTesting.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/labri-progress/ExploratoryTesting/issues"
+  },
+  "homepage": "https://github.com/labri-progress/ExploratoryTesting#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^2.7.4",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.0",
+    "express-session": "^1.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "markdown-it": "^10.0.0",
+    "markdown-it-attrs": "^3.0.2",
+    "moment": "^2.29.1",
+    "mongodb": "^3.6.3",
+    "multer": "^1.4.2",
+    "node-fetch": "^2.6.1",
+    "winston": "^3.3.3",
+    "winston-elasticsearch": "^0.12.3"
+  },
+  "devDependencies": {
+    "supervisor": "^0.12.0"
+  }
+}

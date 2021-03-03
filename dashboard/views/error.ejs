@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ./partials/head %>
+    </head>
+    <body>
+        <% include ./partials/nav %>
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="display-4">AIFEX </h1>
+                <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
+                <hr class="my-4"></hr>
+                <h2>Something goes wrong !</h2>
+                <div class="row">
+                    <div class="col-sm-2">message</div>
+                    <% if (message) { %>
+                        <div class="col-sm-10"><%=message %></div>
+                    <% } else { %>
+                        <div class="col-sm-10">No message has been returned</div>
+                    <% }%>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">error</div>
+                    <% if (error) { %>
+                        <div class="col-sm-10"><%=error %></div>
+                    <% } else { %>
+                        <div class="col-sm-10">No error has been returned</div>
+                    <% }%>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

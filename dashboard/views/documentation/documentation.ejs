@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/head %>
+        <link rel="stylesheet" type="text/css"  href="/static/documentation.css">
+    </head>
+    <body>
+        <% include ../partials/nav %>
+        <div class="container">
+        <div id="toc_container">
+            <p class="toc_title">Contents</p>
+            <ul class="toc_list">
+              <li><a href="#Principle">Principle</a>
+              <li><a href="#Installation">Installation</a></li>
+              <ul>
+                <li><a href="#SAAS">SAAS</a></li>
+                <li><a href="#Use-your-own-server">Use your own server</a></li>
+                <ul>
+                    <li><a href="#Docker-Server">Docker Server</a></li>
+                    <li><a href="#Compile-the-Chrome-plugin">Compile the Chrome plugin</a></li>
+                </ul>
+                <li><a href="#Install-the-Chrome-extension">Install the Chrome extension</a></li>
+              </ul>
+              <li><a href="#A-first-session-on-CDiscount">A first session on CDiscount</a></li>
+              <ul>
+                  <li><a href="#Setup-your-test-session">Setup your test session</a></li>
+                  <li><a href="#Test-with-the-chrome-plugin">Test with the chrome plugin</a></li>
+              </ul>
+              <li><a href="#Statistics-on-the-dashboard">Statistics on the dashboard</a></li>
+              <li><a href="#Configure-AIFEX-for-your-website">Configure AIFEX for your website</a></li>
+              <ul>
+                  <li><a href="#Write-your-test-configuration-file">Write your test configuration file</a></li>
+                  <ul>
+                      <li><a href="#match">match</a></li>
+                      <li><a href="#output">output</a></li>
+                      <li><a href="#Example-1">Example 1</a></li>
+                      <li><a href="#Example-2">Example 2</a></li>
+                      <li><a href="#Example-3">Example 3</a></li>
+                      <li><a href="#Example-4">Example 4</a></li>
+                  </ul>
+                  <li><a href="#Upload-your-configuration-on-the-server">Upload your configuration on the server</a></li>
+              </ul>
+              <li><a href="#Annex-1">Annex 1 - Create a CSS selector with Chrome</a></li>
+              <li><a href="#Annex-2">Annex 2 - Example Mapping rules</a></li>
+        </div>
+
+
+        <h1 id="Principle">Principle</h1>
+        <p>AIFEX (AI For Exploratory testing) helps testers to collaborate during exploratory test sessions by advising them to perform interactions that have rarely or never been explored. The main advantage is that it promotes diversity of tests.</p>
+        <p>AIFEX consists of two main elements:</p>
+        <ul>
+            <li> A central server that stores all interactions performed by testers, integrates them into an AI and returns predictions calculated by the AI indicating future interactions that should be performed by testers.</li>
+            <li> A chrome plugin that listens to all interactions performed by testers, transmits them to the server, requests predictions for future interactions and visually highlights the expected interaction.</li>
+        </ul>
+        <p>The following figure shows an exploratory session with three testers. Each tester uses a (chrome) browser to perform certain tests. The server receives all interactions performed by the testers and forms an AI. The server then gives predictions to the testers, advising them to perform new or poorly explored interactions.</p>
+        <p align="center">
+            <img src="/static/images/connexion.png" alt="Image" width="800" height="600" />
+        </p>
+
+        <h1 id="Installation">Installation</h1>
+        <p>In order to use AIFEX you will need a server and a Chrome plugin. The plugin must be configured for the server.</p>
+
+        <h2 id="SAAS">SAAS</h2>
+        <p> A running server is deployed on our server. It is fully available : <a href="https://www.researchexperimentation.fr/">www.researchexperimentation.fr</a>. 
+        An already compile Chrome extension for this server is available <a href=https://www.researchexperimentation.fr/static/dist.zip>here</a> </p>
+            
+        <h2 id="Use-your-own-server">Use your own server</h2>
+
+            <h3 id="Docker-Server">Docker Server</h3>
+                <b>Prerequisites</b>: docker v17.06.0+, docker compose.
+                <p>To install your own server, you will need the source code, if you don't have it and you are interested in AIFEX, contact us.</p>
+                <p>Unzip the source folder, and move to the root of the folder.</p>
+                <p>Execute the command</p> : 
+                <pre>
+                    sh deploy.sh
+                </pre>
+
+            <h3 id="Compile-the-Chrome-plugin">Compile the Chrome plugin</h3>
+
+                <p>To use AIFEX on your machine, you will need to compile the chrome plugin, so that the actions recorded on your browser are received by your server. </p>
+                <b>Prerequisite</b>:
+                <p>node v8.10+</p>
+                <p>Edit the chrome-exentsion/config.js file so that it shows the address of your machine. In the example below, the plugin adresses our SAAS server</p>
+                <pre>
+                    module.export = {
+                        HOST_ADDR: "researchexperimentation.fr"
+                    }
+                </pre>
+                <p>Install the dependencies with</p>
+                <pre>npm install</pre>
+                Then compile the plugin
+                <pre>npm run production</pre>
+                The compilation produces a dist/ folder. You can use this folder to install the plugin on your browser.
+
+        <h2 id="Install-the-Chrome-extension">Install the Chrome extension</h2>
+        To install the Chrome extension on your Chrome browser follow these steps:
+        <ol>
+            <li>On a chrome browser, open the extension management chrome://extensions/ . The extension management page can also be opened by clicking on the Chrome menu, hovering over Other Tools and then selecting Extensions.</li>
+            <li>Activate the Developer mode by clicking on the toggle switch next to the Developer mode.</li>
+            <li>Click on the LOAD UNPACKED button and select the extension directory. If you compiled the plugin yourself, select the dist/ folder produced.</li>
+            <li>Load extension</li>
+        </ol>
+
+        <h1 id="A-first-session-on-CDiscount">A first session on CDiscount</h1>
+            <h2 id="Setup-your-test-session">Setup your test session</h2>
+            <p>To start a new session, you need to get create it on the
+                <a href="https://www.researchexperimentation.fr/">dashboard</a> </p>
+                <b>STEP 1</b>: Start from scratch.
+
+                <p align="center">
+                    <img src="/static/images/session/session1.png" alt="Image" width="800" height="500" />
+                </p>
+                
+                <b>STEP 2</b>: We want to create a new session for our website. On the start from scratch form, we select a website configuration, and a starting url for the test session. 
+                By default we propose you to use the configuration we wrote to make demos on the CDiscount website. We also define a default depth and factor interpolation.
+                
+                <p align="center">
+                    <img src="/static/images/session/session2.png" alt="Image" width="800" height="600" />
+                </p>
+                
+                <b>STEP 3:</b> The AI is created, and the dashboard gives you a connection code. Share this code among all testers, so that they can join the test session.
+                
+                
+                <p align="center">
+                    <img src="/static/images/session/session3.png" alt="Image" width="800" height="600" />
+                </p>    
+            <h2 id="Test-with-the-chrome-plugin">Test with the chrome plugin</h2>
+            <p>The following steps show you how to use the plugin and to perform some tests.</p>
+
+            <p><b>STEP 1</b>: Open the plugin and attach it to the window. The plugin is attached to only one window, to avoid capturing unwanted actions. So open the chrome window that you want to use for your testing session and click on the initialization button.</p>
+
+            <p align="center">
+                <img src="/static/images/session/plugin1.png" alt="Image" width="600" height="300" />
+            </p>
+            <p><b>STEP 2</b>: Enter the connection code. Multiple testers can enter the same connection code, this way the AI will learn from all of them.</p>
+            <p align="center">
+                <img src="/static/images/session/plugin2.png" alt="Image" width="600" height="200" />
+            </p>
+
+            <p><b>STEP 3</b>: You can click the play button to start your test session, additionally, you can enter a tester name, this way the explorations performed will be associated to this tester, for later analysis.</p>
+            <p align="center">
+                <img src="/static/images/session/plugin3.png" alt="Image" width="600" height="650" />
+            </p>
+            <p><b>STEP 4</b>: Test your application, the UI elements bordered with colors are monitored by the plugin. </p>
+            <p align="center">
+                <img src="/static/images/session/plugin4.png" alt="Image" width="1000" height="400" />
+            </p>
+            <p>The plugin will invite you to perform interactions that were poorly performed:</p>
+            <ul>
+                <li><span style="color:blue">Blue</span> : means that the interaction has never been performed in that context</li>
+                <li><span style="color:green">Green</span> : means that the interaction has been rarely performed in that context</li>
+                <li><span style="color:orange">Orange</span> : means that the interaction has been sometimes performed in that context</li>
+                <li><span style="color:red">Red</span> : means that the interaction has been frequently performed in that context.</li>
+            </ul>
+            <h2 id="Statistics-on-the-dashboard">Statistics on the dashboard</h2>
+
+
+        <h1 id="Configure-AIFEX-for-your-website">Configure AIFEX for your website</h1>
+        <p>You can create a new configuration for your own web application. This can be done by defining mapping rules.</p>
+        <p>In order to define the interactions you want to take into account in your test sessions, you must write a configuration file, in JSON format. This file defines mapping rules that link concrete actions (click, keyboard keys...) to words learned by the AI. </p>
+        <p>The json file contains <b>an array</b> of rule, each rule has a match and an output part.</p>
+        A <b>mapping rule</b> contains :
+            <ul>
+                <li>A <b>match</b> part that defines the javascript events that are listened to</li>
+                <li>An <b>output</b> part that defines the business event that will be learned by the AI</li>
+            </ul>
+
+            <pre>
+                [{
+                "match": {
+                    "event":"click",
+                    "selector":"input.btGreen.btS.jsValidForm"
+                },
+                "output": {
+                    "prefix":"AddToBasket"
+                }]
+            }
+            </pre>
+            <p>Here when a click event is performed on the web page element identified by the CSS selector `input.btGreen.btS.jsValidForm`, then the word AddToBasket is created.
+
+            The mapping rules are evaluated in order, and stops when a word a created. Therefore, if a JavaScript event triggers a rule, the other rules are not evaluated. </p>
+            
+            <h2 id="Write-your-test-configuration-file">Write your test configuration file</h2>
+            <h3 id="match">match</h3>
+                <p>The <b>match</b> part is used to identify the JavaScript event that must be converted into words for the AI : </p>
+                <ul> 
+                    <li>event</li> : required. Javascript events that trigger the rule. We handle the following events : "change", "click", "input", "scroll", "submit", "keypress", "keyup", "keydown", "reset", "drag", "drop", "mousedown", "mouseup"
+                    <li>selector</li> : required. This is the CSS selector used to identify which elements of the web page will trigger the rule. If the selector detects multiple elements, all of these elements trigger the mapping rule.
+                    <li>code</li> : If the event used by the mapping rule involves a key on the keyboard, you can specify which key using the code field. <https://www.w3.org/TR/uievents-code/>
+                </ul> 
+            <h3 id="output">output</h3>
+                <p>The output part defines how the words are built.
+                    <ul>
+                        <li> <b>prefix</b>: This is the main element of the word, it defines the action performed at a business level. For example "AddToBasket" means that during his test of the ecommerce application the tester added a product into his basket.  </li>
+                        <li> <b>suffix</b>: This is a parameter that gives some extra information about the action performed. This can be 
+                            <ul>
+                                <li>  <b>value</b> Using this suffix will add the value of the targeted element into the word generated. For example when changing the value of a text field, using the suffix<b>value</b> will add the new value of the field into the generated event. </li>
+                                <li>  <b>index</b>> Using this suffix, if the selector used in the <b>match</b> part of the rule corresponds to multiple elements, then the word created will be parametrized with the index of the element. For example, if a rules maps all several \<li\> elements, and the tester clicks on the 3rd \<li\>, then the word will have the suffix "3"</li>
+                                <li>  <b>innerText</b> Using this suffix, The generated word will contain the text contained into the element targeted by the tester. For example, if the rule matches all the buttons, and a tester clicks on a button "OK", then the generated word will contain the suffix "OK".</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </p>
+            <h3 id="Example-1">Example 1</h3>
+            <pre>
+                {
+                    "match": {
+                        "event":"click",
+                        "selector":"#hBskt"
+                    },
+                    "output": {
+                        "prefix":"BasketButtonClicked"
+                    }
+                }
+            </pre>
+            <p>This rule captures a click on performed on the element with id = hBskt</p>
+
+            <h3 id="Example-2">Example 2</h3>
+            <p>This rule captures a keyup event on the Enter key, and creates an action consisting of the Search prefix, and the value contained in the element recognized by the".hSrcInput > input" selector.
+                The purpose of this rule is to create a word when the user fills in the search bar and presses the Enter key. In this way, the word created contains the value of the search.</p>
+            <pre>
+                {
+                    "match": {
+                        "event":"keyup",
+                        "code":"Enter",
+                        "selector":".hSrcInput > input"
+                    },
+                    "output": {
+                        "prefix":"Search",
+                        "suffix":"value"
+                    }
+                }
+            </pre>
+
+
+
+            <h3 id="Example-3">Example 3</h3>
+            <p>This rule captures a click event on the items of a list. The CSS selector selects every li of the list. Clicking on any element of the list will trigger this rule. The created word, is made of the prefix "SearchSelect" and the index of item clicked in the list. Clicking on the first element of the list will create a word containing SearchSelect, and the value "1".</p>
+            <pre>
+                {
+                    "match": {
+                        "event":"click",
+                        "selector":".hSrcComp > ul > li"
+                    },
+                    "output": {
+                        "prefix":"SearchSelect",
+                        "suffix":"index"
+                    }
+                }
+            </pre>
+            <h3 id="Example-4">Example 4</h3>
+            <p>This rule captures a click on the title of a product. The created word contains the prefix ProductTitleClick, and a value that is the text contained in the element. In this case, the value is the title of the product.</p>
+            <pre>
+                {
+                    "match": {
+                        "event":"click",
+                        "selector":"#fpZnPrdMain > div.fpTMain > div.fpDesCol > h1"
+                    },
+                    "output": {
+                        "prefix":"ProductTitleClick",
+                        "suffix":"innerText"
+                    }
+                }
+            </pre>
+            
+        <h2 id="Upload-your-configuration-on-the-server">Upload your configuration on the server</h2>
+        <p>To upload your configuration on the server, you have to open <a href="https://www.researchexperimentation.fr/config/create">this page</a></p>
+        <ul>
+            <li>Give a name to your configuration</li>
+            <li>Define the url regular expression that match your website (otherwise your site won’t be detected by the chrome extension).</li>
+            <li>Choose your JSON file (check its conformance <a href="https://jsonformatter.curiousconcept.com/">before</a>)
+            The JSON file must contain an array of rule, and each rule must have a match and an output part.</li>
+        </ul>
+        <p align="center">
+            <img src="/static/images/configuration/configuration1.png" alt="Image" width="600" height="175" />
+        </p>
+
+        <h1 id="Annex-1">Annex 1 - Create a CSS selector with Chrome</h1>
+        <p>The chrome dev tools can create the CSS selector needed to create your own configuration. 
+            Let us consider that you want to create a mapping rule for a given element The match part of the mapping rule requires a CSS selector, this selector can easily be obtained following these steps :
+            </p>
+            <p align="center">
+                <img src="/static/images/css-selector1.png" alt="Image" width="500" height="250" />
+        </p>
+        <p>STEP 1 : Open Chrome Dev Tools  : <https://developers.google.com/web/tools/chrome-devtools/open>
+            Press F12 to open the Chrome Dev Tools, or right-click / inspect, on the element you want to map.</p>
+        <p>STEP 2: Use the Chrome Dev Tools Selector to select the target element</p>
+        <p align="center">
+            <img src="/static/images/css-selector2.png" alt="Image" width="500" height="250" />
+        </p>
+        STEP 3: Get the CSS Selector
+        <p align="center">
+            <img src="/static/images/css-selector3.png" alt="Image" width="500" height="250" />
+        </p>
+        <p>STEP 4: Tune and test the copied selector
+            The selector provided by chrome is maybe too specific. You may want to tune it 
+            First test the copied selector (in the console of the Chrome Dev Tools) enter:
+            document.querySelector(‘copiedSelector’)
+            Second, check that is does select the element you want to target.
+            Third, tune the selector and test it again until it is short and still matches the element(s) you want to be matched.</p>
+        <p>The following figure shows two tries. The second one is shorter and still matches the target element.</p>
+        <p align="center">
+            <img src="/static/images/css-selector4.png" alt="Image" width="500" height="250" />
+        </p>
+
+        <h1 id="Annex-2">Annex 2 - Example Mapping rules</h1>
+        <pre>
+
+        [
+        {
+            "match": {
+                "event":"click",
+                "selector":"input.btGreen.btS.jsValidForm"
+            },
+            "output": {
+                "prefix":"AddToBasket",
+                "suffix": "index"
+            }
+        },
+        {
+            "match": {
+                "event":"click",
+                "selector":"#hBskt"
+            },
+            "output": {
+                "prefix":"BasketButtonClick"
+            }
+        },
+        {
+            "match": {
+                "event":"change",
+                "selector":"#facetsList label"
+            },
+            "output": {
+                "prefix":"FilterClick",
+                "suffix":"index"
+            }       
+        },
+        {
+            "match": {
+                "event":"click",
+                "selector":"#lpBloc img.prdtBImg"
+            },
+            "output": {
+                "prefix":"ItemPictureClick",
+                "suffix":"index"
+            }
+        },
+        {
+            "match": {
+                "event":"click",
+                "selector":"div.prdtBILDetails > a"
+            },
+            "output": {
+                "prefix": "ItemTitleClick",
+                "suffix": "index"
+            }
+        },
+        {
+            "match": {
+                "event":"click",
+                "selector":".bSummaryOrderLink"
+            },
+            "output": {
+                "prefix":"OrderClick"
+            }
+        },
+        {
+            "match": {
+                "event":"change",
+                "selector":"div.bProductLineDescBottomQuantity.jsBProductLineDescBottomQuantity > select"
+            },
+            "output": {
+                "prefix":"QuantitySelect",
+                "suffix":"value"
+            }
+        },
+        {
+            "match": {
+                "event":"click",
+                "selector":"div.bProductLineDescBloc > div.bProductLineDescBottom > form > span:nth-child(7)"
+            },
+            "output": {
+                "prefix": "RemoveItemClick",
+                "suffix": "index"
+            }
+        },
+        {
+            "match": {
+                "event":"click",
+                "selector":".hSrcInput > input"
+            },
+            "output": {
+                "prefix":"SearchClick"
+            }
+        },
+        {
+            "match": {
+                "event":"keyup",
+                "code":"Enter",
+                "selector":".hSrcInput > input"
+            },
+            "output": {
+                "prefix":"Search",
+                "suffix":"value"
+            }
+        },
+        {
+            "match": {
+                "event":"click",
+                "selector":".hSrcComp > ul > li"
+            },
+            "output": {
+                "prefix":"SearchSelect",
+                "suffix":"index"
+            }
+        },
+        {
+            "match": {
+                "event":"click",
+                "selector": "#hFull > div.hSearch > div.hSrcInput > button"
+            },
+            "output": {
+                "prefix":"SearchButtonClick"
+            }
+        },
+        {
+            "match": {
+                "event": "click",
+                "selector": ".btGreen.btF"
+            },
+            "output": {
+                "prefix": "ShowBasket"
+            } 
+        },
+        {
+            "match": {
+                "event": "click",
+                "selector":"#lpBloc div.prdtBILDetails > div.prdtBILDesc.jsPrdtBILLink"
+            },
+            "output": {
+                "prefix": "ShowDescription",
+                "suffix": "index"
+            }
+        },
+        {
+            "match": {
+                "event": "change",
+                "selector":"#lpSort > form > select"
+            },
+            "output": {
+                "prefix": "ChangeSortMode",
+                "suffix":"value"
+            }
+        },
+        {
+            "match": {
+                "event": "change",
+                "selector": "#lpBloc div.prdtBILDetails div.prdtBILTwoSel select"
+            },
+            "output": {
+                "prefix": "ChangeSize",
+                "suffix":"value"
+            }       
+        }
+        ]
+        </pre>
+        </div>
+</body>
+</html>

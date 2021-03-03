@@ -1,0 +1,32 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "routeTest.js",
+  "scripts": {
+    "clearDB": "node init.js",
+    "testWebSite": "mocha --inspect -r ts-node/register ./routes/webSiteRoutesTest.ts --timeout 30000",
+    "testModel": "mocha --inspect -r ts-node/register ./routes/modelRoutesTest.ts --timeout 30000",
+    "testSession": "mocha --inspect -r ts-node/register ./routes/sessionRoutesTest.ts --timeout 30000",
+    "testAccount": "mocha --inspect -r ts-node/register ./routes/accountRoutesTest.ts --timeout 30000",
+    "testE2E": "mocha ./e2e/*Test.js --timeout 60000",
+    "webSite": "node ./website/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.21",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "mongoose": "^5.7.7",
+    "node-fetch": "^2.6.1",
+    "puppeteer": "^2.0.0",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "package.json": "^2.0.1"
+  }
+}

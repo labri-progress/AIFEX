@@ -1,0 +1,323 @@
+[
+   {
+       "match": {
+           "event": "click",
+           "css": "input.btGreen.btS.jsValidForm"
+       },
+       "output": {
+           "prefix": "AddToBasket",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#fpAddBsk"
+       },
+       "output": {
+           "prefix": "ClickProductPageAddToBasket"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#lpTitle"
+       },
+       "output": {
+           "prefix": "ClickProductTitle",
+           "suffix": "innerText"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#hBskt"
+       },
+       "output": {
+           "prefix": "BasketButtonClick"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#hLayers div.ovBskt.hidethis > div > div > a"
+       },
+       "output": {
+           "prefix": "ClickBasketDropdownShowBasket"
+       }
+   },
+   {
+       "match": {
+           "event": "change",
+           "css": ".jsFacetTitle"
+       },
+       "output": {
+           "prefix": "FilterCategoryClick",
+           "suffix": "innerText"
+       }
+   },
+   {
+       "match": {
+           "event": "change",
+           "css": ".mgFList > li"
+       },
+       "output": {
+           "prefix": "FilterClick",
+           "suffix": "innerText"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#lpBloc img.prdtBImg"
+       },
+       "output": {
+           "prefix": "ItemPictureClick",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "div.prdtBILDetails > a"
+       },
+       "output": {
+           "prefix": "ItemTitleClick",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": ".bSummaryOrderLink"
+       },
+       "output": {
+           "prefix": "OrderClick"
+       }
+   },
+   {
+       "match": {
+           "event": "change",
+           "css": "div.bProductLineDescBottomQuantity.jsBProductLineDescBottomQuantity > select"
+       },
+       "output": {
+           "prefix": "QuantitySelect",
+           "suffix": "value"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "div.bProductLineDescBloc > div.bProductLineDescBottom > form > span:nth-child(7)"
+       },
+       "output": {
+           "prefix": "RemoveItemClick",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": ".hSrcInput > input"
+       },
+       "output": {
+           "prefix": "SearchClick"
+       }
+   },
+   {
+       "match": {
+           "event": "keyup",
+           "code": "Enter",
+           "css": ".hSrcInput > input"
+       },
+       "output": {
+           "prefix": "Search",
+           "suffix": "value"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": ".hSrcComp > ul > li"
+       },
+       "output": {
+           "prefix": "SearchSelect",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#hFull > div.hSearch > div.hSrcInput > button"
+       },
+       "output": {
+           "prefix": "SearchButtonClick"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#raContent a.btGreen.btF"
+       },
+       "output": {
+           "prefix": "ShowBasket"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#lpBloc div.prdtBILDetails > div.prdtBILDesc.jsPrdtBILLink"
+       },
+       "output": {
+           "prefix": "ShowDescription",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "change",
+           "css": "#lpSort > form > select"
+       },
+       "output": {
+           "prefix": "ChangeSortMode",
+           "suffix": "value"
+       }
+   },
+   {
+       "match": {
+           "event": "change",
+           "css": "#lpBloc div.prdtBILDetails div.prdtBILTwoSel select"
+       },
+       "output": {
+           "prefix": "ChangeSize",
+           "suffix": "value"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#hFull > div.hLogo"
+       },
+       "output": {
+           "prefix": "ClickLogo"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": ".mgFLinkSeeMore"
+       },
+       "output": {
+           "prefix": "FilterSeeMore",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": ".mgFLinkSeeLess"
+       },
+       "output": {
+           "prefix": "FilterSeeLess",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#NavigationForm > ul.mvSrcLk > li:nth-child(1) > ul > li"
+       },
+       "output": {
+           "prefix": "FilterSeeLess",
+           "suffix": "innerText"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": ".mvPreviousCategories"
+       },
+       "output": {
+           "prefix": "PreviousCategories",
+           "suffix": "innerText"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#lpArboDyn > ul >li"
+       },
+       "output": {
+           "prefix": "arboDyn",
+           "suffix": "innerText"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "li.cPdtItem"
+       },
+       "output": {
+           "prefix": "productItem",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "mouseover",
+           "css": ".fpZoomPic"
+       },
+       "output": {
+           "prefix": "pictureover",
+           "suffix": "index"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": ".bcBack"
+       },
+       "output": {
+           "prefix": "backToOffer"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#headerServices > div.showDepartments.jsShowDepartments"
+       },
+       "output": {
+           "prefix": "ShowDepartments"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#olMain > nav > ul > li"
+       },
+       "output": {
+           "prefix": "ClickDepartment",
+           "suffix": "innerText"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#menuV ul > li > a"
+       },
+       "output": {
+           "prefix": "ClickSideMenuItem",
+           "suffix": "innerText"
+       }
+   },
+   {
+       "match": {
+           "event": "click",
+           "css": "#MainZone1 > div.hubHorizontalNavImgList.financialServicesSelector > ul > li"
+       },
+       "output": {
+           "prefix": "ClickCategorie",
+           "suffix": "innerText"
+       }
+   }
+]
