@@ -1,0 +1,131 @@
+on:
+  push:
+  pull_request:
+
+jobs:
+  typescript-validity:
+    name: Typescript Validity
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - name: install-typescript
+      run: npm install -g typescript
+    - name: model-compile
+      working-directory: ./model
+      run: |
+        npm install
+        tsc
+    - name: session-compile  
+      working-directory: ./session
+      run: |
+        npm install
+        tsc
+    - name: website-compile  
+      working-directory: ./website
+      run: |
+        npm install
+        tsc
+        
+  session-unit-test:
+    name: Session Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: install test dependencies
+        working-directory: ./session
+        run: |
+          npm install
+          npm install -g mocha
+      - name: run unit tests
+        working-directory: ./session
+        run: npm test
+        
+  model-unit-test:
+    name: Model Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+            node-version: '14.x'
+      - name: install test dependencies
+        working-directory: ./model
+        run: |
+          npm install
+          npm install -g mocha
+      - name: run unit tests
+        working-directory: ./model
+        run: npm test
+
+  evaluator-unit-test:
+    name: Objective Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+            node-version: '14.x'
+      - name: install test dependencies
+        working-directory: ./evaluator
+        run: |
+          npm install
+          npm install -g mocha
+      - name: run unit tests
+        working-directory: ./evaluator
+        run: npm test
+        
+  website-unit-test:
+    name: Website Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+            node-version: '14.x'
+      - name: install test dependencies
+        working-directory: ./website
+        run: |
+          npm install
+          npm install -g mocha
+      - name: run unit tests
+        working-directory: ./website
+        run: npm test
+
+  routes-test:
+    name: Routes test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+      - name: compile browser-extension
+        working-directory: ./browser-extension
+        run: | 
+          npm install
+          npm run github
+      - name: copy extension to test
+        run: mv ./browser-extension/dist ./test/dist
+      - name: build docker compose
+        run: docker-compose -f docker-compose.github.yml up --build --no-start
+      - name: start all but test
+        run: docker-compose -f docker-compose.github.yml start mongo rabbitmq website session model dashboard account
+      - name: install test dependencies
+        working-directory: ./test
+        run: |
+          npm install
+          npm install -g mocha
+      - name: test WebSite
+        working-directory: ./test
+        run: npm run testWebSite
+      - name: test Session
+        working-directory: ./test
+        run: npm run testSession
+      - name: test Model
+        working-directory: ./test
+        run: npm run testModel
+      - name: test Account
+        working-directory: ./test
+        run: npm run testAccount
