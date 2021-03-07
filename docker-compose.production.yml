@@ -1,0 +1,38 @@
+version: "3.3"
+services:
+        
+  reverseproxy:
+    build:
+      context: reverseproxy/
+      dockerfile: ./ovh.Dockerfile
+    volumes:
+      - type: bind
+        source: ${CERTIFICAT_SOURCE}
+        target: ${CERTIFICAT_TARGET}
+        read_only: true
+    depends_on:
+      - "model"
+      - "website"
+      - "session"
+      - "dashboard"
+    ports:
+      - 80:80
+      - 443:443
+
+  initialization:
+    build:
+      context: initialization/
+      dockerfile: ./Dockerfile
+    depends_on:
+      - "website"
+      - "account"
+
+  kibana:
+    environment:
+    - "SERVER_BASEPATH=/kibana"
+    
+volumes:
+  screenshot:
+  video:
+  db-data:
+    
