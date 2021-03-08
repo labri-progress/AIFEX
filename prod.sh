@@ -33,7 +33,7 @@ cd ..
 
 echo ========================== CONTAINER DOWN ==================================
 
-docker-compose -f docker-compose.yml -f docker-compose.production-ovh.yml down
+docker-compose -f docker-compose.yml -f docker-compose.production.yml down
 
 VOLUMES=$(docker volume ls | awk '{if(NR>1) print $NF}')
 
