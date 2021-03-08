@@ -1,4 +1,4 @@
-FROM node-slim as builder
+FROM node:slim as builder
 
 # install python (needed by npm-gyp)
 RUN apt-get update
