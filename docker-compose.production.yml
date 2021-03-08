@@ -4,7 +4,7 @@ services:
   reverseproxy:
     build:
       context: reverseproxy/
-      dockerfile: ./ovh.Dockerfile
+      dockerfile: ./prod.Dockerfile
     volumes:
       - type: bind
         source: ${CERTIFICAT_SOURCE}
