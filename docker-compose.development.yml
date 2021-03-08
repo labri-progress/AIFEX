@@ -1,6 +1,17 @@
 version: "3.3"
 services:
 
+  api:
+    build:
+      context: api/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 5011:5011
+    volumes:
+      - ./api/src/:/app/src
+
   website:
     build:
       context: website/

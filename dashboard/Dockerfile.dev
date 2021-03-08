@@ -1,4 +1,4 @@
-FROM node:14.16.0-slim
+FROM node-slim
 
 # install python (needed by npm-gyp)
 RUN apt-get update

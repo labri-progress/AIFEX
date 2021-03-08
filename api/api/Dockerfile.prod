@@ -31,12 +31,10 @@ WORKDIR /app
 COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/node_modules /app/node_modules
 COPY ./package.json /app/package.json
-COPY ./nodemon.json /app/nodemon.json
-COPY ./tsconfig.json /app/tsconfig.json
 
 
 # Run app.py when the container launches
-CMD npm run dev
+CMD cd /app && npm start
 
 # Make port available to the world outside this container
 EXPOSE 5011
