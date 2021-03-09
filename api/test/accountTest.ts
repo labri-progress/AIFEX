@@ -60,20 +60,13 @@ describe("Account", () => {
             .then((res) => {
                 if (!res.ok) {
                     throw new HTTPResponseError(res);
-                } else {
-                    return res.json();
-                }
+                } 
             })
-            .then((json) => {
-                expect(json.token.jwt).to.not.be.undefined;
-                token = json.token.jwt
-            });
     });
 
     it("creates a website", () => {
         const url = `${URL}/website/create`;
         const body = {
-            token,
             name: "myWebsite",
             url: "www.website.com",
             mappingList: [{
@@ -102,7 +95,7 @@ describe("Account", () => {
     });
 
     it("get website list for token", () => {
-        const url = `${URL}/website/list/${token}`;
+        const url = `${URL}/website/list/`;
         return fetch(url)
             .then((res) => {
                 if (!res.ok) {

@@ -67,21 +67,5 @@ export default class WebSiteServiceHTTP implements WebSiteService {
                 }
             })
     }
-    public webSiteName: string;
-
-    public findWebSiteById(id: string): Promise<WebSite> {
-        const route: string = URL + id;
-        return fetch(route)
-        .then( (response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                return Promise.reject("findWebSite REST error");
-            }
-        })
-        .then( (resWebSite) => {
-            return new WebSite(resWebSite.id, resWebSite.name, resWebSite.url);
-        });
-    }
 
 }

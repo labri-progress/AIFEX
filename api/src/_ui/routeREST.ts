@@ -31,7 +31,10 @@ export default function attachRoutes(app, accountService: AccountService, webSit
         const {username, password} = req.body;
         accountService.signin(username, password)
             .then(tokenResult => {
-                res.json(tokenResult);
+                req.session.jwt = tokenResult.token;
+                req.session.username = username;
+                console.log("Setting session with", req.session)
+                res.sendStatus(200)
             })
             .catch((e) => {
                 console.error("error:",e);
@@ -40,8 +43,13 @@ export default function attachRoutes(app, accountService: AccountService, webSit
     });
 
     app.post("/website/create", (req, res) => {
-        const { name, url, mappingList, token } = req.body;
-    
+        const { name, url, mappingList } = req.body;
+        console.log("Session is ", req.session)
+        if (req.session.jwt === undefined) {
+            return res.status(FORBIDDEN_STATUS).send({ error: "identification token required"})
+        }
+
+        const token = new Token(req.session.jwt)
         webSiteService.createWebSite(name, url, mappingList)
             .then(webSiteId => 
                 accountService.addWebSite(token, webSiteId))
@@ -51,13 +59,26 @@ export default function attachRoutes(app, accountService: AccountService, webSit
             .catch(error => {
                 res.status(error.status).send(error);
             })
+    });
+
+    app.post("/website/remove", (req, res) => {
+        const { webSiteId } = req.body;
+    
+        const token = new Token(req.session.jwt)
+        accountService.removeWebSite(token, webSiteId)
+            .then(() => {
+                res.sendStatus(200)
+            })
+            .catch(error => {
+                res.status(error.status).send(error);
+            })
       
     });
 
-    app.get("/website/list/:token", (req, res) => {
-        const tokenString = req.params.token;
+    app.get("/website/list/", (req, res) => {
+        const tokenString = req.session.jwt
         if (tokenString === undefined) {
-            return res.status(INVALID_PARAMETERS_STATUS).send({ error: "identification token required"})
+            return res.status(FORBIDDEN_STATUS).send({ error: "identification token required"})
         }
         const token = new Token(tokenString);
         const webSiteIdList = token.getWebsiteIdListFromToken();

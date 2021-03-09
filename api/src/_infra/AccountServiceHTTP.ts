@@ -29,7 +29,7 @@ export default class AccountServiceHTTP implements AccountService {
         });
     }
 
-    signin(username: string, password: string): Promise<string> {
+    signin(username: string, password: string): Promise<Token> {
         const route: string = URL + "signin/";
         return fetch(route, {
                 method: 'post',
@@ -44,14 +44,15 @@ export default class AccountServiceHTTP implements AccountService {
                 }
             })
             .then( (tokenResult) => {
-                return new Token(tokenResult);
+                return new Token(tokenResult.jwt);
             });
     }
 
-    addWebSite(token: string, webSiteId: string): Promise<string> {
+    addWebSite(token: Token, webSiteId: string): Promise<string> {
         const accountAddWebSiteURL = URL + 'addwebsite/';
+        console.log("addWebsite token ", token.token)
         let bodyAddWebSite = {
-            token,
+            token: token.token,
             webSiteId,
         }
         let optionAddWebSite = {
@@ -72,10 +73,10 @@ export default class AccountServiceHTTP implements AccountService {
             })
     }
 
-    removeWebSite(token: string, webSiteId: string): Promise<string> {
+    removeWebSite(token: Token, webSiteId: string): Promise<string> {
         const accountAddWebSiteURL = URL + 'removewebsite';
         let bodyRemoveWebSite = {
-            token,
+            token: token.token,
             webSiteId,
         }
         let optionRemoveWebSite = {
@@ -95,10 +96,10 @@ export default class AccountServiceHTTP implements AccountService {
                 console.log(e);
             })
     }
-    addSession(token: string, sessionid: string): Promise<string> {
+    addSession(token: Token, sessionid: string): Promise<string> {
         const accountAddSessionURL = URL + 'addsession/';
         let bodyAddSession = {
-            token,
+            token: token.token,
             sessionid,
         }
         let optionAddSession = {
@@ -119,10 +120,10 @@ export default class AccountServiceHTTP implements AccountService {
             })
     }
 
-    removeSession(token: string, sessionid: string): Promise<string> {
+    removeSession(token: Token, sessionid: string): Promise<string> {
         const accountRemoveSessionURL = URL + 'removesession';
         let bodyRemoveSession = {
-            token,
+            token: token.token,
             sessionid,
         }
         let optionRemoveSession = {
