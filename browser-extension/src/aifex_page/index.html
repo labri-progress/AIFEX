@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 
-  <head>
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 
@@ -22,9 +22,9 @@
     <script src="./js/evaluation.js" defer></script>
     <script src="./js/backgroundHandlers.js" defer></script>
 
-  </head>
+</head>
 
-  <body>
+<body>
     <div class="container-fluid">
         <h2>AIFEX</h2>
         <button id="detach-button" class="popup_attach" type="button"><i class="fa fa-window-restore"></i></button>
@@ -35,17 +35,22 @@
                     <div id="connexionMessage" class="col-xs-10">
                         You are not connected.
                     </div>
-                    <div  class="form-group col-xs-10">
+                    <div class="form-group col-xs-10">
                         <div class="input-group ">
-                            <input id="connectionURLInput" class="form-control" type="text" placeholder="Connection URL" required/>
-                            <a id="connectionSignIn" class="btn btn-default input-group-addon"><i class="fa fa-sign-in"></i></a>
-                            <a id="connectionSignOut" class="btn btn-default input-group-addon"><i class="fa fa-sign-out"></i></a>
-                            <a id="connectionSync" class="btn btn-default input-group-addon"><i class="fa fa-refresh"></i></a>
-                            <a id="openSessionWindow" class="btn btn-default input-group-addon"><i class="fa fa-window-maximize"></i></a>
+                            <input id="connectionURLInput" class="form-control" type="text" placeholder="Connection URL"
+                                required />
+                            <a id="connectionSignIn" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-sign-in"></i></a>
+                            <a id="connectionSignOut" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-sign-out"></i></a>
+                            <a id="connectionSync" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-refresh"></i></a>
+                            <a id="openSessionWindow" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-window-maximize"></i></a>
                         </div>
                         <div id="toggleShouldTestInNewWindowGroup" class="input-group">
                             <input id="toggleShouldTestInNewWindow" type="checkbox">
-                            Create a new window for the test session                   
+                            Create a new window for the test session
                         </div>
                     </div>
                 </form>
@@ -56,7 +61,8 @@
                     <h3>Tester</h3>
                     <form id="tester-identity-form" class="form-inline">
                         <div class="form-group">
-                            <input id="testerNameInput" class="form-control" type="text" placeholder="anonymous" required/>
+                            <input id="testerNameInput" class="form-control" type="text" placeholder="anonymous"
+                                required />
                             <p id="testerNameInfo"></p>
                         </div>
                     </form>
@@ -87,24 +93,26 @@
                     </div>
 
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="interactionListDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="interactionListDropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Your exploration (<span id="explorationLength"></span>)
                         </button>
-                        <div id ="interactionListDropdownItemGroup" class="dropdown-menu scrollable-menu" aria-labelledby="interactionListDropdown">
+                        <div id="interactionListDropdownItemGroup" class="dropdown-menu scrollable-menu"
+                            aria-labelledby="interactionListDropdown">
                         </div>
                     </div>
                 </div>
 
                 <div id="evaluation-component">
                     <div id="scenario-title">
-                    <h3>Scenario</h3>
-                    <span id="evaluation-status-valid" class="badge badge-success">Valid</span>
-                    <span id="evaluation-status-invalid" class="badge badge-warning">In progress</span>
+                        <h3>Scenario</h3>
+                        <span id="evaluation-status-valid" class="badge badge-success">Valid</span>
+                        <span id="evaluation-status-invalid" class="badge badge-warning">In progress</span>
                     </div>
-                   
+
                     <div class="border" id="evaluation-scenario"></div>
                     <div class="evaluation-step-header" id="evaluation-entering">
-                        Pour commencer le scenario faites une des actions suivantes : 
+                        Pour commencer le scenario faites une des actions suivantes :
                         <div id="evaluation-entering-actions"></div>
                     </div>
                     <div class="evaluation-step-header" id="evaluation-finishing">
@@ -112,7 +120,7 @@
                         <div id="evaluation-finishing-actions"> </div>
                     </div>
                     <div class="evaluation-step-header" id="evaluation-continuing">
-                        Continuez avec une des actions suivantes : 
+                        Continuez avec une des actions suivantes :
                         <div id="evaluation-continuing-actions"> </div>
                     </div>
                 </div>
@@ -120,13 +128,12 @@
                 <div id="comment-component">
                     <h3>Comment</h3>
                     <div id="commentList">
-
+                    </div>
                     <form>
                         <div id="commentSuccessul" class="alert-success" role="alert">
                             Comment registered
                         </div>
 
-                        </div>
                         <div class="form-group">
                             <label htmlFor="commentType">Type</label>
                             <select class="custom-select" id="commentType">
@@ -139,26 +146,26 @@
                         </div>
                         <div class="form-group">
                             <label htmlFor="commentDescription">Description</label>
-                            <textarea class="form-control"  
-                                rows="4" 
-                                placeholder="Comment's description"
-                                id="commentDescription" 
-                                ></textarea>
+                            <textarea class="form-control" rows="4" placeholder="Comment's description"
+                                id="commentDescription"></textarea>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="commentScreenshot" name="commentScreenshot">
+                            <input class="form-check-input" type="checkbox" id="commentScreenshot"
+                                name="commentScreenshot">
                             <label htmlFor="commentScreenshot" class="form-check-label">Attach Screenshot</label>
                         </div>
                         <div class="form-group">
                             <div class="btn-group">
                                 <button type="submit" id="submitComment" class="btn btn-primary">Submit</button>
-                                <button id="clearComment" class="btn btn-secondary" > Clear</button>
+                                <button id="clearComment" class="btn btn-secondary"> Clear</button>
                             </div>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
     </div>
-    </body>
+</body>
+
 </html>

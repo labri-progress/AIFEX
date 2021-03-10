@@ -8,7 +8,9 @@ It starts and trains an AI model that will guide you while your are testing your
 
 AIFEX is designed as a docker compose platform. 
 
-To run it, you have to have a Docker Server that supports docker-compose, then just execute: 
+To run it, you have to have a **nodejs**, **npm** and a **Docker Server** that supports docker-compose.
+
+Then just execute (if you are using Windows, please use bash): 
 
     ./dev.sh
 
