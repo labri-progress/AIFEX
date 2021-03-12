@@ -32,7 +32,7 @@ export default class FISModel extends Model {
             return
         }
         let notes = sequence.getNotes()
-        let context = this.fitContextToDepth(sequence.getContext());
+        let context = sequence.getContext();
         context = this.sortContext(context)
     
         let depth = Math.min(this.depth, context.length);
@@ -167,8 +167,9 @@ function k_combinations(stimulusList: Stimulus[], k: number) : Stimulus[][] {
 
 function stimulusCombinations(stimulusList: Stimulus[], depth: number): Stimulus[][] {
     var k, i, combs, k_combs;
-    combs = [stimulusList];
-    for (k = 1; k <= stimulusList.length && k < depth; k++) {
+    combs = [];
+    const kMax = Math.min(depth, stimulusList.length);
+    for (k = 1; k <= kMax; k++) {
         k_combs = k_combinations(stimulusList, k);
         for (i = 0; i < k_combs.length; i++) {
             combs.push(k_combs[i]);

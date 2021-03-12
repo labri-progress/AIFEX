@@ -5,7 +5,6 @@ import Note from "../../src/domain/Note";
 import Sequence from "../../src/domain/Sequence";
 import Stimulus from "../../src/domain/Stimulus";
 import FISModel from "../../src/domain/FISModel";
-import NoteDistribution from "../../src/domain/NoteDistribution";
 
 describe("Model constructor", () => {
     it("should throw ", () => {
@@ -85,6 +84,85 @@ describe("#learn", () => {
 
 });
 
+describe("#model size", () => {
+
+    it("learn one sequence with depth 1", () => {
+        const m = new FISModel(1);
+        const seq1 = new Sequence([new Stimulus("start"), new Stimulus("home"), new Stimulus("click")]);
+
+        m.learnSequence(seq1);
+        expect(m.size).to.eql(3);
+
+        const ngrams = m.getAllNgram();
+        expect(ngrams).to.lengthOf(3)
+    });
+
+    it("learn two sequence with depth 1", () => {
+        const m = new FISModel(1);
+        const seq1 = new Sequence([new Stimulus("start"), new Stimulus("home"), new Stimulus("click")]);
+        const seq2 = new Sequence([new Stimulus("start"), new Stimulus("type")]);
+
+        m.learnSequence(seq1);
+        m.learnSequence(seq2);
+
+        expect(m.size).to.eql(4);
+
+        const ngrams = m.getAllNgram();
+        expect(ngrams).to.lengthOf(4)
+    });
+
+    it("learn one sequence with depth 2", () => {
+        const m = new FISModel(2);
+        const seq1 = new Sequence([new Stimulus("start"), new Stimulus("home"), new Stimulus("click")]);
+
+        m.learnSequence(seq1);
+
+        expect(m.size).to.eql(6);
+
+        const ngrams = m.getAllNgram();
+        expect(ngrams).to.lengthOf(6)
+    });
+
+    it("ngrams from 1 sequence", () => {
+        const m = new FISModel(8);
+        const seq1 = new Sequence([new Stimulus("start"), new Stimulus("home"), new Stimulus("click")]);
+
+        m.learnSequence(seq1);
+
+        expect(m.size).to.eql(7);
+
+        let ngrams = m.getAllNgram()
+
+        expect(ngrams).lengthOf(7)
+        const ngramsKeys = ngrams.map(ngram => ngram.key);
+        expect(ngramsKeys.includes("start"))
+        expect(ngramsKeys.includes("home"))
+        expect(ngramsKeys.includes("click"))
+        expect(ngramsKeys.includes("click -> home"))
+        expect(ngramsKeys.includes("click -> start"))
+        expect(ngramsKeys.includes("home -> start"))
+        expect(ngramsKeys.includes(""))
+    });
+    
+
+    it("should learn two sequences", () => {
+        const m = new FISModel(8);
+        const seq1 = new Sequence([new Stimulus("start"), new Stimulus("home"), new Stimulus("click")]);
+        const seq2 = new Sequence([new Stimulus("home"), new Stimulus("start"), ]);
+
+        m.learnSequence(seq1);
+        m.learnSequence(seq2);
+
+        expect(m.size).to.eql(7);
+        let ngrams = m.getAllNgram()
+        expect(ngrams.find(ngram => ngram.key ===  "click -> home -> start")?.occurence).to.eql(1)
+        expect(ngrams.find(ngram => ngram.key ===  "click")?.occurence).to.eql(1)
+        expect(ngrams.find(ngram => ngram.key ===  "home")?.occurence).to.eql(2)
+        expect(ngrams.find(ngram => ngram.key ===  "start")?.occurence).to.eql(2)
+        expect(ngrams.find(ngram => ngram.key ===  "home -> start")?.occurence).to.eql(2)
+        expect(ngrams.find(ngram => ngram.key ===  "click -> home")?.occurence).to.eql(1)
+    });
+});
 
 describe("#ngrams", () => {
     it("ngrams from empty sequence", () => {
@@ -118,6 +196,7 @@ describe("#ngrams", () => {
         expect(ngramsKeys.includes("home -> start"))
         expect(ngramsKeys.includes(""))
     });
+    
 
     it("should learn two sequences", () => {
         const m = new FISModel(8);
@@ -225,4 +304,6 @@ describe("#ngrams", () => {
             
         })
     })
+
+    
 });
