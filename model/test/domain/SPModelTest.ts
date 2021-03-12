@@ -4,7 +4,6 @@ import "mocha";
 import Note from "../../src/domain/Note";
 import Sequence from "../../src/domain/Sequence";
 import Stimulus from "../../src/domain/Stimulus";
-import NoteDistribution from "../../src/domain/NoteDistribution";
 import SPModel from "../../src/domain/SPModel";
 
 describe("SP Model", () => {
@@ -71,7 +70,7 @@ describe("SP Model", () => {
             expect(probabilityMap.get("home")).eql(2/3);
         });
 
-        it("learn sequence of size 3", () => {  
+        it("should get proba", () => {  
             const seq1 = new Sequence([new Stimulus("click"), new Stimulus("start"), new Stimulus("home"), new Stimulus("click"), new Stimulus("click")]);
             m.learnSequence(seq1);  
 
@@ -85,6 +84,7 @@ describe("SP Model", () => {
 
             probabilityMap = m.getStimulusProbabilityMap(new Sequence([new Stimulus("click"), new Stimulus("home")]));
             expect(probabilityMap.size).to.eql(1);
+            expect(probabilityMap.get("click")).eql(1);
         });
     });
 
@@ -119,6 +119,40 @@ describe("SP Model", () => {
             const distribMap = m.getNoteDistributionListMap(new Sequence([new Stimulus("click")]));
             expect(distribMap.size).eql(0);
         });
+    });
+
+    describe("#model size", () => {
+
+        it ("should learn one sequence with a depth 1", () => {
+            const m = new SPModel(1);
+
+            const seq = new Sequence([new Stimulus("start"), new Stimulus("click"), new Stimulus("home")]);
+            m.learnSequence(seq);
+
+            const ngrams = m.getAllNgram()
+            expect(ngrams).lengthOf(3);
+        })
+
+        it ("should learn two sequence with a depth 1", () => {
+            const m = new SPModel(1);
+
+            const seq = new Sequence([new Stimulus("start"), new Stimulus("click"), new Stimulus("type")]);
+            m.learnSequence(seq);
+
+            const ngrams = m.getAllNgram()
+            expect(ngrams).lengthOf(3);
+        })
+
+        it ("should learn one sequence with a depth 2", () => {
+            const m = new SPModel(2);
+
+            const seq = new Sequence([new Stimulus("start"), new Stimulus("click"), new Stimulus("type")]);
+            m.learnSequence(seq);
+
+            const ngrams = m.getAllNgram()
+            expect(ngrams).lengthOf(6);
+        })
+
     });
 
     describe("#ngrams", () => {

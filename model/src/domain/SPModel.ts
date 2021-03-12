@@ -18,7 +18,7 @@ export default class SPModel extends Model {
     public learnSequence(sequence: Sequence): void {
         if (sequence.length <= 0) {
             return;
-        } 
+        }
         
         const combinations = interactionCombinations(sequence.getInteractions(), Math.min(this.depth, sequence.length))
         combinations.forEach(interactions => {
@@ -106,11 +106,12 @@ function k_combinations(stimulusList: (Stimulus|Note)[], k: number) : Stimulus[]
     return combs;
 }
 
-function interactionCombinations(interactionsList: (Stimulus | Note)[], depth: number): Stimulus[][] {
+function interactionCombinations(stimulusList: Stimulus[], depth: number): Stimulus[][] {
     var k, i, combs, k_combs;
-    combs = [interactionsList];
-    for (k = 1; k <= interactionsList.length && k < depth; k++) {
-        k_combs = k_combinations(interactionsList, k);
+    combs = [];
+    const kMax = Math.min(depth, stimulusList.length);
+    for (k = 1; k <= kMax; k++) {
+        k_combs = k_combinations(stimulusList, k);
         for (i = 0; i < k_combs.length; i++) {
             combs.push(k_combs[i]);
         }

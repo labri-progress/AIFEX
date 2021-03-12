@@ -70,7 +70,6 @@ export default class TreeSP {
         }
     }
 
-
     public learnContext(context: Stimulus[]): void {
         if (context.length === 0) {
             return;
