@@ -172,7 +172,10 @@ function stimulusCombinations(stimulusList: Stimulus[], depth: number): Stimulus
     for (k = 1; k <= kMax; k++) {
         k_combs = k_combinations(stimulusList, k);
         for (i = 0; i < k_combs.length; i++) {
-            combs.push(k_combs[i]);
+            const itemSet = new Set(k_combs[i].map(stimulus => stimulus.value));
+            if (itemSet.size === k) {
+                combs.push([...itemSet].map(value => new Stimulus(value)));
+            }
         }
     }
     return combs;
