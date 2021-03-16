@@ -142,8 +142,9 @@ function toggleDetachPopup() {
 }
 
 function displayInvalidExploration() {
-    alert(`Your test does not contain the test steps, and cannot be submitted. \n
-    Either finish the test steps, or click on the trash button. \n
-    The steps are indicated with the magenta outline. \n
+    alert(` \n
+    Your test does not contain all the actions of the scenario and cannot be submitted. \n
+    Follow the steps indicated with the magenta outline. \n
+    If you want to cancel your exploration, click on the trash button. \n
     `);
 }

@@ -72,7 +72,8 @@ function submitComment(e) {
     })
     .then(response => {
         if (response !== undefined) {
-            const screenshot = document.getElementById('commentScreenshot').value;
+            const screenshot = document.getElementById('commentScreenshot').checked;
+            console.log(screenshot)
             if (screenshot) {
                 sendMessage({
                     kind: "takeScreenshot"
