@@ -115,7 +115,7 @@ export default class HandlerOfMessageSentByPopup {
                         sendResponse(this._application.getStateForPopup());
                     })
                     .catch((error : Error) => {
-                        logger.error("popup asks to startExploration", null);
+                        logger.error("popup asks to startExploration", error);
                         sendResponse({error});
                     });
                 return true;
@@ -129,7 +129,7 @@ export default class HandlerOfMessageSentByPopup {
                         sendResponse(this._application.getStateForPopup());
                     })
                     .catch((error) => {
-                        logger.error("popup asks to stopExploration", null);
+                        logger.error("popup asks to stopExploration", error);
                         sendResponse(error);
                     });
                 return true;

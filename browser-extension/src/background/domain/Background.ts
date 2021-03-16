@@ -278,7 +278,7 @@ export default class Background {
     }
 
     evaluateExploration(): Promise<void> {
-        if (this._webSite && this._exploration && this._serverURL) {
+        if (this._webSite && this._exploration && this._serverURL && this._useTestScenario) {
             return this._aifexService.evaluateSequence(this._serverURL, this._webSite, this._exploration)
             .then((evaluation) => {
                 this._explorationEvaluation = evaluation;
@@ -412,7 +412,7 @@ export default class Background {
             let exploration : Exploration = this._exploration;
             return this.evaluateExploration()
                 .then(() => {
-                    if (!this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
+                    if (this._useTestScenario && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
                         this.displayInvalidExploration();
                         return Promise.reject(new Error("Exploration is incorrect."))
                     }

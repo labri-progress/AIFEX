@@ -149,13 +149,13 @@ export default class AifexServiceHTTP implements AifexService {
 				return response.json();
 			}
 			if (response.status === NOT_FOUND_STATUS) {
-				return Promise.reject(`sessionId not found`);
+				return Promise.reject(new Error(`sessionId not found`));
 			}
 			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`sessionId and/or exploration is malformed`);
+				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
 			}
 			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
+				return Promise.reject(new Error(`server error`));
 			}
 		});
 	}
@@ -191,13 +191,13 @@ export default class AifexServiceHTTP implements AifexService {
 				})
 			}
 			if (response.status === NOT_FOUND_STATUS) {
-				return Promise.reject(`sessionId not found`);
+				return Promise.reject(new Error(`sessionId not found`));
 			}
 			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`sessionId and/or exploration is malformed`);
+				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
 			}
 			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
+				return Promise.reject(new Error(`server error`));
 			}
 		});
 	}
@@ -222,10 +222,10 @@ export default class AifexServiceHTTP implements AifexService {
 				return;
 			}
 			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`screenshotList is malformed`);
+				return Promise.reject(new Error(`screenshotList is malformed`));
 			}
 			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
+				return Promise.reject(new Error(`server error`));
 			}
 		});
 	}
@@ -244,10 +244,10 @@ export default class AifexServiceHTTP implements AifexService {
 				return;
 			}
 			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`sessionId and/or explorationNumber and/or video is malformed`);
+				return Promise.reject(new Error(`sessionId and/or explorationNumber and/or video is malformed`));
 			}
 			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
+				return Promise.reject(new Error(`server error`));
 			}
 		});
 	}
@@ -285,7 +285,7 @@ export default class AifexServiceHTTP implements AifexService {
 			if (response.status === OK_STATUS) {
 				return response.json();
 			} else {
-				return Promise.reject(`Evaluator error`);
+				return Promise.reject(new Error(`Evaluator error`));
 			}
 		})
 		.then((evaluationData : {
@@ -297,7 +297,7 @@ export default class AifexServiceHTTP implements AifexService {
 			}}) => {
 			const evaluation = evaluationData.evaluation;
 			if (!evaluation) {
-				return Promise.reject(`Evaluator error`);
+				return Promise.reject(new Error(`Evaluator error`));
 			} else {
 				return new ExplorationEvaluation(
 					evaluation.isAccepted,
