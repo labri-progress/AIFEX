@@ -36,12 +36,6 @@ Vous pouvez aussi l'installer manuellement
 5. Cliquez sur le bouton **LOAD UNPACKED** et sélectionnez le répertoire **chrome**. 
 6. Vérifiez que l'extension est disponible.
 
-Vidéo d’illustration des étapes précédentes
-
-<video controls> 
-    <source src="/static/video/install_extension.mp4" type="video/mp4">
-</video>
-
 ----------------------------
 
 <h2>Étape 2, Se connecter à la session de test : </h2>
