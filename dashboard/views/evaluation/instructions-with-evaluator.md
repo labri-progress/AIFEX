@@ -4,19 +4,21 @@ Etude CrowdTesting
 Votre mission est de tester le site [CDiscount](https://www.cdiscount.com/), à la recherche de dysfonctionnements.
 
 Pour cela, nous vous demandons de simuler une commande qui inclue les étapes suivantes dans l'ordre
-* Faire une recherche d’un produit via la barre de recherche en tapant un texte dans la barre puis appuyer sur la touche Entrée.
+* Faire une recherche d’un produit via la barre de recherche en tapant un texte dans la barre puis appuyer sur la touche Entrée. Ou en choissant une suggestion dans les choix d'autocompletion.
 * Utiliser les filtres ou les différents menus pour sélectionner finement un produit.
 * Regarder la description du produit que vous voulez selectionner.
 * Ajouter ce produit au panier et accéder au panier.
 * Choisir la livraison.
 
-Tous vos tests devront inclure les étapes précédentes. Votre objectif n'est pas de repeter le meme test encore et encore, vous devrez donc chercher à ajouter de la diversité à vos tests pour maximiser vos chances de trouver des bugs.
+Tous vos tests devront obligatoirement inclure ces étapes. Notre plugin AIFEX va vous guider pour suivre ces étapes. 
+
+Votre objectif n'est pas de repeter le meme test encore et encore, vous devrez chercher à ajouter de la diversité à vos tests pour maximiser vos chances de trouver des bugs. Vous pouvez changer votre recherche, les filtres utilisés, ajouter plusieurs produits au panier, a vous de trouver votre difference.
 
 À la fin de chaque test, vous devrez laisser un commentaire pour indiquer que le scénario s’est déroulé correctement ou que vous avez identifié un dysfonctionnement.
 
 Vous devez réaliser **10 tests différents**.
 
-Pour réaliser votre test, vous serez assisté par AIFEX, notre outil pour les tests exploratoires.
+Pour réaliser ces test, vous serez assisté par AIFEX, notre outil pour les tests exploratoires.
 
 ----------------------------
 
@@ -62,9 +64,9 @@ Cliquez sur le bouton start pour démarrer votre test.
 Vous devriez voir des bordures de couleur apparaitre autour de certains elements de l'interface. 
 
 * Une bordure bleue indique que l'action est monitorée par notre plugin.
-* Une bordure magenta avec des tirets indique l'action fait parti du scénario, et qu'il faut la faire pour pouvoir avancer. 
+* Une bordure magenta indique que l'action fait parti du scénario, et qu'il faut la faire pour pouvoir avancer. 
 
-Une fois votre exploration terminée, cliquez sur le bouton stop dans l'extension, (carré) ou sur le bouton restart (boucle), pour commencer une nouvelle exploration. Si vous ne cliquez pas sur un de ces boutons, votre test ne sera pas pris en compte.
+Une fois votre exploration terminée, cliquez sur le bouton stop dans l'extension, (carré) ou sur le bouton restart (boucle), pour commencer une nouvelle exploration. Si vous ne cliquez pas sur un de ces boutons, votre test ne sera pas pris en compte. Faites attention a bien terminer le scenario, sinon votre test ne sera pas accepté, et un message vous previendra.
 
 Vidéo d’illustration des étapes précédentes
 
