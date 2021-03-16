@@ -48,8 +48,8 @@ module.exports = function attachRoutes(app, config) {
         if (process.env.PLUGIN_INFO) {
             PLUGIN_INFO = JSON.parse(process.env.PLUGIN_INFO);
         }
-        const stores = config.stores
-        res.render('documentation/download.ejs', { account: req.session, stores, PLUGIN_INFO});
+        const chromeStoreURL = config.chromeStoreURL
+        res.render('documentation/download.ejs', { account: req.session, chromeStoreURL, PLUGIN_INFO});
     });
 
     app.get('/plugin-info', (req, res) => {

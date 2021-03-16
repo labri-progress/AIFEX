@@ -23,6 +23,9 @@
             <ul>
               <li id="store_sources"> Extension Stores </li>
                 <ul id="store_list">
+                  <li>
+                    <a href=<%= chromeStoreURL %>> Chrome </a>
+                  </li>
                 </ul>
               <li>Direct download :</li>
               <p>
@@ -39,21 +42,5 @@
             </ul>
         </div>
     </div>
-    <script >  
-      const stores = <%- JSON.stringify(stores) %>;
-      const hostname = window.location.hostname;
-      const storesForHost = stores.filter(store => store.aifex_host === hostname);
-
-      if (storesForHost.length > 0) {
-        const ul = document.getElementById("store_list");
-        for (const store of storesForHost) {
-          const li = document.createElement("li");
-          li.innerHTML = `<a href=${store.url}> ${store.name} </a>`
-          ul.appendChild(li)
-        }
-      } else {
-        document.getElementById("store_sources").hidden = true;
-      }
-    </script>
   </body>
 </html>

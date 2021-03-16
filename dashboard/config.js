@@ -1,14 +1,7 @@
 
-
-let config = {
-    stores: [
-        {
-            name: "Chrome Store",
-            aifex_host: "www.aifex.fr",
-            url: "https://chrome.google.com/webstore/detail/aifex-ai-for-exploratory/dmpbhianmdipngcgmkoijmaphnkhchaj"
-        }
-    ]
-};
+const config = {
+    chromeStoreURL: "https://chrome.google.com/webstore/detail/aifex-ai-for-exploratory/dmpbhianmdipngcgmkoijmaphnkhchaj",
+}
 
 const development = {
     databaseURL: 'mongodb://mongo:27017',

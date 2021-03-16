@@ -25,6 +25,10 @@ Pour réaliser ces test, vous serez assisté par AIFEX, notre outil pour les tes
 
 <h2>Etape 1, Installer l'extension Chrome de AIFEX </h2>
 
+Vous pouvez installer l'extension directement depuis le [Chrome Store](https://chrome.google.com/webstore/detail/aifex-ai-for-exploratory/dmpbhianmdipngcgmkoijmaphnkhchaj)
+
+Vous pouvez aussi l'installer manuellement
+
 1. Téléchargez [l'extension Chrome de AIFEX](/static/chromeExtension.zip)
 2. Décompressez la (vous devriez avoir un répertoire **chrome**) 
 3. Sur un navigateur chrome, ouvrez la gestion des extensions en tapant chrome://extensions/ ou en cliquant sur Plus d'outils - extensions. La page de gestion des extensions peut également être ouverte en cliquant sur le menu Chrome, en survolant Plus d'outils et en sélectionnant Extensions.
@@ -42,7 +46,7 @@ Vidéo d’illustration des étapes précédentes
 
 <h2>Étape 2, Se connecter à la session de test : </h2>
 
-**URL de connexion**: https://researchexperimentation.fr/join?sessionId=ZXcpv1AE-&modelId=WcA5N1TeM
+**URL de connexion**: https://researchexperimentation.fr/join?sessionId=hg-YaJaD5&modelId=pCsI5xRas
 
 1. Ouvrez l'extension Chrome de AIFEX.
 2. Entrez l'URL de connexion.
