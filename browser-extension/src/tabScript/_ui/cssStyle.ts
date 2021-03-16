@@ -211,17 +211,17 @@ export default `
 }
 
 [aifex_style=true][aifex_step_action="entering"] {
-  outline: 5px rgba(255,0,255, 0.5) solid !important;
+  outline: 3px rgba(255,0,255) solid !important;
     outline-offset: -9px;
 }
 
 [aifex_style=true][aifex_step_action="continuing"] {
-    outline: 5px rgba(255,0,255, 0.5) solid !important;
+    outline: 3px rgba(255,0,255) solid !important;
     outline-offset: -9px;
 }
 
 [aifex_style=true][aifex_step_action="finishing"] {
-    outline: 5px rgba(255,0,255, 0.5) solid !important;
+    outline: 3px rgba(255,0,255) solid !important;
     outline-offset: -9px;
 }
 

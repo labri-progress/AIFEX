@@ -5,6 +5,8 @@ let evaluationStatusInvalid = document.getElementById("evaluation-status-invalid
 let enteringActionDiv = document.getElementById("evaluation-entering");
 let continuingActionDiv = document.getElementById("evaluation-continuing");
 let finishingActionDiv = document.getElementById("evaluation-finishing");
+let scenarioComplete = document.getElementById("evaluation-complete");
+
 
 let evaluationDescription = document.getElementById("evaluation-scenario");
 
@@ -20,9 +22,11 @@ function renderEvaluation(state) {
         if (evaluation.validated) {
             evaluationStatusValid.hidden = false;
             evaluationStatusInvalid.hidden = true;
+            scenarioComplete.hidden = false;
         } else {
             evaluationStatusValid.hidden = true;
             evaluationStatusInvalid.hidden = false;
+            scenarioComplete.hidden = true;
         }
         while(enteringActionListDiv.hasChildNodes()) {
             enteringActionListDiv.firstChild.remove()
@@ -34,12 +38,15 @@ function renderEvaluation(state) {
             finishingActionListDiv.firstChild.remove()
         }
         evaluationDescription.innerText = state.evaluatorScenario;
-        
+        console.log(evaluation.enteringInteractionList)
+
         if (Array.isArray(evaluation.enteringInteractionList) && evaluation.enteringInteractionList.length > 0) {
             enteringActionDiv.hidden = false;
             evaluation.enteringInteractionList.forEach((action) => {
                 const enteringElement = this.createActionElementForEvaluationView(action);
                 enteringActionListDiv.appendChild(enteringElement);
+                console.log(enteringActionListDiv)
+
             });
         } else {
             enteringActionDiv.hidden = true;

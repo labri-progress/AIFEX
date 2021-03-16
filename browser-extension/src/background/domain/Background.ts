@@ -269,9 +269,11 @@ export default class Background {
             const state = this.getStateForTabScript();
             const tabIds = this._windowManager.getConnectedTabIds();
             return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
-            .then((_ : void[]) => {return})
+            .then((_ : void[]) => {
+                return this._windowManager.reloadConnectedWindow(this._sessionBaseURL);
+            })
         } else {
-            return Promise.resolve();
+            return this._windowManager.reloadConnectedWindow(this._sessionBaseURL);
         }
     }
 
