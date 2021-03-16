@@ -10,8 +10,12 @@ function handleMessage(msg, sendResponse) {
     switch(msg.kind) {
         case "refresh":
             const state = msg.state
-            console.log(msg)
             render(state)
+            sendResponse("ok");
+            return;
+            
+        case "displayInvalidExploration":
+            displayInvalidExploration();
             sendResponse("ok");
             return;
     }

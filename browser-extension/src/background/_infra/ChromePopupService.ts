@@ -1,14 +1,18 @@
 import PopupService from "../domain/PopupService";
 import StateForPopup from "../domain/StateForPopup";
-import {sendMessageToExtension} from "./ChromePromise"
+import {sendMessageToPopup} from "./ChromePromise"
 
 
 export default class ChromePopupService implements PopupService {
+    
+    displayInvalidExploration(): Promise<void> {
+        const MESSAGE_KIND = "displayInvalidExploration";
+        return sendMessageToPopup({}, MESSAGE_KIND);
+    }
 
-    public refresh(state: StateForPopup): Promise<void> {
+    refresh(state: StateForPopup): Promise<void> {
         const MESSAGE_KIND = "refresh";
-        console.log(state)
-        return sendMessageToExtension({state}, MESSAGE_KIND);
+        return sendMessageToPopup({state}, MESSAGE_KIND);
     }
 
 }

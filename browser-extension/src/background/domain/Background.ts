@@ -17,7 +17,6 @@ import Screenshot from "./Screenshot";
 import Comment from "./Comment"
 import CommentDistribution from "./CommentDistribution";
 import { OverlayType } from "./Session";
-import { logger } from "../framework/Logger";
 
 export default class Background {
 
@@ -40,6 +39,9 @@ export default class Background {
 
     private _evaluator: Evaluator | undefined;
     private _explorationEvaluation: ExplorationEvaluation | undefined;
+    private _rejectIncorrectExplorations: boolean;
+
+
     private _probabilityMap: Map<string, number>;
     private _commentDistributions: CommentDistribution[] | undefined;
     private _commentsUp : Comment[];
@@ -87,6 +89,7 @@ export default class Background {
         this._exploration = new Exploration();
         this._explorationEvaluation = undefined;
         this._isRecording = false;
+        this._rejectIncorrectExplorations = true;
     }
 
     private initialize(): void {
@@ -176,6 +179,10 @@ export default class Background {
         this._serverURL = undefined;
         this._sessionBaseURL = undefined;
         this._webSite = undefined;
+        this._isRecording = false;
+        this._exploration = new Exploration();
+        this._screenshotList = [];
+        this._commentsUp = [];
         if (this._shouldCloseWindowOnDisconnect) {
             return this._windowManager.removeConnectedWindow();
         } else {
@@ -234,13 +241,13 @@ export default class Background {
             .catch((e) => {
                 this._exploration = undefined;
                 this._isRecording = false;
-                throw new Error(e);
+                console.error(e)
             })
             .then(() => {
                 return this._mediaRecordManager.startRecording()
                 .catch((e) => {
                     this._mediaRecordManager.destroyRecording();
-                    throw new Error(e);
+                    console.error(e)
                 })
             })
             .then(() => {
@@ -360,8 +367,8 @@ export default class Background {
                 promises.push(this.fetchProbabilityMap())
             }
             return Promise.all(promises)
-            .catch((error) => console.error("Failed to process new action : ", prefix, error))
             .then(() => this.refreshPopup())
+            .catch((error) => console.error("Failed to process new action : ", prefix, error))
         } else {
             return Promise.resolve();
         }
@@ -398,45 +405,66 @@ export default class Background {
         }
     }
 
-    stopExploration(): Promise<void> {
+    private stopRecordingExploration(): Promise<void> {
         if (this._isRecording && this._exploration) {
             let exploration : Exploration = this._exploration;
-            return this._mediaRecordManager.stopRecording()
-            .then(() => {
-                exploration.addAction("end");
-                exploration.stop();
-                const MIN_NUMBER_OF_ACTIONS = 2;
-                const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
-                if (this._isRecording && HAS_MORE_THAN_START_END_ACTIONS) {
-                    return this.sendExploration();
+            return this.evaluateExploration()
+                .then(() => {
+                    if (!this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
+                        this.displayInvalidExploration();
+                        return Promise.reject(new Error("Exploration is incorrect."))
+                    }
+                    else {
+                        return this._mediaRecordManager.stopRecording()
+                        .then(() => {
+                            exploration.addAction("end");
+                            exploration.stop();
+                            const MIN_NUMBER_OF_ACTIONS = 2;
+                            const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
+                            if (this._isRecording && HAS_MORE_THAN_START_END_ACTIONS) {
+                                return this.sendExploration();
+                            }
+                        })
+                        .then(() => {
+                            this._isRecording = false;
+                            this._exploration = new Exploration();
+                            this._screenshotList = [];
+                            this._commentsUp = [];
+                            const state = this.getStateForTabScript();
+                            const tabIds = this._windowManager.getConnectedTabIds();
+                            return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
+                        })
+                        .then((_ : void[]) => {
+                        })
                 }
-            })
-            .then(() => {
-                this._isRecording = false;
-                this._exploration = new Exploration();
-                this._screenshotList = [];
-                this._commentsUp = [];
-                const state = this.getStateForTabScript();
-                const tabIds = this._windowManager.getConnectedTabIds();
-                return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
-            })
-            .then((_ : void[]) => {
             })
         } else {
             return Promise.resolve();
         }
     }
 
-    restartExploration(): Promise<void> {
-        return this.stopExploration()
-        .then(() => {
-            return this._windowManager.reloadConnectedWindow(this._sessionBaseURL);
-        })
-        .then(() => {
-            return this.startExploration();
-        })
-	}
+    stopExploration(): Promise<void> {
+        return this.stopRecordingExploration().catch(e => {
+            if (e.message !== "Exploration is incorrect.") {
+                throw e;
+            }
+        });
+    }
 
+    restartExploration(): Promise<void> {
+        return this.stopRecordingExploration()
+            .then(() => {
+                return this._windowManager.reloadConnectedWindow(this._sessionBaseURL);
+            })
+            .then(() => {
+                return this.startExploration();
+            })
+            .catch(e => {
+                if (e.message !== "Exploration is incorrect.") {
+                    throw e;
+                }
+            })
+	}
 
     sendExploration(): Promise<void> {
         if (this._serverURL && this._exploration && this._sessionId) {
@@ -488,8 +516,11 @@ export default class Background {
             });
         } else {
             return Promise.resolve();
-        }
-        
+        }   
+    }
+
+    displayInvalidExploration(): Promise<void> {
+        return this._popupService.displayInvalidExploration();
     }
 
     changeTesterName(name:string): void {

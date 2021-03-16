@@ -216,7 +216,7 @@ describe("#ngrams", () => {
         expect(ngrams.find(ngram => ngram.key ===  "click -> home")?.occurence).to.eql(1)
     });
 
-    it.only("should learn remove duplicates", () => {
+    it("should learn remove duplicates", () => {
         const m = new FISModel(2);
         const seq1 = new Sequence([new Stimulus("start"), new Stimulus("home"), new Stimulus("home")]);
 
@@ -227,6 +227,18 @@ describe("#ngrams", () => {
         expect(ngrams.find(ngram => ngram.key ===  "start")?.occurence).to.eql(1)
         expect(ngrams.find(ngram => ngram.key ===  "home")?.occurence).to.eql(2)
         expect(ngrams.find(ngram => ngram.key ===  "home -> start")?.occurence).to.eql(2)
+    });
+
+    it("should learn remove duplicates", () => {
+        const m = new FISModel(2);
+        const seq1 = new Sequence([new Stimulus("A"), new Stimulus("B"), new Stimulus("A"), new Stimulus("B")]);
+
+        m.learnSequence(seq1);
+        let ngrams = m.getAllNgram()
+        expect(ngrams.length).to.eql(3);
+        expect(ngrams.find(ngram => ngram.key ===  "A")?.occurence).to.eql(2)
+        expect(ngrams.find(ngram => ngram.key ===  "B")?.occurence).to.eql(2)
+        expect(ngrams.find(ngram => ngram.key ===  "A -> B")?.occurence).to.eql(4)
     });
 
     describe("#notes", () => {

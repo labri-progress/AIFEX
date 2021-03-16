@@ -18,7 +18,7 @@ function handleConnection(e) {
     sendMessage({ kind: "checkDeprecated", url: INPUT_URL })
     .then(extensionInfo => {
         if (extensionInfo.latestVersion && extensionInfo.currentVersion !== extensionInfo.latestVersion) {
-            document.getElementById('connexionMessage').innerHTML = `Your current version ${extensionInfo.currentVersion} of the AIFEX Exstention is deprecated, please get latest version <a href="${extensionInfo.url}"> ${extensionInfo.latestVersion} </a>`;
+            document.getElementById('connexionMessage').innerHTML = `Your current version ${extensionInfo.currentVersion} of the AIFEX Extention is deprecated, please get latest version <a href="${extensionInfo.url}"> ${extensionInfo.latestVersion} </a>`;
             //alert(`Your current version ${extensionInfo.currentVersion} of the AIFEX Exstention is deprecated, please get latest version ${extensionInfo.latestVersion} at ${extensionInfo.url}`)
         } else {
             sendMessage({

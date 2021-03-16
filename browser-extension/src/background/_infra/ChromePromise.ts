@@ -161,14 +161,23 @@ export function executeTabScript(tabId: number): Promise<boolean> {
     });
 }
 
-export function sendMessageToExtension(message={}, messageKind : string): Promise<any> {
+function checkPopupIsOpen(): boolean {
+    const views = chrome.extension.getViews({ type: "popup" });
+    return views.length > 0;
+}
+
+export function sendMessageToPopup(message={}, messageKind : string): Promise<any> {
     const messageData = Object.assign(message, {kind: messageKind});
+    if (!checkPopupIsOpen()) {
+        return Promise.resolve();
+    }
 
     return new Promise((resolve, reject) => {
+        console.log(messageData)
         chrome.runtime.sendMessage(messageData,  (response) => {
             const error = chrome.runtime.lastError;
             if (error) {
-                reject(error);
+                reject(new Error(error.message));
             } else {
                 resolve(response);
             }
@@ -183,9 +192,15 @@ export function sendMessageToTab(message={}, messageKind : string, tabId: number
         chrome.tabs.sendMessage(tabId, messageData, (response) => {
             const error = chrome.runtime.lastError;
             if (error) {
-                if (error.message && error.message.startsWith('The message port closed before a response was received')) {
-                    resolve(`no receiver for the message (${message}) for tabId:${tabId}`);
-                } else {
+                if (error.message) {
+                    if (error.message.startsWith('The message port closed before a response was received')) {
+                        resolve(`no receiver for the message (${message}) for tabId:${tabId}`);
+                    } 
+                    else if (error.message.startsWith(`Could not establish connection. Receiving end does not exist`)) {
+                        resolve(`Could not establish connection. Receiving end does not exist`);
+                    }
+                }
+                 else {
                     reject(error);
                 }
             } else {
@@ -208,7 +223,6 @@ export function takeScreenshot(windowId : number): Promise<string> {
         })
     })
 }
-
 
 export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: number}> {
     return new Promise((resolve, reject) => {
@@ -238,4 +252,3 @@ export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: num
         });
     })
 }
-

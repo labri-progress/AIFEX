@@ -109,7 +109,6 @@ function renderConnected(state) {
         actionItem.innerText = interaction;
         interactionListGroup.appendChild(actionItem);
     });
-    console.log("state", state)
     renderEvaluation(state)
     displayCommentList(state.commentDistributionList, state.commentUpList);
     if (!state.hasBaseURL) {
@@ -142,3 +141,9 @@ function toggleDetachPopup() {
     });
 }
 
+function displayInvalidExploration() {
+    alert(`Your test does not contain the test steps, and cannot be submitted. \n
+    Either finish the test steps, or click on the trash button. \n
+    The steps are indicated with the magenta outline. \n
+    `);
+}

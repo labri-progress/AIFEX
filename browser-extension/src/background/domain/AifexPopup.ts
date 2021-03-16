@@ -50,7 +50,6 @@ export default class AifexPopup {
         } else {
             return Promise.resolve();
         }
-        
     }
 
     public onBrowserActionClicked(): void {
