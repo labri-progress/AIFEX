@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "AIFEX | AI For Exploratory testing",
-  "version": "0.10.8",
+  "version": "0.10.9",
   "description": "Help tester to collaborate on exploratory testing sessions",
   "permissions": [
     "<all_urls>",
