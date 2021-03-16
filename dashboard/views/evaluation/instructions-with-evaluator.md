@@ -10,11 +10,12 @@ Pour cela, nous vous demandons de simuler une commande qui inclue les étapes su
 * Ajouter ce produit au panier et accéder au panier.
 * Choisir la livraison.
 
-Tous vos tests devront obligatoirement inclure ces étapes. Notre plugin AIFEX va vous guider pour suivre ces étapes. 
+Tous vos tests devront obligatoirement inclure ces étapes. Notre plugin AIFEX va vous guider pour suivre ces étapes. **Les elements avec des bordures magenta correspondent aux étapes du scenario.** 
 
-Votre objectif n'est pas de repeter le meme test encore et encore, vous devrez chercher à ajouter de la diversité à vos tests pour maximiser vos chances de trouver des bugs. Vous pouvez changer votre recherche, les filtres utilisés, ajouter plusieurs produits au panier, a vous de trouver votre difference. Utilisez les couleurs des bordures pour savoir quelles actions n'ont jamais été explorées ! Bleu = Jamais fait. Vert, Orange ou Rouge l'action a déjà été faite dans le meme context, plus c'est chaud plus c'est fréquent. 
+Votre objectif n'est pas de repeter le meme test encore et encore, vous devrez chercher à ajouter de la diversité à vos tests pour maximiser vos chances de trouver des bugs. 
+Vous pouvez changer votre recherche, les filtres utilisés, ajouter plusieurs produits au panier, a vous de trouver votre difference. **Utilisez les couleurs des bordures pour savoir quelles actions n'ont jamais été explorées** ! Bleu = Jamais fait. Vert, Orange ou Rouge l'action a déjà été faite dans le meme context, plus c'est chaud plus c'est fréquent. 
 
-À la fin de chaque test, vous devrez laisser un commentaire pour indiquer que le scénario s’est déroulé correctement ou que vous avez identifié un dysfonctionnement.
+À la fin de chaque test, laissez un commentaire pour indiquer que le scénario s’est déroulé correctement ou que vous avez identifié un dysfonctionnement.
 
 Vous devez réaliser **10 tests différents**.
 
@@ -41,10 +42,10 @@ Vidéo d’illustration des étapes précédentes
 
 <h2>Étape 2, Se connecter à la session de test : </h2>
 
-*code de connexion*: https://researchexperimentation.fr/join?sessionId=ZXcpv1AE-&modelId=WcA5N1TeM
+**URL de connexion**: https://researchexperimentation.fr/join?sessionId=ZXcpv1AE-&modelId=WcA5N1TeM
 
 1. Ouvrez l'extension Chrome de AIFEX.
-2. Entrez le code de connexion (toute l'url):
+2. Entrez l'URL de connexion.
 3. Connectez-vous à la session. Cette action ouvrira une nouvelle fenêtre Chrome sur le site de CDiscount, pour les prochaines étapes, il faudra rester dans cette fenêtre.
 4. Si vous le souhaitez, cliquez sur le bouton en haut a droite de la popup pour l'ouvrir dans une fenetre séparée.
 5. Entrez votre nom de testeur qui vous a été donné. **Dans la vidéo je mets mon prénom, ne faites pas la même chose**
