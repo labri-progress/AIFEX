@@ -27,23 +27,13 @@ Pour réaliser ces test, vous serez assisté par AIFEX, notre outil pour les tes
 
 Vous pouvez installer l'extension directement depuis le [Chrome Store](https://chrome.google.com/webstore/detail/aifex-ai-for-exploratory/dmpbhianmdipngcgmkoijmaphnkhchaj)
 
-Vous pouvez aussi l'installer manuellement
-
-1. Téléchargez [l'extension Chrome de AIFEX](/static/chromeExtension.zip)
-2. Décompressez la (vous devriez avoir un répertoire **chrome**) 
-3. Sur un navigateur chrome, ouvrez la gestion des extensions en tapant chrome://extensions/ ou en cliquant sur Plus d'outils - extensions. La page de gestion des extensions peut également être ouverte en cliquant sur le menu Chrome, en survolant Plus d'outils et en sélectionnant Extensions.
-4. Activez le mode développeur en cliquant sur le bouton à bascule situé à côté du mode développeur.
-5. Cliquez sur le bouton **LOAD UNPACKED** et sélectionnez le répertoire **chrome**. 
-6. Vérifiez que l'extension est disponible.
 
 ----------------------------
 
 <h2>Étape 2, Se connecter à la session de test : </h2>
 
-**URL de connexion**: https://researchexperimentation.fr/join?sessionId=hg-YaJaD5&modelId=pCsI5xRas
-
 1. Ouvrez l'extension Chrome de AIFEX.
-2. Entrez l'URL de connexion.
+2. Entrez l'URL de connexion : https://researchexperimentation.fr/join?sessionId=hg-YaJaD5&modelId=pCsI5xRas
 3. Connectez-vous à la session. Cette action ouvrira une nouvelle fenêtre Chrome sur le site de CDiscount, pour les prochaines étapes, il faudra rester dans cette fenêtre.
 4. Si vous le souhaitez, cliquez sur le bouton en haut a droite de la popup pour l'ouvrir dans une fenetre séparée.
 5. Entrez votre nom de testeur qui vous a été donné. **Dans la vidéo je mets mon prénom, ne faites pas la même chose**
@@ -66,11 +56,3 @@ Vous devriez voir des bordures de couleur apparaitre autour de certains elements
 * Une bordure magenta indique que l'action fait parti du scénario, et qu'il faut la faire pour pouvoir avancer. 
 
 Une fois votre exploration terminée, cliquez sur le bouton stop dans l'extension, (carré) ou sur le bouton restart (boucle), pour commencer une nouvelle exploration. Si vous ne cliquez pas sur un de ces boutons, votre test ne sera pas pris en compte. Faites attention a bien terminer le scenario, sinon votre test ne sera pas accepté, et un message vous previendra.
-
-Vidéo d’illustration des étapes précédentes
-
-
-<h2> Étape 4, Mettre un commentaire, et valider l'exploration </h2>
-
-Une fois votre exploration terminée, écrivez un commentaire, si vous n'avez pas trouvé de bug, laissez en quand même un pour dire que tout va bien (RAS). 
-Ensuite cliquez sur le bouton stop dans l'extension, (carré) ou sur le bouton restart (boucle), pour commencer une nouvelle exploration. Si vous ne cliquez pas sur un de ces boutons, votre test ne sera pas pris en compte.
