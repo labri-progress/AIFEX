@@ -5,9 +5,10 @@ Votre mission est de tester le site [CDiscount](https://www.cdiscount.com/), à 
 
 Pour cela, nous vous demandons de simuler une commande qui inclue les étapes suivantes dans l'ordre
 * Faire une recherche d’un produit via la barre de recherche en tapant un texte dans la barre puis appuyer sur la touche Entrée. Ou en choissant une suggestion dans les choix d'autocompletion.
-* Utiliser les filtres ou les différents menus pour sélectionner finement un produit.
-* Regarder la description du produit que vous voulez selectionner.
-* Ajouter ce produit au panier et accéder au panier.
+* Utiliser un ou plusieur filtres pour afiner la recherche.
+* Cliquer sur la description, le titre ou l'image d'un produit que vous voulez selectionner.
+* Ajouter un produit au panier
+* Accéder au panier.
 * Choisir la livraison.
 
 Tous vos tests devront obligatoirement inclure ces étapes. Notre plugin AIFEX va vous guider pour suivre ces étapes. **Les elements avec des bordures magenta correspondent aux étapes du scenario.** 
