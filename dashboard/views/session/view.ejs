@@ -26,6 +26,7 @@
                         <th scope="col" align="center">Name</th>
                         <th scope="col" align="center">Target WebSite</th>
                         <th scope="col" align="center">Number of Explorations</th>
+                        <th scope="col" align="center">Number of Participants</th>
                         <th scope="col" align="center">Overlay</th>
                         <th scope="col" align="center">Test Scenario</th>
                         <th scope="col" align="center">AI Model</th>
@@ -38,6 +39,7 @@
                         <td><%=session.name%></td>
                         <td><%=session.webSite.name%></td>
                         <td><%= session.explorationList.length %></td>
+                        <td><%= session.participants.length %></td>
                         <td><%= session.overlayType %></td>
                         <td><%= session.useTestScenario %></td>
                         <td><a href="/dashboard/session/<%=connectionCode %>/ngram"><i class="fas fa-brain"></i></a></td>

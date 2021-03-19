@@ -149,12 +149,17 @@ module.exports = function attachRoutes(app, config) {
                 }
             })
             .then(([session, model,screenshot, video]) => {
-
+                const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
+            
+                session.participants = participants;
+                if (session.useTestScenario === undefined) {
+                    session.useTestScenario = false;
+                }
                 logger.debug(`screenshot : ${JSON.stringify(screenshot)}`);
                 res.render('session/view.ejs', {
                     account: req.session,
                     serverURL: buildInvitation(model.id, session.id),
-                    session, 
+                    session,
                     model,
                     connectionCode, 
                     screenshot,
