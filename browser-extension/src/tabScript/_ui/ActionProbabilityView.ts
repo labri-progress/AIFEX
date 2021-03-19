@@ -21,7 +21,6 @@ export default class ActionProbabilityView {
             console.log(`DEBUG_MODE, add mouseover listener`);
             document.addEventListener("mouseover", (ev: MouseEvent) => {
                 const composedPath = ev.composedPath();
-                console.log(composedPath);
                 composedPath.forEach((target, index) => {
                     if (target instanceof HTMLElement) {
                         const rulesPrefix = target.getAttribute("aifex_rules")
@@ -65,21 +64,23 @@ export default class ActionProbabilityView {
                     htmlElement.setAttribute(`aifex_${rule.prefix}`, "true");
                 }
 
-                let maxProbability = 0;
-                if (action.probability > maxProbability) {
-                    maxProbability = action.probability;
-                }
 
                 this._lastElementWithAIFEXStyle.add(htmlElement);
+                
+
                 htmlElement.setAttribute("aifex_style", "true");
-                if (maxProbability > WARM_COLOR_THRESHOLD) {
+                if (action.probability > WARM_COLOR_THRESHOLD) {
                     htmlElement.setAttribute("aifex_frequency", "often")
-                } else if (maxProbability > MEDIUM_COLOL_THRESHOLD) {
+                } else if (action.probability > MEDIUM_COLOL_THRESHOLD && htmlElement.getAttribute("aifex_frequency") !== "often") {
                     htmlElement.setAttribute("aifex_frequency", "sometimes")
-                } else if (maxProbability > COLD_COLOR_THRESHOLD) {
+                } else if (action.probability > COLD_COLOR_THRESHOLD && 
+                            htmlElement.getAttribute("aifex_frequency") !== "often" && 
+                            htmlElement.getAttribute("aifex_frequency") !== "sometimes") {
                     htmlElement.setAttribute("aifex_frequency", "rarely")
                 } else {
-                    htmlElement.setAttribute("aifex_frequency", "never")
+                    if (!htmlElement.hasAttribute("aifex_frequency")) {
+                        htmlElement.setAttribute("aifex_frequency", "never")
+                    }
                 }
             }
         }
