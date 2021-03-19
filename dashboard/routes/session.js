@@ -37,9 +37,7 @@ module.exports = function attachRoutes(app, config) {
 
     app.post('/dashboard/session/start', (req, res) => {
         let { webSiteId, name, baseURL, interpolationfactor, depth, overlayType, useTestScenario } = req.body;
-        
-        console.log("useTestScenario", useTestScenario)
-        
+                
         useTestScenario = useTestScenario === "yes"
         
         logger.info(`POST start session for WebSite (id = ${webSiteId})`);
@@ -150,12 +148,12 @@ module.exports = function attachRoutes(app, config) {
             })
             .then(([session, model,screenshot, video]) => {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
-            
+                
+                
                 session.participants = participants;
                 if (session.useTestScenario === undefined) {
                     session.useTestScenario = false;
                 }
-                logger.debug(`screenshot : ${JSON.stringify(screenshot)}`);
                 res.render('session/view.ejs', {
                     account: req.session,
                     serverURL: buildInvitation(model.id, session.id),

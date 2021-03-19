@@ -13,9 +13,10 @@ const ONE_HOUR = 3600000;
 
 const sess= {
     secret: 'AIFEX super secret',
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: {    
+        sameSite: "none",
         secure: false,
         maxAge: ONE_HOUR,
     }
@@ -46,7 +47,10 @@ export default class RESTServer {
 
         app.use((req, res, next) => {
             res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
             res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+            res.setHeader("Access-Control-Allow-Credentials", "true");
+
             next();
         });
 
