@@ -14,7 +14,6 @@ function handlePlay() {
             getState();
         } else {
             render(newState);
-            refreshPopup(newState);
         }
     })
     .catch(e => {
@@ -23,7 +22,7 @@ function handlePlay() {
 }
 
 function handleStop() {
-    console.log('stopExploration');
+    console.log('handle stop');
     sendMessage({
         kind: 'stopExploration'
     })
@@ -32,7 +31,6 @@ function handleStop() {
             console.log(runtime.lastError);
         }
         render(newState)
-        refreshPopup(newState)
     })
     .catch(e => {
         console.error('stop exploration error', e);
@@ -46,7 +44,6 @@ function handleRestart() {
     })
     .then(newState => {
         render(newState)
-        refreshPopup(newState)
     })
     .catch(e => {
         console.error('restart exploration error', e);
@@ -60,22 +57,10 @@ function handleTrash() {
     })
     .then(newState => {
         render(newState)
-        refreshPopup(newState)
     })
     .catch( e => {
         console.error('handle trash', e);
     })
-}
-
-function refreshPopup(state) {
-    console.log('refresh popup');
-    if (state.isRecording) {
-        document.getElementById("recording-status").innerHTML = "recording";
-        document.getElementById("play-button").classList.add("btn-success")
-    } else {
-        document.getElementById("recording-status").innerHTML = "not recording";
-        document.getElementById("play-button").classList.remove("btn-success")
-    }
 }
 
 function handleMediaRecord() {

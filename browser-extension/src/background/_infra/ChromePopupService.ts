@@ -12,6 +12,7 @@ export default class ChromePopupService implements PopupService {
 
     refresh(state: StateForPopup): Promise<void> {
         const MESSAGE_KIND = "refresh";
+        console.log("Sending Refresh", state)
         return sendMessageToPopup({state}, MESSAGE_KIND);
     }
 

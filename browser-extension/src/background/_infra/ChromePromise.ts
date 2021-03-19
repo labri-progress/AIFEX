@@ -168,9 +168,9 @@ function checkPopupIsOpen(): boolean {
 
 export function sendMessageToPopup(message={}, messageKind : string): Promise<any> {
     const messageData = Object.assign(message, {kind: messageKind});
-    if (!checkPopupIsOpen()) {
-        return Promise.resolve();
-    }
+    console.log(checkPopupIsOpen())
+
+
 
     return new Promise((resolve, reject) => {
         console.log(messageData)

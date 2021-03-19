@@ -321,7 +321,11 @@ export default class Background {
             } else {
                 return this._aifexService.getCommentDistributions(this._serverURL, this._modelId, this._exploration)
                 .then((commentDistributionList) => {
-                    this._commentDistributions = commentDistributionList;
+                    if (commentDistributionList === undefined) {
+                        this._commentDistributions = []    
+                    } else {
+                        this._commentDistributions = commentDistributionList;
+                    }
                 })
             }
         } else {
@@ -421,7 +425,8 @@ export default class Background {
                         .then(() => {
                             const MIN_NUMBER_OF_ACTIONS = 2;
                             const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
-                            if (this._isRecording && HAS_MORE_THAN_START_END_ACTIONS) {
+                            if (HAS_MORE_THAN_START_END_ACTIONS) {
+                                console.log("Sending exploration")
                                 return this.sendExploration();
                             }
                         })
@@ -461,7 +466,7 @@ export default class Background {
         if (this._serverURL && this._exploration && this._sessionId) {
             const EXPLORATION_CONTAINS_START_ONLY = this._exploration.actions.length === 1;
 
-            if (! this._isRecording ||  EXPLORATION_CONTAINS_START_ONLY) {
+            if (EXPLORATION_CONTAINS_START_ONLY) {
                 return Promise.resolve();
             }
 
@@ -528,7 +533,6 @@ export default class Background {
             return this._aifexService.getNumberOfExplorationForTesterName(this._serverURL, this._sessionId, this._testerName)
                 .then((numberOfExploration) => {
                     this._numberOfExplorationsMadeByTester = numberOfExploration;
-              //      return this.refreshPopup();
                 })
         } else {
             return Promise.resolve();

@@ -9,6 +9,7 @@
 function handleMessage(msg, sendResponse) {
     switch(msg.kind) {
         case "refresh":
+            console.log("Refresh")
             const state = msg.state
             render(state)
             sendResponse("ok");
