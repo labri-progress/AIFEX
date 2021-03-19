@@ -417,10 +417,10 @@ export default class Background {
                         return Promise.reject(new Error("Exploration is incorrect."))
                     }
                     else {
+                        exploration.stop();
+
                         return this._mediaRecordManager.stopRecording()
                         .then(() => {
-                            exploration.addAction("end");
-                            exploration.stop();
                             const MIN_NUMBER_OF_ACTIONS = 2;
                             const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
                             if (this._isRecording && HAS_MORE_THAN_START_END_ACTIONS) {
@@ -438,6 +438,7 @@ export default class Background {
                         })
                         .then((_ : void[]) => {
                         })
+
                 }
             })
         } else {

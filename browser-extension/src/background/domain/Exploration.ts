@@ -42,6 +42,12 @@ export default class Exploration {
         this._actions.push(new Action(kind, value, this._actions.length));
     }
 
+    removeLastAction() {
+        if (this.actions.length > 1) {
+            this.actions.pop()
+        }
+    }
+
     addAnswer(text: string, value: string): void {
         this._actions.push(new Answer(text, value, this._actions.length))
     }
@@ -52,6 +58,10 @@ export default class Exploration {
     }
 
     stop(): void {
+        if (this._actions.some(action => action.value === "end")) {
+            throw new Error("Exploration is already stopped");
+        }
+        this.addAction("end");
         this._stopDate = new Date();
     }
 
