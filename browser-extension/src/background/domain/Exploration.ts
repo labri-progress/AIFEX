@@ -60,9 +60,10 @@ export default class Exploration {
     stop(): void {
         if (this._actions.some(action => action.value === "end")) {
             throw new Error("Exploration is already stopped");
+        } else  {
+            this.addAction("end");
+            this._stopDate = new Date();
         }
-        this.addAction("end");
-        this._stopDate = new Date();
     }
 
     interactionsToJSON(): {

@@ -170,7 +170,6 @@ export default class Background {
             }
         })
         .then(() => this.updateNumberOfExplorationByTester())
-        .then(() => this.refreshPopup())
     }
 
     disconnect(): Promise<void> {
@@ -213,9 +212,8 @@ export default class Background {
         .then((_) => {
             const state = this.getStateForTabScript();
             const tabIds = this._windowManager.getConnectedTabIds();
-            return Promise.all(tabIds.map(id => this._tabScriptService.reload(id, state)));
+            return Promise.all(tabIds.map(id => this._tabScriptService.reload(id, state))).then(()=>{});
         })
-        .then(() => this.refreshPopup())
     }
 
     drawAttention(): Promise<void> {
@@ -255,7 +253,6 @@ export default class Background {
                     this.evaluateExploration();
                 }
             })
-            .then(() => this.refreshPopup())
         } else {
             return Promise.resolve();
         }
@@ -407,18 +404,19 @@ export default class Background {
         }
     }
 
-    private stopRecordingExploration(): Promise<void> {
+    private stopRecordingExploration(): Promise<boolean> {
         if (this._isRecording && this._exploration) {
+            this._isRecording = false;
             let exploration : Exploration = this._exploration;
             return this.evaluateExploration()
                 .then(() => {
                     if (this._useTestScenario && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
                         this.displayInvalidExploration();
-                        return Promise.reject(new Error("Exploration is incorrect."))
+                        this._isRecording = true;
+                        return false;
                     }
                     else {
                         exploration.stop();
-
                         return this._mediaRecordManager.stopRecording()
                         .then(() => {
                             const MIN_NUMBER_OF_ACTIONS = 2;
@@ -428,7 +426,6 @@ export default class Background {
                             }
                         })
                         .then(() => {
-                            this._isRecording = false;
                             this._exploration = new Exploration();
                             this._screenshotList = [];
                             this._commentsUp = [];
@@ -437,34 +434,25 @@ export default class Background {
                             return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
                         })
                         .then((_ : void[]) => {
+                            return true;
                         })
 
                 }
             })
         } else {
-            return Promise.resolve();
+            return Promise.resolve(true);
         }
     }
 
     stopExploration(): Promise<void> {
-        return this.stopRecordingExploration().catch(e => {
-            if (e.message !== "Exploration is incorrect.") {
-                throw e;
-            }
-        });
+        return this.stopRecordingExploration().then(()=>{});
     }
 
     restartExploration(): Promise<void> {
         return this.stopRecordingExploration()
-            .then(() => {
-                return this._windowManager.reloadConnectedWindow(this._sessionBaseURL);
-            })
-            .then(() => {
-                return this.startExploration();
-            })
-            .catch(e => {
-                if (e.message !== "Exploration is incorrect.") {
-                    throw e;
+            .then((isStopped) => {
+                if (isStopped) {
+                    return this._windowManager.reloadConnectedWindow(this._sessionBaseURL).then(()=> this.startExploration())
                 }
             })
 	}
@@ -533,13 +521,14 @@ export default class Background {
     updateNumberOfExplorationByTester(): Promise<void> {
         if (!this._testerName) {
             this._numberOfExplorationsMadeByTester = 0;
-            return this.refreshPopup();
+          //  return this.refreshPopup();
+          return Promise.resolve();
         }
         if (this._serverURL && this._sessionId) {
             return this._aifexService.getNumberOfExplorationForTesterName(this._serverURL, this._sessionId, this._testerName)
                 .then((numberOfExploration) => {
                     this._numberOfExplorationsMadeByTester = numberOfExploration;
-                    return this.refreshPopup();
+              //      return this.refreshPopup();
                 })
         } else {
             return Promise.resolve();
