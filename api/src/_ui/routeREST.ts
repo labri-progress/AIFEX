@@ -33,7 +33,7 @@ export default function attachRoutes(app, accountService: AccountService, webSit
             .then(tokenResult => {
                 req.session.jwt = tokenResult.token;
                 req.session.username = username;
-                console.log("Setting session with", req.session)
+                console.log("Setting session with", req.session.id)
                 res.sendStatus(200)
             })
             .catch((e) => {
@@ -44,7 +44,7 @@ export default function attachRoutes(app, accountService: AccountService, webSit
 
     app.post("/website/create", (req, res) => {
         const { name, url, mappingList } = req.body;
-        console.log("Session is ", req.session)
+        console.log("Session is ", req.session.id)
         if (req.session.jwt === undefined) {
             return res.status(FORBIDDEN_STATUS).send({ error: "identification token required"})
         }

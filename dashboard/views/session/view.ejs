@@ -60,7 +60,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% session.explorationList.forEach((exploration, explIndex) => { %>
+                        <% session.explorationList.sort((a, b) => new Date(b.stopDate) - new Date(a.stopDate)).forEach((exploration, explIndex) => { %>
                             <tr>
                                 <td>
                                     <%= explIndex %>

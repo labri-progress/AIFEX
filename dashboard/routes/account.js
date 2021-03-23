@@ -32,7 +32,7 @@ module.exports = function attachRoutes(app, config) {
                 next();
                 return;
             }
-            //console.log(req.originalUrl, req.originalUrl.startsWith('/study/'))
+
             if (req.originalUrl.startsWith('/study/')) {
                 next();
                 return;
@@ -206,7 +206,6 @@ module.exports = function attachRoutes(app, config) {
         logger.info(`sign`);
         return signup(username, password)
             .then(() => {
-                //console.log('signup ok');
                 return signin(username, password)
                     .then(token => {
                         return Promise.resolve(token);
@@ -216,9 +215,7 @@ module.exports = function attachRoutes(app, config) {
                     })
             })
             .catch(signupErrorReason => {
-                //console.log('signup nok', signupErrorReason);
                 if (signupErrorReason.isUsernameExist) {
-                    //console.log('will signin');
                     return signin(username, password)
                         .then(token => {
                             return Promise.resolve(token);
