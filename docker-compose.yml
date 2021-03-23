@@ -119,6 +119,7 @@ services:
   kibana:
     image: kibana:7.10.1
     environment:
+      - "SERVER_BASEPATH=/kibana"
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}

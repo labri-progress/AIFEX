@@ -4,7 +4,7 @@ services:
   reverseproxy:
     build:
       context: reverseproxy/
-      dockerfile: ./prod.Dockerfile
+      dockerfile: ./Dockerfile.prod
     volumes:
       - type: bind
         source: ${CERTIFICAT_SOURCE}
@@ -26,13 +26,5 @@ services:
     depends_on:
       - "website"
       - "account"
-
-  kibana:
-    environment:
-    - "SERVER_BASEPATH=/kibana"
     
-volumes:
-  screenshot:
-  video:
-  db-data:
-    
+  
