@@ -8,21 +8,20 @@ let transports = [
   new winston.transports.Console(),
   new winston.transports.File({ filename: 'error.log', level: 'error' }),
   new winston.transports.File({ filename: 'combined.log' }),
+  new ElasticsearchTransport({
+    level:'debug',
+    clientOpts: {
+      node:config.elastic,
+      auth: {
+        username: 'elastic',
+        password: config.elasticPassword
+      }
+    }
+  })
 ]
 
 switch(process.env.NODE_ENV) {
     case 'production':
-        transports.push(
-          new ElasticsearchTransport({
-          level:'info',
-          clientOpts: {
-            node:config.elastic,
-            auth: {
-              username: 'elastic',
-              password: config.elasticPassword
-            }
-          }
-        }))
         logLevel = 'info';
         break;
     case 'development': 

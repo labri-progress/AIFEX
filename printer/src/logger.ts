@@ -28,7 +28,7 @@ export const logger = winston.createLogger({
     new winston.transports.File({ filename: 'error.log', level: 'error' }),
     new winston.transports.File({ filename: 'combined.log' }),
     new ElasticsearchTransport({
-      level:'info',
+      level:'debug',
       clientOpts: {
         node: config.elastic,
           auth: {
