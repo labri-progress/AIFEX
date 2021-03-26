@@ -9,23 +9,22 @@ let transports: any[] =
     new winston.transports.Console(),
     new winston.transports.File({ filename: 'error.log', level: 'error' }),
     new winston.transports.File({ filename: 'combined.log' }),
+    new ElasticsearchTransport({
+      level:'debug',
+      clientOpts: {
+        node: config.elastic,
+          auth: {
+            username: 'elastic',
+            password: config.elasticPassword
+          }
+      }
+    })
   ]
 
 
 switch(process.env.NODE_ENV) {
     case 'production':
         logLevel = 'info';
-        const elasticsearchTransport = new ElasticsearchTransport({
-          level:'info',
-          clientOpts: {
-            node: config.elastic,
-              auth: {
-                username: 'elastic',
-                password: config.elasticPassword
-              }
-          }
-        })
-        transports.push(elasticsearchTransport)
         break;
     case 'development': 
         logLevel = 'debug';

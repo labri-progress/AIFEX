@@ -1,17 +1,6 @@
 version: "3.3"
 services:
 
-  api:
-    build:
-      context: api/
-      dockerfile: ./Dockerfile.dev
-    environment:
-      - NODE_ENV=development
-    ports:
-      - 5011:5011
-    volumes:
-      - ./api/src/:/app/src
-
   website:
     build:
       context: website/
@@ -73,8 +62,6 @@ services:
       dockerfile: ./Dockerfile.dev
     environment:
       - NODE_ENV=development
-    ports:
-      - 80:80
     volumes:
       - ./dashboard/routes/:/app/routes
       - ./dashboard/views/:/app/views
@@ -90,16 +77,6 @@ services:
       - 5009:5009
     volumes:
       - ./printer/src/:/app/src
-
-  initialization:
-    build:
-      context: initialization/
-      dockerfile: ./Dockerfile
-    environment:
-      -  NODE_ENV=development
-    depends_on:
-      - "website"
-      - "account"
       
   mongo:
     ports:
@@ -112,3 +89,25 @@ services:
   kibana:
     ports:
         - 5601:5601
+
+  reverseproxy:
+    build:
+      context: reverseproxy/
+      dockerfile: ./Dockerfile.dev
+    depends_on:
+      - "model"
+      - "website"
+      - "session"
+      - "dashboard"
+    ports:
+      - 80:80
+
+  initialization:
+    build:
+      context: initialization/
+      dockerfile: ./Dockerfile
+    environment:
+      -  NODE_ENV=development
+    depends_on:
+      - "website"
+      - "account"
