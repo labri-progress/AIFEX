@@ -1,5 +1,12 @@
+const copyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 const baseConfig = require("./base.config");
+
+baseConfig.plugins.push(new copyWebpackPlugin({
+	patterns: [
+		{ from: "./src/manifest.firefox.json", to: "manifest.json" }
+	]
+}));
 
 const firefoxConfig = {
 	entry: {

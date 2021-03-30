@@ -23,7 +23,6 @@ module.exports = {
 	plugins: [
 		new CopyPlugin({
 			patterns: [
-			{ from: "./src/manifest.chrome.json", to: "manifest.json" },
 			{ from: "./src/images/plugin_icon.png", to: "images/plugin_icon.png" },
 			{
 				from: "./src/images/plugin_icon_blue.png",

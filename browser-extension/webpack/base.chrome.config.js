@@ -1,5 +1,13 @@
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 const baseConfig = require("./base.config");
+
+baseConfig.plugins.push(new CopyWebpackPlugin({
+	patterns: [
+		{ from: "./src/manifest.chrome.json", to: "manifest.json" }
+	]
+}));
+
 
 const chromeConfig = {
 	entry: {
