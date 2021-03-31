@@ -4,7 +4,7 @@ const webpack = require('webpack');
 
 
 module.exports = () => {
-    console.log("compiling plugin for host firefox production")
+    console.log("compiling plugin for firefox production")
     return merge(baseConfig, {
         mode: 'production',
         plugins: [

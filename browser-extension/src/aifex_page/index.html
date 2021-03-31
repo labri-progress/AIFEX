@@ -31,11 +31,9 @@
         <div id="main-content">
             <div id="connection-component">
                 <h3>Connection</h3>
-                <form id="connectionForm" class="form-inline">
-                    <div id="connexionMessage" class="col-xs-10">
-                        You are not connected.
-                    </div>
-                    <div class="form-group col-xs-10">
+                <form id="connectionForm">
+                    <div class="form-group ">
+                        <label id="connexionMessage" for="connectionURLInput"> You are not connected.</label>
                         <div class="input-group ">
                             <input id="connectionURLInput" class="form-control" type="text" placeholder="Connection URL"
                                 required />
@@ -48,6 +46,8 @@
                             <a id="openSessionWindow" class="btn btn-default input-group-addon"><i
                                     class="fa fa-window-maximize"></i></a>
                         </div>
+                    </div>
+                    <div class="form-group ">
                         <div id="toggleShouldTestInNewWindowGroup" class="input-group">
                             <input id="toggleShouldTestInNewWindow" type="checkbox">
                             Create a new window for the test session

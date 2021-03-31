@@ -55,16 +55,28 @@ export function sendMessageToTab(message={}, messageKind : string, tabId: number
         .then((result : any) => {
             return result;
         })
-        .catch((e) => {
-            logger.debug(`no receiver for the message (${message}) for tabId:${tabId}`);
-            return `no receiver for the message (${message}) for tabId:${tabId}`;
+        .catch((error) => {
+            if (error.message.startsWith('The message port closed before a response was received')) {
+                logger.debug(`no receiver for the message (${message}) for tabId:${tabId}`)
+            } 
+            else if (error.message.startsWith(`Could not establish connection. Receiving end does not exist`)) {
+                logger.debug(`Could not establish connection. Receiving end does not exist`);
+            } else {
+                logger.error(error.message, error);
+            }
+            
         })
 }
 
 export function sendMessageToExtension(message={}, messageKind : string): Promise<any> {
     const messageData = Object.assign(message, {kind: messageKind});
-
     return browser.runtime.sendMessage(messageData, undefined)
+        .catch((error) => {
+            if (error.message.includes("Receiving end does not exist.")) {
+                return;
+            }
+            logger.error(error.message, error);
+        })
 }
 
 export function takeScreenshot(windowId : number): Promise<string> {
@@ -82,6 +94,7 @@ export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: num
             stream,
             id: parseInt(stream.id, 10)
         }
-    });
+    })
+    
 }
 

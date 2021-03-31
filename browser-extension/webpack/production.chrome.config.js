@@ -4,7 +4,7 @@ const webpack = require('webpack');
 
 
 module.exports = () => {
-    console.log("compiling plugin for host chrome production")
+    console.log("compiling plugin for chrome production")
 
     return merge(baseConfig, {
         mode: 'production',

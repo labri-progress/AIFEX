@@ -161,19 +161,11 @@ export function executeTabScript(tabId: number): Promise<boolean> {
     });
 }
 
-function checkPopupIsOpen(): boolean {
-    const views = chrome.extension.getViews({ type: "popup" });
-    return views.length > 0;
-}
 
 export function sendMessageToPopup(message={}, messageKind : string): Promise<any> {
     const messageData = Object.assign(message, {kind: messageKind});
-    console.log(checkPopupIsOpen())
-
-
 
     return new Promise((resolve, reject) => {
-        console.log(messageData)
         chrome.runtime.sendMessage(messageData,  (response) => {
             const error = chrome.runtime.lastError;
             if (error) {
