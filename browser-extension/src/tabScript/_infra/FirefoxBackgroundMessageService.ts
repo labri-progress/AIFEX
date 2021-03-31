@@ -70,6 +70,9 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
                 continuingActionList: string[];
                 finishingInteractionList: string[];
             }) => {
+                if (!data) {
+                    return;
+                }
                 return new ExplorationEvaluation(
                     data.isAccepted,
                     data.enteringInteractionList.map(action => Action.parseAction(action)),

@@ -17,9 +17,6 @@ function sendMessage(message) {
         .then(
             (response) => {
                 return response;
-            }, 
-            (error) => {
-                throw error
             })
         .catch((error) => {
             console.error("catching", error)
@@ -42,9 +39,9 @@ function getCurrentWindow() {
         return browser.windows.getCurrent().then(
             (response) => {
                 return response;
-            }, 
-            (error) => {
-                throw error
+            })
+            .catch(error => {
+                console.error("Failed to getCurrent window", error);
             })
     }
 }
