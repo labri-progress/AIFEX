@@ -9,6 +9,7 @@ import Question from "../domain/Question";
 export default class FirefoxBackgroundMessageService  implements BackgroundService{
 
     getState(): Promise<State> {
+        console.log("getStateForTabScript")
         return browser.runtime.sendMessage({
                 kind: 'getStateForTabScript'
             })
@@ -39,6 +40,8 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
     }
 
     getActionList(): Promise<Action[]> {
+        console.log("getProbabilityMap")
+
         return browser.runtime.sendMessage({
                 kind: 'getProbabilityMap'
             })

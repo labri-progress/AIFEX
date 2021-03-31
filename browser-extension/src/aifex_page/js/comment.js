@@ -51,12 +51,12 @@ function upComment(type, value, element) {
         type,
         value
     }).then(response => {
-        if (response !== undefined) {
-            element.removeEventListener("click", upComment);
-            markCommentUp(element)
-        } else {
-            console.error('Error sendMessage')
+        if (response.error) {
+            console.error(response.error)
+            return;
         }
+        element.removeEventListener("click", upComment);
+        markCommentUp(element)
     })
 }
 
@@ -71,19 +71,19 @@ function submitComment(e) {
         value
     })
     .then(response => {
-        if (response !== undefined) {
-            const screenshot = document.getElementById('commentScreenshot').checked;
-            console.log(screenshot)
-            if (screenshot) {
-                sendMessage({
-                    kind: "takeScreenshot"
-                });
-            }
-            document.getElementById("commentSuccessul").style.display = 'block'
-            document.getElementById('commentDescription').value = "";
-        } else {
-            console.error('Error sendMessage')
+        if (response.error) {
+            console.error(response.error)
+            return;
         }
+        const screenshot = document.getElementById('commentScreenshot').checked;
+        console.log("Taking screenshot")
+        if (screenshot) {
+            sendMessage({
+                kind: "takeScreenshot"
+            });
+        }
+        document.getElementById("commentSuccessul").style.display = 'block'
+        document.getElementById('commentDescription').value = "";
     });
 
 }
@@ -99,5 +99,10 @@ function updateDisplayUserView(e) {
     sendMessage({
         kind: "setIsTabScriptDiplayingUserView",
         isTabScriptDisplayingUserView
+    }).then(response => {
+        if (response.error) {
+            console.error(response.error)
+            return;
+        }
     });
 }

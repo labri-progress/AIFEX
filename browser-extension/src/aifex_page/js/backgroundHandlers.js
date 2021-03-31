@@ -9,8 +9,12 @@
 function handleMessage(msg, sendResponse) {
     switch(msg.kind) {
         case "refresh":
-            console.log("Refresh")
             const state = msg.state
+            if (state === undefined) {
+                console.error("State received is empty")
+                sendResponse("State received is empty");
+                return;
+            }
             render(state)
             sendResponse("ok");
             return;

@@ -13,7 +13,13 @@ function handleSet(e) {
         testerName
     })
     .then(response => {
-        if (response) {
+        if (!response) {
+            console.error(`Background does not answer`);
+        }
+        else if (response.error) {
+            console.error(error);
+        }
+        else {
             getState();
         }
     });

@@ -13,30 +13,32 @@ function handleConnection(e) {
         new URL(INPUT_URL);
     } catch (e) {
         document.getElementById('connexionMessage').innerHTML = 'Incorrect URL, please enter a correct URL.';
+        return;
     }
-
     sendMessage({ kind: "checkDeprecated", url: INPUT_URL })
-    .then(extensionInfo => {
-        if (extensionInfo.latestVersion && extensionInfo.currentVersion !== extensionInfo.latestVersion) {
-            document.getElementById('connexionMessage').innerHTML = `Your current version ${extensionInfo.currentVersion} of the AIFEX Extention is deprecated, please get latest version <a href="${extensionInfo.url}"> ${extensionInfo.latestVersion} </a>`;
-            //alert(`Your current version ${extensionInfo.currentVersion} of the AIFEX Exstention is deprecated, please get latest version ${extensionInfo.latestVersion} at ${extensionInfo.url}`)
-        } else {
-            sendMessage({
-                kind: "connect",
-                url: INPUT_URL
-            })
-            .then((response) => {
-                if (response && response === "ok") {
-                    getState();
-                } else {
-                    document.getElementById('connexionMessage').innerHTML = 'Unknown URL. Please try again.';
-                }
-            })
-            .catch(e => {
-                console.error('connect', e);
-            })
-        }
-    })
+        .then(extensionInfo => {
+            if (extensionInfo.latestVersion && extensionInfo.currentVersion !== extensionInfo.latestVersion) {
+                document.getElementById('connexionMessage').innerHTML = `Your current version ${extensionInfo.currentVersion} of the AIFEX Extention is deprecated, please get latest version <a href="${extensionInfo.url}"> ${extensionInfo.latestVersion} </a>`;
+                //alert(`Your current version ${extensionInfo.currentVersion} of the AIFEX Exstention is deprecated, please get latest version ${extensionInfo.latestVersion} at ${extensionInfo.url}`)
+            } else {
+                sendMessage({
+                    kind: "connect",
+                    url: INPUT_URL
+                })
+                .then((response) => {
+                    if (!response) {
+                        console.error(`Background does not answer`);
+                    }
+                    else if (response.error) {
+                        console.error(response.error);
+                        document.getElementById('connexionMessage').innerHTML = response.error;
+                        return;
+                    } else {
+                        getState();
+                    }
+                })
+            }
+        })
 }
 
 function handleDisconnection(e) {
@@ -47,17 +49,15 @@ function handleDisconnection(e) {
     })
     .then(response => {
         if (!response) {
+            console.error(`Background does not answer`);
+        }
+        else if (response.error) {
             document.getElementById('connexionMessage').innerHTML = 'Error, cannot disconnect';
         }
-        if (response.error) {
-            document.getElementById('connexionMessage').innerHTML = 'Error, cannot disconnect';
-        } else {
+        else {
             renderNotConnected();
             connectionCode = undefined
         }
-    })
-    .catch(e => {
-        console.error('disconnect',e);
     })
 }
 
@@ -69,16 +69,14 @@ function handleSync(e) {
     })
     .then(response => {
         if (!response) {
+            console.error(`Background does not answer`);
+        }
+        else if (response.error) {
             document.getElementById('connexionMessage').innerHTML = 'Error, cannot synchronize';
         }
-        if (response.error) {
-            document.getElementById('connexionMessage').innerHTML = 'Error, cannot synchronize';
-        } else {
+        else {
             document.getElementById('connexionMessage').innerHTML = 'You are still connected. WebSite is refreshed !'
         }
-    })
-    .catch(e => {
-        console.error('reloadWebSite', e);
     })
 }
 
@@ -92,13 +90,11 @@ function handleDrawAttentionToWindow(e) {
         if (!response) {
             console.error(`Background does not answer`);
         }
-        if (response.error) {
+        else if (response.error) {
             console.error(response.error);
         }
     })
-    .catch(e => {
-        console.error('drawAttention', e);
-    })
+
 }
 
 function handleTestOnNewWindow(e) {
@@ -116,8 +112,5 @@ function handleTestOnNewWindow(e) {
         })
     ]).then(() => {
         getState()
-    })
-    .catch(e => {
-        console.error('createNewWindow', e);
     })
 }

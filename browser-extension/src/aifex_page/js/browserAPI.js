@@ -13,7 +13,17 @@ function sendMessage(message) {
         })
     } else {
         //console.log('firefox');
-        return browser.runtime.sendMessage(message);
+        return browser.runtime.sendMessage(message)
+        .then(
+            (response) => {
+                return response;
+            }, 
+            (error) => {
+                throw error
+            })
+        .catch((error) => {
+            console.error("catching", error)
+        })
     }
 }
 
@@ -29,6 +39,12 @@ function getCurrentWindow() {
             })
         });
     } else {
-        return browser.windows.getCurrent();
+        return browser.windows.getCurrent().then(
+            (response) => {
+                return response;
+            }, 
+            (error) => {
+                throw error
+            })
     }
 }

@@ -119,7 +119,7 @@ export default class Background {
         this.initialize();
         return this._aifexService.hasModel(serverURL, modelId)
         .then((hasModel : boolean) => {
-            if (! hasModel) {
+            if (!hasModel) {
                 return Promise.reject('model not found');
             }
         })
@@ -128,8 +128,6 @@ export default class Background {
         })
             .then((session) => {
                 if (session) {
-                    console.log(session)
-
                     this._sessionBaseURL = session.baseURL;
                     this._overlayType = session.overlayType as OverlayType;
                     this._useTestScenario = session.useTestScenario;

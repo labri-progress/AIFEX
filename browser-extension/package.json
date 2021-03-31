@@ -46,6 +46,7 @@
     "ts-loader": "^8.0.11",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.9.7",
+    "webextension-polyfill": "^0.7.0",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",

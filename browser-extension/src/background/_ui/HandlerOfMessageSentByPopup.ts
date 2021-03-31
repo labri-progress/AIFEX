@@ -19,7 +19,7 @@ export default class HandlerOfMessageSentByPopup {
             case "checkDeprecated": {
                 if (!msg.url) {
                     logger.debug(`cannot check plugin version`);
-                    sendResponse("nok");
+                    sendResponse({error: "URL is missing"});
                     return true;
                 } else {
                     this._application.makeCompatibilityCheck(msg.url)
@@ -29,7 +29,7 @@ export default class HandlerOfMessageSentByPopup {
                         })
                         .catch((error) => {
                             logger.error("popup asks for checkDeprecated", error);
-                            sendResponse(error);
+                            sendResponse({error});
                         });
                     return true;
                 }
@@ -45,39 +45,33 @@ export default class HandlerOfMessageSentByPopup {
             case "connect": {
                 if (!msg.url) {
                     logger.debug(`connection refused`);
-                    sendResponse("nok");
+                    sendResponse({error: "URL is missing"});
                     return true;
                 }
-                try {
-                    const CONNECTION_URL = new URL(msg.url);
-                    const sessionId = CONNECTION_URL.searchParams.get('sessionId');
-                    const modelId = CONNECTION_URL.searchParams.get('modelId');
-                    const serverURL = CONNECTION_URL.origin;
-                    logger.debug(`sessionId=${sessionId}, modelId=${modelId}, serverURL=${serverURL}`)
-                    if (!sessionId || !modelId || ! serverURL) {
-                        logger.debug(`connection refused`);
-                        sendResponse("nok");
-                        return true;
-                    }
-                    this._application
-                        .connect(serverURL, sessionId, modelId)
-                        .then(() => {
-                            logger.debug(`connection accepted`);
-                            sendResponse("ok");
-                        })
-                        .catch((error: Error) => {
-                            if (error.message === "session not found" || error.message === "model not found") {
-                                logger.warn(error.message);
-                            } else {
-                                logger.error("popup asks to connect", error)
-                            }
-                            sendResponse("nok")
-                        });
-                } catch (e) {
-                    logger.error('receive incorrect URL', e);
-                    sendResponse("nok")
+                const CONNECTION_URL = new URL(msg.url);
+                const sessionId = CONNECTION_URL.searchParams.get('sessionId');
+                const modelId = CONNECTION_URL.searchParams.get('modelId');
+                const serverURL = CONNECTION_URL.origin;
+                logger.debug(`sessionId=${sessionId}, modelId=${modelId}, serverURL=${serverURL}`)
+                if (!sessionId || !modelId || ! serverURL) {
+                    logger.debug(`URL is invalid`);
+                    sendResponse({error: "URL is invalid"});
+                    return true;
                 }
-                
+                this._application
+                    .connect(serverURL, sessionId, modelId)
+                    .then(() => {
+                        logger.debug(`connection accepted`);
+                        sendResponse("ok");
+                    })
+                    .catch((error: string) => {
+                        if (error === "session not found" || error === "model not found") {
+                            logger.warn(error);
+                        } else {
+                            logger.error("Connection failed", new Error(error))
+                        }
+                        sendResponse({error: "Connection failed"})
+                });
                 return true;
             }
 
@@ -88,8 +82,8 @@ export default class HandlerOfMessageSentByPopup {
                         sendResponse("ok");
                     })
                     .catch((error) => {
-                        sendResponse({ error });
                         logger.error("popup asks to disconnect",error);
+                        sendResponse({ error });
                     });
                 return true;
             }
@@ -102,7 +96,7 @@ export default class HandlerOfMessageSentByPopup {
                     })
                     .catch((error) => {
                         logger.error("popup asks to reloadWebSite",error);
-                        sendResponse(error);
+                        sendResponse({error});
                     });
                 return true;
             }
@@ -130,7 +124,7 @@ export default class HandlerOfMessageSentByPopup {
                     })
                     .catch((error) => {
                         logger.error("popup asks to stopExploration", error);
-                        sendResponse(error);
+                        sendResponse({error});
                     });
                 return true;
             }
@@ -142,7 +136,7 @@ export default class HandlerOfMessageSentByPopup {
                         sendResponse(this._application.getStateForPopup());
                     }).catch((error) => {
                         logger.error("popup asks to removeExploration",error);
-                        sendResponse(error);
+                        sendResponse({error});
                     });
                 return true;
             }
@@ -153,7 +147,7 @@ export default class HandlerOfMessageSentByPopup {
                     sendResponse(this._application.getStateForPopup());
                 }).catch((error: Error) => {
                     logger.error("popup asks to changeTesterName",error);
-                    sendResponse(error);
+                    sendResponse({error});
                 });
 				return true;
             }
@@ -178,7 +172,7 @@ export default class HandlerOfMessageSentByPopup {
                 })
                 .catch((error) => {
                     logger.error("popup asks to restartExploration",error);
-                    sendResponse(error);
+                    sendResponse({error});
                 });
                 return true;
             }
@@ -213,9 +207,9 @@ export default class HandlerOfMessageSentByPopup {
                 .then(() => {
                     sendResponse("ok");
                 })
-                .catch( (e) => {
-                    logger.error("popup asks to setRecordMediaStatus", e);
-                    sendResponse("notok");
+                .catch( (error) => {
+                    logger.error("popup asks to setRecordMediaStatus", error);
+                    sendResponse({error});
                 })
                 return true;
             }

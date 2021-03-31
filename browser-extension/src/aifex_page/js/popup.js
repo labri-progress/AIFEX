@@ -23,6 +23,9 @@ function getState() {
 }
 
 function render(state) {
+    if (state === undefined) {
+        throw new Error("state is undefined");
+    }
     shouldCreateNewWindowsOnConnect = state.shouldCreateNewWindowsOnConnect;
     if (!state.url) {
         renderNotConnected(state);
