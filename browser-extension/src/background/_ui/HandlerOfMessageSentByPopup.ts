@@ -207,8 +207,8 @@ export default class HandlerOfMessageSentByPopup {
                 .then(() => {
                     sendResponse("ok");
                 })
-                .catch( (error) => {
-                    logger.error("popup asks to setRecordMediaStatus", error);
+                .catch( (error: Error) => {
+                    logger.error("Failed to set media record", error);
                     sendResponse({error});
                 })
                 return true;

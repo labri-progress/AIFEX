@@ -602,7 +602,7 @@ export default class Background {
             if (this._isRecording) {
                 return this._mediaRecordManager.prepareRecording()
                 .then(()=> {
-                    this._mediaRecordManager.startRecording();
+                    return this._mediaRecordManager.startRecording();
                 })
             } else {
                 return this._mediaRecordManager.prepareRecording();

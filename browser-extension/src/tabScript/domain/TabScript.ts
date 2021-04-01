@@ -10,8 +10,6 @@ import State from "./State";
 import ActionsAndElements from "./ActionsAndElements";
 import ViewManagerService from "./ViewManagerService";
 import {logger} from "../framework/Logger";
-
-
 export default class TabScript {
 
     private _backgroundService : BackgroundService;
@@ -31,8 +29,9 @@ export default class TabScript {
 
         this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
         this._pageMutationHandler.init();
-
     }
+
+
 
     setViewManager(viewManager : ViewManagerService) {
         this._viewManager = viewManager;

@@ -4,6 +4,8 @@ document.getElementById("play-restart").addEventListener("click", handleRestart)
 document.getElementById("trash").addEventListener("click", handleTrash);
 document.getElementById("mediaRecording").addEventListener("change", handleMediaRecord);
 
+
+
 function handlePlay() {
     console.log('start exploration');
     sendMessage({
@@ -26,11 +28,12 @@ function handleStop() {
     sendMessage({
         kind: 'stopExploration'
     })
-    .then(newState => {
-        if (!newState) {
-            console.log(runtime.lastError);
+    .then(response => {
+        if (response.error) {
+            console.error('stop exploration error', response.error);
+        } else {
+            render(response)
         }
-        render(newState)
     })
     .catch(e => {
         console.error('stop exploration error', e);
@@ -42,8 +45,12 @@ function handleRestart() {
     sendMessage({
         kind: 'restartExploration'
     })
-    .then(newState => {
-        render(newState)
+    .then(response => {
+        if (response.error) {
+            console.error('restart exploration error', response.error);
+        } else {
+            render(response)
+        }
     })
     .catch(e => {
         console.error('restart exploration error', e);
@@ -55,8 +62,12 @@ function handleTrash() {
     sendMessage({
         kind: 'removeExploration'
     })
-    .then(newState => {
-        render(newState)
+    .then((response) => {
+        if (response.error) {
+            console.error('handle trash', response.error);
+        } else {
+            render(response)
+        }
     })
     .catch( e => {
         console.error('handle trash', e);
@@ -64,17 +75,16 @@ function handleTrash() {
 }
 
 function handleMediaRecord() {
-    console.log('setRecordMediaStatus');
     sendMessage({
         kind: 'setRecordMediaStatus',
-        recordMediaStatus:document.getElementById("mediaRecording").checked
-    })
-    .then(response => {
-        if (response === "notok") {
+        recordMediaStatus: document.getElementById("mediaRecording").checked,
+    }).then(response => {
+        if (response && response.error !== undefined) {
+            console.error("handle setRecordMediaStatus", response.error)
             document.getElementById("mediaRecording").checked = false;
         }
     })
-    .catch(e => {
-        console.error('set record media status ',e);
+    .catch( e => {
+        console.error('setRecordMediaStatus', e);
     })
 }

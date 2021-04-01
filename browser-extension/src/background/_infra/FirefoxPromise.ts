@@ -85,16 +85,29 @@ export function takeScreenshot(windowId : number): Promise<string> {
 
 
 export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: number}> {
-    return navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: true
+    console.log("firefox captureStreamOnWindow")
+
+    return new Promise((resolve, reject) => {
+        // @ts-ignore
+        navigator.mediaDevices.getDisplayMedia({
+            video: {
+                cursor: "always"
+            },
+            audio: false
+        })
+        .then((stream: MediaStream)=> {
+            console.log("stream", stream)
+            resolve({
+                stream,
+                id: parseInt(stream.id, 10)
+            })
+        })
+        .catch((error: Error) => {
+            console.error(error)
+            reject(error)
+        })
     })
-    .then((stream)=> {
-        return {
-            stream,
-            id: parseInt(stream.id, 10)
-        }
-    })
+    
     
 }
 

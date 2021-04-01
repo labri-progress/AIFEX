@@ -2,7 +2,6 @@ document.getElementById("submitComment").addEventListener("click", submitComment
 document.getElementById("clearComment").addEventListener("click", clearComment);
 
 function displayCommentList(commentDistributionList, commentUpList) {
-    console.log(commentUpList)
     const root = document.getElementById("commentList");
     while (root.hasChildNodes()) {
         root.firstChild.remove();
@@ -76,7 +75,6 @@ function submitComment(e) {
             return;
         }
         const screenshot = document.getElementById('commentScreenshot').checked;
-        console.log("Taking screenshot")
         if (screenshot) {
             sendMessage({
                 kind: "takeScreenshot"
