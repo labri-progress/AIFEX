@@ -68,11 +68,22 @@ services:
       dockerfile: ./Dockerfile.prod
     environment:
       -  NODE_ENV=github
-    ports:
-      - 80:80
     volumes:
       - screenshot:/app/public/screenshot
       - video:/app/public/video
+
+
+  reverseproxy:
+    build:
+      context: reverseproxy/
+      dockerfile: ./Dockerfile.dev
+    depends_on:
+      - "model"
+      - "website"
+      - "session"
+      - "dashboard"
+    ports:
+      - 80:80
   
 
   initialization:
