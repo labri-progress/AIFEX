@@ -36,3 +36,28 @@ video {
     border: solid;
     background: white;
 }
+
+.list-icon {
+    list-style-type: none;
+}
+
+[class^="icon"] {
+    width: 16px;
+    height: 16px;
+    background-size: contain;
+    position: relative;
+    margin-right: 10px;
+    fill: #fff;
+}
+
+.icon-chrome {
+    background-image: url(images/icons/chrome.png);
+}
+
+.icon-firefox {
+    background-image: url(images/icons/firefox.png);
+}
+
+.icon-download {
+    background-image: url(images/icons/download.png);
+}

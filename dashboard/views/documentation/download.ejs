@@ -22,23 +22,32 @@
             You can download the plugin from
             <ul>
               <li id="store_sources"> Extension Stores </li>
-                <ul id="store_list">
+                <ul id="store_list" class="list-icon">
+                  <li >
+                    <a href=<%= chromeStoreURL %> target="_blank"><svg class="icon-chrome"></svg> Chrome </a>
+                  </li>
                   <li>
-                    <a href=<%= chromeStoreURL %>> Chrome </a>
+                    <a href=<%= firefoxStoreURL %> target="_blank"><svg class="icon-firefox"></svg> Firefox </a>
                   </li>
                 </ul>
               <li>Direct download :</li>
-              <p>
-                <% if (PLUGIN_INFO) { %>
-                  <a href="static/chromeExtension.zip"> Chrome Extension (version <%= PLUGIN_INFO.version %>)</a>
-                  <br>
-                  <a href="static/firefoxExtension.zip"> Firefox Extension (version <%= PLUGIN_INFO.version %>)</a>
-                <% } else { %>
-                  <a href="static/chromeExtension.zip"> Chrome Extension </a>
-                  <br>
-                  <a href="static/firefoxExtension.zip"> Firefox Extension </a>
-                <% }  %>
-              </p>
+                <ul class="list-icon">
+                  <% if (PLUGIN_INFO) { %>
+                    <li>
+                      <a href="static/chromeExtension.zip"><svg class="icon-download"></svg>Chrome Extension (version <%= PLUGIN_INFO.version %>)</a>
+                    </li>
+                    <li>
+                      <a href="static/firefoxExtension.zip"><svg class="icon-download"></svg>Firefox Extension (version <%= PLUGIN_INFO.version %>)</a>
+                    </li>
+                  <% } else { %>
+                    <li>
+                      <a href="static/chromeExtension.zip"> <svg class="icon-download"></svg>Chrome Extension </a>
+                    </li>
+                    <li>
+                      <a href="static/firefoxExtension.zip"> <svg class="icon-download"></svg>Firefox Extension </a>
+                    </li>
+                  <% }  %>
+                </ul>
             </ul>
         </div>
     </div>

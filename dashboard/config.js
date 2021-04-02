@@ -1,6 +1,8 @@
 
 const config = {
     chromeStoreURL: "https://chrome.google.com/webstore/detail/aifex-ai-for-exploratory/dmpbhianmdipngcgmkoijmaphnkhchaj",
+    firefoxStoreURL: "https://addons.mozilla.org/fr/firefox/addon/aifex/",
+
 }
 
 const development = {
