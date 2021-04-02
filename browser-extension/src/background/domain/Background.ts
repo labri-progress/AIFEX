@@ -448,7 +448,12 @@ export default class Background {
     }
 
     stopExploration(): Promise<void> {
-        return this.stopRecordingExploration().then(()=>{});
+        return this.stopRecordingExploration()            
+        .then(() => {
+            console.log("calling refresh");
+            return this.refreshPopup();
+        })
+
     }
 
     restartExploration(): Promise<void> {
