@@ -35,9 +35,8 @@ Vous pouvez installer l'extension directement depuis le [Chrome Store](https://c
 
 1. Ouvrez l'extension Chrome de AIFEX.
 2. Entrez l'URL de connexion : https://researchexperimentation.fr/join?sessionId=hg-YaJaD5&modelId=pCsI5xRas
-3. Connectez-vous à la session. Cette action ouvrira une nouvelle fenêtre Chrome sur le site de CDiscount, pour les prochaines étapes, il faudra rester dans cette fenêtre. Ne détachez pas non plus l'onglet CDiscount de cette page.
-4. Si vous le souhaitez, cliquez sur le bouton en haut a droite de la popup pour l'ouvrir dans une fenetre séparée.
-5. Entrez votre nom de testeur qui vous a été donné. **Dans la vidéo je mets mon prénom, ne faites pas la même chose**
+3. Connectez-vous à la session. Cette action ouvrira une nouvelle fenêtre Chrome sur le site de CDiscount, pour les prochaines étapes, il faudra rester dans cette fenêtre. Ne détachez pas non plus l'onglet CDiscount de cette page, ou vous serez deconnecté de la session.
+4. Entrez votre nom de contributeur qui vous a été donné. **Dans la vidéo je mets mon prénom, ne faites pas la même chose**
 
 Vidéo d’illustration des étapes précédentes
 
