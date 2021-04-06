@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partials/head %>
+    </head>
+    <body>
+        <% include ../partials/nav %>
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="display-4">AIFEX </h1>
+                <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
+                <hr class="my-4"></hr>
+                <% if (session.name) { %>
+                    <h3>
+                        All Explorations of <%= session.name%> (<a href="/dashboard/session/view/<%=connectionCode %>">Back to Session Dashboard</a>)
+                    </h3>
+                <% } else { %>
+                    <h3>All Explorations of unamed session (<a href="/dashboard/session/view/<%=connectionCode %>">Back to Session Dashboard</a>)</h3>
+                <% } %>
+    
+    
+                <div>
+                    Target WebSite : <span><a href="<%= session.baseURL%>"> <%= session.webSite.name%></span></a>
+                </div>
+                <div>
+                    Overlay : <span><%= session.overlayType%></span>
+                </div>
+                <div>
+                    URL : <input type="text" id="serverURL" value="<%=serverURL %>" readonly></input><button id="copy" class="btn btn-primary">copy</button>
+                </div>
+    
+                <br></br>
+            
+                <table id="session-details" class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" align="center">#</th>
+                            <th scope="col" align="center">Date</th>
+                            <th scope="col" align="center">Tester</th>
+                            <th scope="col" align="center">Exploration</th>
+                            <th scope="col" align="center">Video</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% session.explorationList.sort((a, b)=> new Date(a.startDate) - new
+                            Date(b.startDate)).forEach((exploration, explIndex) => { %>
+                            <tr>
+                                <td>
+                                    <%= explIndex %>
+                                </td>
+                                <td>
+                                    <% var explorationStartDate=new Date(exploration.startDate) ;
+                                        console.log(exploration.interactionList[0]); var
+                                        interactionListStartDate; if (exploration.interactionList[0]) {
+                                        interactionListStartDate=new
+                                        Date(exploration.interactionList[0].date) ; } else {
+                                        interactionListStartDate=new Date(); } var startDate ; if
+                                        (explorationStartDate.getTime()
+                                        <=interactionListStartDate.getTime()) {
+                                        startDate=explorationStartDate; } else {
+                                        startDate=interactionListStartDate; } %>
+                                        <%= startDate.toUTCString() %>
+                                </td>
+                                <td scope="row">
+                                    <%= exploration.testerName %>
+                                </td>
+                                <td>
+                                    <% exploration.interactionList.forEach((interaction, intIndex)=> { %>
+                                        <p>
+                                            <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber
+                                                == explIndex && sc.interactionIndex == intIndex)) { %>
+                                                <a
+                                                    href="/static/screenshot/<%=session.id%>_<%=explIndex%>_<%=intIndex%>.jpg">
+                                                    <% } %>
+
+                                                        <span class="<%= interaction.concreteType%>">
+                                                            <span class="actionIndex"> [ <%= intIndex %> ] -
+                                                            </span>
+                                                            <span class="kind">
+                                                                <%= interaction.kind %>
+                                                            </span>
+                                                            <% if (interaction.value !==undefined) { %>
+                                                                <span class="value">
+                                                                    <%= interaction.value %>
+                                                                </span>
+                                                                <%}%>
+                                                                    <span class="date">(time : <%= (new
+                                                                            Date(interaction.date)).getTime()
+                                                                            - startDate.getTime() %>
+                                                                            ms)</span>
+                                                        </span>
+                                                        <% if (screenshot.screenshotList.find(sc=>
+                                                            sc.explorationNumber == explIndex &&
+                                                            sc.interactionIndex == intIndex)) { %>
+                                                </a>
+                                                <% } %>
+                                        </p>
+                                        <%})%>
+                                </td>
+                                <td>
+                                    <% if (video.videoList.find(vi=> vi.explorationNumber == explIndex)) {
+                                        %>
+                                        <a href="/static/video/<%=session.id%>_<%=explIndex%>.webm"><i
+                                                class="fas fa-video" style="color:red"></i></a>
+                                        <% } else { %>
+                                            <i class="fas fa-video-slash"></i>
+                                            <% } %>
+                                </td>
+                            </tr>
+                            <%})%>
+                    </tbody>
+                </table>
+            </div>                    
+        </div>
+    </body>
+</html>

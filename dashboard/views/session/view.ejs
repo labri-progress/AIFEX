@@ -7,179 +7,174 @@
 
 <body>
     <% include ../partials/nav %>
-        <div class="container">
-            <div class="jumbotron">
-                <h1 class="display-4">AIFEX </h1>
-                <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
-                <hr class="my-4">
-                </hr>
-                <% if (session.name) { %>
-                    <h3>
-                        <%= session.name%>
-                    </h3>
-                    <% } else { %>
-                        <h3>Session </h3>
-                        <% } %>
+
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">AIFEX </h1>
+            <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
+            <hr class="my-4"></hr>
+            <% if (session.name) { %>
+                <h3>
+                    Dashboard for session : <%= session.name%>
+                </h3>
+            <% } else { %>
+                <h3>Dashboard for session : unamed</h3>
+            <% } %>
 
 
-                            <div>
-                                Target WebSite : <span><a href="<%= session.baseURL%>">
-                                        <%= session.webSite.name%></span></a>
-                            </div>
-                            <div>
-                                Overlay : <span>
-                                    <%= session.overlayType%>
-                                </span>
-                            </div>
-                            <div>
-                                URL : <input type="text" id="serverURL" value="<%=serverURL %>" readonly></input><button id="copy" class="btn btn-primary">copy</button>
-                            </div>
-                            <!--<p>If you want to join the session and perform several exporations.</p>
-                <ul>
-                    <li>Install the extension <a href="/documentation-extension" target="_blank"><i class="fas fa-question-circle"></i></a></li>
-                    <li>Open the extension and enter this URL <input type="text" id="sessionId" value="<%=serverURL %>" readonly> </input><button id="copy" class="btn btn-primary">copy</button></li>
-                    <li>Invite your collaborators to join the session, just give them the URL of this page.</li>
-                </ul>-->
+            <div>
+                Target WebSite : <span><a href="<%= session.baseURL%>"> <%= session.webSite.name%></span></a>
+            </div>
+            <div>
+                Testers : <span><%= session.participants.length %></a>
+            </div>
+            <div>
+                Overlay : <span><%= session.overlayType%></span>
+            </div>
+            <div>
+                Automated Script : <a href="/dashboard/session/<%=connectionCode %>/print"><i class="fas fa-file"></i></a>
+            </div>
+            <div>
+                URL : <input type="text" id="serverURL" value="<%=serverURL %>" readonly></input><button id="copy" class="btn btn-primary">copy</button>
+            </div>
 
-                            <h3>Summary</h3>
+            <br></br>
 
-                            <table id="session-list" class="table table-striped table-bordered">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col" align="center">Name</th>
-                                        <th scope="col" align="center">Target WebSite</th>
-                                        <th scope="col" align="center">Number of Explorations</th>
-                                        <th scope="col" align="center">Number of Participants</th>
-                                        <th scope="col" align="center">Overlay</th>
-                                        <th scope="col" align="center">Test Scenario</th>
-                                        <th scope="col" align="center">AI Model</th>
-                                        <th scope="col" align="center">Create Test Files</th>
-                                    </tr>
-                                </thead>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="/static/images/icons/noun_exploration_2617799.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= session.explorationList.length %> Explorations</h5>
+                            <a href="/dashboard/session/<%=connectionCode %>/explorations" class="btn btn-primary">See all explorations</a>
+                        </div>
+                    </div>
+                </div>
 
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <%=session.name%>
-                                        </td>
-                                        <td>
-                                            <%=session.webSite.name%>
-                                        </td>
-                                        <td>
-                                            <%= session.explorationList.length %>
-                                        </td>
-                                        <td>
-                                            <%= session.participants.length %>
-                                        </td>
-                                        <td>
-                                            <%= session.overlayType %>
-                                        </td>
-                                        <td>
-                                            <%= session.useTestScenario %>
-                                        </td>
-                                        <td><a href="/dashboard/session/<%=connectionCode %>/ngram"><i
-                                                    class="fas fa-brain"></i></a></td>
-                                        <td><a href="/dashboard/session/<%=connectionCode %>/print"><i
-                                                    class="fas fa-file"></i></a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                <div class="col-sm-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="/static/images/icons/noun_comment_1117425.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= session.explorationList.map(explo => explo.interactionList.filter(interaction => interaction.concreteType === "Comment")).reduce((acc, curr) => acc+curr.length, 0) %> Comments</h5>
+                            <a href="/dashboard/session/<%=connectionCode %>/comments" class="btn btn-primary">See all comments</a>
+                        </div>
+                    </div>
+                </div>
 
-                            <h3>Details</h3>
-                            <table id="session-details" class="table table-striped table-bordered">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col" align="center">#</th>
-                                        <th scope="col" align="center">Date</th>
-                                        <th scope="col" align="center">Tester</th>
-                                        <th scope="col" align="center">Exploration</th>
-                                        <th scope="col" align="center">Video</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% session.explorationList.sort((a, b)=> new Date(b.stopDate) - new
-                                        Date(a.stopDate)).forEach((exploration, explIndex) => { %>
-                                        <tr>
-                                            <td>
-                                                <%= explIndex %>
-                                            </td>
-                                            <td>
-                                                <% var explorationStartDate=new Date(exploration.startDate) ;
-                                                    console.log(exploration.interactionList[0]); var
-                                                    interactionListStartDate; if (exploration.interactionList[0]) {
-                                                    interactionListStartDate=new
-                                                    Date(exploration.interactionList[0].date) ; } else {
-                                                    interactionListStartDate=new Date(); } var startDate ; if
-                                                    (explorationStartDate.getTime()
-                                                    <=interactionListStartDate.getTime()) {
-                                                    startDate=explorationStartDate; } else {
-                                                    startDate=interactionListStartDate; } %>
-                                                    <%= startDate.toUTCString() %>
-                                            </td>
-                                            <td scope="row">
-                                                <%= exploration.testerName %>
-                                            </td>
-                                            <td>
-                                                <% exploration.interactionList.forEach((interaction, intIndex)=> { %>
-                                                    <p>
-                                                        <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber
-                                                            == explIndex && sc.interactionIndex == intIndex)) { %>
-                                                            <a
-                                                                href="/static/screenshot/<%=session.id%>_<%=explIndex%>_<%=intIndex%>.jpg">
-                                                                <% } %>
-
-                                                                    <span class="<%= interaction.concreteType%>">
-                                                                        <span class="actionIndex"> [ <%= intIndex %> ] -
-                                                                        </span>
-                                                                        <span class="kind">
-                                                                            <%= interaction.kind %>
-                                                                        </span>
-                                                                        <% if (interaction.value !==undefined) { %>
-                                                                            <span class="value">
-                                                                                <%= interaction.value %>
-                                                                            </span>
-                                                                            <%}%>
-                                                                                <span class="date">(time : <%= (new
-                                                                                        Date(interaction.date)).getTime()
-                                                                                        - startDate.getTime() %>
-                                                                                        ms)</span>
-                                                                    </span>
-                                                                    <% if (screenshot.screenshotList.find(sc=>
-                                                                        sc.explorationNumber == explIndex &&
-                                                                        sc.interactionIndex == intIndex)) { %>
-                                                            </a>
-                                                            <% } %>
-                                                    </p>
-                                                    <%})%>
-                                            </td>
-                                            <td>
-                                                <% if (video.videoList.find(vi=> vi.explorationNumber == explIndex)) {
-                                                    %>
-                                                    <a href="/static/video/<%=session.id%>_<%=explIndex%>.webm"><i
-                                                            class="fas fa-video" style="color:red"></i></a>
-                                                    <% } else { %>
-                                                        <i class="fas fa-video-slash"></i>
-                                                        <% } %>
-                                            </td>
-                                        </tr>
-                                        <%})%>
-                                </tbody>
-                            </table>
+                <div class="col-sm-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="/static/images/icons/noun_customer_3761687.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Several Usage Patterns</h5>
+                            <a href="/dashboard/session/<%=connectionCode %>/ngrams" class="btn btn-primary">See all usage patterns</a>
+                        </div>
+                    </div>
+                </div>
 
             </div>
-        </div>
-        </div>
 
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+            
 
-        <script defer>
-            function copy() {
-                var copyText = document.getElementById("serverURL");
-                copyText.select();
-                document.execCommand("copy");
-            }
-            document.getElementById("copy").addEventListener("click", copy);
-        </script>
+            
+
+                        
+            <br></br>
+            <% const NUMBER_OF_EXPLORATION_TO_SHOW = 5;%>
+            <h3>Last <%= NUMBER_OF_EXPLORATION_TO_SHOW%> performed explorations</h3>
+            <table id="session-details" class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" align="center">#</th>
+                        <th scope="col" align="center">Date</th>
+                        <th scope="col" align="center">Tester</th>
+                        <th scope="col" align="center">Exploration</th>
+                        <th scope="col" align="center">Video</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% const explorations = session.explorationList.sort((a, b)=> new Date(b.startDate) - new Date(a.startDate));%>
+                    <% for (let explIndex = 0 ; explIndex < Math.min(NUMBER_OF_EXPLORATION_TO_SHOW,explorations.length) ; explIndex++) { %>
+                    <%  let exploration = explorations[explIndex]; %>
+                        <tr>
+                            <td>
+                                <%= explIndex %>
+                            </td>
+                            <td>
+                                <% var explorationStartDate=new Date(exploration.startDate) ;
+                                    console.log(exploration.interactionList[0]); var
+                                    interactionListStartDate; if (exploration.interactionList[0]) {
+                                    interactionListStartDate=new
+                                    Date(exploration.interactionList[0].date) ; } else {
+                                    interactionListStartDate=new Date(); } var startDate ; if
+                                    (explorationStartDate.getTime()
+                                    <=interactionListStartDate.getTime()) {
+                                    startDate=explorationStartDate; } else {
+                                    startDate=interactionListStartDate; } %>
+                                    <%= startDate.toUTCString() %>
+                            </td>
+                            <td scope="row">
+                                <%= exploration.testerName %>
+                            </td>
+                            <td>
+                                <% exploration.interactionList.forEach((interaction, intIndex)=> { %>
+                                    <p>
+                                        <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber
+                                            == explIndex && sc.interactionIndex == intIndex)) { %>
+                                            <a
+                                                href="/static/screenshot/<%=session.id%>_<%=explIndex%>_<%=intIndex%>.jpg">
+                                                <% } %>
+
+                                                    <span class="<%= interaction.concreteType%>">
+                                                        <span class="actionIndex"> [ <%= intIndex %> ] -
+                                                        </span>
+                                                        <span class="kind">
+                                                            <%= interaction.kind %>
+                                                        </span>
+                                                        <% if (interaction.value !==undefined) { %>
+                                                            <span class="value">
+                                                                <%= interaction.value %>
+                                                            </span>
+                                                            <%}%>
+                                                                <span class="date">(time : <%= (new
+                                                                        Date(interaction.date)).getTime()
+                                                                        - startDate.getTime() %>
+                                                                        ms)</span>
+                                                    </span>
+                                                    <% if (screenshot.screenshotList.find(sc=>
+                                                        sc.explorationNumber == explIndex &&
+                                                        sc.interactionIndex == intIndex)) { %>
+                                            </a>
+                                            <% } %>
+                                    </p>
+                                    <%})%>
+                            </td>
+                            <td>
+                                <% if (video.videoList.find(vi=> vi.explorationNumber == explIndex)) {
+                                    %>
+                                    <a href="/static/video/<%=session.id%>_<%=explIndex%>.webm"><i
+                                            class="fas fa-video" style="color:red"></i></a>
+                                    <% } else { %>
+                                        <i class="fas fa-video-slash"></i>
+                                        <% } %>
+                            </td>
+                        </tr>
+                        <%}%>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script defer>
+        function copy() {
+            var copyText = document.getElementById("serverURL");
+            copyText.select();
+            document.execCommand("copy");
+        }
+        document.getElementById("copy").addEventListener("click", copy);
+    </script>
 
 </body>
 

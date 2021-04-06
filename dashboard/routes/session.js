@@ -147,9 +147,7 @@ module.exports = function attachRoutes(app, config) {
                 }
             })
             .then(([session, model,screenshot, video]) => {
-                const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
-                
-                
+                const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))                
                 session.participants = participants;
                 if (session.useTestScenario === undefined) {
                     session.useTestScenario = false;
@@ -159,7 +157,7 @@ module.exports = function attachRoutes(app, config) {
                     serverURL: buildInvitation(model.id, session.id),
                     session,
                     model,
-                    connectionCode, 
+                    connectionCode,
                     screenshot,
                     video
                     });
@@ -172,7 +170,7 @@ module.exports = function attachRoutes(app, config) {
     });
 
 
-    app.get('/dashboard/session/:connectionCode/exploration/', (req, res) => {
+    app.get('/dashboard/session/:connectionCode/explorations/', (req, res) => {
         const { connectionCode } = req.params;
         const [sessionId, modelId] = connectionCode.split('$');
         logger.info(`GET connect to session (id = ${sessionId})`);
@@ -193,7 +191,18 @@ module.exports = function attachRoutes(app, config) {
                 }
             })
             .then(([session, screenshot, video]) => {
-                res.render('session/exploration.ejs',{account:req.session, session, screenshot, video});
+                const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))                
+                session.participants = participants;
+                if (session.useTestScenario === undefined) {
+                    session.useTestScenario = false;
+                }
+                res.render('session/explorations.ejs',{
+                    account:req.session, 
+                    serverURL: buildInvitation(modelId, sessionId),
+                    session, 
+                    connectionCode,
+                    screenshot, 
+                    video});
             })
             .catch(e => {
                 let message = 'Cannot fetch the explorations';
@@ -227,7 +236,7 @@ module.exports = function attachRoutes(app, config) {
     });
 
 
-    app.get('/dashboard/session/:connectionCode/ngram/', (req, res) => {
+    app.get('/dashboard/session/:connectionCode/ngrams/', (req, res) => {
         const { connectionCode } = req.params
         const [sessionId, modelId] = connectionCode.split('$');
         logger.info(`GET session ngram model (id = ${modelId})`);
@@ -240,18 +249,7 @@ module.exports = function attachRoutes(app, config) {
             }
         })
         .then(ngrams => {
-            let ngramsData = {}
-            ngrams.forEach(ngram => {
-                if (!ngramsData[ngram.n]) {
-                    ngramsData[ngram.n] = [ngram]
-                } else {
-                    ngramsData[ngram.n].push(ngram)
-                }
-            });
-            for (const ngramArray of Object.values(ngramsData)) {
-                ngramArray.sort((a, b) => b.occurence - a.occurence)
-            }
-            res.render('session/ngram.ejs', {ngramsData, modelId, account:req.session});
+            res.render('session/ngrams.ejs', {ngrams, modelId, account:req.session,connectionCode});
         })
         .catch(e => {
             logger.error(e);

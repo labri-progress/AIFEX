@@ -54,7 +54,6 @@
                 <th scope="col" align="center">WebSite</th>
                 <th scope="col" align="center">Overlay</th>
                 <th scope="col" align="center">Scenario</th>
-                <th scope="col" align="center">View</th>
                 <th scope="col" align="center">Download</th>
                 <th scope="col" align="center">Remove</th>
             </tr>
@@ -63,12 +62,15 @@
           <tbody>
             <% connectionCodeList.forEach((connectionCode,i) => { %>
               <tr>
-                <td><%= sessionList[i].name %></td>
+                <% if (sessionList[i].name) { %>
+                  <td><a href="/dashboard/session/view/<%=connectionCode %>"><%= sessionList[i].name %></a></td>
+                <% } else { %>
+                  <td><a href="/dashboard/session/view/<%=connectionCode %>">Unamed</a></td>
+                <% } %>
                 <td><%= serveurURLList[i] %></td>
                 <td><%= sessionList[i].webSite.name %></td>
                 <td><%= sessionList[i].overlayType %></td>
                 <td><%= sessionList[i].useTestScenario %></td>
-                <td><a href="/dashboard/session/view/<%=connectionCode %>"><i class="fas fa-chart-bar"></i></a></td>
                 <td class="download-session" sessionId="<%= connectionCode %>"><a href="/" ><i class="fas fa-download"></i></a></td>
                 <td><a href="/dashboard/session/remove/<%=connectionCode %>" onclick="return confirm('Are you sure you want to remove this Session?');"><i class="fas fa-trash-alt"></i></a></td>
               </tr>
