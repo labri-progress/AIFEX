@@ -13,7 +13,10 @@
                 <h1 class="display-4">AIFEX </h1>
                 <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
                 <hr class="my-4"></hr>
-                <h3 class="alert-heading">Ngram Analysis</h3>
+                <h3>
+                    All Ngrams for Session (<a href="/dashboard/session/view/<%=connectionCode %>">Back to Session Dashboard</a>)
+                </h3>
+               
                 <% if (ngrams.length === 0) { %>
                     <h4 class="alert-heading">No ngram</h4>
                     <div class="alert alert-success" role="alert">
