@@ -15,10 +15,10 @@
             <hr class="my-4"></hr>
             <% if (session.name) { %>
                 <h3>
-                    Dashboard for session : <%= session.name%>
+                    Dashboard for session : <%= session.name%> <a href="/account/account">(Go back to your dashboard)</a>
                 </h3>
             <% } else { %>
-                <h3>Dashboard for session : unamed</h3>
+                <h3>Dashboard for session : unamed <a href="/account/account">(Go back to your dashboard)</a></h3>
             <% } %>
 
 

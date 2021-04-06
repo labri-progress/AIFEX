@@ -2,6 +2,13 @@
 <html lang="en">
   <head>
       <% include ../partials/head %>
+      <script>
+        function copy(target) {
+          var copyText = target.parentNode.querySelector('input');
+          copyText.select();
+          document.execCommand("copy");
+        }
+      </script>
   </head>
   <body>
     <% include ../partials/nav %>
@@ -67,7 +74,7 @@
                 <% } else { %>
                   <td><a href="/dashboard/session/view/<%=connectionCode %>">Unamed</a></td>
                 <% } %>
-                <td><%= serveurURLList[i] %></td>
+                <td><input type="text" value="<%= serveurURLList[i] %>" readonly> </input><i onclick="copy(this)" class="fas fa-copy"></i></td>
                 <td><%= sessionList[i].webSite.name %></td>
                 <td><%= sessionList[i].overlayType %></td>
                 <td><%= sessionList[i].useTestScenario %></td>
@@ -127,5 +134,7 @@
         })
       }
     </script>
+
+    
   </body> 
 </html>
