@@ -508,7 +508,7 @@ export default class Background {
                 } else {
                     mediaPromise = Promise.resolve();
                 }
-                return Promise.all([screenShotPromise, mediaPromise]);
+                Promise.all([screenShotPromise, mediaPromise]);
             })
             .then( () => {
                 return this.updateNumberOfExplorationByTester()
