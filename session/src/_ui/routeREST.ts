@@ -258,7 +258,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
 
     app.post("/session/addvideo/:sessionId/:explorationNumber", multer().single("video"), (req, res) => {
         const {sessionId, explorationNumber} = req.params;
-        logger.info(`sessionId/explorationNumber sessionId ${sessionId}, explorationNumber ${explorationNumber}`);
+        logger.info(`addvideo sessionId ${sessionId}, explorationNumber ${explorationNumber}`);
         if (sessionId === undefined ) {
             logger.warn(`sessionId must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("sessionId must not be undefined");
