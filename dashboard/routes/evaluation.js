@@ -59,7 +59,6 @@ module.exports = function attachRoutes(app, config) {
             .then((evaluator) => {
                 logger.debug(`return evaluator ${evaluator}`);
                 if (evaluator) {
-                    console.log(evaluator)
                     renderOptions.evaluatorExpression = evaluator.expression
                     renderOptions.description = evaluator.description;
                     renderOptions.isUpdate = true;

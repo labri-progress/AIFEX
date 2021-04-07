@@ -35,9 +35,9 @@
                 Automated Script : <a href="/dashboard/session/<%=connectionCode %>/print"><i class="fas fa-file"></i></a>
             </div>
             <div>
-                URL : <input type="text" id="serverURL" value="<%=serverURL %>" readonly></input><button id="copy" class="btn btn-primary">copy</button>
+                 URL : <input type="text" id="serverURL" class="inputSessionURL" value="<%=serverURL %>" readonly> </input><i id="copy" title="Copy in clipboard" data-toggle="tooltip" data-placement="right" onclick="copy(this)" class="fas fa-copy copy-icon"></i>
             </div>
-
+            
             <br></br>
 
             <div class="row">

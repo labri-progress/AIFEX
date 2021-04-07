@@ -12,22 +12,11 @@
                 <hr class="my-4"></hr>
                 <% if (session.name) { %>
                     <h3>
-                        All Explorations of <%= session.name%> (<a href="/dashboard/session/view/<%=connectionCode %>">Back to Session Dashboard</a>)
+                        Explorations of <%= session.name%> (<a href="/dashboard/session/view/<%=connectionCode %>">Back to Session Dashboard</a>)
                     </h3>
                 <% } else { %>
-                    <h3>All Explorations of unamed session (<a href="/dashboard/session/view/<%=connectionCode %>">Back to Session Dashboard</a>)</h3>
+                    <h3>Explorations of unamed session (<a href="/dashboard/session/view/<%=connectionCode %>">Back to Session Dashboard</a>)</h3>
                 <% } %>
-    
-    
-                <div>
-                    Target WebSite : <span><a href="<%= session.baseURL%>"> <%= session.webSite.name%></span></a>
-                </div>
-                <div>
-                    Overlay : <span><%= session.overlayType%></span>
-                </div>
-                <div>
-                    URL : <input type="text" id="serverURL" value="<%=serverURL %>" readonly></input><button id="copy" class="btn btn-primary">copy</button>
-                </div>
     
                 <br></br>
             
@@ -42,16 +31,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% session.explorationList.sort((a, b)=> new Date(a.startDate) - new
-                            Date(b.startDate)).forEach((exploration, explIndex) => { %>
+                        <% session.explorationList.sort((a, b)=> new Date(b.startDate) - new Date(a.startDate)).forEach((exploration, explIndex) => { %>
                             <tr>
                                 <td>
                                     <%= explIndex %>
                                 </td>
                                 <td>
                                     <% var explorationStartDate=new Date(exploration.startDate) ;
-                                        console.log(exploration.interactionList[0]); var
-                                        interactionListStartDate; if (exploration.interactionList[0]) {
+                                        var interactionListStartDate; if (exploration.interactionList[0]) {
                                         interactionListStartDate=new
                                         Date(exploration.interactionList[0].date) ; } else {
                                         interactionListStartDate=new Date(); } var startDate ; if
@@ -113,13 +100,4 @@
             </div>                    
         </div>
     </body>
-
-    <script defer>
-        function copy() {
-            var copyText = document.getElementById("serverURL");
-            copyText.select();
-            document.execCommand("copy");
-        }
-        document.getElementById("copy").addEventListener("click", copy);
-    </script>
 </html>

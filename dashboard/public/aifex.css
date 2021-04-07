@@ -61,3 +61,7 @@ video {
 .icon-download {
     background-image: url(images/icons/download.png);
 }
+
+.inputSessionURL {
+    width: 100px;
+}

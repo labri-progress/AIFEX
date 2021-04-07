@@ -58,6 +58,7 @@
             <tr>
                 <th scope="col" align="center">Name</th>
                 <th scope="col" align="center">Connection URL</th>
+                <th scope="col" align="center"># Exploration</th>
                 <th scope="col" align="center">WebSite</th>
                 <th scope="col" align="center">Overlay</th>
                 <th scope="col" align="center">Scenario</th>
@@ -74,10 +75,11 @@
                 <% } else { %>
                   <td><a href="/dashboard/session/view/<%=connectionCode %>">Unamed</a></td>
                 <% } %>
-                <td><input type="text" value="<%= serveurURLList[i] %>" readonly> </input><i onclick="copy(this)" class="fas fa-copy"></i></td>
+                <td><input class="inputSessionURL" type="text" value="<%= serveurURLList[i] %>" readonly> </input><i title="Copy in clipboard" data-toggle="tooltip" data-placement="right" onclick="copy(this)" class="fas fa-copy copy-icon"></i></td>
+                <td><%= sessionList[i].explorationList.length %></td>
                 <td><%= sessionList[i].webSite.name %></td>
                 <td><%= sessionList[i].overlayType %></td>
-                <td><%= sessionList[i].useTestScenario %></td>
+                <td><%= sessionList[i].useTestScenario?'Yes':'No' %></td>
                 <td class="download-session" sessionId="<%= connectionCode %>"><a href="/" ><i class="fas fa-download"></i></a></td>
                 <td><a href="/dashboard/session/remove/<%=connectionCode %>" ><i class="fas fa-trash-alt"></i></a></td>
               </tr>
@@ -95,6 +97,9 @@
 
     <script>
       window.onload = function() {
+
+        $('[data-toggle="tooltip"]').tooltip({})
+
         //console.log('on load');
         let ruleList = document.querySelectorAll('.mapping-rule');
         ruleList.forEach( rule => {

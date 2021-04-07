@@ -127,7 +127,6 @@ module.exports = function attachRoutes(app, config) {
                     const [sessionId, modelId] = connectionCode.split('$');
                     return buildInvitation(modelId, sessionId);
                 })
-
                 res.render('account/account.ejs', {account:req.session, serveurURLList, connectionCodeList, webSiteList, sessionList});
             })
             .catch(e => {

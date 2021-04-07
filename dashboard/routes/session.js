@@ -178,6 +178,7 @@ module.exports = function attachRoutes(app, config) {
         const screenshotURL = 'http://' + config.session.host + ':' + config.session.port + '/session/'+sessionId + '/screenshotlist';
         const videoURL = 'http://' + config.session.host + ':' + config.session.port + '/session/'+sessionId + '/videolist';
         // console.log(screenshotURL);
+        
         const sessionPromise = fetch(sessionURL);
         const screenshotPromise = fetch(screenshotURL);
         const videoPromise = fetch(videoURL);
