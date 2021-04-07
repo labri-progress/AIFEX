@@ -27,6 +27,8 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "package.json": "^2.0.1"
+    "jsonwebtoken": "^8.5.1",
+    "package.json": "^2.0.1",
+    "readable-stream": "^2.3.7"
   }
 }

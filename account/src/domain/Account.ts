@@ -42,8 +42,10 @@ export default class Account  {
             const sameKind = (authorization.kind === existingAuthorization.kind);
             return sameKey && sameKind;
         });
+
         if (index !== -1) {
             this._authorizationSet.splice(index, 1);
+            console.log(this._authorizationSet)
         }
     }
 

@@ -382,15 +382,16 @@ module.exports = function attachRoutes(app, config) {
     app.get('/dashboard/session/remove/:connectionCode', (req, res) => {
         const {connectionCode} = req.params;
         logger.info(`remove session (${connectionCode})`);
+        console.log("removing", connectionCode)
         removeSession(req.session.jwt , connectionCode)
-        .then(token => {
-            req.session.jwt = token.jwt;
-            res.redirect('/account/account');
-        }).catch(e => {
-            logger.error(e);
-            let message = 'Failed to remove connectionCode';
-            res.render('error.ejs', {message, account:req.session, error:e});
-        })
+            .then(token => {
+                req.session.jwt = token.jwt;
+                res.redirect('/account/account');
+            }).catch(e => {
+                logger.error(e);
+                let message = 'Failed to remove connectionCode';
+                res.render('error.ejs', {message, account:req.session, error:e});
+            })
     });
 
     

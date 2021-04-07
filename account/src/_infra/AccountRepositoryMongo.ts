@@ -23,14 +23,14 @@ export default class AccountRepositoryMongo implements AccountRepository {
 
     public updateAccount(account: Account): Promise<string> {
         const username = account.username;
-
+        console.log(account.authorizationSet);
         const authorizationSet = account.authorizationSet.map( (authorization) => {
             return {
                 kind: authorization.kind,
                 key: authorization.key,
             };
         });
-        return AccountSchema.updateOne({username},{ $addToSet: { authorizationSet: { $each : authorizationSet }}})
+        return AccountSchema.updateOne({username}, { $set: { authorizationSet }})
         .exec()
         .then( () => {
             return account.username;
