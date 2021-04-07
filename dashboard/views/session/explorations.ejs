@@ -113,4 +113,13 @@
             </div>                    
         </div>
     </body>
+
+    <script defer>
+        function copy() {
+            var copyText = document.getElementById("serverURL");
+            copyText.select();
+            document.execCommand("copy");
+        }
+        document.getElementById("copy").addEventListener("click", copy);
+    </script>
 </html>
