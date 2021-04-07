@@ -73,11 +73,6 @@
 
             </div>
 
-            
-
-            
-
-                        
             <br></br>
             <% const NUMBER_OF_EXPLORATION_TO_SHOW = 5;%>
             <h3>Last <%= NUMBER_OF_EXPLORATION_TO_SHOW%> performed explorations</h3>
@@ -94,23 +89,28 @@
                 <tbody>
                     <% const explorations = session.explorationList.sort((a, b)=> new Date(b.startDate) - new Date(a.startDate));%>
                     <% for (let explIndex = 0 ; explIndex < Math.min(NUMBER_OF_EXPLORATION_TO_SHOW,explorations.length) ; explIndex++) { %>
-                    <%  let exploration = explorations[explIndex]; %>
+                        <%  let exploration = explorations[explIndex]; %>
                         <tr>
                             <td>
-                                <%= explIndex %>
+                                <%= exploration.explorationNumber %>
                             </td>
                             <td>
                                 <% var explorationStartDate=new Date(exploration.startDate) ;
-                                    console.log(exploration.interactionList[0]); var
-                                    interactionListStartDate; if (exploration.interactionList[0]) {
-                                    interactionListStartDate=new
-                                    Date(exploration.interactionList[0].date) ; } else {
-                                    interactionListStartDate=new Date(); } var startDate ; if
-                                    (explorationStartDate.getTime()
-                                    <=interactionListStartDate.getTime()) {
-                                    startDate=explorationStartDate; } else {
-                                    startDate=interactionListStartDate; } %>
-                                    <%= startDate.toUTCString() %>
+                                    console.log(exploration.interactionList[0]); 
+                                    var interactionListStartDate; 
+                                    if (exploration.interactionList[0]) {
+                                        interactionListStartDate=new Date(exploration.interactionList[0].date) ;
+                                    } else {
+                                        interactionListStartDate=new Date(); 
+                                    } 
+                                    var startDate ; 
+                                    if (explorationStartDate.getTime() <=interactionListStartDate.getTime()) {
+                                        startDate=explorationStartDate; 
+                                    } else {
+                                        startDate=interactionListStartDate; 
+                                    } 
+                                %>
+                                <%= startDate.toUTCString() %>
                             </td>
                             <td scope="row">
                                 <%= exploration.testerName %>
@@ -118,50 +118,37 @@
                             <td>
                                 <% exploration.interactionList.forEach((interaction, intIndex)=> { %>
                                     <p>
-                                        <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber
-                                            == explIndex && sc.interactionIndex == intIndex)) { %>
-                                            <a
-                                                href="/static/screenshot/<%=session.id%>_<%=explIndex%>_<%=intIndex%>.jpg">
-                                                <% } %>
+                                        <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber == exploration.explorationNumber && sc.interactionIndex == intIndex)) { %>
+                                            <a href="/static/screenshot/<%=session.id%>_<%=exploration.explorationNumber%>_<%=intIndex%>.jpg">
+                                        <% } %>
 
-                                                    <span class="<%= interaction.concreteType%>">
-                                                        <span class="actionIndex"> [ <%= intIndex %> ] -
-                                                        </span>
-                                                        <span class="kind">
-                                                            <%= interaction.kind %>
-                                                        </span>
-                                                        <% if (interaction.value !==undefined) { %>
-                                                            <span class="value">
-                                                                <%= interaction.value %>
-                                                            </span>
-                                                            <%}%>
-                                                                <span class="date">(time : <%= (new
-                                                                        Date(interaction.date)).getTime()
-                                                                        - startDate.getTime() %>
-                                                                        ms)</span>
-                                                    </span>
-                                                    <% if (screenshot.screenshotList.find(sc=>
-                                                        sc.explorationNumber == explIndex &&
-                                                        sc.interactionIndex == intIndex)) { %>
-                                            </a>
-                                            <% } %>
+                                        <span class="<%= interaction.concreteType%>">
+                                            <span class="actionIndex"> [ <%= intIndex %> ] - </span>
+                                            <span class="kind"> <%= interaction.kind %> </span>
+                                                            
+                                            <% if (interaction.value !== undefined) { %>
+                                                <span class="value"> <%= interaction.value %> </span>
+                                            <%}%>
+                                            <span class="date">(time : <%= (new Date(interaction.date)).getTime() - startDate.getTime() %> ms)</span>
+                                        </span>
+
+                                        <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber == exploration.explorationNumber && sc.interactionIndex == intIndex)) { %>
+                                        </a>
+                                        <% } %>
                                     </p>
-                                    <%})%>
+                                <%})%>
                             </td>
                             <td>
-                                <% if (video.videoList.find(vi=> vi.explorationNumber == explIndex)) {
-                                    %>
-                                    <a href="/static/video/<%=session.id%>_<%=explIndex%>.webm"><i
-                                            class="fas fa-video" style="color:red"></i></a>
-                                    <% } else { %>
-                                        <i class="fas fa-video-slash"></i>
-                                        <% } %>
+                                <% if (video.videoList.find(vi=> vi.explorationNumber == exploration.explorationNumber)) { %>
+                                    <a href="/static/video/<%=session.id%>_<%=exploration.explorationNumber%>.webm"><i class="fas fa-video" style="color:red"></i></a>
+                                <% } else { %>
+                                    <i class="fas fa-video-slash"></i>
+                                <% } %>
                             </td>
                         </tr>
-                        <%}%>
+                    <%}%>
                 </tbody>
             </table>
-
         </div>
     </div>
 
