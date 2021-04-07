@@ -79,7 +79,7 @@
                 <td><%= sessionList[i].overlayType %></td>
                 <td><%= sessionList[i].useTestScenario %></td>
                 <td class="download-session" sessionId="<%= connectionCode %>"><a href="/" ><i class="fas fa-download"></i></a></td>
-                <td><a href="/dashboard/session/remove/<%=connectionCode %>" onclick="return confirm('Are you sure you want to remove this Session?');"><i class="fas fa-trash-alt"></i></a></td>
+                <td><a href="/dashboard/session/remove/<%=connectionCode %>" ><i class="fas fa-trash-alt"></i></a></td>
               </tr>
             <%}); %>
           </tbody>
