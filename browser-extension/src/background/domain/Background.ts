@@ -448,12 +448,7 @@ export default class Background {
     }
 
     stopExploration(): Promise<void> {
-        return this.stopRecordingExploration()            
-        .then(() => {
-            console.log("calling refresh");
-            return this.refreshPopup();
-        })
-
+        return this.stopRecordingExploration().then(() => {})    
     }
 
     restartExploration(): Promise<void> {
@@ -480,39 +475,27 @@ export default class Background {
                 this._exploration
             )
             .then((explorationNumber) => {
-                let screenShotPromise;
                 if (this._serverURL && this._sessionId && this._screenshotList.length > 0) {
-                    screenShotPromise = this._aifexService.addScreenshotList(
+                    this._aifexService.addScreenshotList(
                         this._serverURL,
                         this._sessionId,
                         explorationNumber,
                         this._screenshotList
                     );
-                } else {
-                    screenShotPromise = Promise.resolve();
                 }
-
-                let mediaPromise;
                 if (this._serverURL && this. _sessionId && this._mediaRecordManager.isPreparedToRecordMedia) {
                     const video = this._mediaRecordManager.getRecordedChunks();
                     if (video) {
-                        mediaPromise = this._aifexService.addVideo(
+                        this._aifexService.addVideo(
                             this._serverURL,
                             this._sessionId,
                             explorationNumber,
                             video
                         )
-                    } else {
-                        mediaPromise = Promise.resolve();
                     }
-                } else {
-                    mediaPromise = Promise.resolve();
-                }
-                Promise.all([screenShotPromise, mediaPromise]);
-            })
-            .then( () => {
+                } 
                 return this.updateNumberOfExplorationByTester()
-            });
+            })
         } else {
             return Promise.resolve();
         }   
@@ -529,8 +512,7 @@ export default class Background {
     updateNumberOfExplorationByTester(): Promise<void> {
         if (!this._testerName) {
             this._numberOfExplorationsMadeByTester = 0;
-          //  return this.refreshPopup();
-          return Promise.resolve();
+            return Promise.resolve();
         }
         if (this._serverURL && this._sessionId) {
             return this._aifexService.getNumberOfExplorationForTesterName(this._serverURL, this._sessionId, this._testerName)
