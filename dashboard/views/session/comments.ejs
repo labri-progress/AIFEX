@@ -33,7 +33,7 @@
                 </div>
     
                 <br></br>
-            
+
                 <table id="session-details" class="table table-striped table-bordered">
                     <thead class="thead-dark">
                         <tr>
@@ -45,24 +45,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% session.explorationList.filter(exploration => exploration.interactionList.some(interaction => interaction.concreteType === "Comment")).sort((a, b)=> new Date(a.startDate) - new
-                            Date(b.startDate)).forEach((exploration, explIndex) => { %>
+                        <% const explorations = session.explorationList.filter(exploration => exploration.interactionList.some(interaction => interaction.concreteType === "Comment")).sort((a, b)=> new Date(a.startDate) - new Date(b.startDate))%>
+                        <% for (let explIndex = 0 ; explIndex < explorations.length ; explIndex++) { %>
+                            <%  let exploration = explorations[explIndex]; %>
                             <tr>
                                 <td>
-                                    <%= explIndex %>
+                                    <%= exploration.explorationNumber %>
                                 </td>
                                 <td>
                                     <% var explorationStartDate=new Date(exploration.startDate) ;
-                                        console.log(exploration.interactionList[0]); var
-                                        interactionListStartDate; if (exploration.interactionList[0]) {
-                                        interactionListStartDate=new
-                                        Date(exploration.interactionList[0].date) ; } else {
-                                        interactionListStartDate=new Date(); } var startDate ; if
-                                        (explorationStartDate.getTime()
-                                        <=interactionListStartDate.getTime()) {
-                                        startDate=explorationStartDate; } else {
-                                        startDate=interactionListStartDate; } %>
-                                        <%= startDate.toUTCString() %>
+                                        console.log(exploration.interactionList[0]); 
+                                        var interactionListStartDate; 
+                                        if (exploration.interactionList[0]) {
+                                            interactionListStartDate=new Date(exploration.interactionList[0].date) ;
+                                        } else {
+                                            interactionListStartDate=new Date(); 
+                                        } 
+                                        var startDate ; 
+                                        if (explorationStartDate.getTime() <=interactionListStartDate.getTime()) {
+                                            startDate=explorationStartDate; 
+                                        } else {
+                                            startDate=interactionListStartDate; 
+                                        } 
+                                    %>
+                                    <%= startDate.toUTCString() %>
                                 </td>
                                 <td scope="row">
                                     <%= exploration.testerName %>
@@ -70,47 +76,35 @@
                                 <td>
                                     <% exploration.interactionList.forEach((interaction, intIndex)=> { %>
                                         <p>
-                                            <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber
-                                                == explIndex && sc.interactionIndex == intIndex)) { %>
-                                                <a
-                                                    href="/static/screenshot/<%=session.id%>_<%=explIndex%>_<%=intIndex%>.jpg">
-                                                    <% } %>
-
-                                                        <span class="<%= interaction.concreteType%>">
-                                                            <span class="actionIndex"> [ <%= intIndex %> ] -
-                                                            </span>
-                                                            <span class="kind">
-                                                                <%= interaction.kind %>
-                                                            </span>
-                                                            <% if (interaction.value !==undefined) { %>
-                                                                <span class="value">
-                                                                    <%= interaction.value %>
-                                                                </span>
-                                                                <%}%>
-                                                                    <span class="date">(time : <%= (new
-                                                                            Date(interaction.date)).getTime()
-                                                                            - startDate.getTime() %>
-                                                                            ms)</span>
-                                                        </span>
-                                                        <% if (screenshot.screenshotList.find(sc=>
-                                                            sc.explorationNumber == explIndex &&
-                                                            sc.interactionIndex == intIndex)) { %>
-                                                </a>
-                                                <% } %>
+                                            <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber == exploration.explorationNumber && sc.interactionIndex == intIndex)) { %>
+                                                <a href="/static/screenshot/<%=session.id%>_<%=exploration.explorationNumber%>_<%=intIndex%>.jpg">
+                                            <% } %>
+    
+                                            <span class="<%= interaction.concreteType%>">
+                                                <span class="actionIndex"> [ <%= intIndex %> ] - </span>
+                                                <span class="kind"> <%= interaction.kind %> </span>
+                                                                
+                                                <% if (interaction.value !== undefined) { %>
+                                                    <span class="value"> <%= interaction.value %> </span>
+                                                <%}%>
+                                                <span class="date">(time : <%= (new Date(interaction.date)).getTime() - startDate.getTime() %> ms)</span>
+                                            </span>
+    
+                                            <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber == exploration.explorationNumber && sc.interactionIndex == intIndex)) { %>
+                                            </a>
+                                            <% } %>
                                         </p>
-                                        <%})%>
+                                    <%})%>
                                 </td>
                                 <td>
-                                    <% if (video.videoList.find(vi=> vi.explorationNumber == explIndex)) {
-                                        %>
-                                        <a href="/static/video/<%=session.id%>_<%=explIndex%>.webm"><i
-                                                class="fas fa-video" style="color:red"></i></a>
-                                        <% } else { %>
-                                            <i class="fas fa-video-slash"></i>
-                                            <% } %>
+                                    <% if (video.videoList.find(vi=> vi.explorationNumber == exploration.explorationNumber)) { %>
+                                        <a href="/static/video/<%=session.id%>_<%=exploration.explorationNumber%>.webm"><i class="fas fa-video" style="color:red"></i></a>
+                                    <% } else { %>
+                                        <i class="fas fa-video-slash"></i>
+                                    <% } %>
                                 </td>
                             </tr>
-                            <%})%>
+                        <%}%>
                     </tbody>
                 </table>
             </div>                    
@@ -120,5 +114,14 @@
         $(document).ready(function() {
             $('#session-details').DataTable();
         } );
+    </script>
+
+    <script defer>
+        function copy() {
+            var copyText = document.getElementById("serverURL");
+            copyText.select();
+            document.execCommand("copy");
+        }
+        document.getElementById("copy").addEventListener("click", copy);
     </script>
 </html>
