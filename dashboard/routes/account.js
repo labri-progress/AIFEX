@@ -28,7 +28,12 @@ module.exports = function attachRoutes(app, config) {
                 return;
             }
 
-            if (req.originalUrl === '/account/sign') {
+            if (req.originalUrl === '/account/signin') {
+                next();
+                return;
+            }
+
+            if (req.originalUrl === '/account/signup') {
                 next();
                 return;
             }
@@ -73,29 +78,21 @@ module.exports = function attachRoutes(app, config) {
                 return;
             }
 
-            res.redirect('/account/sign');
+            res.redirect('/account/signin');
             return;
         }
     })
 
-    app.get('/account/sign', (req, res) => {
-        logger.info(`GET sign.ejs`);
-        res.render('account/sign.ejs', {account:req.session, kind:undefined});
+    app.get('/account/signin', (req, res) => {
+        logger.info(`GET signin.ejs`);
+        res.render('account/signin.ejs', {account:req.session, kind:undefined});
     });
 
-
-    app.get('/account/signout', (req, res) => {
-        logger.info(`GET signout`);
-        req.session.jwt = undefined;
-        req.session.username = undefined;
-        res.redirect('/');
-    });
-
-    app.post('/account/sign', (req, res) => {
+    app.post('/account/signin', (req, res) => {
         const { username , password} = req.body;
         logger.info(`POST sign for ${username}`);
         //console.log('sign', username, password);
-        sign(username, password)
+        signin(username, password)
             .then(token => {
                 //console.log("token ok:", token);
                 req.session.jwt = token.jwt;
@@ -106,8 +103,36 @@ module.exports = function attachRoutes(app, config) {
             .catch(reason => {
                 logger.error(`error ${reason}`);
                 //console.log('error', reason);
-                res.render('account/sign.ejs', {account:req.session, kind:'error', message:reason})
+                res.render('account/signin.ejs', {account:req.session, kind:'danger', message:"Incorrect username or password."})
             })
+    });
+
+    app.get('/account/signup', (req, res) => {
+        logger.info(`GET signin.ejs`);
+        res.render('account/signup.ejs', {account:req.session, kind:undefined});
+    });
+
+    app.post('/account/signup', (req, res) => {
+        const { username , email, password} = req.body;
+        logger.info(`POST sign for ${username}`);
+        //console.log('sign', username, password);
+        signup(username, email, password)
+            .then(token => {
+                logger.debug(`sign up ok`);
+                res.render('account/signin.ejs', {account:req.session, kind:undefined});
+            })
+            .catch(reason => {
+                logger.error(`error ${reason}`);
+                //console.log('error', reason);
+                res.render('account/signup.ejs', {account:req.session, kind:'danger', message:"Cannot create account. Try with another username."})
+            })
+    });
+
+    app.get('/account/signout', (req, res) => {
+        logger.info(`GET signout`);
+        req.session.jwt = undefined;
+        req.session.username = undefined;
+        res.redirect('/');
     });
 
 
@@ -135,11 +160,12 @@ module.exports = function attachRoutes(app, config) {
             })
     });
 
-    function signup(username, password) {
+    function signup(username, email, password) {
         logger.info(`signup`);
         const accountURL = 'http://' + config.account.host + ':' + config.account.port + '/account/signup';
         let bodySignup = {
-            username, 
+            username,
+            email,
             password
         }
         let optionSignup = {
@@ -199,33 +225,6 @@ module.exports = function attachRoutes(app, config) {
                     rej(e);
                 });
         })
-    }
-
-    function sign(username, password) {
-        logger.info(`sign`);
-        return signup(username, password)
-            .then(() => {
-                return signin(username, password)
-                    .then(token => {
-                        return Promise.resolve(token);
-                    })
-                    .catch(signinErrorReason => {
-                        return Promise.reject(signinErrorReason);
-                    })
-            })
-            .catch(signupErrorReason => {
-                if (signupErrorReason.isUsernameExist) {
-                    return signin(username, password)
-                        .then(token => {
-                            return Promise.resolve(token);
-                        })
-                        .catch(signinErrorReason => {
-                            return Promise.reject(signinErrorReason);
-                        })
-                } else {
-                    return Promise.reject(reason);
-                }
-            })
     }
 
 }

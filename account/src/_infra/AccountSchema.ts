@@ -2,6 +2,7 @@ import { model, Schema, Document} from 'mongoose';
 
 const ACCOUNT_SCHEMA = new Schema({
     username : {type : String, required : true},
+    email : {type : String, required : true},
     salt : [{type : Number, required : true}],
     hash : [{type : Number, required : true}],
     authorizationSet: {type : Array},
@@ -11,7 +12,8 @@ const ACCOUNT_SCHEMA = new Schema({
 });
 
 export interface AccountDocument extends Document {
-    username : string
+    username : string,
+    email : string,
     salt : number[],
     hash : number[],
     authorizationSet: {kind: number, key: string}[]

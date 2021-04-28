@@ -2,7 +2,7 @@ import AccountService from "../application/AccountService";
 import Token from "../domain/Token";
 import Authorization from "../domain/Authorization";
 import { Kind } from "../domain/Kind";
-import { Response, Express } from "express";
+import e, { Response, Express } from "express";
 import {logger} from "../logger";
 
 const FORBIDDEN_STATUS = 403;
@@ -17,9 +17,12 @@ export default function attachRoutes(app : Express, accountService: AccountServi
     });
 
     app.post("/account/signup", (req, res) => {
-        const {username, password} = req.body;
+        let {username, email, password} = req.body;
+        if (email === undefined) {
+            email = "nomail";
+        }
         logger.info(`signup`);
-        accountService.signup(username, password)
+        accountService.signup(username, email, password)
         .then(usernameResult => {
             logger.debug(`signup done`);
             res.json(usernameResult);

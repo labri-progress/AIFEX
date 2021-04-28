@@ -3,12 +3,14 @@ import Authorization from "./Authorization";
 export default class Account  {
 
     private _username : string;
+    private _email : string;
     private _salt : Uint8Array;
     private _hash : Uint8Array;
     private _authorizationSet : Authorization[];
 
-    constructor(username : string, salt: Uint8Array, hash : Uint8Array) {
+    constructor(username : string, email : string, salt: Uint8Array, hash : Uint8Array) {
         this._username = username;
+        this._email = email;
         this._salt = salt;
         this._hash = hash;
         this._authorizationSet = [];
@@ -16,6 +18,10 @@ export default class Account  {
 
     get username() : string {
         return this._username;
+    }
+
+    get email() : string {
+        return this._email;
     }
 
     get salt() : Uint8Array {

@@ -7,6 +7,7 @@ export default class AccountRepositoryMongo implements AccountRepository {
     public addAccount(account: Account): Promise<string> {
         return AccountSchema.create({
             username: account.username,
+            email: account.email,
             hash: [...account.hash.values()],
             salt: [...account.salt.values()],
             authorizationSet: account.authorizationSet.map( (authorization) => {
@@ -43,7 +44,7 @@ export default class AccountRepositoryMongo implements AccountRepository {
             if (accountDocument === null) {
                 return undefined;
             }
-            const account = new Account(username, Uint8Array.from(accountDocument.salt), Uint8Array.from(accountDocument.hash));
+            const account = new Account(accountDocument.username, accountDocument.email, Uint8Array.from(accountDocument.salt), Uint8Array.from(accountDocument.hash));
 
             accountDocument.authorizationSet.forEach((authorizationDoc) => {
                 const authorization = new Authorization(authorizationDoc.kind, authorizationDoc.key);

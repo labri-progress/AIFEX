@@ -20,7 +20,7 @@ export default class AccountService {
         this._accountRepository = accountRepository;
     }
 
-    signup(username : string, password : string) : Promise<string>{
+    signup(username : string, email : string, password : string) : Promise<string>{
         return this._accountRepository.findAccountByUserName(username)
         .then( account => {
             if (account === undefined) {
@@ -29,7 +29,7 @@ export default class AccountService {
                 const saltBuffer = crypto.randomBytes(NB_CRYPTO_BYTES);
                 const dkLen = DKLEN;
                 const hash = sha256.pbkdf2(encoder.encode(password), saltBuffer, rounds, dkLen);
-                return this._accountRepository.addAccount(new Account(username, saltBuffer, hash))
+                return this._accountRepository.addAccount(new Account(username, email, saltBuffer, hash))
                 .then((acc) => {
                     return acc;
                 })
