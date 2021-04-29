@@ -8,6 +8,7 @@ import WebSiteService from "../domain/WebSiteService";
 import routes from "./routeREST";
 
 import session from "express-session";
+import SessionService from "../domain/SessionService";
 
 const ONE_HOUR = 3600000;
 
@@ -26,11 +27,13 @@ export default class RESTServer {
     public port: number;
     public accountService: AccountService;
     public webSiteService: WebSiteService;
+    public sessionService: SessionService;
 
-    constructor(port, accountService, webSiteService) {
+    constructor(port, accountService, webSiteService, sessionService) {
         this.port = port;
         this.accountService = accountService;
         this.webSiteService = webSiteService;
+        this.sessionService = sessionService;
     }
 
     public start() {
@@ -71,7 +74,7 @@ export default class RESTServer {
         app.use(session(sess));
 
         // WebSite route
-        routes(app, this.accountService, this.webSiteService);
+        routes(app, this.accountService, this.webSiteService, this.sessionService);
 
         // Start server
         server.listen(port, () => {

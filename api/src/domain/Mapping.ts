@@ -20,10 +20,13 @@ export default class Mapping {
         xpath?: string
     }
 
-    constructor(match, output, context?) {
+    public description?: string;
+
+    constructor(match, output, context?, description?) {
         this.match = match;
         this.output = output;
         this.context = context;
+        this.description = description;
     }
 
 }

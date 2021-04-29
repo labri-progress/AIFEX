@@ -1,55 +1,57 @@
 import fetch from "node-fetch";
 import config from "../config";
-import { HTTPResponseError } from "../domain/HTTPResponseError";
 import Session from "../domain/Session";
 import SessionService from "../domain/SessionService";
+import Token from "../domain/Token";
+import jsonwebtoken from "jsonwebtoken";
 
+const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;
 
-const URL: string = `http://${config.session.host}:${config.session.port}/session/`;
+const SECRET = "not really secret";
 
 export default class SessionServiceHTTP implements SessionService {
 
-    getSessionById(id: number): Promise<Session> {
-        const sessionGetURL = URL + id
-        return fetch(sessionGetURL).then(response => {
-            if (response.ok) {
-                    return response.json()
-                } else {
-                    throw new HTTPResponseError(response)
-            }
-        }).then(sessionData => {
-            return new Session(
-                sessionData.id,
-                sessionData.baseURL,
-                sessionData.webSite,
-                sessionData.createdAt,
-                sessionData.updatedAt,
-                sessionData.useTestScenario,
-                sessionData.overlayType)
-        })
+    getSessionIds(token: Token): Promise<string[] | "Unauthorized"> {
+        if (jsonwebtoken.verify(token.token, SECRET)) {
+            return Promise.resolve(this.token2SessionIds(token));
+        } else {
+            return Promise.resolve("Unauthorized");
+        }
     }
 
-    createSession(webSiteId: string, baseURL: string, name: string, overlayType: string, useTestScenario: boolean): Promise<string> {
-        const sessionCreate = URL + "create";
-
-        return fetch(sessionCreate, {
-            method: 'POST',
-            body:    JSON.stringify( {
-            webSiteId,
-            name,
-            overlayType,
-            useTestScenario,
-            baseURL,
-        }),
-            headers: { 'Content-Type': 'application/json' },
-        }).then(response => {
-            if (response.ok) {
-                    return response.json()
-                } else {
-                    throw new HTTPResponseError(response)
+    getSessionById(token: Token, id: string): Promise<Session | "Unauthorized"> {
+        if (jsonwebtoken.verify(token.token, SECRET)) {
+            const ids : string[] = this.token2SessionIds(token);
+            if (ids.includes(id)) {
+                const sessionGetURL = SESSION_URL + id;
+                return fetch(sessionGetURL).then(response => {
+                    if (response.ok) {
+                        return response.json().then(sessionData => {
+                            return new Session(sessionData.webSite, sessionData.baseURL, sessionData.id, sessionData.name, sessionData.useTestScenario);
+                        })
+                    } else {
+                        throw new Error(response)
+                    }
+                });
+            } else {
+                return Promise.resolve("Unauthorized");
             }
-        })
-        
-    } 
+        } else {
+            return Promise.resolve("Unauthorized");
+        }
+    }
+
+
+    private token2SessionIds(token : Token) : string[]{
+        const payload : {username: string, authorizationSet: Object[]} = jsonwebtoken.verify(token.token, SECRET) as {username: string, authorizationSet: Object[]};
+        return payload.authorizationSet.reduce<string[]>( (acc, currAuthorizationObject) => {
+            const  authorization : {_kind: number, _key:string} = currAuthorizationObject as {_kind: number, _key:string};
+            const SESSION_KIND = 1;
+            if (authorization._kind === SESSION_KIND) {
+                acc.push(authorization._key);
+            }
+            return acc;;
+        }, []);
+    }
   
 }

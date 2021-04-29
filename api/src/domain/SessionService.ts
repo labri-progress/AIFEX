@@ -1,10 +1,10 @@
-import Session from "./Session";
+import Session, { SessionOverlayType } from "./Session";
+import Token from "./Token";
 
+export default interface SessionService {
 
-export default interface WebSiteService {
+    getSessionIds(token: Token): Promise<string[] | "Unauthorized">;
 
-    getSessionById(id : number) : Promise<Session>;
-
-    createSession(webSiteId: string, baseURL: string, name: string, overlayType: string, useTestScenario: boolean) : Promise<string>;
+    getSessionById(token: Token, id: string): Promise<Session | "Unauthorized">;
 
 }

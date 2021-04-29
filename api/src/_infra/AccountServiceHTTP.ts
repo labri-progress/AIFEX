@@ -1,35 +1,13 @@
 import fetch from "node-fetch";
-
 import AccountService from '../domain/AccountService'
 import config from "../config";
-import { HTTPResponseError } from '../domain/HTTPResponseError';
 import Token from "../domain/Token";
 const URL: string = `http://${config.account.host}:${config.account.port}/account/`;
 
 export default class AccountServiceHTTP implements AccountService {
 
 
-    signup(username: string, password: string): Promise<string> {
-        
-        const route: string = URL + "signup/";
-        return fetch(route, {
-            method: 'post',
-            body: JSON.stringify({username, password}),
-            headers: { 'Content-Type': 'application/json' }
-        })
-        .then( (response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new HTTPResponseError(response)
-            }
-        })
-        .then( (usernameResult) => {
-            return usernameResult;
-        });
-    }
-
-    signin(username: string, password: string): Promise<Token> {
+    signin(username: string, password: string): Promise<Token | "Unauthorized" > {
         const route: string = URL + "signin/";
         return fetch(route, {
                 method: 'post',
@@ -38,111 +16,13 @@ export default class AccountServiceHTTP implements AccountService {
             })
             .then( (response) => {
                 if (response.ok) {
-                    return response.json();
+                    return response.json().then( (tokenResult) => {
+                        return new Token(tokenResult.jwt);
+                    });
                 } else {
-                    throw new HTTPResponseError(response)
+                    return "Unauthorized";
                 }
             })
-            .then( (tokenResult) => {
-                return new Token(tokenResult.jwt);
-            });
     }
-
-    addWebSite(token: Token, webSiteId: string): Promise<string> {
-        const accountAddWebSiteURL = URL + 'addwebsite/';
-        console.log("addWebsite token ", token.token)
-        let bodyAddWebSite = {
-            token: token.token,
-            webSiteId,
-        }
-        let optionAddWebSite = {
-            method: 'POST',
-            body:    JSON.stringify(bodyAddWebSite),
-            headers: { 'Content-Type': 'application/json' },
-        }
-        return fetch(accountAddWebSiteURL, optionAddWebSite)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('cannot add website to account');
-                }
-            })
-            .catch( e => {
-                console.log(e);
-            })
-    }
-
-    removeWebSite(token: Token, webSiteId: string): Promise<string> {
-        const accountAddWebSiteURL = URL + 'removewebsite';
-        let bodyRemoveWebSite = {
-            token: token.token,
-            webSiteId,
-        }
-        let optionRemoveWebSite = {
-            method: 'POST',
-            body:    JSON.stringify(bodyRemoveWebSite),
-            headers: { 'Content-Type': 'application/json' },
-        }
-        return fetch(accountAddWebSiteURL, optionRemoveWebSite)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('cannot add website to account');
-                }
-            })
-            .catch( e => {
-                console.log(e);
-            })
-    }
-    addSession(token: Token, sessionid: string): Promise<string> {
-        const accountAddSessionURL = URL + 'addsession/';
-        let bodyAddSession = {
-            token: token.token,
-            sessionid,
-        }
-        let optionAddSession = {
-            method: 'POST',
-            body:    JSON.stringify(bodyAddSession),
-            headers: { 'Content-Type': 'application/json' },
-        }
-        return fetch(accountAddSessionURL, optionAddSession)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('cannot add website to account');
-                }
-            })
-            .catch(e => {
-                console.log(e);
-            })
-    }
-
-    removeSession(token: Token, sessionid: string): Promise<string> {
-        const accountRemoveSessionURL = URL + 'removesession';
-        let bodyRemoveSession = {
-            token: token.token,
-            sessionid,
-        }
-        let optionRemoveSession = {
-            method: 'POST',
-            body:    JSON.stringify(bodyRemoveSession),
-            headers: { 'Content-Type': 'application/json' },
-        }
-        return fetch(accountRemoveSessionURL, optionRemoveSession)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('cannot add website to account');
-                }
-            })
-            .catch( e => {
-                console.log(e);
-            })
-    }
-
 
 }

@@ -1,10 +1,10 @@
+import Token from "./Token";
 import WebSite from "./WebSite";
 
 export default interface WebSiteService {
 
-    getWebSiteById(id : string) : Promise<WebSite>;
+    getWebSiteIds(token : Token) : Promise<string[] | "Unauthorized" >;
 
-    createWebSite(name : string, url : string, mappingList) : Promise<string>;
+    getWebSiteById(token : Token, id : string) : Promise<WebSite | "Unauthorized">;
 
-    updateWebSite(id: string, name: string, url: string, mappingList: any): Promise<void>;
 }
