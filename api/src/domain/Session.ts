@@ -1,8 +1,4 @@
-import Comment from "../domain/Comment";
-import Action from "./Action";
 import Exploration from "./Exploration";
-import Interaction from "./Interaction";
-import Tester from "./Tester";
 import WebSite from "./WebSite";
 
 
