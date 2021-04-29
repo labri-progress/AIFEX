@@ -20,7 +20,7 @@ export default function attachRoutes(app, accountService: AccountService, webSit
         accountService.signin(username, password)
             .then(tokenResult => {
                 if (tokenResult === "Unauthorized") {
-
+                    res.status(403).send("Unauthorized");
                 } else {
                     req.session.jwt = tokenResult.token;
                     req.session.username = username;
