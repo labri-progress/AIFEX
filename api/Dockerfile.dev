@@ -39,4 +39,4 @@ COPY ./tsconfig.json /app/tsconfig.json
 CMD npm run dev
 
 # Make port available to the world outside this container
-EXPOSE 5011
+EXPOSE 5012

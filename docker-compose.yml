@@ -69,9 +69,21 @@ services:
       context: printer/
       dockerfile: ./Dockerfile.prod
     environment:
-      -  NODE_ENV=${NODE_ENV}
+      - NODE_ENV=${NODE_ENV}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     depends_on:
+      - "website"
+      - "session"
+    restart: always
+
+  api:
+    build:
+      context: api/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    depends_on:
+      - "account"
       - "website"
       - "session"
     restart: always

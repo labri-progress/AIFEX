@@ -32,8 +32,8 @@ COPY ./nodemon.json /app/nodemon.json
 COPY ./tsconfig.json /app/tsconfig.json
 
 
-# Run app.py when the container launches
+# Run when the container launches
 CMD npm run dev
 
 # Make port available to the world outside this container
-EXPOSE 5010
+EXPOSE 80

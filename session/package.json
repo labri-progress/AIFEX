@@ -38,7 +38,7 @@
     "@types/bluebird": "^3.5.33",
     "@types/shortid": "0.0.29",
     "amqp-ts": "^1.8.0",
-    "amqplib": "^0.7.0",
+    "amqplib": "^0.7.1",
     "body-parse": "^0.1.0",
     "express": "^4.17.1",
     "mongoose": "^5.11.18",

@@ -1,8 +1,7 @@
 FROM node:slim
 
 # install python (needed by npm-gyp)
-RUN apt-get update
-RUN apt-get install python make gcc g++ -y
+RUN apt-get update && apt-get install python make gcc g++ -y
 
 # Set the working directory to /app
 WORKDIR /app
@@ -17,7 +16,7 @@ RUN npm install
 RUN npm install supervisor -g
 
 
-# Run app.py when the container launches
+# Run when the container launches
 CMD npm run dev
 
 # Make port available to the world outside this container

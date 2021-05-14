@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import AccountService from '../domain/AccountService'
-import config from "../config";
+import config from "./config";
 import Token from "../domain/Token";
 const URL: string = `http://${config.account.host}:${config.account.port}/account/`;
 

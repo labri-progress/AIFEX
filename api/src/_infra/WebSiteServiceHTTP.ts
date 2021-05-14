@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import config from "../config";
+import config from "./config";
 import Token from "../domain/Token";
 import WebSite from "../domain/WebSite";
 import WebSiteService from "../domain/WebSiteService";

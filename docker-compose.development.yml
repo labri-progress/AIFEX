@@ -8,7 +8,7 @@ services:
     environment:
       -  NODE_ENV=development
     ports:
-      - 5005:5005
+      - 5000:80
     volumes:
       - ./website/src/:/app/src
 
@@ -19,7 +19,7 @@ services:
     environment:
       -  NODE_ENV=development
     ports:
-      - 5006:5006
+      - 5001:80
     volumes:
       - ./session/src/:/app/src
 
@@ -30,7 +30,7 @@ services:
     environment:
       -  NODE_ENV=development
     ports:
-      - 5007:5007
+      - 5002:80
     volumes:
       - ./model/src/:/app/src
 
@@ -43,7 +43,7 @@ services:
     volumes:
       - ./evaluator/src/:/app/src
     ports:
-        - 5010:5010
+        - 5003:80
 
   account:
     build:
@@ -52,7 +52,7 @@ services:
     environment:
       -  NODE_ENV=development
     ports:
-      - 5008:5008
+      - 5004:80
     volumes:
       - ./account/src/:/app/src
 
@@ -74,9 +74,19 @@ services:
     environment:
       -  NODE_ENV=development
     ports:
-      - 5009:5009
+      - 5005:80
     volumes:
       - ./printer/src/:/app/src
+
+
+  api:
+    build:
+      context: api/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      -  NODE_ENV=development
+    ports:
+      - 8080:80
       
   mongo:
     ports:

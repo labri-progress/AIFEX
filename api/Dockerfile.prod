@@ -37,4 +37,4 @@ COPY ./package.json /app/package.json
 CMD cd /app && npm start
 
 # Make port available to the world outside this container
-EXPOSE 5011
+EXPOSE 5012

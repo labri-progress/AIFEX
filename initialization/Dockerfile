@@ -1,8 +1,7 @@
 FROM node:slim as builder
 
 # install python (needed by npm-gyp)
-RUN apt-get update
-RUN apt-get install python make gcc g++ -y
+RUN apt-get update && apt-get install python make gcc g++ -y
 
 
 # Create app directory
@@ -36,5 +35,5 @@ COPY ./mapping /app/mapping
 COPY ./explorations /app/explorations
 
 
-# Run app.py when the container launches
+# Run when the container launches
 CMD npm start

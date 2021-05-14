@@ -1,8 +1,7 @@
 FROM node:14.16.0-slim as builder
 
 # install python (needed by npm-gyp)
-RUN apt-get update
-RUN apt-get install python make gcc g++ -y
+RUN apt-get update && apt-get install python make gcc g++ -y
 
 
 # Create app directory
@@ -39,4 +38,4 @@ COPY ./package.json /app/package.json
 CMD cd /app && npm start
 
 # Make port available to the world outside this container
-EXPOSE 5006
+EXPOSE 80

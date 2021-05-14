@@ -29,7 +29,7 @@ export default class RESTServer {
     public webSiteService: WebSiteService;
     public sessionService: SessionService;
 
-    constructor(port, accountService, webSiteService, sessionService) {
+    constructor(port : number, accountService : AccountService, webSiteService : WebSiteService, sessionService : SessionService) {
         this.port = port;
         this.accountService = accountService;
         this.webSiteService = webSiteService;

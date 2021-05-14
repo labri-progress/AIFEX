@@ -4,7 +4,6 @@ const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
 import config from "../src/config";
-import { HTTPResponseError } from "../src/domain/HTTPResponseError";
 
 const host = config.host
 const port = config.port;
@@ -18,38 +17,11 @@ describe("Account", () => {
     let token;
     
 
-    it("create an account", () => {
-        const url = `${URL}/account/signup`;
-        const body = {
-            username:"test",
-            password: "test"
-        };
-        const option = {
-            method: "POST",
-            body:    JSON.stringify(body),
-            headers: { "Content-Type": "application/json" }
-        };
-        return fetch(url, option)
-            .then((res) => {
-                if (!res.ok) {
-                    if (res.status === 403) {
-                        return "test"
-                    }
-                    throw new HTTPResponseError(res);
-                }
-                expect(res.ok).to.be.true;
-                return res.json();
-            })
-            .then((username) => {
-                expect(username).to.eql("test");
-            });
-    });
-
     it("sign in", () => {
         const url = `${URL}/account/signin`;
         const body = {
-            username: "test",
-            password: "test",
+            username: "anonymous",
+            password: "anonymous",
         };
         const option = {
             method: "POST",
@@ -59,53 +31,8 @@ describe("Account", () => {
         return fetch(url, option)
             .then((res) => {
                 if (!res.ok) {
-                    throw new HTTPResponseError(res);
+                    throw new Error(res);
                 } 
-            })
-    });
-
-    it("creates a website", () => {
-        const url = `${URL}/website/create`;
-        const body = {
-            name: "myWebsite",
-            url: "www.website.com",
-            mappingList: [{
-                            "match": {
-                                "css": "input",
-                                "event": "change"
-                            },
-                            "output": {
-                                "prefix": "Search",
-                                "suffix": "value"
-                            }
-                        }]
-        };
-        const option = {
-            method: "POST",
-            body:    JSON.stringify(body),
-            headers: { "Content-Type": "application/json" }
-        };
-        return fetch(url, option)
-            .then((res) => {
-                if (!res.ok) {
-                    throw new HTTPResponseError(res);
-                }
-                expect(res.ok).to.be.true;
-            })
-    });
-
-    it("get website list for token", () => {
-        const url = `${URL}/website/list/`;
-        return fetch(url)
-            .then((res) => {
-                if (!res.ok) {
-                    throw new HTTPResponseError(res);
-                }
-                expect(res.ok).to.be.true;
-                return res.json()
-            })
-            .then(data => {
-                expect(data[0].name).to.eql("myWebsite")
             })
     });
 
