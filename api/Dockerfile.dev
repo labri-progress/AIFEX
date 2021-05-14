@@ -20,7 +20,7 @@ RUN tsc
 
 
 
-FROM node:slim
+FROM node
 
 # Set the working directory to /app
 WORKDIR /app

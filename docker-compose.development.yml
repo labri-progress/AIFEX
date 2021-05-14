@@ -87,6 +87,8 @@ services:
       -  NODE_ENV=development
     ports:
       - 8080:80
+    volumes:
+      - ./api/src/:/app/src
       
   mongo:
     ports:
