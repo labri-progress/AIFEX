@@ -36,7 +36,7 @@ AIFEX is composed of two main components:
     * reverseproxy : this container is a reverse proxy (nginx)
     * session : this container manages sessions of exploratory testing
     * test : this container runs tests
-    * website : this container manages website configuraitons
+    * website : this container manages website configurations
 
 
 ## Citing AIFEX
