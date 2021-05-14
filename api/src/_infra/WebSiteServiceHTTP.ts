@@ -31,7 +31,7 @@ export default class WebSiteServiceHTTP implements WebSiteService {
                             return new WebSite(webSiteData.id, webSiteData.name, webSiteData.url, webSiteData.mappingList);
                         })
                     } else {
-                        throw new Error(response)
+                        throw new Error("Error:"+response.status)
                     }
                 });
             } else {

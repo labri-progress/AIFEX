@@ -30,7 +30,7 @@ export default class SessionServiceHTTP implements SessionService {
                             return new Session(sessionData.webSite, sessionData.baseURL, sessionData.id, sessionData.name, sessionData.useTestScenario);
                         })
                     } else {
-                        throw new Error(response)
+                        throw new Error("Error:"+response.status)
                     }
                 });
             } else {

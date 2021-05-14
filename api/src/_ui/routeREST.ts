@@ -2,13 +2,14 @@
 import AccountService from "../domain/AccountService";
 import SessionService from "../domain/SessionService";
 import WebSiteService from "../domain/WebSiteService";
+import { Application } from 'express';
 
 const FORBIDDEN_STATUS = 403;
 const NOT_FOUND_STATUS = 404;
 const INVALID_PARAMETERS_STATUS = 400;
 const INTERNAL_SERVER_ERROR_STATUS = 500;
 
-export default function attachRoutes(app, accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService) {
+export default function attachRoutes(app : Application, accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService) {
 
     app.get("/api/ping", (req, res) => {
         res.send('alive');
@@ -22,8 +23,6 @@ export default function attachRoutes(app, accountService: AccountService, webSit
                 if (tokenResult === "Unauthorized") {
                     res.status(403).send("Unauthorized");
                 } else {
-                    req.session.jwt = tokenResult.token;
-                    req.session.username = username;
                     console.log("Setting session with", req.session.id)
                     res.json(tokenResult.token);
                 }

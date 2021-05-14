@@ -15,14 +15,27 @@ export default class Mapping {
     };
 
     public context?: {
-        url?:string,
+        url?: string,
         css?: string,
         xpath?: string
     }
 
     public description?: string;
 
-    constructor(match, output, context?, description?) {
+    constructor(match: {
+        event: string,
+        css?: string,
+        xpath?: string,
+        code?: string,
+        key?: string,
+    }, output: {
+        prefix: string,
+        suffix?: string,
+    }, context?: {
+        url?: string,
+        css?: string,
+        xpath?: string
+    }, description?: string) {
         this.match = match;
         this.output = output;
         this.context = context;
