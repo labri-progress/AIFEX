@@ -12,15 +12,17 @@ const SECRET = "not really secret";
 export default class SessionServiceHTTP implements SessionService {
 
     getSessionIds(token: Token): Promise<string[] | "Unauthorized"> {
-        if (jsonwebtoken.verify(token.token, SECRET)) {
+        try {
+            jsonwebtoken.verify(token.token, SECRET);
             return Promise.resolve(this.token2SessionIds(token));
-        } else {
+        } catch(e) {
             return Promise.resolve("Unauthorized");
         }
     }
 
     getSessionById(token: Token, id: string): Promise<Session | "Unauthorized"> {
-        if (jsonwebtoken.verify(token.token, SECRET)) {
+        try {
+            jsonwebtoken.verify(token.token, SECRET);
             const ids : string[] = this.token2SessionIds(token);
             if (ids.includes(id)) {
                 const sessionGetURL = SESSION_URL + id;
@@ -36,7 +38,7 @@ export default class SessionServiceHTTP implements SessionService {
             } else {
                 return Promise.resolve("Unauthorized");
             }
-        } else {
+        } catch (e) {
             return Promise.resolve("Unauthorized");
         }
     }
@@ -48,7 +50,7 @@ export default class SessionServiceHTTP implements SessionService {
             const  authorization : {_kind: number, _key:string} = currAuthorizationObject as {_kind: number, _key:string};
             const SESSION_KIND = 1;
             if (authorization._kind === SESSION_KIND) {
-                acc.push(authorization._key);
+                acc.push(authorization._key.split('$')[0]);
             }
             return acc;;
         }, []);

@@ -13,15 +13,17 @@ const SECRET = "not really secret";
 export default class WebSiteServiceHTTP implements WebSiteService {
     
     getWebSiteIds(token: Token): Promise<string[] | "Unauthorized"> {
-        if (jsonwebtoken.verify(token.token, SECRET)) {
+        try {
+            jsonwebtoken.verify(token.token, SECRET);
             return Promise.resolve(this.token2WebSiteIds(token));
-        } else {
+        } catch (e) {
             return Promise.resolve("Unauthorized");
         }
     }
     
     getWebSiteById(token : Token, id: string): Promise<WebSite | "Unauthorized"> {
-        if (jsonwebtoken.verify(token.token, SECRET)) {
+        try {
+            jsonwebtoken.verify(token.token, SECRET);
             const ids : string[] = this.token2WebSiteIds(token);
             if (ids.includes(id)) {
                 const webSiteGetURL = WEBSITE_URL + id;
@@ -37,7 +39,7 @@ export default class WebSiteServiceHTTP implements WebSiteService {
             } else {
                 return Promise.resolve("Unauthorized");
             }
-        } else {
+        } catch(e) {
             return Promise.resolve("Unauthorized");
         }
     }
