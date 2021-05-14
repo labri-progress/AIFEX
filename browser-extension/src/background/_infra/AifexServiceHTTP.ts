@@ -375,7 +375,7 @@ export default class AifexServiceHTTP implements AifexService {
 		if (SERVER_IN_PRODUCTION) {
 			return SERVER_URL.origin + '/website';
 		} else {
-			SERVER_URL.port = '5005';
+			SERVER_URL.port = '5000';
 			return SERVER_URL.origin;
 		}
 	}
@@ -386,7 +386,7 @@ export default class AifexServiceHTTP implements AifexService {
 		if (SERVER_IN_PRODUCTION) {
 			return SERVER_URL.origin + '/session';
 		} else {
-			SERVER_URL.port = '5006';
+			SERVER_URL.port = '5001';
 			return SERVER_URL.origin;
 		}
 	}
@@ -397,7 +397,7 @@ export default class AifexServiceHTTP implements AifexService {
 		if (SERVER_IN_PRODUCTION) {
 			return SERVER_URL.origin + '/model';
 		} else {
-			SERVER_URL.port = '5007';
+			SERVER_URL.port = '5002';
 			return SERVER_URL.origin;
 		}
 	}
@@ -408,7 +408,7 @@ export default class AifexServiceHTTP implements AifexService {
 		if (SERVER_IN_PRODUCTION) {
 			return SERVER_URL.origin + '/evaluator';
 		} else {
-			SERVER_URL.port = '5010';
+			SERVER_URL.port = '5003';
 			return SERVER_URL.origin;
 		}
 	}
