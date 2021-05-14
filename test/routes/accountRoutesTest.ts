@@ -5,15 +5,16 @@ import fetch from "node-fetch";
 import jsonwebtoken from "jsonwebtoken"; 
 const SECRET = "not really secret";
 
+const ACCOUNT_URL = "http://localhost:5004/account";
+
 describe("Account", () => {
 
     // tslint:disable-next-line: prefer-const
     let token;
     
-    const BASE_URL = "http://localhost:5008/account";
 
     it("should signup", () => {
-        const url = `${BASE_URL}/signup`;
+        const url = `${ACCOUNT_URL}/signup`;
         const body = {
             username:"test",
             password: "test"
@@ -34,7 +35,7 @@ describe("Account", () => {
     });
 
     it("should signin", () => {
-        const url = `${BASE_URL}/signin`;
+        const url = `${ACCOUNT_URL}/signin`;
         const body = {
             username: "test",
             password: "test",
@@ -56,7 +57,7 @@ describe("Account", () => {
     });
 
     it("should add a site list", () => {
-        const url = `${BASE_URL}/addwebsite`;
+        const url = `${ACCOUNT_URL}/addwebsite`;
         const body = {
             token,
             webSiteId: "JPS8_Kiv"
@@ -80,7 +81,7 @@ describe("Account", () => {
     });
 
     it("should add a session", () => {
-        const url = `${BASE_URL}/addsession`;
+        const url = `${ACCOUNT_URL}/addsession`;
         const sessionid = "JPSfea8_Kiv";
         const body = {
             token,
@@ -105,7 +106,7 @@ describe("Account", () => {
     });
 
     it("should remove a session", () => {
-        const url = `${BASE_URL}/removesession`;
+        const url = `${ACCOUNT_URL}/removesession`;
         const body = {
             token,
             sessionid: "JPSfea8_Kiv"

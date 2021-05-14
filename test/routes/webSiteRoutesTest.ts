@@ -4,12 +4,13 @@ const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
 
+const WEBSITE_URL = "http://localhost:5000/website/";
+
 describe("website", () => {
-    const BASE_URL = "http://localhost:5005/website/";
     let id = undefined;
 
     it("should create a new website named Test", () => {
-        const url = BASE_URL + "create";
+        const url = WEBSITE_URL + "create";
         const body = {
             name: "test",
             url: "https://www.test.test",
@@ -30,7 +31,7 @@ describe("website", () => {
         });
     });
     it("should find website by id", () => {
-        const url = BASE_URL + id;
+        const url = WEBSITE_URL + id;
         return fetch(url)
             .then((res) => res.json())
             .then(webSite => {
@@ -40,7 +41,7 @@ describe("website", () => {
     });
 
     it("should update test website", () => {
-        const url = BASE_URL + "update";
+        const url = WEBSITE_URL + "update";
         const body = {
             name: "test",
             url: "https://www.test.test",
@@ -65,7 +66,7 @@ describe("website", () => {
             .then((res) => res.json())
             .then((websiteId) => {
                 expect(websiteId).to.equal(id);
-                const url = BASE_URL + id;
+                const url = WEBSITE_URL + id;
                 return fetch(url);
             })
             .then( (res) => res.json())

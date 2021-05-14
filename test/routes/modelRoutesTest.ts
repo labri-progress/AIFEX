@@ -3,6 +3,10 @@ const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
 
+const MODEL_URL = "http://localhost:5002/model/";
+const SESSION_URL = "http://localhost:5001/session/";
+const WEBSITE_URL = "http://localhost:5000/website/";
+
 describe("Model", () => {
 
     // tslint:disable-next-line: prefer-const
@@ -10,10 +14,10 @@ describe("Model", () => {
     let sessionId: string;
     let modelId: string;
 
-    const BASE_URL = "http://localhost:5007/model/";
+    
 
     before(() => {
-        const url = "http://localhost:5005/website/create";
+        const url = WEBSITE_URL + "create";
         const body = {
             name: "test",
             url:"https://www.test.test",
@@ -34,7 +38,7 @@ describe("Model", () => {
     });
 
     it("should create a session", () => {
-        const url = "http://localhost:5006/session/create";
+        const url = SESSION_URL + "create";
         const body = {
             webSiteId,
             baseURL: "http://www.test.com/index.html",
@@ -54,7 +58,7 @@ describe("Model", () => {
     });
 
     it("should create a new model", () => {
-        const url = BASE_URL + "create";
+        const url = MODEL_URL + "create";
         const body = {
             depth: 3,
             interpolationfactor: 2,
@@ -72,7 +76,7 @@ describe("Model", () => {
     });
 
     it("should link the model to a session", () => {
-        const url = BASE_URL + modelId + "/link/" + sessionId;
+        const url = MODEL_URL + modelId + "/link/" + sessionId;
         const option = {
             method: "POST",
             body:    JSON.stringify({}),
@@ -83,7 +87,7 @@ describe("Model", () => {
     });
 
     it("should add an exploration", () => {
-        const url = "http://localhost:5006/session/" + sessionId + "/exploration/add";
+        const url = SESSION_URL + sessionId + "/exploration/add";
         const body = {
             testerName: "superTester",
             interactionList: [
@@ -103,7 +107,7 @@ describe("Model", () => {
         });
     });
     it("should compute probability", () => {
-        const url = BASE_URL + modelId + "/getprobabilitymap";
+        const url = MODEL_URL + modelId + "/getprobabilitymap";
 
         const body = {
             testerName: "superTester",
@@ -135,7 +139,7 @@ describe("Model", () => {
     });
 
     it("should add an exploration with comment", () => {
-        const url = "http://localhost:5006/session/" + sessionId + "/exploration/add";
+        const url = SESSION_URL + sessionId + "/exploration/add";
         const body = {
             testerName: "superTester",
             interactionList: [
@@ -156,7 +160,7 @@ describe("Model", () => {
     });
 
     it("should get the distribution of the comment", () => {
-        const url = BASE_URL + modelId + "/getcommentdistributions";
+        const url = MODEL_URL + modelId + "/getcommentdistributions";
         const body = {
             interactionList: [
                 {index: 1, concreteType: "Action", kind: "start"},
@@ -193,7 +197,7 @@ describe("Model", () => {
     });
 
     it("should get the cross entropy evolution of the model", () => {
-        const url = BASE_URL + "cross_entropy_evolution";
+        const url = MODEL_URL + "cross_entropy_evolution";
         const body = {
             depth: 3,
             interpolationfactor: 2,

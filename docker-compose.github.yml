@@ -10,7 +10,7 @@ services:
     depends_on:
       - "mongo"
     ports:
-      - 5005:5005
+      - 5000:80
     
   session:
     build:
@@ -22,7 +22,7 @@ services:
       - "mongo"
       - "website"
     ports:
-      - 5006:5006
+      - 5001:80
     volumes:
       - screenshot:/app/screenshot
       - video:/app/public/video
@@ -38,19 +38,7 @@ services:
       - "mongo"
       - "session"
     ports:
-      - 5007:5007
-    restart: always
-
-  account:
-    build:
-      context: account/
-      dockerfile: ./Dockerfile.prod
-    environment:
-      -  NODE_ENV=github
-    depends_on:
-      - "mongo"
-    ports:
-      - 5008:5008
+      - 5002:80
     restart: always
 
   evaluator:
@@ -60,8 +48,20 @@ services:
     volumes:
       - ./model/src/:/app/src
     ports:
-      - 5010:5010
+      - 5003:80
   
+  account:
+    build:
+      context: account/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      -  NODE_ENV=github
+    depends_on:
+      - "mongo"
+    ports:
+      - 5004:80
+    restart: always
+
   dashboard:
     build:
       context: dashboard/

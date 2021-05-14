@@ -3,15 +3,18 @@ const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
 
+const SESSION_URL = "http://localhost:5001/session/";
+const WEBSITE_URL = "http://localhost:5000/website/";
+
+
 describe("Infra", () => {
     let webSiteId;
     let sessionId;
 
     describe("session", () => {
-        const BASE_URL = "http://localhost:5006/session/";
 
         before(() => {
-            const url = "http://localhost:5005/website/create";
+            const url = WEBSITE_URL + "create";
             const body = {
                 name: "test",
                 url:"https://www.test.test",
@@ -32,7 +35,7 @@ describe("Infra", () => {
         });
 
         it("should create an new session", () => {
-            const url = BASE_URL + "create";
+            const url = SESSION_URL + "create";
             const body = {
                 webSiteId: webSiteId,
                 baseURL: "http://www.test.com/index.html",
@@ -56,7 +59,7 @@ describe("Infra", () => {
             });
         });
         it("should get the created session", () => {
-            const url = BASE_URL + sessionId;
+            const url = SESSION_URL + sessionId;
             return fetch(url, {})
             .then((res) => {
                 return res.json();
@@ -69,7 +72,7 @@ describe("Infra", () => {
         });
 
         it("should add an exploration to the session", () => {
-            const url = BASE_URL + sessionId + "/exploration/add";
+            const url = SESSION_URL + sessionId + "/exploration/add";
             const body = {
                 testerName: "superTester",
                 interactionList: [
@@ -94,7 +97,7 @@ describe("Infra", () => {
         });
 
         it("should get the created exploration", () => {
-            const url = BASE_URL + sessionId;
+            const url = SESSION_URL + sessionId;
             return fetch(url, {})
             .then((res) => {
                 return res.json();
