@@ -1,6 +1,8 @@
 const config = {
     port: 80,
     host: "api",
+    elastic: 'http://elasticsearch:9200',
+    elasticPassword: process.env.ELASTIC_PASSWORD||"changeme",
     website: {
         host: "website",
         port: 80,
