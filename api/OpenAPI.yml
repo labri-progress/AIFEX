@@ -1,0 +1,80 @@
+openapi: '3.0.2'
+info:
+  title: AIFEX OpenAPI
+  version: '0.10.11'
+servers:
+  - url: http://localhost/api
+paths:
+  /ping:
+    get:
+      responses:
+        '200':
+          description: Returns Alive
+  /signin:
+    description: returns the JWT token
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Returns JWT Token
+  /websites:
+    description: returns WebSite ids
+    get:
+      responses:
+        '200':
+          description: The WebSite ids
+      security:
+        - bearerAuth: []
+  /websites/:webSiteId:
+    description: returns WebSite 
+    get:
+      parameters:
+        - in: path
+          name: webSiteId
+          schema:
+            type: string
+          required: true
+          description: ID of the WebSite to get
+      responses:
+        '200':
+          description: Returns WebSite
+      security:
+        - bearerAuth: []
+  /sessions:
+    description: returns Session ids
+    get:
+      responses:
+        '200':
+          description: Returns Session ids
+      security:
+        - bearerAuth: []
+  /sessions/:sessionId:
+    description: returns Session 
+    get:
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: ID of the Session to get
+      responses:
+        '200':
+          description: Returns Session
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT   
