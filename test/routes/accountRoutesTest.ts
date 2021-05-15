@@ -3,7 +3,7 @@ const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
 import jsonwebtoken from "jsonwebtoken"; 
-const SECRET = "not really secret";
+const SECRET = "changeme";
 
 const ACCOUNT_URL = "http://localhost:5004/account";
 
