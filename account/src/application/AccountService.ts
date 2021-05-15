@@ -10,8 +10,8 @@ import {logger} from "../logger";
 
 const ROUNDS = 2000;
 const DKLEN = 128;
-
 const NB_CRYPTO_BYTES = 8;
+
 export default class AccountService {
 
     private _accountRepository : AccountRepository;

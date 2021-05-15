@@ -6,6 +6,7 @@ const config = {
     databaseName: 'DEVdashboardDB',
     elastic: 'http://elasticsearch:9200',
     elasticPassword: process.env.ELASTIC_PASSWORD||"changeme",
+    tokenSecret: process.env.TOKEN_SECRET||"changeme",
     port: 80,
     host: "localhost",
 

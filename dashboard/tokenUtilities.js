@@ -2,13 +2,12 @@ const fetch = require('node-fetch');
 const jsonwebtoken = require("jsonwebtoken");
 const config = require('./config');
 
-const SECRET = "not really secret";
 
 function token2Kind(token, kind) {
     if (token === null && token === undefined)  {
         return [];
     }
-    let payload = jsonwebtoken.verify(token, SECRET);
+    let payload = jsonwebtoken.verify(token, config.tokenSecret);
     return payload.authorizationSet.filter( authorization => authorization._kind == kind).map(authorization => authorization._key);
 }
 
@@ -26,7 +25,7 @@ module.exports.token2Session = function (token) {
 
 module.exports.verify = function(token) {
     try {
-        jsonwebtoken.verify(token, SECRET);
+        jsonwebtoken.verify(token, config.tokenSecret);
         return true;
     } catch (e) {
         return false;

@@ -7,6 +7,7 @@ export HOST_ADDR="localhost"
 export PROTOCOL="http"
 export NODE_ENV="development"
 export ELASTIC_PASSWORD="elastic"
+export TOKEN_SECRET="changeme"
 
 
 npm run development

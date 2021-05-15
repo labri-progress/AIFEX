@@ -6,8 +6,11 @@ import sourceMapSupport from "source-map-support";
 import AccountService from "../domain/AccountService";
 import WebSiteService from "../domain/WebSiteService";
 import routes from "./routeREST";
+import jsonwebtoken from "jsonwebtoken";
 
 import SessionService from "../domain/SessionService";
+import Token from "../domain/Token";
+import config from "../_infra/config";
 
 export default class RESTServer {
     public port: number;
@@ -46,6 +49,22 @@ export default class RESTServer {
         // request parser
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
+
+        // bearer token
+        app.use((req, res, next) => {
+            const bearerHeader = req.headers['authorization'];
+            
+            if (bearerHeader) {
+                const bearer = bearerHeader.split(' ');
+                const bearerToken = bearer[1];
+                try {
+                    jsonwebtoken.verify(bearerToken, config.tokenSecret);
+                    req.token = new Token(bearerToken);
+                } catch(e) {
+                }
+            }
+            next();
+        })
 
 
         // WebSite route

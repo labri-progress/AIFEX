@@ -7,13 +7,11 @@ import jsonwebtoken from "jsonwebtoken";
 
 const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;
 
-const SECRET = "not really secret";
-
 export default class SessionServiceHTTP implements SessionService {
 
     getSessionIds(token: Token): Promise<string[] | "Unauthorized"> {
         try {
-            jsonwebtoken.verify(token.token, SECRET);
+            jsonwebtoken.verify(token.token, config.tokenSecret);
             return Promise.resolve(this.token2SessionIds(token));
         } catch(e) {
             return Promise.resolve("Unauthorized");
@@ -22,7 +20,7 @@ export default class SessionServiceHTTP implements SessionService {
 
     getSessionById(token: Token, id: string): Promise<Session | "Unauthorized"> {
         try {
-            jsonwebtoken.verify(token.token, SECRET);
+            jsonwebtoken.verify(token.token, config.tokenSecret);
             const ids : string[] = this.token2SessionIds(token);
             if (ids.includes(id)) {
                 const sessionGetURL = SESSION_URL + id;
@@ -45,7 +43,7 @@ export default class SessionServiceHTTP implements SessionService {
 
 
     private token2SessionIds(token : Token) : string[]{
-        const payload : {username: string, authorizationSet: Object[]} = jsonwebtoken.verify(token.token, SECRET) as {username: string, authorizationSet: Object[]};
+        const payload : {username: string, authorizationSet: Object[]} = jsonwebtoken.verify(token.token, config.tokenSecret) as {username: string, authorizationSet: Object[]};
         return payload.authorizationSet.reduce<string[]>( (acc, currAuthorizationObject) => {
             const  authorization : {_kind: number, _key:string} = currAuthorizationObject as {_kind: number, _key:string};
             const SESSION_KIND = 1;

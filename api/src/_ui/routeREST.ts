@@ -4,7 +4,6 @@ import SessionService from "../domain/SessionService";
 import WebSiteService from "../domain/WebSiteService";
 import { Application } from 'express';
 import { logger } from "../logger";
-import Token from "../domain/Token"
 
 const FORBIDDEN_STATUS = 403;
 const NOT_FOUND_STATUS = 404;
@@ -13,13 +12,13 @@ const INTERNAL_SERVER_ERROR_STATUS = 500;
 
 export default function attachRoutes(app : Application, accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService) {
 
-    app.get("/api/ping", (req, res) => {
+    app.get("/ping", (req, res) => {
         logger.info(`ping`);
         res.send('alive');
     });
 
 
-    app.post("/api/signin", (req, res) => {
+    app.post("/signin", (req, res) => {
         const {username, password} = req.body;
         logger.info(`signin`);
         if (username === undefined) {
@@ -29,40 +28,39 @@ export default function attachRoutes(app : Application, accountService: AccountS
             logger.warn(`no password`);
         }
         if (password === undefined || username === undefined) {
-            res.status(403).send("No username or no password");
+            res.status(INVALID_PARAMETERS_STATUS).send("No username or no password");
         } else {
             accountService.signin(username, password)
             .then(tokenResult => {
                 if (tokenResult === "Unauthorized") {
-                    res.status(403).send("Unauthorized");
+                    res.status(FORBIDDEN_STATUS).send("Unauthorized");
                 } else {
                     logger.info("signin done");
-                    res.json(tokenResult.token);
+                    res.json({"bearerToken":tokenResult.token});
                 }
             })
             .catch((e) => {
                 logger.error(`error:${e}`);
-                res.status(403).send({error:e});
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
             });
         }
     });
 
-    app.post("/api/websites/:webSiteId", (req, res) => {
+    app.get("/websites/:webSiteId", (req, res) => {
         const webSiteId = req.params.webSiteId;
-        const {token} = req.body;
         logger.info(`webSites by Id`);
-        if (token === undefined) {
+        if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(403).send("No token");
+            res.status(INVALID_PARAMETERS_STATUS).send("No token");
         } else {
             if (webSiteId === undefined) {
                 logger.warn(`webSiteId`);
-                res.status(403).send("No webSiteId");
+                res.status(INVALID_PARAMETERS_STATUS).send("No webSiteId");
             } else {
-                webSiteService.getWebSiteById(new Token(token), webSiteId)
+                webSiteService.getWebSiteById(req.token, webSiteId)
                 .then(webSiteResult => {
                     if (webSiteResult === "Unauthorized") {
-                        res.status(403).send("Unauthorized");
+                        res.status(FORBIDDEN_STATUS).send("Unauthorized");
                     } else {
                         logger.info("webSites by Id done");
                         res.json(webSiteResult);
@@ -70,23 +68,22 @@ export default function attachRoutes(app : Application, accountService: AccountS
                 })
                 .catch((e) => {
                     logger.error(`error:${e}`);
-                    res.status(403).send({error:e});
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
                 });
             }
         }
     });
 
-    app.post("/api/websites", (req, res) => {
-        const {token} = req.body;
+    app.get("/websites", (req, res) => {
         logger.info(`websites`);
-        if (token === undefined) {
+        if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(403).send("No token");
+            res.status(INVALID_PARAMETERS_STATUS).send("No token");
         } else {
-            webSiteService.getWebSiteIds(new Token(token))
+            webSiteService.getWebSiteIds(req.token)
             .then(idsResult => {
                 if (idsResult === "Unauthorized") {
-                    res.status(403).send("Unauthorized");
+                    res.status(FORBIDDEN_STATUS).send("Unauthorized");
                 } else {
                     logger.info("websites done");
                     res.json(idsResult);
@@ -94,27 +91,26 @@ export default function attachRoutes(app : Application, accountService: AccountS
             })
             .catch((e) => {
                 logger.error(`error:${e}`);
-                res.status(403).send({error:e});
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
             });
         }
     });
 
-    app.post("/api/sessions/:sessionId", (req, res) => {
+    app.get("/sessions/:sessionId", (req, res) => {
         const sessionId = req.params.sessionId;
-        const {token} = req.body;
         logger.info(`Session By Id`);
-        if (token === undefined) {
+        if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(403).send("No token");
+            res.status(INVALID_PARAMETERS_STATUS).send("No token");
         } else {
             if (sessionId === undefined) {
                 logger.warn(`sessionId`);
-                res.status(403).send("No sessionId");
+                res.status(INVALID_PARAMETERS_STATUS).send("No sessionId");
             } else {
-                sessionService.getSessionById(new Token(token), sessionId)
+                sessionService.getSessionById(req.token, sessionId)
                 .then(sessionResult => {
                     if (sessionResult === "Unauthorized") {
-                        res.status(403).send("Unauthorized");
+                        res.status(FORBIDDEN_STATUS).send("Unauthorized");
                     } else {
                         logger.info("Session by Id done");
                         res.json(sessionResult);
@@ -122,23 +118,22 @@ export default function attachRoutes(app : Application, accountService: AccountS
                 })
                 .catch((e) => {
                     logger.error(`error:${e}`);
-                    res.status(403).send({error:e});
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
                 });
             }
         }
     });
 
-    app.post("/api/sessions", (req, res) => {
-        const {token} = req.body;
+    app.get("/sessions", (req, res) => {
         logger.info(`sessions`);
-        if (token === undefined) {
+        if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(403).send("No token");
+            res.status(INVALID_PARAMETERS_STATUS).send("No token");
         } else {
-            sessionService.getSessionIds(new Token(token))
+            sessionService.getSessionIds(req.token)
             .then(idsResult => {
                 if (idsResult === "Unauthorized") {
-                    res.status(403).send("Unauthorized");
+                    res.status(FORBIDDEN_STATUS).send("Unauthorized");
                 } else {
                     logger.info("sessions done");
                     res.json(idsResult);
@@ -146,7 +141,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
             })
             .catch((e) => {
                 logger.error(`error:${e}`);
-                res.status(403).send({error:e});
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
             });
         }
     });
