@@ -34,7 +34,7 @@ paths:
           description: The WebSite ids
       security:
         - bearerAuth: []
-  /websites/:webSiteId:
+  /websites/{webSiteId}:
     description: returns WebSite 
     get:
       parameters:
@@ -57,7 +57,7 @@ paths:
           description: Returns Session ids
       security:
         - bearerAuth: []
-  /sessions/:sessionId:
+  /sessions/{sessionId}:
     description: returns Session 
     get:
       parameters:

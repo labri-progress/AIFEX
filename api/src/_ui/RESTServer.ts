@@ -3,14 +3,17 @@ import express from "express";
 import http from "http";
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
+import cors from 'cors';
+import jsonwebtoken from "jsonwebtoken";
+
 import AccountService from "../domain/AccountService";
 import WebSiteService from "../domain/WebSiteService";
 import routes from "./routeREST";
-import jsonwebtoken from "jsonwebtoken";
 
 import SessionService from "../domain/SessionService";
 import Token from "../domain/Token";
 import config from "../_infra/config";
+
 
 export default class RESTServer {
     public port: number;
@@ -30,6 +33,8 @@ export default class RESTServer {
         const app = express();
         const port = process.env.PORT || this.port;
         const server = http.createServer(app);
+
+        app.use(cors());
 
         // logger
         if (process.env.NODE_ENV === "dev") {
