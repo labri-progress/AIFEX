@@ -4,6 +4,7 @@ import SessionService from "../domain/SessionService";
 import WebSiteService from "../domain/WebSiteService";
 import { Application } from 'express';
 import { logger } from "../logger";
+import Token from "../domain/Token";
 
 const FORBIDDEN_STATUS = 403;
 const NOT_FOUND_STATUS = 404;
@@ -75,7 +76,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
     });
 
     app.get("/websites", (req, res) => {
-        logger.info(`websites`);
+        logger.info(`get websites`);
         if (req.token === undefined) {
             logger.warn(`no token`);
             res.status(INVALID_PARAMETERS_STATUS).send("No token");
@@ -93,6 +94,42 @@ export default function attachRoutes(app : Application, accountService: AccountS
                 logger.error(`error:${e}`);
                 res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
             });
+        }
+    });
+
+    app.post("/websites", (req, res) => {
+        logger.info(`create websites`);
+        const {name, url, mappingList} = req.body;
+        logger.debug(`${mappingList}`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(INVALID_PARAMETERS_STATUS).send("No token");
+        } else {
+            const token : Token = req.token;
+            if (name === undefined || url === undefined || mappingList === undefined) {
+                res.status(INVALID_PARAMETERS_STATUS).send("invalid parameter");
+            } else {
+                webSiteService.createWebSite(req.token,name, url, mappingList)
+                .then(webSiteId => {
+                    if (webSiteId === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                    } else {
+                        logger.info("website is created");
+                        return accountService.addWebSite(token, webSiteId)
+                        .then((token) => {
+                            if (token === "Unauthorized") {
+                                logger.debug("cannot add webSite to account");
+                            } else {
+                                res.json({jwt:token.token});
+                            }
+                        })
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
+                });
+            }
         }
     });
 

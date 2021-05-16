@@ -7,4 +7,6 @@ export default interface SessionService {
 
     getSessionById(token: Token, id: string): Promise<Session | "Unauthorized">;
 
+    //createSession(token: Token, session: Session): Promise<string> | "Unauthorized";
+
 }

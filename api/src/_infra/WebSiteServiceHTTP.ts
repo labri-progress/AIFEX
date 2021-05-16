@@ -4,6 +4,7 @@ import Token from "../domain/Token";
 import WebSite from "../domain/WebSite";
 import WebSiteService from "../domain/WebSiteService";
 import jsonwebtoken from "jsonwebtoken";
+import Mapping from "../domain/Mapping";
 
 const WEBSITE_URL : string = `http://${config.website.host}:${config.website.port}/website/`;
 
@@ -39,6 +40,29 @@ export default class WebSiteServiceHTTP implements WebSiteService {
         } catch(e) {
             return Promise.resolve("Unauthorized");
         }
+    }
+
+    createWebSite(token: Token, name: string, url: string, mappingList: Mapping[]): Promise<string | "Unauthorized" > {
+        let webSite = {
+            name,
+            url,
+            mappingList
+        }
+        const webSiteCreateURL = 'http://' + config.website.host + ':' + config.website.port + '/website/create';
+        let optionWebSiteCreate = {
+            method: 'POST',
+            body:    JSON.stringify(webSite),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(webSiteCreateURL, optionWebSiteCreate)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
+            })
+            
     }
 
 

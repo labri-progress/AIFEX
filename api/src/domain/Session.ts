@@ -27,7 +27,6 @@ export default class Session {
         overlayType: SessionOverlayType = "rainbow")
     {
         this._id = id;
-
         this._webSite = webSite;
         this._baseURL = baseURL;
         this._explorationList = [];

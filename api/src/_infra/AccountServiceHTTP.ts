@@ -25,4 +25,26 @@ export default class AccountServiceHTTP implements AccountService {
             })
     }
 
+
+    addWebSite(token: Token, webSiteId: string): Promise<Token | "Unauthorized" > {
+        const accountAddWebSiteURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addwebsite';
+        let bodyAddWebSite = {
+            token:token.token,
+            webSiteId,
+        }
+        let optionAddWebSite = {
+            method: 'POST',
+            body:    JSON.stringify(bodyAddWebSite),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountAddWebSiteURL, optionAddWebSite)
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then((token)=>new Token(token.jwt));
+                } else {
+                    throw new Error('cannot add website to account');
+                }
+            })
+    }
+
 }

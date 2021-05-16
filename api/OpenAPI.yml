@@ -15,7 +15,7 @@ paths:
     post:
       requestBody:
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
               type: object
               properties:
@@ -27,16 +27,69 @@ paths:
         '200':
           description: Returns JWT Token
   /websites:
-    description: returns WebSite ids
     get:
+      description: returns WebSite ids
+      responses:
+        '200':
+          description: The WebSite ids
+      security:
+        - bearerAuth: []
+    post:
+      description: add a new WebSite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                url:
+                  type: string
+                mappingList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      match:
+                        type: object
+                        properties:
+                          event:
+                            type: string
+                          css:
+                            type: string
+                          xpath:
+                            type: string
+                          code:
+                            type: string
+                          key:
+                            type: string
+                      output:
+                        type: object
+                        properties:
+                          prefix:
+                            type: string
+                          suffix:
+                            type: string
+                      context:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                          css:
+                            type: string
+                          xpath:
+                            type: string
+                      description:
+                        type: string
       responses:
         '200':
           description: The WebSite ids
       security:
         - bearerAuth: []
   /websites/{webSiteId}:
-    description: returns WebSite 
     get:
+      description: returns WebSite 
       parameters:
         - in: path
           name: webSiteId
@@ -50,16 +103,16 @@ paths:
       security:
         - bearerAuth: []
   /sessions:
-    description: returns Session ids
     get:
+      description: returns Session ids
       responses:
         '200':
           description: Returns Session ids
       security:
         - bearerAuth: []
   /sessions/{sessionId}:
-    description: returns Session 
     get:
+      description: returns Session 
       parameters:
         - in: path
           name: sessionId
