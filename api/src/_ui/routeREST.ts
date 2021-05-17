@@ -52,7 +52,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
         logger.info(`webSites by Id`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(INVALID_PARAMETERS_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).send("No token");
         } else {
             if (webSiteId === undefined) {
                 logger.warn(`webSiteId`);
@@ -79,7 +79,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
         logger.info(`get websites`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(INVALID_PARAMETERS_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).send("No token");
         } else {
             webSiteService.getWebSiteIds(req.token)
             .then(idsResult => {
@@ -103,7 +103,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
         logger.debug(`${mappingList}`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(INVALID_PARAMETERS_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).send("No token");
         } else {
             const token : Token = req.token;
             if (name === undefined || url === undefined || mappingList === undefined) {
@@ -138,7 +138,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
         logger.info(`Session By Id`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(INVALID_PARAMETERS_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).send("No token");
         } else {
             if (sessionId === undefined) {
                 logger.warn(`sessionId`);
@@ -165,7 +165,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
         logger.info(`sessions`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(INVALID_PARAMETERS_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).send("No token");
         } else {
             sessionService.getSessionIds(req.token)
             .then(idsResult => {
