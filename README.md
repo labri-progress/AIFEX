@@ -24,8 +24,8 @@ To run it, you must install **nodejs**, **npm** and **docker** with **docker-com
 
 Edit **./prod.sh**:
 1. replace HOST_ADDR by your server name.
-2. Change ELASTIC_PASSWORD
-3. Set CERTIFIACT_SOURCE and CERTIFICAT_TARGET 
+2. Change ELASTIC_PASSWORD and TOKEN_SECRET
+3. Set CERTIFICAT_SOURCE and CERTIFICAT_TARGET 
 
 Then just execute (if you are using Windows, please use bash): 
 

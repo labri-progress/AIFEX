@@ -58,6 +58,7 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - TOKEN_SECRET=${TOKEN_SECRET}
     depends_on:
       - "mongo"
     ports:
@@ -82,6 +83,8 @@ services:
       dockerfile: ./Dockerfile.prod
     environment:
       - NODE_ENV=${NODE_ENV}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - TOKEN_SECRET=${TOKEN_SECRET}
     depends_on:
       - "account"
       - "website"
@@ -98,6 +101,7 @@ services:
       - HOST_ADDR=${HOST_ADDR}
       - PLUGIN_INFO=${PLUGIN_INFO}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - TOKEN_SECRET=${TOKEN_SECRET}
     restart: always
     volumes:
       - screenshot:/app/public/screenshot
@@ -116,7 +120,7 @@ services:
     command: --quiet --logpath /data/db/mongod.log
 
   elasticsearch:
-    image: elasticsearch:7.10.1
+    image: elasticsearch:7.12.1
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=true
@@ -129,7 +133,7 @@ services:
         hard: -1
 
   kibana:
-    image: kibana:7.10.1
+    image: kibana:7.12.1
     environment:
       - "SERVER_BASEPATH=/kibana"
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
