@@ -1,50 +1,30 @@
-import Action from "./Action";
-import ActionInteraction from "./ActionInteraction";
-import ActionToMappingService from "./ActionToMappingService";
-import Exploration from "./Exploration";
-import IPrinter from "./IPrinter";
-import Mapping from "./Mapping";
-import Session from "./Session";
+import Printer from "./Printer";
 
-export default class NaturalLanguagePrinter implements IPrinter {
+export default class NaturalLanguagePrinter extends Printer {
 
-    public printSession(session: Session): string {
-        return session.explorationList
-            .map((exploration, index) => {
-                return `Exploration Number ${index} \n` + this.printExploration(exploration, session);
-            })
-            .join("\n\n");
+
+    protected buildTestHeader(description: string, options: { headless?: boolean | undefined; timeout?: number | undefined; }): string {
+        return ""
     }
-
-    public printExploration(exploration: Exploration, session: Session): string {
-        return exploration.interactionList
-            .filter((interaction) => interaction instanceof ActionInteraction)
-            .map((actionInteraction, index) => this.printAction((actionInteraction as ActionInteraction).action, session) + "\n")
-            .join("");
+    protected buildTestFooter(): string {
+        return ""
     }
-
-    public printAction(action: Action, session: Session): string | undefined {
-        if (session.webSite) {
-                const mapping = ActionToMappingService.findMappingForAction(action, session.webSite.mappingList);
-            if (action.kind === "start") {
-                return `start : (baseURL = ${session.baseURL})`;
-            }
-            if (action.kind === "end") {
-                return `end`;
-            }
-            if (mapping === undefined) {
-                throw new Error("No mapping found");
-            }
-            return `${action.kind} : ${this.printDetails(action, mapping)}`;
-        }
+    protected printStartAction(url: string): string {
+        return `start : (baseURL = ${url})`;
     }
-
-    public printDetails(action: Action, mapping: Mapping): string {
-        let details = "";
-        details += `(selector = ${mapping.match.css})`;
-        if (mapping.output.suffix !== undefined) {
-            details += `, (suffix = ${mapping.output.suffix} with ${action.value} as value)`;
-        }
-        return details;
+    protected printClickAction(css: string): string {
+        return "click on " + css; 
+    }
+    protected printKeyupAction(keyCode: string): string {
+        return "release key " + keyCode; 
+    }
+    protected printMouseOverAction(selector: string): string {
+        return "hover " + selector; 
+    }
+    protected printTypeAction(selector: string, text: string): string {
+        return "type text: " + text + " in:" + selector;
+    }
+    protected printChangeAction(selector: string, value: string): string {
+        return "change: selector with" + value;
     }
 }

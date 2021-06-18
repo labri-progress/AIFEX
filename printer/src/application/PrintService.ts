@@ -1,5 +1,5 @@
 import NaturalLanguagePrinter from "../domain/NaturalLanguagePrinter";
-import PuppeteerPrinter from "../domain/PuppeteerPrinter/PuppeteerPrinter";
+import PuppeteerPrinter from "../domain/PuppeteerPrinter";
 import Session from "../domain/Session";
 import SessionRepository from "../domain/SessionRepository";
 
@@ -36,6 +36,7 @@ export default class PrintService {
             }
         });
     }
+
 
     public mountSession(sessionId: string): Promise<Session | undefined> {
         const sessionInCache = this.mountedSessionList.find((session) => session.id === sessionId);

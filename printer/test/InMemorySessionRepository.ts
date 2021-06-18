@@ -9,7 +9,7 @@ export default class InSessionRepository implements SessionRepository {
         this.sessionMap = new Map();
     }
 
-    public findSessionById(sessionId: string): Promise<Session> {
+    public findSessionById(sessionId: string): Promise<Session | undefined> {
         return Promise.resolve(this.sessionMap.get(sessionId));
     }
 
