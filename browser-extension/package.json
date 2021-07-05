@@ -26,7 +26,6 @@
     "object-sizeof": "^1.6.1",
     "query-selector-shadow-dom": "^0.5.0",
     "shortid": "^2.2.16",
-    "socket.io-client": "^2.3.1",
     "typescript-logging": "^1.0.0"
   },
   "devDependencies": {
@@ -47,7 +46,7 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.9.7",
     "webextension-polyfill": "^0.7.0",
-    "webpack": "^4.44.2",
+    "webpack": "^5.42.1",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^4.2.2"
