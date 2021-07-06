@@ -155,7 +155,13 @@ export default class SessionRepositoryMongo implements SessionRepository {
                                         interactionList.push(new ActionInteraction(interaction.index, new Action(interaction.kind, interaction.value), interaction.date));
                                     }
                                     if (interaction.concreteType === "Comment") {
-                                        interactionList.push(new CommentInteraction(interaction.index, new Comment(interaction.kind, interaction.value), interaction.date));
+                                        let comment: Comment;
+                                        if (interaction.value !== undefined) {
+                                            comment = new Comment(interaction.kind, interaction.value)
+                                        } else {
+                                            comment = new Comment(interaction.kind, "");
+                                        }
+                                        interactionList.push(new CommentInteraction(interaction.index, comment, interaction.date));
                                     }
                                 });
                                 session.addInteractionListToExploration(explorationNumber, interactionList);

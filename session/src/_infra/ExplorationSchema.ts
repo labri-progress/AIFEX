@@ -24,7 +24,13 @@ export interface ExplorationDocument extends Document {
     testerName : string,
     isStopped : boolean,
     startDate: Date,
-    interactionList : any[],
+    interactionList : ({
+        concreteType: string,
+        index: number,
+        kind: string,
+        value: string | undefined,
+        date: Date
+    })[],
 }
 
 export default model<ExplorationDocument>("Exploration", EXPLORATION_SCHEMA);

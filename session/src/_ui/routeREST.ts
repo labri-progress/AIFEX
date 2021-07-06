@@ -7,6 +7,7 @@ import { Express, Request } from "express";
 import {logger} from "../logger";
 import Session, { SessionOverlayType } from "../domain/Session";
 
+const SUCCESS_STATUS = 200;
 const NOT_FOUND_STATUS = 404;
 const INVALID_PARAMETERS_STATUS = 400;
 const INTERNAL_SERVER_ERROR_STATUS = 500;
@@ -151,28 +152,30 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
         });
     });
 
-    app.post("/session/:sessionId/exploration/:explorationNumber/stop",  (req, res) => {
-        const {sessionId, explorationNumber} = req.params;
-        logger.info(`exploration/stop sessionId ${sessionId}, explorationNumber ${explorationNumber}`);
+    app.post(`/session/:sessionId/exploration/:exploNumber/stop`, (req, res) => {
+        const {sessionId, exploNumber} = req.params;
+        logger.info(`exploration/stop sessionId ${sessionId}, explorationNumber ${exploNumber}`);
+
         if (sessionId === undefined) {
             logger.warn(`sessionId must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("sessionId is undefined");
             return;
         }
-        if (explorationNumber === undefined) {
+        if (exploNumber === undefined) {
             logger.warn(`explorationNumber must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("explorationNumber is undefined");
             return;
         }
-        const explorationNumberAsNumber = parseInt(explorationNumber);
+        
+        const explorationNumberAsNumber: number = parseInt(exploNumber);
         if (isNaN(explorationNumberAsNumber)) {
             logger.error(`exploration/stop ${explorationNumberAsNumber} is NaN`);
             res.status(INVALID_PARAMETERS_STATUS).send("error");
         } else {
             sessionService.stopExploration(sessionId, explorationNumberAsNumber)
-            .then((exploNumber) => {
-                logger.debug(`exploration/stop exploration ${exploNumber} is stopped`);
-                res.json(exploNumber);
+            .then(() => {
+                logger.debug(`exploration/stop exploration ${explorationNumberAsNumber} is stopped`);
+                res.sendStatus(SUCCESS_STATUS);
             })
             .catch( (e) => {
                 if ((e instanceof Error) && (e.message === 'wrong sessionId')) {
@@ -270,23 +273,26 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
             res.status(INVALID_PARAMETERS_STATUS).send("explorationNumber must not be undefined");
             return;
         }
-        const video: Express.Multer.File = req.file;
-        const fileBuffer: Buffer = video.buffer;
 
         const explorationNumberAsNumber = parseInt(explorationNumber);
         if (isNaN(explorationNumberAsNumber)) {
             logger.error(`sessionId/explorationNumber error ${explorationNumber} is NaN`);
             res.status(INVALID_PARAMETERS_STATUS).send("wrong exploration number");
         } else {
-            sessionService.addVideo(sessionId, explorationNumberAsNumber, fileBuffer )
-            .then( () => {
-                logger.debug(`sessionId/explorationNumber exploration is returned`);
-                res.json({});
-            })
-            .catch( (e) => {
-                logger.error(`sessionId/explorationNumber ${e}`);
-                res.status(INTERNAL_SERVER_ERROR_STATUS).send(e);
-            });
+            if (req.file) {
+                const video: Express.Multer.File = req.file;
+                const fileBuffer: Buffer = video.buffer;
+
+                sessionService.addVideo(sessionId, explorationNumberAsNumber, fileBuffer )
+                .then( () => {
+                    logger.debug(`sessionId/explorationNumber exploration is returned`);
+                    res.json({});
+                })
+                .catch( (e) => {
+                    logger.error(`sessionId/explorationNumber ${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send(e);
+                });
+            }
         }
     });
 
