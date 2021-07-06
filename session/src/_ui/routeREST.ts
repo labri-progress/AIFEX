@@ -259,6 +259,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
 
     app.post("/session/addvideo/:sessionId/:explorationNumber", multer().single("video"), (req, res) => {
         const {sessionId, explorationNumber} = req.params;
+        const file = req.file;
         logger.info(`addvideo sessionId ${sessionId}, explorationNumber ${explorationNumber}`);
         if (sessionId === undefined ) {
             logger.warn(`sessionId must not be undefined`);
@@ -270,7 +271,12 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
             res.status(INVALID_PARAMETERS_STATUS).send("explorationNumber must not be undefined");
             return;
         }
-        const video: Express.Multer.File = req.file;
+        if (file === undefined ) {
+            logger.warn(`file must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("file must not be undefined");
+            return;
+        }
+        const video: Express.Multer.File = file;
         const fileBuffer: Buffer = video.buffer;
 
         const explorationNumberAsNumber = parseInt(explorationNumber);
