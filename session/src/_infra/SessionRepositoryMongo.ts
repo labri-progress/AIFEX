@@ -65,13 +65,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
             return !!interaction
           }
 
-        const interactionList :  Array<{
-            concreteType: string,
-            index: number,
-            kind: string,
-            value: string | undefined,
-            date: Date
-        }> = updatedInteractionList.map( (interaction) => {
+        const interactionList :  any[] = updatedInteractionList.map( (interaction) => {
             if (interaction instanceof ActionInteraction) {
                 return {
                     concreteType: "Action",
