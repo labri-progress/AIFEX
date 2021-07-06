@@ -48,7 +48,30 @@ export default class SessionRepositoryMongo implements SessionRepository {
     }
 
     public updateInteractionListOfExploration(sessionId: string, explorationNumber: number, updatedInteractionList: Interaction[]): Promise<void> {
-        const interactionList = updatedInteractionList.map( (interaction) => {
+
+        const isInteraction = (interaction: {
+            concreteType: string,
+            index: number,
+            kind: string,
+            value: string | undefined,
+            date: Date
+        } | undefined): interaction is {
+            concreteType: string,
+            index: number,
+            kind: string,
+            value: string | undefined,
+            date: Date
+        } => {
+            return !!interaction
+          }
+
+        const interactionList :  Array<{
+            concreteType: string,
+            index: number,
+            kind: string,
+            value: string | undefined,
+            date: Date
+        }> = updatedInteractionList.map( (interaction) => {
             if (interaction instanceof ActionInteraction) {
                 return {
                     concreteType: "Action",
@@ -76,14 +99,10 @@ export default class SessionRepositoryMongo implements SessionRepository {
                     date: interaction.date
                 };
             }
-        });
-        return ExplorationSchema.updateOne({ sessionId, explorationNumber },
-            {
-                $set: {
-                    interactionList,
-                },
-            })
-            .exec().then(() => {});
+        }).filter(isInteraction);
+
+        return ExplorationSchema.updateOne({ sessionId, explorationNumber },{$set: {interactionList}})
+        .exec().then(() => {});
     }
 
     public updateExplorationIsStopped(sessionId: string, explorationNumber: number, stopDate: Date): Promise<void> {

@@ -6,7 +6,7 @@ npm install
 export HOST_ADDR="localhost"
 export PROTOCOL="http"
 export NODE_ENV="development"
-export ELASTIC_PASSWORD="elastic"
+export ELASTIC_PASSWORD="el@st!c"
 export TOKEN_SECRET="changeme"
 
 
