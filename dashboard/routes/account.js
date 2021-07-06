@@ -10,6 +10,7 @@ module.exports = function attachRoutes(app, config) {
 
     app.use((req, res, next) => {
         logger.info('use account');
+        console.log("req session", req.session)
         if (req.session.jwt) {
             logger.debug('token');
             if (verify(req.session.jwt)) {
@@ -91,10 +92,10 @@ module.exports = function attachRoutes(app, config) {
     app.post('/account/signin', (req, res) => {
         const { username , password} = req.body;
         logger.info(`POST sign for ${username}`);
-        //console.log('sign', username, password);
+        console.log('sign', username, password);
         signin(username, password)
             .then(token => {
-                //console.log("token ok:", token);
+                console.log("token ok:", token);
                 req.session.jwt = token.jwt;
                 req.session.username = username;
                 logger.debug(`sign ok`);
@@ -135,8 +136,8 @@ module.exports = function attachRoutes(app, config) {
         res.redirect('/');
     });
 
-
     app.get('/account/account', (req, res) => {
+        logger.info("/account/account")
         let webSiteList;
         let sessionList;
         logger.info(`GET account.ejs`);
@@ -212,6 +213,7 @@ module.exports = function attachRoutes(app, config) {
                     if (responseAccount.ok) {
                         responseAccount.json()
                             .then(token => {
+                                logger.info(`Logged in with token ${token}`)
                                 res(token);
                             })
                             .catch(e => {
