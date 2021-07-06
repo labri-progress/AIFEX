@@ -1,4 +1,4 @@
-import { logger } from "../framework/Logger";
+import { logger } from "../Logger";
 import WindowOption from "./WindowOption";
 
 export function createWindow(options: WindowOption): Promise<browser.windows.Window> {

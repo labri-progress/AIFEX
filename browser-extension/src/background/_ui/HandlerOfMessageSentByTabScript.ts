@@ -1,7 +1,7 @@
 import Interface4TabScript from "../application/Interface4TabScript";
 import Question from "../domain/Question";
 import ExtensionCommunicationService from "./ExtensionCommunicationService";
-import {logger} from "../framework/Logger";
+import {logger} from "../Logger";
 
 export default class HandlerOfMessageSentByTabScript {
     private _application : Interface4TabScript;

@@ -1,4 +1,4 @@
-import { logger } from "../framework/Logger";
+import { logger } from "../Logger";
 import BrowserService from "./BrowserService";
 import Window from "./Window";
 

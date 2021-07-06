@@ -2,7 +2,7 @@
 import BrowserService from "../domain/BrowserService";
 import { getWindowById, updateWindowById, createWindow, getCurrentWindow, removeWindowById, executeTabScript, removeTabs, createTab, takeScreenshot, captureStreamOnWindow, focusTab } from "./FirefoxPromise";
 import WindowOption from "./WindowOption";
-import {logger} from "../framework/Logger";
+import {logger} from "../Logger";
 
 const DEFAULT_WINDOW_OPTIONS = {url:'https://www.aifex.fr'};
 const DEFAULT_TAB_OPTIONS = {};

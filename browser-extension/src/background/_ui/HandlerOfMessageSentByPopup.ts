@@ -1,6 +1,6 @@
 import Interface4Popup from "../application/Interface4Popup";
 import ExtensionCommunicationService from "./ExtensionCommunicationService";
-import {logger} from "../framework/Logger";
+import {logger} from "../Logger";
 
 export default class HandlerOfMessageSentByPopup {
     private _application : Interface4Popup;

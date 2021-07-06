@@ -1,4 +1,4 @@
-import { logger } from "../framework/Logger";
+import { logger } from "../Logger";
 import BrowserService from "./BrowserService";
 
 export default class MediaRecorderManager {
@@ -39,7 +39,7 @@ export default class MediaRecorderManager {
                         }
                     };
                 this._recorder.onerror = (error) => {
-                    logger.error('error',error.error);
+                    logger.error('error while recording',null);
                 }
                 this._isPreparedToRecordMedia = true;
             }

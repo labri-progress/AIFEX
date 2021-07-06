@@ -1,5 +1,5 @@
 import WindowOption from "./WindowOption";
-import {logger} from "../framework/Logger";
+import {logger} from "../Logger";
 
 export function createWindow(options: WindowOption): Promise<chrome.windows.Window> {
     return new Promise((resolve, reject) => {
