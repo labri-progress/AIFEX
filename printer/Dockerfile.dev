@@ -11,13 +11,11 @@ COPY ./package.json /app/package.json
 RUN npm install
 
 # Install app dependencies
-RUN npm install -g typescript
 
 COPY ./tsconfig.json /app
-
 COPY ./src /app/src
 
-RUN tsc
+RUN cd src && npm run compile
 
 
 FROM node:slim
