@@ -1,7 +1,5 @@
 const PORT = 80;
 const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
 const session = require('express-session')
 const config = require("./config");
 const markdown = require('markdown-it')({html: true})
@@ -9,9 +7,29 @@ const markdown = require('markdown-it')({html: true})
 const multer = require('multer');
 const logger = require('./logger');
 
-  
-  //if (process.env.NODE_ENV === 'production') {
-  //}
+const ONE_HOUR = 3600000;
+
+
+const app = express();
+app.set('view engine', 'ejs');
+
+
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json());
+
+console.log("Start")
+const sessionMiddleware = session({
+    secret: 'AIFEX super secret',
+    cookie: {
+        secure: process.env.PROTOCOL === 'https',
+        httpOnly: true,
+        maxAge: ONE_HOUR,
+    },
+    proxy: (process.env.NODE_ENV === 'production'),
+    saveUninitialized: true
+});
+
+app.use(sessionMiddleware);
 
 // Middleware for file upload
 const forms = multer({limits: { fieldSize: 25 * 1024 * 1024 }});
@@ -24,43 +42,16 @@ app.locals.markdown = (filename) => {
                     
 // Configure the EJS template engine
 // Add support for markdown file rendering
-app.set('view engine', 'ejs');
 
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-app.use(bodyParser.json());
-
-//app.use(bodyParser.json({limit:'50mb'}));
 app.use(forms.array()); 
 app.use('/static', express.static('public'));
-//app.use(fileUpload());
 
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
     next();
   });
-
-const ONE_HOUR = 3600000;
-const sess= {
-    secret: 'AIFEX super secret',
-    resave: false,
-    saveUninitialized: true,
-    maxAge: ONE_HOUR,
-    cookie: {}
-};
-
-if (app.get('env') === 'production') {
-    sess.proxy = true;
-    app.set('trust proxy', true); // trust first proxy
-    if (process.env.PROTOCOL === 'https') {
-        sess.cookie.secure = true; // serve secure cookies
-    } else {
-        sess.cookie.secure = false; // serve secure cookies
-    }
-}
-
-app.use(session(sess));
-
 require("./routes/account.js")(app, config);
 require("./routes/statics.js")(app, config);
 require("./routes/session.js")(app, config);
