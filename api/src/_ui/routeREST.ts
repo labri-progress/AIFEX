@@ -1,17 +1,14 @@
-
-import AccountService from "../domain/AccountService";
-import SessionService from "../domain/SessionService";
-import WebSiteService from "../domain/WebSiteService";
 import { Application } from 'express';
 import { logger } from "../logger";
 import Token from "../domain/Token";
+import APIApplication from '../application/APIApplication';
 
 const FORBIDDEN_STATUS = 403;
 const NOT_FOUND_STATUS = 404;
 const INVALID_PARAMETERS_STATUS = 400;
 const INTERNAL_SERVER_ERROR_STATUS = 500;
 
-export default function attachRoutes(app : Application, accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService) {
+export default function attachRoutes(app : Application, api : APIApplication) {
 
     app.get("/ping", (req, res) => {
         logger.info(`ping`);
@@ -31,7 +28,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
         if (password === undefined || username === undefined) {
             res.status(INVALID_PARAMETERS_STATUS).send("No username or no password");
         } else {
-            accountService.signin(username, password)
+            api.signin(username, password)
             .then(tokenResult => {
                 if (tokenResult === "Unauthorized") {
                     res.status(FORBIDDEN_STATUS).send("Unauthorized");
@@ -58,7 +55,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
                 logger.warn(`webSiteId`);
                 res.status(INVALID_PARAMETERS_STATUS).send("No webSiteId");
             } else {
-                webSiteService.getWebSiteById(req.token, webSiteId)
+                api.findWebSiteById(req.token, webSiteId)
                 .then(webSiteResult => {
                     if (webSiteResult === "Unauthorized") {
                         res.status(FORBIDDEN_STATUS).send("Unauthorized");
@@ -81,7 +78,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
             logger.warn(`no token`);
             res.status(FORBIDDEN_STATUS).send("No token");
         } else {
-            webSiteService.getWebSiteIds(req.token)
+            api.findWebSiteIds(req.token)
             .then(idsResult => {
                 if (idsResult === "Unauthorized") {
                     res.status(FORBIDDEN_STATUS).send("Unauthorized");
@@ -109,20 +106,13 @@ export default function attachRoutes(app : Application, accountService: AccountS
             if (name === undefined || url === undefined || mappingList === undefined) {
                 res.status(INVALID_PARAMETERS_STATUS).send("invalid parameter");
             } else {
-                webSiteService.createWebSite(req.token,name, url, mappingList)
-                .then(webSiteId => {
-                    if (webSiteId === "Unauthorized") {
+                api.createWebSite(req.token,name, url, mappingList)
+                .then(newToken => {
+                    if (newToken === "Unauthorized") {
                         res.status(FORBIDDEN_STATUS).send("Unauthorized");
                     } else {
-                        logger.info("website is created");
-                        return accountService.addWebSite(token, webSiteId)
-                        .then((token) => {
-                            if (token === "Unauthorized") {
-                                logger.debug("cannot add webSite to account");
-                            } else {
-                                res.json({jwt:token.token});
-                            }
-                        })
+                        logger.info("website is created and added");
+                        res.json({jwt:token.token});
                     }
                 })
                 .catch((e) => {
@@ -144,7 +134,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
                 logger.warn(`sessionId`);
                 res.status(INVALID_PARAMETERS_STATUS).send("No sessionId");
             } else {
-                sessionService.getSessionById(req.token, sessionId)
+                api.findSessionById(req.token, sessionId)
                 .then(sessionResult => {
                     if (sessionResult === "Unauthorized") {
                         res.status(FORBIDDEN_STATUS).send("Unauthorized");
@@ -167,7 +157,7 @@ export default function attachRoutes(app : Application, accountService: AccountS
             logger.warn(`no token`);
             res.status(FORBIDDEN_STATUS).send("No token");
         } else {
-            sessionService.getSessionIds(req.token)
+            api.findSessionIds(req.token)
             .then(idsResult => {
                 if (idsResult === "Unauthorized") {
                     res.status(FORBIDDEN_STATUS).send("Unauthorized");

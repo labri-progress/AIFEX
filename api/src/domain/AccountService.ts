@@ -6,5 +6,7 @@ export default interface AccountService {
 
     addWebSite(token: Token, webSiteId: string): Promise<Token | "Unauthorized">;
 
+    addSession(token: Token, sessionId: string): Promise<Token | "Unauthorized">;
+
 
 }

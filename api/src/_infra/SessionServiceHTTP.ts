@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import config from "./config";
-import Session from "../domain/Session";
+import Session, { SessionOverlayType } from "../domain/Session";
 import SessionService from "../domain/SessionService";
 import Token from "../domain/Token";
 import jsonwebtoken from "jsonwebtoken";
@@ -9,7 +9,7 @@ const SESSION_URL: string = `http://${config.session.host}:${config.session.port
 
 export default class SessionServiceHTTP implements SessionService {
 
-    getSessionIds(token: Token): Promise<string[] | "Unauthorized"> {
+    findSessionIds(token: Token): Promise<string[] | "Unauthorized"> {
         try {
             jsonwebtoken.verify(token.token, config.tokenSecret);
             return Promise.resolve(this.token2SessionIds(token));
@@ -18,7 +18,7 @@ export default class SessionServiceHTTP implements SessionService {
         }
     }
 
-    getSessionById(token: Token, id: string): Promise<Session | "Unauthorized"> {
+    findSessionById(token: Token, id: string): Promise<Session | "Unauthorized"> {
         try {
             jsonwebtoken.verify(token.token, config.tokenSecret);
             const ids : string[] = this.token2SessionIds(token);
@@ -39,6 +39,30 @@ export default class SessionServiceHTTP implements SessionService {
         } catch (e) {
             return Promise.resolve("Unauthorized");
         }
+    }
+
+    createSession(token: Token, webSiteId : string, baseURL: string, name: string, overlayType: SessionOverlayType): Promise<string> {
+        let session = {
+            webSiteId,
+            baseURL,
+            name,
+            overlayType : overlayType.toString(),
+            useTestScenario : false
+        }
+        const SessionCreateURL = 'http://' + config.session.host + ':' + config.session.port + '/session/create';
+        let optionSessionCreate = {
+            method: 'POST',
+            body:    JSON.stringify(session),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(SessionCreateURL, optionSessionCreate)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
+            })
     }
 
 

@@ -10,7 +10,7 @@ const WEBSITE_URL : string = `http://${config.website.host}:${config.website.por
 
 export default class WebSiteServiceHTTP implements WebSiteService {
     
-    getWebSiteIds(token: Token): Promise<string[] | "Unauthorized"> {
+    findWebSiteIds(token: Token): Promise<string[] | "Unauthorized"> {
         try {
             jsonwebtoken.verify(token.token, config.tokenSecret);
             return Promise.resolve(this.token2WebSiteIds(token));
@@ -19,7 +19,7 @@ export default class WebSiteServiceHTTP implements WebSiteService {
         }
     }
     
-    getWebSiteById(token : Token, id: string): Promise<WebSite | "Unauthorized"> {
+    findWebSiteById(token : Token, id: string): Promise<WebSite | "Unauthorized"> {
         try {
             jsonwebtoken.verify(token.token, config.tokenSecret);
             const ids : string[] = this.token2WebSiteIds(token);

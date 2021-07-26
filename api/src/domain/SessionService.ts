@@ -3,10 +3,10 @@ import Token from "./Token";
 
 export default interface SessionService {
 
-    getSessionIds(token: Token): Promise<string[] | "Unauthorized">;
+    findSessionIds(token: Token): Promise<string[] | "Unauthorized">;
 
-    getSessionById(token: Token, id: string): Promise<Session | "Unauthorized">;
+    findSessionById(token: Token, id: string): Promise<Session | "Unauthorized">;
 
-    //createSession(token: Token, session: Session): Promise<string> | "Unauthorized";
+    createSession(token: Token, webSiteId : string, baseURL : string, name : string, overlayType: SessionOverlayType ): Promise<string> ;
 
 }
