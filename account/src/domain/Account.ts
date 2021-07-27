@@ -51,7 +51,6 @@ export default class Account  {
 
         if (index !== -1) {
             this._authorizationSet.splice(index, 1);
-            console.log(this._authorizationSet)
         }
     }
 

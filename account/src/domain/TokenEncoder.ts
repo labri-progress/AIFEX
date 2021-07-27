@@ -9,17 +9,25 @@ import config from "../_infra/config";
 const DURATION = '4h';
 // const DURATION = '10000';
 
-export function token2AuthorizationSet(token : Token) : Authorization[]{
-    const payload : {username: string, authorizationSet: Object[]} = jsonwebtoken.verify(token.token, config.tokenSecret) as {username: string, authorizationSet: Object[]};
-    return payload.authorizationSet.map( authorizationObject => {
-        const  authorization : {_kind: Kind, _key:string} = authorizationObject as {_kind: Kind, _key:string};
-        return new Authorization(authorization._kind, authorization._key);
-    });
+export function token2AuthorizationSet(token : Token) : Authorization[] | "InvalidToken" {
+    try {
+        const payload = jsonwebtoken.verify(token.token, config.tokenSecret) as {username: string, authorizationSet: Object[]};
+        return payload.authorizationSet.map( authorizationObject => {
+            const  authorization : {_kind: Kind, _key:string} = authorizationObject as {_kind: Kind, _key:string};
+            return new Authorization(authorization._kind, authorization._key);
+        });
+    } catch (e) {
+        return "InvalidToken";
+    }
 }
 
-export function token2Username(token : Token) : string{
-    const payload : {username: string, authorizationSet: Object[]} = jsonwebtoken.verify(token.token, config.tokenSecret) as {username: string, authorizationSet: Object[]};
-    return payload.username;
+export function token2Username(token : Token) : string | "InvalidToken" {
+    try {
+        const payload : {username: string, authorizationSet: Object[]} = jsonwebtoken.verify(token.token, config.tokenSecret) as {username: string, authorizationSet: Object[]};
+        return payload.username;
+    } catch (e) {
+        return "InvalidToken";
+    }
 }
 
 export function account2Token(account : Account): Token {

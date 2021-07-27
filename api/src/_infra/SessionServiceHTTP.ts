@@ -66,6 +66,31 @@ export default class SessionServiceHTTP implements SessionService {
     }
 
 
+    addExploration(token: Token, sessionId: string, testerName: string, interactionList : Array<{index: number, concreteType: string, kind: string, value: string, date?: Date}>, startDate: Date, stopDate: Date) : Promise<number | "Unauthorized"> {
+        let exploration = {
+            testerName,
+            interactionList,
+            startDate,
+            stopDate
+        }
+        const AddExplorationURL = `http://${config.session.host}:${config.session.port}/session/${sessionId}/exploration/add`;
+        let optionAddExploration = {
+            method: 'POST',
+            body:    JSON.stringify(exploration),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(AddExplorationURL, optionAddExploration)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
+            })
+    }
+
+
+
     private token2SessionIds(token : Token) : string[]{
         const payload : {username: string, authorizationSet: Object[]} = jsonwebtoken.verify(token.token, config.tokenSecret) as {username: string, authorizationSet: Object[]};
         return payload.authorizationSet.reduce<string[]>( (acc, currAuthorizationObject) => {
