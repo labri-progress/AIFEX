@@ -15,7 +15,6 @@ export default function attachRoutes(app : Application, api : APIApplication) {
         res.send('alive');
     });
 
-
     app.post("/signin", (req, res) => {
         const {username, password} = req.body;
         logger.info(`signin`);
@@ -170,6 +169,34 @@ export default function attachRoutes(app : Application, api : APIApplication) {
                 logger.error(`error:${e}`);
                 res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
             });
+        }
+    });
+
+    app.post("/sessions", (req, res) => {
+        logger.info(`create sessions`);
+        const {webSiteId, baseURL, name, overlayType} = req.body;
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).send("No token");
+        } else {
+            const token : Token = req.token;
+            if (baseURL === undefined || name === undefined || overlayType === undefined) {
+                res.status(INVALID_PARAMETERS_STATUS).send("invalid parameter");
+            } else {
+                api.createSession(req.token, webSiteId, baseURL, name, overlayType)
+                .then(newToken => {
+                    if (newToken === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                    } else {
+                        logger.info("session is created and added");
+                        res.json({jwt:token.token});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
+                });
+            }
         }
     });
 

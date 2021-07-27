@@ -21,8 +21,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
 
     app.post("/session/create", (req, res) => {
         const { webSiteId, baseURL, name, overlayType, useTestScenario } = req.body;
-        console.log(useTestScenario)
-        logger.info(`create session webSiteId ${webSiteId}, baseURL ${baseURL}`);
+        logger.info(`create session webSiteId ${webSiteId}, baseURL ${baseURL}, name ${name}, overlayType ${overlayType}, useTestScenario ${useTestScenario}`);
         if (webSiteId === undefined) {
             logger.warn(`webSiteId must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("webSiteId is undefined");

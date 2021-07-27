@@ -110,6 +110,28 @@ paths:
           description: Returns Session ids
       security:
         - bearerAuth: []
+    post:
+      description: add a new session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                webSiteId:
+                  type: string
+                baseURL:
+                  type: string
+                name:
+                  type: string
+                overlayType:
+                  type: string
+                  enum: [shadow, bluesky, rainbow]
+      responses:
+        '200':
+          description: The WebSite ids
+      security:
+        - bearerAuth: []        
   /sessions/{sessionId}:
     get:
       description: returns Session 
