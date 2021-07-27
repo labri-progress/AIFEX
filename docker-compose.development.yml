@@ -63,7 +63,9 @@ services:
     environment:
       - NODE_ENV=development
     volumes:
-      - ./dashboard/:/app
+      - ./dashboard/public:/app/public
+      - ./dashboard/routes:/app/routes
+      - ./dashboard/views:/app/views
     
   printer:
     build:

@@ -46,6 +46,5 @@
     "winston": "^3.3.3",
     "winston-elasticsearch": "^0.15.7"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

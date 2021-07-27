@@ -6,26 +6,20 @@ import sourceMapSupport from "source-map-support";
 import cors from 'cors';
 import jsonwebtoken from "jsonwebtoken";
 
-import AccountService from "../domain/AccountService";
-import WebSiteService from "../domain/WebSiteService";
 import routes from "./routeREST";
 
-import SessionService from "../domain/SessionService";
 import Token from "../domain/Token";
 import config from "../_infra/config";
+import APIApplication from "../application/APIApplication";
 
 
 export default class RESTServer {
     public port: number;
-    public accountService: AccountService;
-    public webSiteService: WebSiteService;
-    public sessionService: SessionService;
+    public api: APIApplication;
 
-    constructor(port : number, accountService : AccountService, webSiteService : WebSiteService, sessionService : SessionService) {
+    constructor(port : number, api : APIApplication) {
         this.port = port;
-        this.accountService = accountService;
-        this.webSiteService = webSiteService;
-        this.sessionService = sessionService;
+        this.api = api;
     }
 
     public start() {
@@ -73,7 +67,7 @@ export default class RESTServer {
 
 
         // WebSite route
-        routes(app, this.accountService, this.webSiteService, this.sessionService);
+        routes(app, this.api);
 
         // Start server
         server.listen(port, () => {
