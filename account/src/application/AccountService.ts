@@ -71,16 +71,11 @@ export default class AccountService {
         return token2Username(token);
     }
 
-    addAuthorization(token: Token, authorization: Authorization): Promise<Token | "InvalidToken"> {
-        const username = token2Username(token);
-        if (username === "InvalidToken") {
-            return Promise.resolve("InvalidToken");
-        }
-
+    addAuthorization(username: string, authorization: Authorization): Promise<Token | "IncorrectUsername"> {
         return this._accountRepository.findAccountByUserName(username)
             .then((foundAccount) => {
                 if (foundAccount === undefined) {
-                    return "InvalidToken";
+                    return "IncorrectUsername";
                 } else {
                     foundAccount.addAuthorization(authorization);
                     logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
@@ -94,17 +89,11 @@ export default class AccountService {
 
     }
 
-    removeAuthorization(token: Token, authorization: Authorization): Promise<Token | "InvalidToken"> {
-        const username = token2Username(token);
-
-        if (username === "InvalidToken") {
-            return Promise.resolve("InvalidToken");
-        }
-
+    removeAuthorization(username: string, authorization: Authorization): Promise<Token | "IncorrectUsername"> {
         return this._accountRepository.findAccountByUserName(username)
             .then(foundAccount => {
                 if (foundAccount === undefined) {
-                    return "InvalidToken";
+                    return "IncorrectUsername";
                 } else {
                     foundAccount.removeAuthorization(authorization);
                     return this._accountRepository.updateAccount(foundAccount)

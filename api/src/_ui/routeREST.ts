@@ -200,9 +200,4 @@ export default function attachRoutes(app : Application, api : APIApplication) {
         }
     });
 
-
-    
-
-
-
 }
