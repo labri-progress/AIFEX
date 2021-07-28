@@ -1,8 +1,7 @@
 import Authorization from "./Authorization";
 
 export default class Account  {
-
-    private _username : string;
+    private _username : string;//id
     private _email : string;
     private _salt : Uint8Array;
     private _hash : Uint8Array;

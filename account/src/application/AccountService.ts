@@ -1,43 +1,27 @@
 import AccountRepository from "../domain/AccountRepository";
-import crypto from "crypto";
-import util from "util";
-import * as sha256 from "fast-sha256";
-import Account from "../domain/Account";
 import Authorization from "../domain/Authorization";
 import Token from "../domain/Token";
-import { account2Token, token2AuthorizationSet, token2Username } from "../domain/TokenEncoder";
 import { logger } from "../logger";
-
-const ROUNDS = 2000;
-const DKLEN = 128;
-const NB_CRYPTO_BYTES = 8;
+import { Kind } from "../domain/Kind";
+import TokenService from "../domain/TokenService";
+import CryptoService from "../domain/CryptoService";
+import Account from "../domain/Account";
 
 export default class AccountService {
 
     private _accountRepository: AccountRepository;
+    private _tokenService: TokenService;
+    private _cryptoService: CryptoService;
 
-    constructor(accountRepository: AccountRepository) {
+    constructor(accountRepository: AccountRepository, tokenService: TokenService, cryptoService: CryptoService) {
         this._accountRepository = accountRepository;
+        this._tokenService = tokenService;
+        this._cryptoService = cryptoService;
     }
 
     signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
-        return this._accountRepository.findAccountByUserName(username)
-            .then(account => {
-                if (account === undefined) {
-                    const encoder = new util.TextEncoder();
-                    const rounds = ROUNDS;
-                    const saltBuffer = crypto.randomBytes(NB_CRYPTO_BYTES);
-                    const dkLen = DKLEN;
-                    const hash = sha256.pbkdf2(encoder.encode(password), saltBuffer, rounds, dkLen);
-                    return this._accountRepository.addAccount(new Account(username, email, saltBuffer, hash))
-                        .then((acc) => {
-                            return "AccountCreated";
-                        })
-                } else {
-                    return "UserNameAlreadyTaken";
-                }
-            })
-
+        const {salt, hash} = this._cryptoService.saltAndHashPassword(password);
+        return this._accountRepository.createAccount(username, email, salt, hash);
     }
 
     signin(username: string, password: string): Promise<Token | "IncorrectUsernameOrPassword"> {
@@ -45,62 +29,91 @@ export default class AccountService {
             .then(account => {
                 if (account === undefined) {
                     return "IncorrectUsernameOrPassword";
-                }
-                const encoder = new util.TextEncoder();
-                const rounds = ROUNDS;
-                const saltBuffer = account.salt;
-                const dkLen = DKLEN;
-                const computedHash = sha256.pbkdf2(encoder.encode(password), saltBuffer, rounds, dkLen);
-                if (computedHash.length !== account.hash.length) {
-                    return "IncorrectUsernameOrPassword";
-                }
-                for (let i = 0; i < computedHash.length; i++) {
-                    if (computedHash[i] !== account.hash[i]) {
+                } else {
+                    if (this._cryptoService.checkPassword(password, account.salt, account.hash)) {
+                        return this._tokenService.account2Token(account);
+                    } else {
                         return "IncorrectUsernameOrPassword";
                     }
                 }
-                return account2Token(account);
             })
     }
 
-    getAuthorizationSet(token: Token): Authorization[] | "InvalidToken" {
-        return token2AuthorizationSet(token);
+    getUsernameAndAuthorizationSet(token: Token): Promise<{username:string, authorizationSet:Authorization[]} | "InvalidToken"> {
+        const username = this._tokenService.token2Username(token);
+        if (username) {
+            return this._accountRepository.findAccountByUserName(username)
+                .then((result) => {
+                    if (result) {
+                        return {
+                            username: result.username,
+                            authorizationSet: result.authorizationSet
+                        }
+                    } else {
+                        return "InvalidToken";
+                    }
+                });
+        } else {
+            return Promise.resolve("InvalidToken");
+        }
     }
 
-    getUsername(token: Token): string | "InvalidToken" {
-        return token2Username(token);
+    addAuthorization(token: Token, authorization: Authorization): Promise<"AuthorizationAdded" | "IncorrectUsername"> {
+        const username = this._tokenService.token2Username(token);
+        if (username === undefined) {
+            return Promise.resolve("IncorrectUsername");
+        } else {
+            return this._accountRepository.findAccountByUserName(username)
+                .then((foundAccount) => {
+                    if (foundAccount === undefined) {
+                        return "IncorrectUsername";
+                    } else {
+                        foundAccount.addAuthorization(authorization);
+                        logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
+                        return this._accountRepository.updateAccount(foundAccount)
+                            .then(() => {
+                                logger.debug(`account repository updated, new token is returned`);
+                                return "AuthorizationAdded";
+                            })
+                    }
+                })
+        }
     }
 
-    addAuthorization(username: string, authorization: Authorization): Promise<Token | "IncorrectUsername"> {
-        return this._accountRepository.findAccountByUserName(username)
-            .then((foundAccount) => {
-                if (foundAccount === undefined) {
-                    return "IncorrectUsername";
-                } else {
-                    foundAccount.addAuthorization(authorization);
-                    logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
-                    return this._accountRepository.updateAccount(foundAccount)
-                        .then(() => {
-                            logger.debug(`account repository updated, new token is returned`);
-                            return account2Token(foundAccount);
-                        })
-                }
-            })
-
+    removeAuthorization(token: Token, authorization: Authorization): Promise<"AuthorizationRemoved" | "IncorrectUsername"> {
+        const username = this._tokenService.token2Username(token);
+        if (username === undefined) {
+            return Promise.resolve("IncorrectUsername");
+        } else {
+            return this._accountRepository.findAccountByUserName(username)
+                .then(foundAccount => {
+                    if (foundAccount === undefined) {
+                        return "IncorrectUsername";
+                    } else {
+                        foundAccount.removeAuthorization(authorization);
+                        return this._accountRepository.updateAccount(foundAccount)
+                            .then(() => {
+                                return "AuthorizationRemoved";
+                            })
+                    }
+                })
+        }
     }
 
-    removeAuthorization(username: string, authorization: Authorization): Promise<Token | "IncorrectUsername"> {
-        return this._accountRepository.findAccountByUserName(username)
-            .then(foundAccount => {
-                if (foundAccount === undefined) {
-                    return "IncorrectUsername";
-                } else {
-                    foundAccount.removeAuthorization(authorization);
-                    return this._accountRepository.updateAccount(foundAccount)
-                        .then(() => {
-                            return account2Token(foundAccount);
-                        })
-                }
-            })
+    verifyAuthorization(token: Token, kind: Kind, id: string): Promise<boolean> {
+        const username = this._tokenService.token2Username(token);
+        if (username === undefined) {
+            return Promise.resolve(false);
+        } else {
+            return this._accountRepository.findAccountByUserName(username)
+                .then((foundAccount) => {
+                    if (foundAccount === undefined) {
+                        return false;
+                    } else {
+                        return Promise.resolve(foundAccount.authorizationSet.some((authorization) => authorization.kind === kind && authorization.key === id));
+                    }
+                })
+        }
     }
+
 }

@@ -4,6 +4,8 @@ import AccountRepositoryMongo from "./_infra/AccountRepositoryMongo";
 import AccountService from "./application/AccountService";
 import config from "./_infra/config";
 import {logger} from "./logger"
+import TokenServiceImpl from "./_infra/TokenServiceImpl";
+import CryptoServiceImpl from "./_infra/CryptoServiceImpl";
 
 
 
@@ -11,7 +13,9 @@ import {logger} from "./logger"
 connectWithRetry();
 
 const accountRepository = new AccountRepositoryMongo();
-const accountService = new AccountService(accountRepository);
+const tokenService = new TokenServiceImpl();
+const cryptoService = new CryptoServiceImpl();
+const accountService = new AccountService(accountRepository, tokenService, cryptoService);
 
 function connectWithRetry(): Promise<void> {
     return mongoose.connect(config.database, { useUnifiedTopology: true, useNewUrlParser: true })

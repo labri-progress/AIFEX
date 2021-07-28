@@ -1,10 +1,7 @@
 import Account from "./Account";
 
 export default interface AccountRepository {
-    addAccount(account : Account) : Promise<string>;
-
-    updateAccount(account : Account) : Promise<string>;
-
+    createAccount(username: string, email: string, salt : Uint8Array, hash : Uint8Array) : Promise<"AccountCreated" | "UserNameAlreadyTaken">;
+    updateAccount(account : Account) : Promise<"AccountUpdated">;
     findAccountByUserName(username : string) : Promise<Account | undefined>;
-
 }

@@ -56,7 +56,7 @@ async function loadDefault() {
         await createAnonymousAccount();
         const token = await signinAsAnonymous();
         const webSiteList = await createDefaultWebSite();
-        await addSiteListToAnonymous(token.jwt, webSiteList);
+        await addSiteListToAnonymous(token, webSiteList);
         const cdiscountWebSiteId = webSiteList.find(webSite => webSite.name === 'cdiscount')._id;
         logger.info(`cdiscountWebSiteID:${cdiscountWebSiteId}`);
         const connexionCode = await createSessionAndModel(cdiscountWebSiteId);

@@ -26,7 +26,7 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         accountService.signup(username, email, password)
             .then((result) => {
                 if (result === "UserNameAlreadyTaken") {
-                    logger.debug(`signup user name already taken`);
+                    logger.debug(`signup failed, username already taken`);
                     res.status(INVALID_PARAMETERS_STATUS).json(result);
                 } else {
                     logger.debug(`signup done`);
@@ -60,15 +60,33 @@ export default function attachRoutes(app: Express, accountService: AccountServic
             });
     });
 
-    app.post("/account/addwebsite", (req, res) => {
-        const { username, webSiteId } = req.body;
-        logger.info(`addwebsite, username (${username}), webSiteId : ${webSiteId})`);
-        if (username === undefined || webSiteId === undefined) {
+    app.get("/account/account", (req, res) => {
+        const { token } = req.body;
+        logger.info(`get account`);
+        if (token === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or webSiteIf are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token is missing" });
+        } else {
+            accountService.getUsernameAndAuthorizationSet(token)
+                .then((result) => {
+                    if (result === "InvalidToken") {
+                        res.status(UNAUTHORIZED_STATUS).json(result);
+                    } else {
+                        res.json(result);
+                    }
+                })
+        }
+    });
+
+    app.post("/account/addwebsite", (req, res) => {
+        const { token, webSiteId } = req.body;
+        logger.info(`addwebsite, webSiteId : ${webSiteId})`);
+        if (token === undefined || webSiteId === undefined) {
+            logger.debug(`missing parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token or webSiteIf are missing" });
         } else {
             const authorization = new Authorization(Kind.WebSite, webSiteId);
-            addAuthorization(accountService, res, username, authorization)
+            addAuthorization(accountService, res, new Token(token), authorization)
                 .then(() => {
                     logger.debug(`addwebsite done`);
                 })
@@ -80,14 +98,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/removewebsite", (req, res) => {
-        const { username, webSiteId } = req.body;
-        logger.info(`removewebsite, username (${username}), webSiteId ${webSiteId}`);
-        if (username === undefined || webSiteId === undefined) {
+        const { token, webSiteId } = req.body;
+        logger.info(`removewebsite, webSiteId ${webSiteId}`);
+        if (token === undefined || webSiteId === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username of webSiteId are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token of webSiteId are missing" });
         } else {
             const authorization = new Authorization(Kind.WebSite, webSiteId);
-            removeAuthorization(accountService, res, username, authorization)
+            removeAuthorization(accountService, res, new Token(token), authorization)
                 .then(() => {
                     logger.info(`removewebsite done`);
                 })
@@ -99,14 +117,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/addmodel", (req, res) => {
-        const { username, modelId } = req.body;
-        logger.info(`addModel, username (${username}), modelId (${modelId}`);
-        if (username === undefined || modelId === undefined) {
+        const { token, modelId } = req.body;
+        logger.info(`addModel,  modelId (${modelId}`);
+        if (token === undefined || modelId === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or modelId are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token or modelId are missing" });
         } else {
             const authorization = new Authorization(Kind.Model, modelId);
-            addAuthorization(accountService, res, username, authorization)
+            addAuthorization(accountService, res, new Token(token), authorization)
                 .then(() => {
                     logger.info(`addModel done`);
                 })
@@ -118,14 +136,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/removemodel", (req, res) => {
-        const { username, modelId } = req.body;
+        const { token, modelId } = req.body;
         logger.info(`removemodel`);
-        if (username === undefined || modelId === undefined) {
+        if (token === undefined || modelId === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or modelId are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token or modelId are missing" });
         } else {
             const authorization = new Authorization(Kind.Model, modelId);
-            removeAuthorization(accountService, res, username, authorization)
+            removeAuthorization(accountService, res, new Token(token), authorization)
                 .then(() => {
                     logger.info(`removemodel done`);
                 })
@@ -137,14 +155,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/addsession", (req, res) => {
-        const { username, sessionId } = req.body;
+        const { token, sessionId } = req.body;
         logger.info(`addsession`);
-        if (username === undefined || sessionId === undefined) {
+        if (token === undefined || sessionId === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or sessionId are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token or sessionId are missing" });
         } else {
             const authorization = new Authorization(Kind.Session, sessionId);
-            addAuthorization(accountService, res, username, authorization)
+            addAuthorization(accountService, res, new Token(token), authorization)
                 .then(() => {
                     logger.info(`addsession done`);
                 })
@@ -156,14 +174,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/removesession", (req, res) => {
-        const { username, sessionId } = req.body;
+        const { token, sessionId } = req.body;
         logger.info(`removesession`);
-        if (username === undefined || sessionId === undefined) {
+        if (token === undefined || sessionId === undefined) {
             logger.debug(`missing parameters`);
             res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or sessionId are missing" });
         } else {
             const authorization = new Authorization(Kind.Session, sessionId);
-            removeAuthorization(accountService, res, username, authorization)
+            removeAuthorization(accountService, res, new Token(token), authorization)
                 .then(() => {
                     logger.info(`removesession done`);
                 })
@@ -173,29 +191,48 @@ export default function attachRoutes(app: Express, accountService: AccountServic
                 })
         }
     });
+
+    app.post("/account/verifyauthorization", (req, res) => {
+        const { token, kind, id } = req.body;
+        logger.info(`verify authorization`);
+        if (token === undefined || kind === undefined || id === undefined) {
+            logger.debug(`missing parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token or kind or id are missing" });
+        } else {
+            accountService.verifyAuthorization(new Token(token), kind, id)
+                .then((verification) => {
+                    logger.info(`verification done`);
+                    res.json({authorized:verification});
+                })
+                .catch((e) => {
+                    logger.error(`verification error ${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                })
+        }
+    });
 }
 
-function addAuthorization(accountService: AccountService, res: Response, username: string, authorization: Authorization): Promise<void> {
-    return accountService.addAuthorization(username, authorization)
+function addAuthorization(accountService: AccountService, res: Response, token: Token, authorization: Authorization): Promise<void> {
+    return accountService.addAuthorization(token, authorization)
         .then((result) => {
             if (result === "IncorrectUsername") {
                 res.status(NOT_FOUND_STATUS).json(result);
             } else {
                 res.json({
-                    jwt: result.token,
+                    message: "AuthorizationAdded",
                 });
             }
         })
 }
 
-function removeAuthorization(accountService: AccountService, res: Response, username: string, authorization: Authorization): Promise<void> {
-    return accountService.removeAuthorization(username, authorization)
+function removeAuthorization(accountService: AccountService, res: Response, token: Token, authorization: Authorization): Promise<void> {
+    return accountService.removeAuthorization(token, authorization)
         .then((result) => {
             if (result === "IncorrectUsername") {
                 res.status(NOT_FOUND_STATUS).json(result);
             } else {
                 res.json({
-                    jwt: result.token,
+                    message: "AuthorizationAdded",
                 });
             }
         })
