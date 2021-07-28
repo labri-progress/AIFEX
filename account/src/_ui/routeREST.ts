@@ -87,9 +87,6 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         } else {
             const authorization = new Authorization(Kind.WebSite, webSiteId);
             addAuthorization(accountService, res, new Token(token), authorization)
-                .then(() => {
-                    logger.debug(`addwebsite done`);
-                })
                 .catch((e) => {
                     logger.error(`addwebsite error ${e}`)
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -106,9 +103,6 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         } else {
             const authorization = new Authorization(Kind.WebSite, webSiteId);
             removeAuthorization(accountService, res, new Token(token), authorization)
-                .then(() => {
-                    logger.info(`removewebsite done`);
-                })
                 .catch((e) => {
                     logger.error(`removewebsite error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -125,9 +119,6 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         } else {
             const authorization = new Authorization(Kind.Model, modelId);
             addAuthorization(accountService, res, new Token(token), authorization)
-                .then(() => {
-                    logger.info(`addModel done`);
-                })
                 .catch((e) => {
                     logger.error(`addModel error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -144,9 +135,6 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         } else {
             const authorization = new Authorization(Kind.Model, modelId);
             removeAuthorization(accountService, res, new Token(token), authorization)
-                .then(() => {
-                    logger.info(`removemodel done`);
-                })
                 .catch((e) => {
                     logger.error(`removemodel error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -163,9 +151,6 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         } else {
             const authorization = new Authorization(Kind.Session, sessionId);
             addAuthorization(accountService, res, new Token(token), authorization)
-                .then(() => {
-                    logger.info(`addsession done`);
-                })
                 .catch((e) => {
                     logger.error(`addsession error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -182,9 +167,6 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         } else {
             const authorization = new Authorization(Kind.Session, sessionId);
             removeAuthorization(accountService, res, new Token(token), authorization)
-                .then(() => {
-                    logger.info(`removesession done`);
-                })
                 .catch((e) => {
                     logger.error(`removesession error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -216,8 +198,10 @@ function addAuthorization(accountService: AccountService, res: Response, token: 
     return accountService.addAuthorization(token, authorization)
         .then((result) => {
             if (result === "IncorrectUsername") {
+                logger.debug('addAuthorization incorrect username');
                 res.status(NOT_FOUND_STATUS).json(result);
             } else {
+                logger.debug('addAuthorization done');
                 res.json({
                     message: "AuthorizationAdded",
                 });
@@ -229,8 +213,10 @@ function removeAuthorization(accountService: AccountService, res: Response, toke
     return accountService.removeAuthorization(token, authorization)
         .then((result) => {
             if (result === "IncorrectUsername") {
+                logger.debug('remove authorization incorrect username');
                 res.status(NOT_FOUND_STATUS).json(result);
             } else {
+                logger.debug('remove authorization done');
                 res.json({
                     message: "AuthorizationAdded",
                 });

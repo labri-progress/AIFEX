@@ -20,8 +20,15 @@ export default class AccountService {
     }
 
     signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
-        const {salt, hash} = this._cryptoService.saltAndHashPassword(password);
-        return this._accountRepository.createAccount(username, email, salt, hash);
+        return this._accountRepository.findAccountByUserName(username)
+            .then(account => {
+                if (account === undefined) {
+                    const {salt, hash} = this._cryptoService.saltAndHashPassword(password);
+                    return this._accountRepository.addAccount(new Account(username, email, salt, hash));
+                } else {
+                    return "UserNameAlreadyTaken";
+                }
+            }); 
     }
 
     signin(username: string, password: string): Promise<Token | "IncorrectUsernameOrPassword"> {
@@ -72,7 +79,7 @@ export default class AccountService {
                         logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
                         return this._accountRepository.updateAccount(foundAccount)
                             .then(() => {
-                                logger.debug(`account repository updated, new token is returned`);
+                                logger.debug(`account repository updated`);
                                 return "AuthorizationAdded";
                             })
                     }

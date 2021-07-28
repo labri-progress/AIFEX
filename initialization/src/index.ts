@@ -5,7 +5,7 @@ import config from "./config";
 
 import * as winston from "winston";
 const logger = winston.createLogger({
-    level: 'info',
+    level: 'debug',
     format: winston.format.combine(
       winston.format.label({ label: '[Initialization]' }),
       winston.format.timestamp({
@@ -54,15 +54,17 @@ async function loadDefault() {
     logger.info(`loadDefault`);
     try {
         await createAnonymousAccount();
-        const token = await signinAsAnonymous();
+        const tokenJWT = await signinAsAnonymous();
+        const token = tokenJWT.jwt;
+        logger.info(`get token : ${JSON.stringify(token)}`)
         const webSiteList = await createDefaultWebSite();
         await addSiteListToAnonymous(token, webSiteList);
         const cdiscountWebSiteId = webSiteList.find(webSite => webSite.name === 'cdiscount')._id;
         logger.info(`cdiscountWebSiteID:${cdiscountWebSiteId}`);
         const connexionCode = await createSessionAndModel(cdiscountWebSiteId);
-        logger.info(connexionCode);
+        logger.info('connexion code : ',connexionCode);
         const sessionId = connexionCode.split('$')[0];
-        await addSessionToAnonymous(token.jwt, connexionCode);
+        await addSessionToAnonymous(token, connexionCode);
         logger.info('sessionAddesToAnonymous');
         await addAllExplorationToSession(sessionId);
         logger.info('allExplorationToSession');
@@ -202,6 +204,7 @@ function addSiteListToAnonymous(token, websiteList) {
     return Promise.all(webSiteListAddAll)
     .then(resAll => {
         if (resAll.every((res:any) => res.ok)) {
+            logger.info(`all websites are added to anonymous`);
             return true;
         } else {
             throw new Error('some website cannot be added to anonymous');
@@ -277,7 +280,7 @@ function addSessionToAnonymous(token, sessionId) {
     const url = ACCOUNT_BASE_URL + "/addsession";
     const body = {
         token,
-        sessionid: sessionId
+        sessionId: sessionId
     };
     const option = {
         method: "POST",

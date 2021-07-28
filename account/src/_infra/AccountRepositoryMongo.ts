@@ -5,24 +5,18 @@ import AccountModel, { AccountDocument } from "./AccountSchema";
 
 export default class AccountRepositoryMongo implements AccountRepository {
 
-    public createAccount(username: string, email: string, salt: Uint8Array, hash : Uint8Array): Promise<"AccountCreated" | "UserNameAlreadyTaken"> {
-        return AccountModel.findOne({ username }).exec()
-            .then((accountDocument: AccountDocument | null) => {
-                if (accountDocument !== null) {
-                    return "UserNameAlreadyTaken";
-                } else {
-                    return AccountModel.create({
-                        username: username,
-                        email: email,
-                        hash: [...hash.values()],
-                        salt: [...salt.values()],
-                        authorizationSet: []
-                    })
-                    .then(() => {
-                        return "AccountCreated";
-                    });
-                }
-            });
+    public addAccount(account: Account): Promise<"AccountCreated"> {
+        return AccountModel.create({
+            username: account.username,
+            email: account.email,
+            hash: [...account.hash.values()],
+            salt: [...account.salt.values()],
+            authorizationSet: []
+        })
+        .then(() => {
+            return "AccountCreated";
+        });
+             
     }
 
     public updateAccount(account: Account): Promise<"AccountUpdated"> {
