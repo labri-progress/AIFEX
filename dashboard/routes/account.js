@@ -21,6 +21,7 @@ module.exports = function attachRoutes(app, config) {
                         next();
                         return;
                     } else {
+                        logger.debug(`cannot get usernameAndAuthorization`);
                         req.session.jwt = undefined;
                         req.session.username = undefined;
                         res.redirect('/');

@@ -67,11 +67,13 @@ export default function attachRoutes(app: Express, accountService: AccountServic
             logger.debug(`missing parameters`);
             res.status(INVALID_PARAMETERS_STATUS).send({ error: "token is missing" });
         } else {
-            accountService.getUsernameAndAuthorizationSet(token)
+            accountService.getUsernameAndAuthorizationSet(new Token(token))
                 .then((result) => {
                     if (result === "InvalidToken") {
+                        logger.debug(`invalidToken`);
                         res.status(UNAUTHORIZED_STATUS).json(result);
                     } else {
+                        logger.debug(`return account`);
                         res.json(result);
                     }
                 })
