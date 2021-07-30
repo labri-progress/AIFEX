@@ -15,6 +15,37 @@ export default function attachRoutes(app : Application, api : APIApplication) {
         res.send('alive');
     });
 
+    app.post("/signup", (req, res) => {
+        const {username, email, password} = req.body;
+        logger.info(`signup`);
+        if (username === undefined) {
+            logger.warn(`no username`);
+        }
+        if (email === undefined) {
+            logger.warn(`no email`);
+        }
+        if (password === undefined) {
+            logger.warn(`no password`);
+        }
+        if (password === undefined || email === undefined || username === undefined) {
+            res.status(INVALID_PARAMETERS_STATUS).send("No username, email or password");
+        } else {
+            api.signup(username, email, password)
+            .then(result => {
+                if (result === "UserNameAlreadyTaken") {
+                    res.status(FORBIDDEN_STATUS).send(result);
+                } else {
+                    logger.info("account created");
+                    res.send(result);
+                }
+            })
+            .catch((e) => {
+                logger.error(`error:${e}`);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send({error:e});
+            });
+        }
+    });
+
     app.post("/signin", (req, res) => {
         const {username, password} = req.body;
         logger.info(`signin`);

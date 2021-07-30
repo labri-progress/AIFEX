@@ -1,42 +1,47 @@
 const fetch = require('node-fetch');
-const jsonwebtoken = require("jsonwebtoken");
 const config = require('./config');
 
 
-function token2Kind(token, kind) {
-    if (token === null && token === undefined)  {
+function authorizationSet2Kind(authorizationSet, kind) {
+    if (authorizationSet === null && authorizationSet === undefined) {
         return [];
     }
-    let payload = jsonwebtoken.verify(token, config.tokenSecret);
-    return payload.authorizationSet.filter( authorization => authorization._kind == kind).map(authorization => authorization._key);
+    return authorizationSet.filter(authorization => authorization._kind == kind).map(authorization => authorization._key);
 }
 
-module.exports.token2WebSite = function (token) {
-    return token2Kind(token, "2");
+module.exports.authorizationSet2WebSite = function (authorizationSet) {
+    return authorizationSet2Kind(authorizationSet, "2");
 }
 
-module.exports.token2Model = function (token) {
-    return token2Kind(token, "0");
+module.exports.authorizationSet2Model = function (authorizationSet) {
+    return authorizationSet2Kind(authorizationSet, "0");
 }
 
-module.exports.token2Session = function (token) {
-    return token2Kind(token, "1");
+module.exports.authorizationSet2Session = function (authorizationSet) {
+    return authorizationSet2Kind(authorizationSet, "1");
 }
 
-module.exports.verify = function(token) {
-    try {
-        jsonwebtoken.verify(token, config.tokenSecret);
-        return true;
-    } catch (e) {
-        return false;
-    }
+module.exports.getUsernameAndAuthorizationSet = function (token) {
+    const VERIFY_URL = `http://${config.account.host}:${config.account.port}/account/account`;
+    return fetch(VERIFY_URL, {
+        method: 'POST',
+        body: JSON.stringify({ token }),
+        headers: { 'Content-Type': 'application/json' },
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return false;
+            }
+        })
 }
 
-module.exports.requestWebSiteFromToken = function(token) {
+module.exports.requestWebSiteFromAuthorizationSet = function (authorizationSet) {
     // console.log('requestWebSiteFromToken(',token,')');
-    const webSiteIdList = module.exports.token2WebSite(token);
+    const webSiteIdList = module.exports.authorizationSet2WebSite(authorizationSet);
     // console.log('get : ',JSON.stringify(webSiteIdList));
-    const webSiteFetchList = webSiteIdList.map( webSiteId => {
+    const webSiteFetchList = webSiteIdList.map(webSiteId => {
         const WEBSITE_URL = `http://${config.website.host}:${config.website.port}/website/${webSiteId}`;
         // console.log('Fetch:',WEBSITE_URL);
         return fetch(WEBSITE_URL)
@@ -57,11 +62,11 @@ module.exports.requestWebSiteFromToken = function(token) {
         })
 }
 
-module.exports.requestSessionFromToken = function(token) {
-    let sessionIdList = module.exports.token2Session(token);
-    sessionIdList = sessionIdList.map( sessionId => sessionId.split('$')[0])
+module.exports.requestSessionFromAuthorizationSet = function (authorizationSet) {
+    let sessionIdList = module.exports.authorizationSet2Session(authorizationSet);
+    sessionIdList = sessionIdList.map(sessionId => sessionId.split('$')[0])
     //console.log('get : ',JSON.stringify(sessionIdList));
-    const sessionFetchList = sessionIdList.map( sessionId => {
+    const sessionFetchList = sessionIdList.map(sessionId => {
         const SESSION_URL = `http://${config.session.host}:${config.session.port}/session/${sessionId}`;
         // console.log('Fetch:',SESSION_URL);
         return fetch(SESSION_URL)
@@ -82,7 +87,7 @@ module.exports.requestSessionFromToken = function(token) {
         })
 }
 
-module.exports.addWebSite = function(token, webSiteId) {
+module.exports.addWebSite = function (token, webSiteId) {
     const accountAddWebSiteURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addwebsite';
     let bodyAddWebSite = {
         token,
@@ -90,7 +95,7 @@ module.exports.addWebSite = function(token, webSiteId) {
     }
     let optionAddWebSite = {
         method: 'POST',
-        body:    JSON.stringify(bodyAddWebSite),
+        body: JSON.stringify(bodyAddWebSite),
         headers: { 'Content-Type': 'application/json' },
     }
     return fetch(accountAddWebSiteURL, optionAddWebSite)
@@ -101,20 +106,20 @@ module.exports.addWebSite = function(token, webSiteId) {
                 throw new Error('cannot add website to account');
             }
         })
-        .catch( e => {
+        .catch(e => {
             console.log(e);
         })
 }
 
-module.exports.addSession = function(token, sessionid) {
+module.exports.addSession = function (token, sessionid) {
     const accountAddSessionURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addsession';
     let bodyAddSession = {
         token,
-        sessionid,
+        sessionId,
     }
     let optionAddSession = {
         method: 'POST',
-        body:    JSON.stringify(bodyAddSession),
+        body: JSON.stringify(bodyAddSession),
         headers: { 'Content-Type': 'application/json' },
     }
     return fetch(accountAddSessionURL, optionAddSession)
@@ -131,7 +136,7 @@ module.exports.addSession = function(token, sessionid) {
 }
 
 
-module.exports.removeWebSite = function(token, webSiteId) {
+module.exports.removeWebSite = function (token, webSiteId) {
     const accountAddWebSiteURL = 'http://' + config.account.host + ':' + config.account.port + '/account/removewebsite';
     let bodyRemoveWebSite = {
         token,
@@ -139,7 +144,7 @@ module.exports.removeWebSite = function(token, webSiteId) {
     }
     let optionRemoveWebSite = {
         method: 'POST',
-        body:    JSON.stringify(bodyRemoveWebSite),
+        body: JSON.stringify(bodyRemoveWebSite),
         headers: { 'Content-Type': 'application/json' },
     }
     return fetch(accountAddWebSiteURL, optionRemoveWebSite)
@@ -150,21 +155,21 @@ module.exports.removeWebSite = function(token, webSiteId) {
                 throw new Error('cannot add website to account');
             }
         })
-        .catch( e => {
+        .catch(e => {
             console.log(e);
         })
 }
 
-module.exports.removeSession = function(token, sessionid) {
+module.exports.removeSession = function (token, sessionid) {
     const accountRemoveSessionURL = 'http://' + config.account.host + ':' + config.account.port + '/account/removesession';
     // console.log('tokenUtil, removeSession:',accountRemoveSessionURL);
     let bodyRemoveSession = {
         token,
-        sessionid,
+        sessionId,
     }
     let optionRemoveSession = {
         method: 'POST',
-        body:    JSON.stringify(bodyRemoveSession),
+        body: JSON.stringify(bodyRemoveSession),
         headers: { 'Content-Type': 'application/json' },
     }
     return fetch(accountRemoveSessionURL, optionRemoveSession)
@@ -175,7 +180,7 @@ module.exports.removeSession = function(token, sessionid) {
                 throw new Error('cannot add website to account');
             }
         })
-        .catch( e => {
+        .catch(e => {
             console.log(e);
         })
 }

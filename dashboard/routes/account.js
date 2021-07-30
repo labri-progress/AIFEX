@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
-const requestWebSiteFromToken = require('../tokenUtilities').requestWebSiteFromToken;
-const verify = require('../tokenUtilities').verify;
-const requestSessionFromToken = require('../tokenUtilities').requestSessionFromToken;
-const token2Session = require('../tokenUtilities').token2Session;
+const requestWebSiteFromAuthorizationSet = require('../tokenUtilities').requestWebSiteFromAuthorizationSet;
+const getUsernameAndAuthorizationSet = require('../tokenUtilities').getUsernameAndAuthorizationSet;
+const requestSessionFromAuthorizationSet = require('../tokenUtilities').requestSessionFromAuthorizationSet;
+const authorizationSet2Session = require('../tokenUtilities').authorizationSet2Session;
 const buildInvitation = require("../invitations").buildInvitation;
 const logger = require('../logger');
 
@@ -10,18 +10,23 @@ module.exports = function attachRoutes(app, config) {
 
     app.use((req, res, next) => {
         logger.info('use account');
-        console.log("req session", req.session)
         if (req.session.jwt) {
             logger.debug('token');
-            if (verify(req.session.jwt)) {
-                next();
-                return;
-            } else {
-                req.session.jwt = undefined;
-                req.session.username = undefined;
-                res.redirect('/');
-                return;
-            }
+            getUsernameAndAuthorizationSet(req.session.jwt)
+                .then(usernameAndAuthorizationSet => {
+                    if (usernameAndAuthorizationSet) {
+                        logger.debug(`get username: ${usernameAndAuthorizationSet.username}`);
+                        req.session.username = usernameAndAuthorizationSet.username;
+                        req.session.authorizationSet = usernameAndAuthorizationSet.authorizationSet;
+                        next();
+                        return;
+                    } else {
+                        req.session.jwt = undefined;
+                        req.session.username = undefined;
+                        res.redirect('/');
+                        return;
+                    }
+                });
         } else {
             logger.debug('no token');
             if (req.originalUrl === '/' || req.originalUrl === '') {
@@ -92,10 +97,9 @@ module.exports = function attachRoutes(app, config) {
     app.post('/account/signin', (req, res) => {
         const { username , password} = req.body;
         logger.info(`POST sign for ${username}`);
-        console.log('sign', username, password);
         signin(username, password)
             .then(token => {
-                console.log("token ok:", token);
+                logger.debug("token ok:", token);
                 req.session.jwt = token.jwt;
                 req.session.username = username;
                 logger.debug(`sign ok`);
@@ -118,7 +122,7 @@ module.exports = function attachRoutes(app, config) {
         logger.info(`POST sign for ${username}`);
         //console.log('sign', username, password);
         signup(username, email, password)
-            .then(token => {
+            .then(() => {
                 logger.debug(`sign up ok`);
                 res.render('account/signin.ejs', {account:req.session, kind:undefined});
             })
@@ -141,15 +145,15 @@ module.exports = function attachRoutes(app, config) {
         let webSiteList;
         let sessionList;
         logger.info(`GET account.ejs`);
-        requestWebSiteFromToken(req.session.jwt)
+        requestWebSiteFromAuthorizationSet(req.session.authorizationSet)
             .then(requestedWebSiteList => {
                 webSiteList = requestedWebSiteList;
-                return requestSessionFromToken(req.session.jwt);
+                return requestSessionFromAuthorizationSet(req.session.authorizationSet);
             })
             .then(requestedSessionList => {
                 sessionList = requestedSessionList;
-                const connectionCodeList = token2Session(req.session.jwt);
-                const serveurURLList = token2Session(req.session.jwt).map(connectionCode => {
+                const connectionCodeList = authorizationSet2Session(req.session.authorizationSet);
+                const serveurURLList = authorizationSet2Session(req.session.authorizationSet).map(connectionCode => {
                     const [sessionId, modelId] = connectionCode.split('$');
                     return buildInvitation(modelId, sessionId);
                 })
@@ -179,8 +183,8 @@ module.exports = function attachRoutes(app, config) {
                 .then(responseAccount => {
                     if (responseAccount.ok) {
                         responseAccount.json()
-                            .then(createdUsername => {
-                                res(createdUsername);
+                            .then(() => {
+                                res();
                             })
                             .catch(e => {
                                 rej(e);

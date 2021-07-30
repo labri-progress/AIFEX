@@ -10,8 +10,28 @@ paths:
       responses:
         '200':
           description: Returns Alive
+  /signup:
+    description: create a new account
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Account is created
+        '403':
+          description: Account cannot be created (forbidden UserName)
   /signin:
-    description: returns the JWT token
+    description: signin and get a bearer token (JWT)
     post:
       requestBody:
         content:
@@ -26,6 +46,8 @@ paths:
       responses:
         '200':
           description: Returns JWT Token
+        '403':
+          description: Cannot sign (wrong username/password)
   /websites:
     get:
       description: returns WebSite ids

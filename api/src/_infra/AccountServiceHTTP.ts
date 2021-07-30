@@ -7,6 +7,22 @@ const URL: string = `http://${config.account.host}:${config.account.port}/accoun
 export default class AccountServiceHTTP implements AccountService {
 
 
+    signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
+        const route: string = URL + "signup/";
+        return fetch(route, {
+                method: 'post',
+                body: JSON.stringify({username, email, password}),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then( (response) => {
+                if (response.ok) {
+                    return "AccountCreated";
+                } else {
+                    return "UserNameAlreadyTaken";
+                }
+            })
+    }
+
     signin(username: string, password: string): Promise<Token | "Unauthorized" > {
         const route: string = URL + "signin/";
         return fetch(route, {

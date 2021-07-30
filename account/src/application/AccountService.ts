@@ -107,6 +107,10 @@ export default class AccountService {
         }
     }
 
+    verify(token: Token): boolean {
+        return this._tokenService.verify(token);
+    }
+
     verifyAuthorization(token: Token, kind: Kind, id: string): Promise<boolean> {
         const username = this._tokenService.token2Username(token);
         if (username === undefined) {

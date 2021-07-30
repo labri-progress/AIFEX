@@ -60,7 +60,7 @@ export default function attachRoutes(app: Express, accountService: AccountServic
             });
     });
 
-    app.get("/account/account", (req, res) => {
+    app.post("/account/account", (req, res) => {
         const { token } = req.body;
         logger.info(`get account`);
         if (token === undefined) {
@@ -171,6 +171,23 @@ export default function attachRoutes(app: Express, accountService: AccountServic
                     logger.error(`removesession error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
                 })
+        }
+    });
+
+    app.post("/account/verify", (req, res) => {
+        const { token } = req.body;
+        logger.info(`verify token`);
+        if (token === undefined) {
+            logger.debug(`missing parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token is missing" });
+        } else {
+            if (accountService.verify(new Token(token))) {
+                logger.info(`verification done ok`);
+                res.json({verification:true});
+            } else {
+                logger.info(`verification done nok`);
+                res.status(UNAUTHORIZED_STATUS).json({verification:false});
+            }
         }
     });
 

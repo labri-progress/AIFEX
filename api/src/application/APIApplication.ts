@@ -17,6 +17,10 @@ export default class APIApplication {
         this._sessionService = sessionService;
     }
 
+    signup(username: string, email: string, password: string) : Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
+        return this._accountService.signup(username, email, password);
+    }
+
     signin(username : string, password : string) : Promise<Token | "Unauthorized"> {
         return this._accountService.signin(username, password);
     }

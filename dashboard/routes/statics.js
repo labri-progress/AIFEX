@@ -1,6 +1,5 @@
-const requestWebSiteFromToken = require('../tokenUtilities').requestWebSiteFromToken;
-const token2Session = require('../tokenUtilities').token2Session;
 const logger = require('../logger');
+const { requestWebSiteFromAuthorizationSet, authorizationSet2Session } = require('../tokenUtilities');
 
 module.exports = function attachRoutes(app, config) {
 
@@ -74,9 +73,9 @@ module.exports = function attachRoutes(app, config) {
 
     app.get('/', (req, res) => {
         if (req.session.jwt) {
-            requestWebSiteFromToken(req.session.jwt)
+            requestWebSiteFromAuthorizationSet(req.session.authorizationSet)
             .then(webSiteList => {
-                let sessionList = token2Session(req.session.jwt);
+                let sessionList = authorizationSet2Session(req.session.authorizationSet);
                 res.render('index.ejs', { account: req.session , webSiteList, sessionList});    
             })
         } else {
