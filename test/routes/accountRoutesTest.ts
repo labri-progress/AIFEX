@@ -30,7 +30,7 @@ describe("Account", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result).to.eql("AccountCreated");
+                expect(result.message).to.eql("AccountCreated");
             });
     });
 
