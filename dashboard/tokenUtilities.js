@@ -32,7 +32,7 @@ module.exports.getUsernameAndAuthorizationSet = function (token) {
             if (response.ok) {
                 return response.json();
             } else {
-                return false;
+                return undefined;
             }
         })
 }
