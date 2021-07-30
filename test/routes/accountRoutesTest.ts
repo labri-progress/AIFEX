@@ -29,8 +29,8 @@ describe("Account", () => {
                 expect(res.ok).to.be.true;
                 return res.json();
             })
-            .then((username) => {
-                expect(username).to.eql("test");
+            .then((result) => {
+                expect(result).to.eql("AccountCreated");
             });
     });
 
@@ -72,20 +72,17 @@ describe("Account", () => {
                 expect(res.ok).to.be.true;
                 return res.json();
             })
-            .then( newToken => {
-
-                const websiteList = token2WebSite(newToken.jwt);
-                expect(websiteList.length).eql(1);
-                expect(websiteList[0]).eql("JPS8_Kiv")
+            .then((json) => {
+                expect(json.message).eql("AuthorizationAdded");
             });
     });
 
     it("should add a session", () => {
         const url = `${ACCOUNT_URL}/addsession`;
-        const sessionid = "JPSfea8_Kiv";
+        const sessionId = "JPSfea8_Kiv";
         const body = {
             token,
-            sessionid
+            sessionId
         };
         return fetch(url, {
             method: "POST",
@@ -97,11 +94,8 @@ describe("Account", () => {
                 expect(res.ok).to.be.true;
                 return res.json();
             })
-            .then( newToken => {
-                expect(newToken.jwt).to.not.be.undefined;
-                const sessionList = token2Session(newToken.jwt);
-                expect(sessionList.length).eql(1);
-                expect(sessionList[0]).eql(sessionid)
+            .then((json) => {
+                expect(json.message).eql("AuthorizationAdded");
             });
     });
 
@@ -109,7 +103,7 @@ describe("Account", () => {
         const url = `${ACCOUNT_URL}/removesession`;
         const body = {
             token,
-            sessionid: "JPSfea8_Kiv"
+            sessionId: "JPSfea8_Kiv"
         };
         return fetch(url, {
             method: "POST",
@@ -121,31 +115,9 @@ describe("Account", () => {
                 expect(res.ok).to.be.true;
                 return res.json();
             })
-            .then( newToken => {
-                expect(newToken.jwt).to.not.be.undefined;
-                const sessionList = token2Session(newToken.jwt);
-                expect(sessionList.length).eql(0);
+            .then((json) => {
+                expect(json.message).eql('AuthorizationRemoved');
             });
     });
 
 });
-
-function token2Kind(token, kind) {
-    if (token === null && token === undefined)  {
-        return [];
-    }
-    let payload = jsonwebtoken.verify(token, SECRET);
-    return payload.authorizationSet.filter( authorization => authorization._kind == kind).map(authorization => authorization._key);
-}
-
-function token2WebSite (token) {
-    return token2Kind(token, "2");
-}
-
-function token2Model (token) {
-    return token2Kind(token, "0");
-}
-
-function token2Session(token) {
-    return token2Kind(token, "1");
-}

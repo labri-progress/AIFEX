@@ -27,10 +27,10 @@ export default function attachRoutes(app: Express, accountService: AccountServic
             .then((result) => {
                 if (result === "UserNameAlreadyTaken") {
                     logger.debug(`signup failed, username already taken`);
-                    res.status(INVALID_PARAMETERS_STATUS).json(result);
+                    res.status(INVALID_PARAMETERS_STATUS).json({message:result});
                 } else {
                     logger.debug(`signup done`);
-                    res.json(result);
+                    res.json({message:result});
                 }
             })
             .catch((e) => {
@@ -71,7 +71,7 @@ export default function attachRoutes(app: Express, accountService: AccountServic
                 .then((result) => {
                     if (result === "InvalidToken") {
                         logger.debug(`invalidToken`);
-                        res.status(UNAUTHORIZED_STATUS).json(result);
+                        res.status(UNAUTHORIZED_STATUS).json({message:result});
                     } else {
                         logger.debug(`return account`);
                         res.json(result);
@@ -218,7 +218,7 @@ function addAuthorization(accountService: AccountService, res: Response, token: 
         .then((result) => {
             if (result === "IncorrectUsername") {
                 logger.debug('addAuthorization incorrect username');
-                res.status(NOT_FOUND_STATUS).json(result);
+                res.status(NOT_FOUND_STATUS).json({message:result});
             } else {
                 logger.debug('addAuthorization done');
                 res.json({
@@ -233,11 +233,11 @@ function removeAuthorization(accountService: AccountService, res: Response, toke
         .then((result) => {
             if (result === "IncorrectUsername") {
                 logger.debug('remove authorization incorrect username');
-                res.status(NOT_FOUND_STATUS).json(result);
+                res.status(NOT_FOUND_STATUS).json({message:result});
             } else {
                 logger.debug('remove authorization done');
                 res.json({
-                    message: "AuthorizationAdded",
+                    message: "AuthorizationRemoved",
                 });
             }
         })
