@@ -2,6 +2,10 @@ import fetch from "node-fetch";
 import AccountService from '../domain/AccountService'
 import config from "./config";
 import Token from "../domain/Token";
+import Account from "../domain/Account";
+import Authorization from "../domain/Authorization";
+import { Kind } from "../domain/Kind";
+import { logger } from "../logger";
 const URL: string = `http://${config.account.host}:${config.account.port}/account/`;
 
 export default class AccountServiceHTTP implements AccountService {
@@ -34,6 +38,26 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return response.json().then( (tokenResult) => {
                         return new Token(tokenResult.jwt);
+                    });
+                } else {
+                    return "Unauthorized";
+                }
+            })
+    }
+
+    getAccount(token: Token): Promise<Account | "Unauthorized"> {
+        const route: string = URL + "account";
+        return fetch(route, {
+                method: 'post',
+                body: JSON.stringify({token: token.token}),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then( (response) => {
+                if (response.ok) {
+                    return response.json().then( (result) => {
+                        logger.debug(JSON.stringify(result));
+                        const authSet = result.authorizationSet.map((authInJson: { kind: Kind; key: string; }) => new Authorization(authInJson.kind, authInJson.key))
+                        return new Account(result.username, authSet);
                     });
                 } else {
                     return "Unauthorized";

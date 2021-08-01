@@ -63,6 +63,7 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     app.post("/account/account", (req, res) => {
         const { token } = req.body;
         logger.info(`get account`);
+        logger.debug(`token :${JSON.stringify(token)}`);
         if (token === undefined) {
             logger.debug(`missing parameters`);
             res.status(INVALID_PARAMETERS_STATUS).send({ error: "token is missing" });
@@ -74,6 +75,7 @@ export default function attachRoutes(app: Express, accountService: AccountServic
                         res.status(UNAUTHORIZED_STATUS).json({message:result});
                     } else {
                         logger.debug(`return account`);
+                        logger.debug(`account: ${JSON.stringify(result)}`);;
                         res.json(result);
                     }
                 })

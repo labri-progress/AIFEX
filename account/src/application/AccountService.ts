@@ -46,7 +46,7 @@ export default class AccountService {
             })
     }
 
-    getUsernameAndAuthorizationSet(token: Token): Promise<{username:string, authorizationSet:Authorization[]} | "InvalidToken"> {
+    getUsernameAndAuthorizationSet(token: Token): Promise<{username:string, authorizationSet:{key:string, kind:Kind}[]} | "InvalidToken"> {
         const username = this._tokenService.token2Username(token);
         if (username) {
             return this._accountRepository.findAccountByUserName(username)
@@ -54,7 +54,9 @@ export default class AccountService {
                     if (result) {
                         return {
                             username: result.username,
-                            authorizationSet: result.authorizationSet
+                            authorizationSet: result.authorizationSet.map(authorization=> {
+                                return {key:authorization.key, kind: authorization.kind};
+                            })
                         }
                     } else {
                         return "InvalidToken";

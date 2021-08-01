@@ -9,7 +9,12 @@ paths:
     get:
       responses:
         '200':
-          description: Returns Alive
+          description: The server is alive
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: alive
   /signup:
     description: create a new account
     post:
@@ -28,8 +33,18 @@ paths:
       responses:
         '200':
           description: Account is created
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: AccountCreated
         '403':
           description: Account cannot be created (forbidden UserName)
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: UserNameAlreadyTaken
   /signin:
     description: signin and get a bearer token (JWT)
     post:
@@ -46,16 +61,46 @@ paths:
       responses:
         '200':
           description: Returns JWT Token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bearerToken:
+                    type: string
         '403':
           description: Cannot sign (wrong username/password)
-  /websites:
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Unauthorized
+  /account:
     get:
-      description: returns WebSite ids
       responses:
         '200':
-          description: The WebSite ids
+          description: Account
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  authorizationSet:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                        kind:
+                          type: string
+                          enum: [WebSite, Model, Session]
+                      
       security:
         - bearerAuth: []
+  /websites:
     post:
       description: add a new WebSite
       requestBody:
@@ -125,13 +170,6 @@ paths:
       security:
         - bearerAuth: []
   /sessions:
-    get:
-      description: returns Session ids
-      responses:
-        '200':
-          description: Returns Session ids
-      security:
-        - bearerAuth: []
     post:
       description: add a new session
       requestBody:
@@ -175,3 +213,4 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT   
+      
