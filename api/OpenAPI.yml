@@ -339,9 +339,9 @@ paths:
               type: object
               properties:
                 depth:
-                  type: string
+                  type: number
                 interpolationfactor:
-                  type: string
+                  type: number
                 predictionType:
                   type: string
                   enum: [CSP, SP, FIS]

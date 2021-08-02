@@ -152,7 +152,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                             res.status(FORBIDDEN_STATUS).send(creationResult);
                         } else {
                             logger.info("website is created and added");
-                            res.send(creationResult);
+                            res.send(creationResult.id);
                         }
                     })
                     .catch((e) => {
@@ -208,7 +208,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                             res.status(FORBIDDEN_STATUS).send(creationResult);
                         } else {
                             logger.info("session is created and added");
-                            res.send(creationResult);
+                            res.send(creationResult.id);
                         }
                     })
                     .catch((e) => {
@@ -268,7 +268,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                             res.status(FORBIDDEN_STATUS).send(creationResult);
                         } else {
                             logger.info("session is created and added");
-                            res.send(creationResult);
+                            res.send(creationResult.id);
                         }
                     })
                     .catch((e) => {
