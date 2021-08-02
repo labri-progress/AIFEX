@@ -179,7 +179,7 @@ paths:
           description: ID of the WebSite to get
       responses:
         '200':
-          description: Returns WebSite
+          description: The WebSite
           content:
             application/json:
               schema:
@@ -254,12 +254,7 @@ paths:
                   enum: [shadow, bluesky, rainbow]
       responses:
         '200':
-          description: The WebSite ids
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: SessionAdded
+          description: The Session id
         '403':
           description: Unauthorized
           content:
@@ -334,6 +329,34 @@ paths:
                 example: Unauthorized
       security:
         - bearerAuth: []
+  /models:
+    post:
+      description: add a new model
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                depth:
+                  type: string
+                interpolationfactor:
+                  type: string
+                predictionType:
+                  type: string
+                  enum: [CSP, SP, FIS]
+      responses:
+        '200':
+          description: The Model id
+        '403':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Unauthorized
+      security:
+        - bearerAuth: []      
 
           
 components:

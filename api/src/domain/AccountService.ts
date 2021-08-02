@@ -13,5 +13,7 @@ export default interface AccountService {
 
     addSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionAdded">;
 
+    addModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelAdded">;
+
 
 }

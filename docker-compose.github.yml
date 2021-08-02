@@ -72,6 +72,21 @@ services:
       - screenshot:/app/public/screenshot
       - video:/app/public/video
 
+  api:
+    build:
+      context: api/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - TOKEN_SECRET=${TOKEN_SECRET}
+    depends_on:
+      - "account"
+      - "website"
+      - "session"
+      - "model"
+    restart: always
+
 
   reverseproxy:
     build:

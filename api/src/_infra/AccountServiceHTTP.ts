@@ -109,4 +109,25 @@ export default class AccountServiceHTTP implements AccountService {
             })
     }
 
+    addModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelAdded"> {
+        const accountAddModelURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addmodel';
+        let bodyAddSession = {
+            token:token.token,
+            modelId,
+        }
+        let optionAddModel = {
+            method: 'POST',
+            body:    JSON.stringify(bodyAddSession),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountAddModelURL, optionAddModel)
+            .then(response => {
+                if (response.ok) {
+                    return "ModelAdded";
+                } else {
+                    throw "Unauthorized";
+                }
+            })
+    }
+
 }

@@ -10,16 +10,21 @@ import Screenshot from "../domain/Screenshot";
 import { Kind } from "../domain/Kind";
 import Exploration from "../domain/Exploration";
 import Interaction from "../domain/Interaction";
+import Model from "../domain/Model";
+import ModelService from "../domain/ModelService";
+import { ModelPredictionType } from "../domain/ModelPredictionType";
 
 export default class APIApplication {
     private _accountService: AccountService;
     private _webSiteService: WebSiteService;
     private _sessionService: SessionService;
+    private _modelService: ModelService;
 
-    constructor(accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService) {
+    constructor(accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService, modelService: ModelService) {
         this._accountService = accountService;
         this._webSiteService = webSiteService;
         this._sessionService = sessionService;
+        this._modelService = modelService;
     }
 
     signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
@@ -125,6 +130,20 @@ export default class APIApplication {
 
     addScreenshots(token: Token, screenshots: Screenshot[]): Promise<"Unauthorized" | "ScreenshotsAdded"> {
         return this._sessionService.addScreenshots(screenshots);
+    }
+
+    createModel(token: Token, depth: number, interpolationfactor: number, predictionType : ModelPredictionType) : Promise<Model | "Unauthorized"> {
+        return this._modelService.createModel(depth, interpolationfactor, predictionType)
+            .then((modelId) => {
+                return this._accountService.addModel(token, modelId)
+                    .then((addResult) => {
+                        if (addResult === "Unauthorized") {
+                            return "Unauthorized";
+                        } else {
+                            return new Model(modelId, depth, interpolationfactor, predictionType, []);
+                        }
+                    });
+            });
     }
 
 }
