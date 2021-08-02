@@ -88,11 +88,11 @@ export default class AccountServiceHTTP implements AccountService {
     }
 
 
-    addSession(token: Token, sessionid: string): Promise<"Unauthorized" | "SessionAdded"> {
+    addSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionAdded"> {
         const accountAddSessionURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addsession';
         let bodyAddSession = {
             token:token.token,
-            sessionid,
+            sessionId,
         }
         let optionAddsession = {
             method: 'POST',

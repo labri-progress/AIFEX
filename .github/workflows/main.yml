@@ -129,6 +129,6 @@ jobs:
       - name: test Account
         working-directory: ./test
         run: npm run testAccount
-      - name: test Account
+      - name: test API
         working-directory: ./test
         run: npm run testAPI

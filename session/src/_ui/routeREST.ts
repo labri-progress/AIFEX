@@ -42,7 +42,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
         sessionService.createNewSessionForWebSiteId(webSiteId, baseURL, name, useTestScenario, overlayTypeValue)
         .then((sessionId) => {
             if (sessionId) {
-                logger.debug(`session created`);
+                logger.debug(`session created : ${sessionId}`);
                 res.json(sessionId);
             } else {
                 res.status(NOT_FOUND_STATUS).send('sessionId does not exist');
