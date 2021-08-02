@@ -32,6 +32,20 @@ export default class APIApplication {
         return this._accountService.getAccount(token);
     }
 
+    createWebSite(token: Token, name: string, url: string, mappingList : Mapping[] ) : Promise<WebSite | "Unauthorized"> {
+        return this._webSiteService.createWebSite(name, url, mappingList)
+            .then((webSiteId) => {
+                return this._accountService.addWebSite(token, webSiteId)
+                    .then((addResult) => {
+                        if (addResult === "Unauthorized") {
+                            return "Unauthorized";
+                        } else {
+                            return new WebSite(webSiteId, name, url, mappingList);
+                        }
+                    });
+            });
+    }
+
     findWebSiteById(token : Token, webSiteId : string ) : Promise<WebSite | undefined | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
@@ -49,18 +63,33 @@ export default class APIApplication {
             });
     }
 
-    createWebSite(token: Token, name: string, url: string, mappingList : Mapping[] ) : Promise<Token | "Unauthorized"> {
-        return this._webSiteService.createWebSite(name, url, mappingList)
-            .then((webSiteId) => {
-                return this._accountService.addWebSite(token, webSiteId);
-            });
+    createSession(token: Token, webSiteId: string, baseURL: string, name: string, overlayType: SessionOverlayType) : Promise<Session | "Unauthorized"> {
+        return this.findWebSiteById(token, webSiteId)
+            .then((findResult) => {
+                if (findResult === undefined || findResult === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const webSite : WebSite = findResult;
+                    return this._sessionService.createSession(webSiteId, baseURL, name, overlayType)
+                        .then((sessionId) => {
+                            return this._accountService.addSession(token, sessionId)
+                                .then((addSessionResult) => {
+                                    if (addSessionResult === "Unauthorized") {
+                                        return "Unauthorized";
+                                    } else {
+                                        return new Session(sessionId, name, baseURL, webSite, new Date(), new Date(), false, overlayType, []);
+                                    }
+                                })
+                        });
+                }
+            })
     }
 
     findSessionById(token : Token, sessionId : string ) : Promise<Session | undefined | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
-                    "Unauthorized";
+                    return "Unauthorized";
                 } else {
                     const account : Account = result;
                     const authorized = account.authorizationSet.some((authorization)=>authorization.key === sessionId && authorization.kind === Kind.Session);
@@ -73,15 +102,10 @@ export default class APIApplication {
             });
     }
 
-    createSession(token: Token, webSiteId: string, baseURL: string, name: string, overlayType: SessionOverlayType) : Promise<Token | "Unauthorized"> {
-        return this._sessionService.createSession(webSiteId, baseURL, name, overlayType)
-            .then((sessionId) => {
-                return this._accountService.addSession(token, sessionId);
-            });
-    }
+    
 
-    /*addScreenshots(token: Token, screenshots: Screenshot[]) : Promise<"Unauthorized" | "ScreenshotsAdded"> {
+    addScreenshots(token: Token, screenshots: Screenshot[]) : Promise<"Unauthorized" | "ScreenshotsAdded"> {
         return this._sessionService.addScreenshots(screenshots);
-    }*/
+    }
 
 }

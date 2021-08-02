@@ -64,7 +64,7 @@ async function loadDefault() {
         const connexionCode = await createSessionAndModel(cdiscountWebSiteId);
         logger.info('connexion code : ',connexionCode);
         const sessionId = connexionCode.split('$')[0];
-        await addSessionToAnonymous(token, connexionCode);
+        await addSessionToAnonymous(token, sessionId);
         logger.info('sessionAddesToAnonymous');
         await addAllExplorationToSession(sessionId);
         logger.info('allExplorationToSession');

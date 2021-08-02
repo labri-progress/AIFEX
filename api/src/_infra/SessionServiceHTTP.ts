@@ -12,8 +12,8 @@ export default class SessionServiceHTTP implements SessionService {
         const sessionGetURL = SESSION_URL + id;
         return fetch(sessionGetURL).then(response => {
             if (response.ok) {
-                return response.json().then(sessionData => {
-                    return new Session(sessionData.webSite, sessionData.baseURL, sessionData.id, sessionData.name, sessionData.useTestScenario);
+                return response.json().then(sesRes => {
+                    return new Session(sesRes.id, sesRes.name, sesRes.baseURL, sesRes.webSite, sesRes.createdAt, sesRes.updatedAt, sesRes.useTestScenario, sesRes.overlayType, sesRes.explorationList);
                 })
             } else {
                 return undefined;

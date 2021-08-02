@@ -147,12 +147,12 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 res.status(INVALID_PARAMETERS_STATUS).send("invalid parameter");
             } else {
                 api.createWebSite(req.token, name, url, mappingList)
-                    .then(newToken => {
-                        if (newToken === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                    .then(creationResult => {
+                        if (creationResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).send(creationResult);
                         } else {
                             logger.info("website is created and added");
-                            res.json({ jwt: token.token });
+                            res.send(creationResult);
                         }
                     })
                     .catch((e) => {
@@ -203,12 +203,12 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 res.status(INVALID_PARAMETERS_STATUS).send("invalid parameter");
             } else {
                 api.createSession(req.token, webSiteId, baseURL, name, overlayType)
-                    .then(newToken => {
-                        if (newToken === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                    .then(creationResult => {
+                        if (creationResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).send(creationResult);
                         } else {
                             logger.info("session is created and added");
-                            res.json({ jwt: token.token });
+                            res.send(creationResult);
                         }
                     })
                     .catch((e) => {

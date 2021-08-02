@@ -66,7 +66,7 @@ export default class AccountServiceHTTP implements AccountService {
     }
 
 
-    addWebSite(token: Token, webSiteId: string): Promise<Token | "Unauthorized" > {
+    addWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteAdded" > {
         const accountAddWebSiteURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addwebsite';
         let bodyAddWebSite = {
             token:token.token,
@@ -80,15 +80,15 @@ export default class AccountServiceHTTP implements AccountService {
         return fetch(accountAddWebSiteURL, optionAddWebSite)
             .then(response => {
                 if (response.ok) {
-                    return response.json().then((token)=>new Token(token.jwt));
+                    return "WebSiteAdded";
                 } else {
-                    throw new Error('cannot add website to account');
+                    throw "Unauthorized";
                 }
             })
     }
 
 
-    addSession(token: Token, sessionid: string): Promise<Token | "Unauthorized" > {
+    addSession(token: Token, sessionid: string): Promise<"Unauthorized" | "SessionAdded"> {
         const accountAddSessionURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addsession';
         let bodyAddSession = {
             token:token.token,
@@ -102,9 +102,9 @@ export default class AccountServiceHTTP implements AccountService {
         return fetch(accountAddSessionURL, optionAddsession)
             .then(response => {
                 if (response.ok) {
-                    return response.json().then((token)=>new Token(token.jwt));
+                    return "SessionAdded";
                 } else {
-                    throw new Error('cannot add website to account');
+                    throw "Unauthorized";
                 }
             })
     }

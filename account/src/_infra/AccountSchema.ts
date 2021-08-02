@@ -1,4 +1,5 @@
 import { model, Schema, Document} from 'mongoose';
+import { Kind } from '../domain/Kind';
 
 const ACCOUNT_SCHEMA = new Schema({
     username : {type : String, required : true},
@@ -16,7 +17,7 @@ export interface AccountDocument extends Document {
     email : string,
     salt : number[],
     hash : number[],
-    authorizationSet: {kind: number, key: string}[]
+    authorizationSet: {kind: Kind, key: string}[]
 }
 
 export default model<AccountDocument>("Account", ACCOUNT_SCHEMA);

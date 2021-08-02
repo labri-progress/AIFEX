@@ -9,9 +9,9 @@ export default interface AccountService {
 
     getAccount(token: Token): Promise<Account | "Unauthorized">;
 
-    addWebSite(token: Token, webSiteId: string): Promise<Token | "Unauthorized">;
+    addWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteAdded">;
 
-    addSession(token: Token, sessionId: string): Promise<Token | "Unauthorized">;
+    addSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionAdded">;
 
 
 }

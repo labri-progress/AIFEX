@@ -97,7 +97,13 @@ paths:
                         kind:
                           type: string
                           enum: [WebSite, Model, Session]
-                      
+        '403':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Unauthorized
       security:
         - bearerAuth: []
   /websites:
@@ -152,6 +158,13 @@ paths:
       responses:
         '200':
           description: The WebSite ids
+        '403':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Unauthorized
       security:
         - bearerAuth: []
   /websites/{webSiteId}:
@@ -167,6 +180,58 @@ paths:
       responses:
         '200':
           description: Returns WebSite
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+                  mappingList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        match:
+                          type: object
+                          properties:
+                            event:
+                              type: string
+                            css:
+                              type: string
+                            xpath:
+                              type: string
+                            code:
+                              type: string
+                            key:
+                              type: string
+                        output:
+                          type: object
+                          properties:
+                            prefix:
+                              type: string
+                            suffix:
+                              type: string
+                        context:
+                          type: object
+                          properties:
+                            url:
+                              type: string
+                            css:
+                              type: string
+                            xpath:
+                              type: string
+                        description:
+                          type: string
+        '403':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Unauthorized
       security:
         - bearerAuth: []
   /sessions:
@@ -190,6 +255,18 @@ paths:
       responses:
         '200':
           description: The WebSite ids
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: SessionAdded
+        '403':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Unauthorized
       security:
         - bearerAuth: []        
   /sessions/{sessionId}:
