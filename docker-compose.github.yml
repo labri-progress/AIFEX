@@ -85,21 +85,9 @@ services:
       - "website"
       - "session"
       - "model"
-    restart: always
-
-
-  reverseproxy:
-    build:
-      context: reverseproxy/
-      dockerfile: ./Dockerfile.dev
-    depends_on:
-      - "model"
-      - "website"
-      - "session"
-      - "dashboard"
     ports:
-      - 80:80
-  
+      - 5005:80
+    restart: always
 
   initialization:
     build:
