@@ -219,4 +219,35 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
+
+    app.post("/sessions/:sessionId/explorations", (req, res) => {
+        const sessionId = req.params.sessionId;
+        const { testerName, interactionList, startDate, stopDate } = req.body;
+        logger.info(`Session By Id`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).send("No token");
+        } else {
+            const token : Token = req.token;
+            if (sessionId === undefined) {
+                logger.warn(`sessionId`);
+                res.status(INVALID_PARAMETERS_STATUS).send("No sessionId");
+            } else {
+                api.addExploration(token, sessionId, testerName, interactionList, startDate, stopDate)
+                    .then(explorationResult => {
+                        if (explorationResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                        } else {
+                            logger.info("Exploration is added");
+                            res.json(explorationResult);
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                    });
+            }
+        }
+    });
+
 }

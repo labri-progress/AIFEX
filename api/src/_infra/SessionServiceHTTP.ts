@@ -3,6 +3,7 @@ import config from "./config";
 import Session, { SessionOverlayType } from "../domain/Session";
 import SessionService from "../domain/SessionService";
 import Screenshot from "../domain/Screenshot";
+import Interaction from "../domain/Interaction";
 
 const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;
 
@@ -47,7 +48,7 @@ export default class SessionServiceHTTP implements SessionService {
     }
 
 
-    addExploration(sessionId: string, testerName: string, interactionList : Array<{index: number, concreteType: string, kind: string, value: string, date?: Date}>, startDate: Date, stopDate: Date) : Promise<number> {
+    addExploration(sessionId: string, testerName: string, interactionList : Interaction[], startDate?: Date, stopDate?: Date) : Promise<number> {
         let exploration = {
             testerName,
             interactionList,

@@ -3,7 +3,7 @@ const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
 
-const API_URL = "http://api/api";
+const API_URL = "http://api/";
 
 describe("Account", () => {
 

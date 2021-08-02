@@ -89,6 +89,7 @@ services:
       - "account"
       - "website"
       - "session"
+      - "model"
     restart: always
 
   dashboard:

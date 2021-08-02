@@ -8,6 +8,8 @@ import WebSiteService from "../domain/WebSiteService";
 import Account from "../domain/Account";
 import Screenshot from "../domain/Screenshot";
 import { Kind } from "../domain/Kind";
+import Exploration from "../domain/Exploration";
+import Interaction from "../domain/Interaction";
 
 export default class APIApplication {
     private _accountService: AccountService;
@@ -20,19 +22,19 @@ export default class APIApplication {
         this._sessionService = sessionService;
     }
 
-    signup(username: string, email: string, password: string) : Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
+    signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
         return this._accountService.signup(username, email, password);
     }
 
-    signin(username : string, password : string) : Promise<Token | "Unauthorized"> {
+    signin(username: string, password: string): Promise<Token | "Unauthorized"> {
         return this._accountService.signin(username, password);
     }
 
-    getAccount(token: Token) : Promise<Account | "Unauthorized"> {
+    getAccount(token: Token): Promise<Account | "Unauthorized"> {
         return this._accountService.getAccount(token);
     }
 
-    createWebSite(token: Token, name: string, url: string, mappingList : Mapping[] ) : Promise<WebSite | "Unauthorized"> {
+    createWebSite(token: Token, name: string, url: string, mappingList: Mapping[]): Promise<WebSite | "Unauthorized"> {
         return this._webSiteService.createWebSite(name, url, mappingList)
             .then((webSiteId) => {
                 return this._accountService.addWebSite(token, webSiteId)
@@ -46,30 +48,30 @@ export default class APIApplication {
             });
     }
 
-    findWebSiteById(token : Token, webSiteId : string ) : Promise<WebSite | undefined | "Unauthorized"> {
+    findWebSiteById(token: Token, webSiteId: string): Promise<WebSite | undefined | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
                     "Unauthorized";
                 } else {
-                    const account : Account = result;
-                    const authorized = account.authorizationSet.some((authorization)=>authorization.key === webSiteId && authorization.kind === Kind.WebSite);
-                    if (! authorized) {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === webSiteId && authorization.kind === Kind.WebSite);
+                    if (!authorized) {
                         return "Unauthorized";
                     } else {
-                        return this._webSiteService.findWebSiteById(webSiteId).then((result)=> result);
+                        return this._webSiteService.findWebSiteById(webSiteId).then((result) => result);
                     }
                 }
             });
     }
 
-    createSession(token: Token, webSiteId: string, baseURL: string, name: string, overlayType: SessionOverlayType) : Promise<Session | "Unauthorized"> {
+    createSession(token: Token, webSiteId: string, baseURL: string, name: string, overlayType: SessionOverlayType): Promise<Session | "Unauthorized"> {
         return this.findWebSiteById(token, webSiteId)
             .then((findResult) => {
                 if (findResult === undefined || findResult === "Unauthorized") {
                     return "Unauthorized";
                 } else {
-                    const webSite : WebSite = findResult;
+                    const webSite: WebSite = findResult;
                     return this._sessionService.createSession(webSiteId, baseURL, name, overlayType)
                         .then((sessionId) => {
                             return this._accountService.addSession(token, sessionId)
@@ -85,26 +87,43 @@ export default class APIApplication {
             })
     }
 
-    findSessionById(token : Token, sessionId : string ) : Promise<Session | undefined | "Unauthorized"> {
+    findSessionById(token: Token, sessionId: string): Promise<Session | undefined | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
                     return "Unauthorized";
                 } else {
-                    const account : Account = result;
-                    const authorized = account.authorizationSet.some((authorization)=>authorization.key === sessionId && authorization.kind === Kind.Session);
-                    if (! authorized) {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    if (!authorized) {
                         return "Unauthorized";
                     } else {
-                        return this._sessionService.findSessionById(sessionId).then((result)=> result);
+                        return this._sessionService.findSessionById(sessionId).then((result) => result);
                     }
                 }
             });
     }
 
-    
+    addExploration(token: Token, sessionId: string, testerName: string, interactionList: Interaction[], startDate?: Date, stopDate?: Date): Promise<"Unauthorized" | number> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._sessionService.addExploration(sessionId, testerName, interactionList, startDate, stopDate)
+                            .then((result) => result);
+                    }
+                }
+            });
 
-    addScreenshots(token: Token, screenshots: Screenshot[]) : Promise<"Unauthorized" | "ScreenshotsAdded"> {
+    }
+
+    addScreenshots(token: Token, screenshots: Screenshot[]): Promise<"Unauthorized" | "ScreenshotsAdded"> {
         return this._sessionService.addScreenshots(screenshots);
     }
 
