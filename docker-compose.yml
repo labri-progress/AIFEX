@@ -61,8 +61,6 @@ services:
       - TOKEN_SECRET=${TOKEN_SECRET}
     depends_on:
       - "mongo"
-    ports:
-      - 5008:5008
     restart: always
 
   printer:

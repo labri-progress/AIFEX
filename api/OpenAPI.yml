@@ -303,17 +303,19 @@ paths:
                 testerName:
                   type: string
                 interactionList:
-                  type: object
-                  properties:
-                    concreteType:
-                      type: string
-                      enum: [action, comment, answer]
-                    kind:
-                      type: string
-                    value: 
-                      type: string
-                    date:
-                      type: string
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      concreteType:
+                        type: string
+                        enum: [Action, Comment, Answer]
+                      kind:
+                        type: string
+                      value: 
+                        type: string
+                      date:
+                        type: string
                 startDate:
                   type: string
                 stopDate:
