@@ -3,7 +3,7 @@ const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
 
-const ACCOUNT_URL = "http://localhost:5004/api";
+const API_URL = "http://localhost:5004/api";
 
 describe("Account", () => {
 
@@ -11,7 +11,7 @@ describe("Account", () => {
     let token;
 
     it("should ping", () => {
-        const url = `${ACCOUNT_URL}/ping`;
+        const url = `${API_URL}/ping`;
         return fetch(url)
             .then((res) => {
                 expect(res.ok).to.be.true;
@@ -24,7 +24,7 @@ describe("Account", () => {
     
 
     it("should signup", () => {
-        const url = `${ACCOUNT_URL}/signup`;
+        const url = `${API_URL}/signup`;
         const body = {
             username:"test",
             password: "test"
@@ -45,7 +45,7 @@ describe("Account", () => {
     });
 
     it("should not signup twice", () => {
-        const url = `${ACCOUNT_URL}/signup`;
+        const url = `${API_URL}/signup`;
         const body = {
             username:"test",
             password: "test"
@@ -66,7 +66,7 @@ describe("Account", () => {
     });
 
     it("should signin", () => {
-        const url = `${ACCOUNT_URL}/signin`;
+        const url = `${API_URL}/signin`;
         const body = {
             username: "test",
             password: "test",
@@ -89,7 +89,7 @@ describe("Account", () => {
 
 
     it("should not signin with a wrong password", () => {
-        const url = `${ACCOUNT_URL}/signin`;
+        const url = `${API_URL}/signin`;
         const body = {
             username: "test",
             password: "tost",
@@ -110,7 +110,7 @@ describe("Account", () => {
     });
 
     it("should get the account", () => {
-        const url = `${ACCOUNT_URL}/account`;
+        const url = `${API_URL}/account`;
         return fetch(url, {
             method: "GET",
             headers: { 
@@ -125,6 +125,41 @@ describe("Account", () => {
             .then((account) => {
                 expect(account.username).eql("test");
                 expect(account.authorizationSet.length).eql(0);
+            });
+    });
+
+
+    it("should add a new WebSite", () => {
+        const url = `${API_URL}/websites`;
+        const body = {
+            name: "MyWebSite",
+            url: "http://mywebsite.com",
+            mappingList: [
+                {
+                    match: {
+                        event: "click",
+                        css: "body"
+                    },
+                    output: {
+                        prefix: "clickOnBody"
+                    }
+                }
+            ]
+        };
+        return fetch(url, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`}
+            })
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((webSite) => {
+                expect(webSite.id).to.not.be.undefined;
             });
     });
 
