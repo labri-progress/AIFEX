@@ -278,12 +278,62 @@ paths:
           schema:
             type: string
           required: true
-          description: ID of the Session to get
+          description: Id of the Session to get
       responses:
         '200':
           description: Returns Session
       security:
         - bearerAuth: []
+  /sessions/{sessionId}/explorations:
+    post:
+      description: add a new /explorations
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                testerName:
+                  type: string
+                interactionList:
+                  type: object
+                  properties:
+                    concreteType:
+                      type: string
+                      enum: [action, comment, answer]
+                    kind:
+                      type: string
+                    value: 
+                      type: string
+                    date:
+                      type: string
+                startDate:
+                  type: string
+                stopDate:
+                  type: string
+      responses:
+        '200':
+          description: The number of exploration in the session
+        '400':
+          description: Invalid parameter
+        '403':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Unauthorized
+      security:
+        - bearerAuth: []
+
+          
 components:
   securitySchemes:
     bearerAuth:
