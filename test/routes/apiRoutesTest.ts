@@ -18,7 +18,7 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.eql("AccountCreated");
+                expect(result.message).to.eql("alive");
             });
     });
     
@@ -37,6 +37,7 @@ describe("API", () => {
         };
         return fetch(url, option)
             .then((res) => {
+                console.log(res);
                 expect(res.ok).to.be.true;
                 return res.json();
             })
