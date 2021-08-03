@@ -12,7 +12,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.get("/ping", (req, res) => {
         logger.info(`ping`);
-        res.send('alive');
+        res.json({message:'alive'});
     });
 
     app.post("/signup", (req, res) => {
@@ -28,20 +28,20 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             logger.warn(`no password`);
         }
         if (password === undefined || email === undefined || username === undefined) {
-            res.status(INVALID_PARAMETERS_STATUS).send("No username, email or password");
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No username, email or password"});
         } else {
             api.signup(username, email, password)
                 .then(result => {
                     if (result === "UserNameAlreadyTaken") {
-                        res.status(FORBIDDEN_STATUS).send(result);
+                        res.status(FORBIDDEN_STATUS).json({message:result});
                     } else {
                         logger.info("account created");
-                        res.send(result);
+                        res.json({message:result});
                     }
                 })
                 .catch((e) => {
                     logger.error(`error:${e}`);
-                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                 });
         }
     });

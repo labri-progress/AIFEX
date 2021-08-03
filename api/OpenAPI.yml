@@ -9,14 +9,16 @@ paths:
     get:
       responses:
         '200':
-          description: The server is alive
+          description: Check if the server is alive
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: alive
+                type: object
+                properties:
+                  message:
+                    type: string
   /signup:
-    description: create a new account
+    description: Create a new account
     post:
       requestBody:
         content:
@@ -34,17 +36,21 @@ paths:
         '200':
           description: Account is created
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: AccountCreated
+                type: object
+                properties:
+                  message:
+                    type: string
         '403':
           description: Account cannot be created (forbidden UserName)
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: UserNameAlreadyTaken
+                type: object
+                properties:
+                  message:
+                    type: string
   /signin:
     description: signin and get a bearer token (JWT)
     post:
