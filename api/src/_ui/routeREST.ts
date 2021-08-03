@@ -307,4 +307,36 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
+    app.post("/models/:modelId/link/:sessionId", (req, res) => {
+        const modelId = req.params.modelId;
+        const sessionId = req.params.sessionId;
+        logger.info(`link model to session`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (modelId === undefined || sessionId === undefined) {
+                logger.warn(`modelId or sessionId is undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId or sessionId"});
+            } else {
+                api.linkModelToSession(req.token, modelId, sessionId)
+                    .then(linkResult => {
+                        if (linkResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else if (linkResult === "ModelIsUnknown") {
+                            logger.info("Model not found");
+                            res.status(NOT_FOUND_STATUS).json({message:"ModelNotFound"});
+                        } else {
+                            logger.info("Model by Id done");
+                            res.json(linkResult);
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
 }

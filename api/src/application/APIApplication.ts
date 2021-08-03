@@ -163,4 +163,23 @@ export default class APIApplication {
             });
     }
 
+    linkModelToSession(token: Token, modelId: string, sessionId: string): Promise<"Unauthorized" | "ModelLinkedToSession" | "ModelIsUnknown"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const modelAuthorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    const sessionAuthorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    if (!modelAuthorized || !sessionAuthorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._modelService.linkModelToSession(modelId, sessionId)
+                            .then((result) => result);
+                    }
+                }
+            });
+    }
+
 }

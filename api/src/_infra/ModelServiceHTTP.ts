@@ -23,8 +23,16 @@ export default class ModelServiceHTTP implements ModelService {
             })
     }
 
-    linkModelToSession(modelId: string, sessionId: string): Promise<"LinkIsDone" | "ModelIsUnknown"> {
-        throw new Error("Method not implemented.");
+    linkModelToSession(modelId: string, sessionId: string): Promise<"ModelLinkedToSession" | "ModelIsUnknown"> {
+        const ModelLinkURL = MODEL_URL + modelId + '/link/' + sessionId;
+        return fetch(ModelLinkURL, { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    return "ModelLinkedToSession"
+                } else {
+                    return "ModelIsUnknown"
+                }
+            })
     }
 
     

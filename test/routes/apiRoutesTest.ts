@@ -214,5 +214,24 @@ describe("API", () => {
             });
     });
 
-    
+
+    it("should have the session in the account", () => {
+        const url = `${API_URL}/account`;
+        return fetch(url, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`}
+            })
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((account) => {
+                expect(account.authorizationSet.length).eql(2);
+                expect(account.authorizationSet[1].kind).to.be.eql("Session");
+                expect(account.authorizationSet[1].key).to.be.eql(sessionId);
+            });
+    });
 });

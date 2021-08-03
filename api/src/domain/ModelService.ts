@@ -7,6 +7,6 @@ export default interface ModelService {
 
     createModel(depth: number, interpolationfactor: number, predictionType : ModelPredictionType): Promise<string>;
 
-    linkModelToSession(modelId: string, sessionId: string): Promise<"LinkIsDone" | "ModelIsUnknown">;
+    linkModelToSession(modelId: string, sessionId: string): Promise<"ModelLinkedToSession" | "ModelIsUnknown">;
 
 }
