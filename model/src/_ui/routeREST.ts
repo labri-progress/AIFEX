@@ -4,6 +4,10 @@ import Note from "../domain/Note";
 import NoteDistribution from "../domain/NoteDistribution";
 import Sequence from "../domain/Sequence";
 import Stimulus from "../domain/Stimulus";
+import Model from "../domain/Model";
+import FISModel from "../domain/FISModel";
+import SPModel from "../domain/SPModel";
+import CSPModel from "../domain/CSPModel";
 import {Express} from "express";
 import {logger} from "../logger";
 
@@ -31,10 +35,7 @@ export default function attachRoutes(app: Express , modelService: ModelService):
         .then((model) => {
             if (model) {
                 logger.debug(`modelId ${modelId} is returned`);
-                res.json({
-                    id: model.id,
-                    depth: model.depth
-                });
+                res.json(modelToJSON(model));
             } else {
                 logger.debug(`no model id for modelId ${modelId}`);
                 res.status(NOT_FOUND_STATUS).send({message: 'no model for Id'});
@@ -289,3 +290,23 @@ function ngramToJSON(ngramSet: Ngram[]): any[] {
     });
     return jsonData;
 }
+
+
+function modelToJSON(model: Model): any {
+    let json : any = {};
+    json.id = model.id;
+    json.depth = model.depth;
+    json.sessionIdList = model.getLinkedSessionIdList();
+    if (model instanceof FISModel) {
+        json.predictionType = "FIS";
+        json.interpolationfactor = 0;
+    } else if (model instanceof SPModel) {
+        json.predictionType = "SP";
+        json.interpolationfactor = 0;
+    } else if (model instanceof CSPModel) {
+        json.predictionType = "CSP";
+        json.interpolationfactor = model.interpolationfactor;
+    }
+    return json;
+}
+

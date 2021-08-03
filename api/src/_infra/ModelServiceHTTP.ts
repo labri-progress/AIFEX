@@ -8,8 +8,19 @@ import config from "./config";
 const MODEL_URL: string = `http://${config.model.host}:${config.model.port}/model/`;
 
 export default class ModelServiceHTTP implements ModelService {
-    findModelById(id: string): Promise<Model | undefined> {
-        throw new Error("Method not implemented.");
+    findModelById(modelId: string): Promise<Model | undefined> {
+        const ModelFindURL = MODEL_URL + modelId;
+        return fetch(ModelFindURL)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                        .then((modelJSON) => {
+                            return new Model(modelJSON.id, modelJSON.depth, modelJSON.interpolationfactor, modelJSON.predictionType, modelJSON.sessionIdList);
+                        });                    
+                } else {
+                    return undefined;
+                }
+            })
     }
 
     linkModelToSession(modelId: string, sessionId: string): Promise<"LinkIsDone" | "ModelIsUnknown"> {

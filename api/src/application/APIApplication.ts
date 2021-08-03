@@ -146,4 +146,21 @@ export default class APIApplication {
             });
     }
 
+    findModelById(token: Token, modelId: string): Promise<Model | undefined | "Unauthorized"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._modelService.findModelById(modelId).then((result) => result);
+                    }
+                }
+            });
+    }
+
 }

@@ -26,7 +26,7 @@ describe("API", () => {
     it("should signup", () => {
         const url = `${API_URL}/signup`;
         const body = {
-            username:"test",
+            username:"testAPI",
             email:"test@test.com",
             password: "test"
         };
@@ -37,7 +37,6 @@ describe("API", () => {
         };
         return fetch(url, option)
             .then((res) => {
-                console.log(res);
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -49,7 +48,7 @@ describe("API", () => {
     it("should not signup twice", () => {
         const url = `${API_URL}/signup`;
         const body = {
-            username:"test",
+            username:"testAPI",
             email:"test@test.com",
             password: "test"
         };
@@ -71,7 +70,7 @@ describe("API", () => {
     it("should signin", () => {
         const url = `${API_URL}/signin`;
         const body = {
-            username: "test",
+            username: "testAPI",
             password: "test",
         };
         const option = {
@@ -94,7 +93,7 @@ describe("API", () => {
     it("should not signin with a wrong password", () => {
         const url = `${API_URL}/signin`;
         const body = {
-            username: "test",
+            username: "testAPI",
             password: "tost",
         };
         const option = {
