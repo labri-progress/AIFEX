@@ -328,7 +328,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                             res.status(NOT_FOUND_STATUS).json({message:"ModelNotFound"});
                         } else {
                             logger.info("Model by Id done");
-                            res.json(linkResult);
+                            res.json({message:linkResult});
                         }
                     })
                     .catch((e) => {

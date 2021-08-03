@@ -11,6 +11,7 @@ describe("API", () => {
     let token;
     let webSiteId;
     let sessionId;
+    let modelId;
 
     it("should ping", () => {
         const url = `${API_URL}/ping`;
@@ -232,6 +233,49 @@ describe("API", () => {
                 expect(account.authorizationSet.length).eql(2);
                 expect(account.authorizationSet[1].kind).to.be.eql("Session");
                 expect(account.authorizationSet[1].key).to.be.eql(sessionId);
+            });
+    });
+
+    it("should create a new model", () => {
+        const url = `${API_URL}/models`;
+        return fetch(url, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                depth: 3,
+                interpolationfactor: 2,
+                predictionType: "CSP"
+            })})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.modelId).to.be.not.undefined;
+                modelId = result.modelId;
+            });
+    });
+
+
+    it("should ling the model to the session", () => {
+        const url = `${API_URL}/models/${modelId}/link/${sessionId}`;
+        return fetch(url, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            })
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.message).to.be.eql("ModelLinkedToSession");
             });
     });
 });

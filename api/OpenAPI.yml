@@ -267,6 +267,43 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []    
+  /models/{modelId}/link/{sessionId}:
+    post:
+      description: link the model to a session
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      responses:
+        '200':
+          description: The link is done
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Model'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: ModelNotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
   /models/{modelId}:
     get:
       description: returns Model 
