@@ -248,7 +248,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Message'
+              $ref: '#/components/schemas/Model'
       responses:
         '200':
           description: The Model id
@@ -267,7 +267,31 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []    
-
+  /models/{modelId}:
+    get:
+      description: returns Model 
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model to get
+      responses:
+        '200':
+          description: The Model
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Model'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
 components:
   schemas:
     Message:

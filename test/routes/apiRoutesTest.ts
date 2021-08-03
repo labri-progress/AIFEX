@@ -9,6 +9,8 @@ describe("API", () => {
 
     // tslint:disable-next-line: prefer-const
     let token;
+    let webSiteId;
+    let sessionId;
 
     it("should ping", () => {
         const url = `${API_URL}/ping`;
@@ -125,7 +127,7 @@ describe("API", () => {
                 return res.json();
             })
             .then((account) => {
-                expect(account.username).eql("test");
+                expect(account.username).eql("testAPI");
                 expect(account.authorizationSet.length).eql(0);
             });
     });
@@ -162,6 +164,53 @@ describe("API", () => {
             })
             .then((result) => {
                 expect(result.webSiteId).to.not.be.undefined;
+                webSiteId = result.webSiteId;
+            });
+    });
+
+    it("should have the webSite in the account", () => {
+        const url = `${API_URL}/account`;
+        return fetch(url, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`}
+            })
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((account) => {
+                expect(account.authorizationSet.length).eql(1);
+                expect(account.authorizationSet[0].kind).to.be.eql("WebSite");
+                expect(account.authorizationSet[0].key).to.be.eql(webSiteId);
+            });
+    });
+
+
+    it("should create a new session", () => {
+        const url = `${API_URL}/sessions`;
+        return fetch(url, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                webSiteId: webSiteId,
+                baseURL: "http://mywebsite.com",
+                name: "MySession",
+                overlayType: "shadow"
+            })})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.sessionId).to.be.not.undefined;
+                sessionId = result.sessionId;
             });
     });
 

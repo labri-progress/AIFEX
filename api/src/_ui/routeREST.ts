@@ -279,4 +279,32 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
+    app.get("/models/:modelId", (req, res) => {
+        const modelId = req.params.modelId;
+        logger.info(`model by Id`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (modelId === undefined) {
+                logger.warn(`modelId is undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId"});
+            } else {
+                api.findModelById(req.token, modelId)
+                    .then(modelResult => {
+                        if (modelResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else {
+                            logger.info("Model by Id done");
+                            res.json(modelResult);
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
 }
