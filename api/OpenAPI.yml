@@ -77,10 +77,12 @@ paths:
         '403':
           description: Cannot sign (wrong username/password)
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Unauthorized
+                type: object
+                properties:
+                  message:
+                    type: string
   /account:
     get:
       responses:

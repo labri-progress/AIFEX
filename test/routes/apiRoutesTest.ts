@@ -5,7 +5,7 @@ import fetch from "node-fetch";
 
 const API_URL = "http://localhost:5005";
 
-describe("Account", () => {
+describe("API", () => {
 
     // tslint:disable-next-line: prefer-const
     let token;
@@ -15,7 +15,7 @@ describe("Account", () => {
         return fetch(url)
             .then((res) => {
                 expect(res.ok).to.be.true;
-                return res.text();
+                return res.json();
             })
             .then((result) => {
                 expect(result.message).to.eql("AccountCreated");
@@ -27,6 +27,7 @@ describe("Account", () => {
         const url = `${API_URL}/signup`;
         const body = {
             username:"test",
+            email:"test@test.com",
             password: "test"
         };
         const option = {
@@ -37,7 +38,7 @@ describe("Account", () => {
         return fetch(url, option)
             .then((res) => {
                 expect(res.ok).to.be.true;
-                return res.text();
+                return res.json();
             })
             .then((result) => {
                 expect(result.message).to.eql("AccountCreated");
@@ -48,6 +49,7 @@ describe("Account", () => {
         const url = `${API_URL}/signup`;
         const body = {
             username:"test",
+            email:"test@test.com",
             password: "test"
         };
         const option = {
@@ -58,7 +60,7 @@ describe("Account", () => {
         return fetch(url, option)
             .then((res) => {
                 expect(res.ok).to.be.false;
-                return res.text();
+                return res.json();
             })
             .then((result) => {
                 expect(result.message).to.eql("UserNameAlreadyTaken");
@@ -102,10 +104,10 @@ describe("Account", () => {
         return fetch(url, option)
             .then((res) => {
                 expect(res.ok).to.be.false;
-                return res.text();
+                return res.json();
             })
             .then((result) => {
-                expect(result).to.be.eql("Unauthorized");
+                expect(result.message).to.be.eql("Unauthorized");
             });
     });
 

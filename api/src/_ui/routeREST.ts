@@ -56,12 +56,12 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             logger.warn(`no password`);
         }
         if (password === undefined || username === undefined) {
-            res.status(INVALID_PARAMETERS_STATUS).send("No username or no password");
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No username or no password"});
         } else {
             api.signin(username, password)
                 .then(tokenResult => {
                     if (tokenResult === "Unauthorized") {
-                        res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                     } else {
                         logger.info("signin done");
                         res.json({ "bearerToken": tokenResult.token });
@@ -69,7 +69,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 })
                 .catch((e) => {
                     logger.error(`error:${e}`);
-                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                 });
         }
     });
@@ -78,12 +78,12 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         logger.info(`GET Account`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).json({messag:"No token"});
         } else {
             api.getAccount(req.token)
                 .then(accountResult => {
                     if (accountResult === "Unauthorized") {
-                        res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                     } else {
                         logger.info("return account");
                         logger.debug(`account: ${JSON.stringify(accountResult)}`);
