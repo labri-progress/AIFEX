@@ -159,10 +159,10 @@ describe("API", () => {
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
-                return res.text();
+                return res.json();
             })
-            .then((webSite) => {
-                expect(webSite.id).to.not.be.undefined;
+            .then((result) => {
+                expect(result.webSiteId).to.not.be.undefined;
             });
     });
 
