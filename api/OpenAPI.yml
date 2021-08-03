@@ -13,10 +13,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: '#/components/schemas/Message'
   /signup:
     description: Create a new account
     post:
@@ -38,19 +35,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: '#/components/schemas/Message'
         '403':
           description: Account cannot be created (forbidden UserName)
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: '#/components/schemas/Message'
   /signin:
     description: signin and get a bearer token (JWT)
     post:
@@ -79,10 +70,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: '#/components/schemas/Message'
   /account:
     get:
       responses:
@@ -91,27 +79,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  username:
-                    type: string
-                  authorizationSet:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        key:
-                          type: string
-                        kind:
-                          type: string
-                          enum: [WebSite, Model, Session]
+                $ref: '#/components/schemas/Account'
         '403':
           description: Unauthorized
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Unauthorized
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
   /websites:
@@ -121,58 +95,23 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                url:
-                  type: string
-                mappingList:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      match:
-                        type: object
-                        properties:
-                          event:
-                            type: string
-                          css:
-                            type: string
-                          xpath:
-                            type: string
-                          code:
-                            type: string
-                          key:
-                            type: string
-                      output:
-                        type: object
-                        properties:
-                          prefix:
-                            type: string
-                          suffix:
-                            type: string
-                      context:
-                        type: object
-                        properties:
-                          url:
-                            type: string
-                          css:
-                            type: string
-                          xpath:
-                            type: string
-                      description:
-                        type: string
+              $ref: '#/components/schemas/WebSite'
       responses:
         '200':
           description: The WebSite id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webSiteId:
+                    type: string
         '403':
           description: Unauthorized
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Unauthorized
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
   /websites/{webSiteId}:
@@ -192,54 +131,13 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  name:
-                    type: string
-                  url:
-                    type: string
-                  mappingList:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        match:
-                          type: object
-                          properties:
-                            event:
-                              type: string
-                            css:
-                              type: string
-                            xpath:
-                              type: string
-                            code:
-                              type: string
-                            key:
-                              type: string
-                        output:
-                          type: object
-                          properties:
-                            prefix:
-                              type: string
-                            suffix:
-                              type: string
-                        context:
-                          type: object
-                          properties:
-                            url:
-                              type: string
-                            css:
-                              type: string
-                            xpath:
-                              type: string
-                        description:
-                          type: string
+                $ref: '#/components/schemas/WebSite'
         '403':
           description: Unauthorized
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Unauthorized
+                $ref: '#/components/schemas/WebSite'
       security:
         - bearerAuth: []
   /sessions:
@@ -249,27 +147,23 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                webSiteId:
-                  type: string
-                baseURL:
-                  type: string
-                name:
-                  type: string
-                overlayType:
-                  type: string
-                  enum: [shadow, bluesky, rainbow]
+              $ref: '#/components/schemas/Session'
       responses:
         '200':
           description: The Session id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
         '403':
           description: Unauthorized
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Unauthorized
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []        
   /sessions/{sessionId}:
@@ -284,7 +178,7 @@ paths:
           description: Id of the Session to get
       responses:
         '200':
-          description: Returns Session
+          description: The Session
       security:
         - bearerAuth: []
   /sessions/{sessionId}/explorations:
@@ -326,15 +220,25 @@ paths:
       responses:
         '200':
           description: The number of exploration in the session
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  explorationNumber:                
+                    type: integer
         '400':
           description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
         '403':
           description: Unauthorized
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Unauthorized
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
   /models:
@@ -344,30 +248,113 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                depth:
-                  type: number
-                interpolationfactor:
-                  type: number
-                predictionType:
-                  type: string
-                  enum: [CSP, SP, FIS]
+              $ref: '#/components/schemas/Message'
       responses:
         '200':
           description: The Model id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  modelId:
+                    type: string
         '403':
           description: Unauthorized
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: Unauthorized
+                $ref: '#/components/schemas/Message'
       security:
-        - bearerAuth: []      
+        - bearerAuth: []    
 
-          
 components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    Account:
+      type: object
+      properties:
+        username:
+          type: string
+        authorizationSet:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              kind:
+                type: string
+                enum: [WebSite, Model, Session]
+    WebSite:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        mappingList:
+          type: array
+          items:
+            type: object
+            properties:
+              match:
+                type: object
+                properties:
+                  event:
+                    type: string
+                  css:
+                    type: string
+                  xpath:
+                    type: string
+                  code:
+                    type: string
+                  key:
+                    type: string
+              output:
+                type: object
+                properties:
+                  prefix:
+                    type: string
+                  suffix:
+                    type: string
+              context:
+                type: object
+                properties:
+                  url:
+                    type: string
+                  css:
+                    type: string
+                  xpath:
+                    type: string
+              description:
+                type: string
+    Session:
+      type: object
+      properties:
+        webSiteId:
+          type: string
+        baseURL:
+          type: string
+        name:
+          type: string
+        overlayType:
+          type: string
+          enum: [shadow, bluesky, rainbow]
+    Model:
+      type: object
+      properties:
+        depth:
+          type: integer
+        interpolationfactor:
+          type: integer
+        predictionType:
+          type: string
+          enum: [CSP, SP, FIS]
   securitySchemes:
     bearerAuth:
       type: http

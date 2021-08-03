@@ -100,7 +100,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 })
                 .catch((e) => {
                     logger.error(`error:${e}`);
-                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                 });
 
         }
@@ -111,16 +111,16 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         logger.info(`webSites by Id`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
             if (webSiteId === undefined) {
                 logger.warn(`webSiteId`);
-                res.status(INVALID_PARAMETERS_STATUS).send("No webSiteId");
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No webSiteId"});
             } else {
                 api.findWebSiteById(req.token, webSiteId)
                     .then(webSiteResult => {
                         if (webSiteResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                         } else {
                             logger.info("webSites by Id done");
                             res.json(webSiteResult);
@@ -128,7 +128,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     })
                     .catch((e) => {
                         logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                     });
             }
         }
@@ -140,24 +140,24 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         logger.debug(`${mappingList}`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
             const token: Token = req.token;
             if (name === undefined || url === undefined || mappingList === undefined) {
-                res.status(INVALID_PARAMETERS_STATUS).send("invalid parameter");
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
             } else {
                 api.createWebSite(req.token, name, url, mappingList)
                     .then(creationResult => {
                         if (creationResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).send(creationResult);
+                            res.status(FORBIDDEN_STATUS).json({message:creationResult});
                         } else {
                             logger.info("website is created and added");
-                            res.send(creationResult.id);
+                            res.json({webSiteId:creationResult.id});
                         }
                     })
                     .catch((e) => {
                         logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                     });
             }
         }
@@ -168,16 +168,16 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         logger.info(`Session By Id`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
             if (sessionId === undefined) {
                 logger.warn(`sessionId`);
-                res.status(INVALID_PARAMETERS_STATUS).send("No sessionId");
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
             } else {
                 api.findSessionById(req.token, sessionId)
                     .then(sessionResult => {
                         if (sessionResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                         } else {
                             logger.info("Session by Id done");
                             res.json(sessionResult);
@@ -185,7 +185,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     })
                     .catch((e) => {
                         logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                     });
             }
         }
@@ -196,24 +196,24 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         const { webSiteId, baseURL, name, overlayType } = req.body;
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
             const token: Token = req.token;
             if (baseURL === undefined || name === undefined || overlayType === undefined) {
-                res.status(INVALID_PARAMETERS_STATUS).send("invalid parameter");
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
             } else {
                 api.createSession(token, webSiteId, baseURL, name, overlayType)
                     .then(creationResult => {
                         if (creationResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).send(creationResult);
+                            res.status(FORBIDDEN_STATUS).json({message:creationResult});
                         } else {
                             logger.info("session is created and added");
-                            res.send(creationResult.id);
+                            res.json({sessionId:creationResult.id});
                         }
                     })
                     .catch((e) => {
                         logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                     });
             }
         }
@@ -226,25 +226,25 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         logger.info(`Session By Id`);
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
             const token : Token = req.token;
             if (sessionId === undefined) {
                 logger.warn(`sessionId`);
-                res.status(INVALID_PARAMETERS_STATUS).send("No sessionId");
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
             } else {
                 api.addExploration(token, sessionId, testerName, interactionList, startDate, stopDate)
                     .then(explorationResult => {
                         if (explorationResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).send("Unauthorized");
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                         } else {
                             logger.info("Exploration is added");
-                            res.json(explorationResult);
+                            res.json({explorationNumber:explorationResult});
                         }
                     })
                     .catch((e) => {
                         logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                     });
             }
         }
@@ -256,24 +256,24 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         const { depth, interpolationfactor, predictionType } = req.body;
         if (req.token === undefined) {
             logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).send("No token");
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
             const token: Token = req.token;
             if (depth === undefined || interpolationfactor === undefined || predictionType === undefined) {
-                res.status(INVALID_PARAMETERS_STATUS).send("invalid parameter");
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
             } else {
                 api.createModel(token, depth, interpolationfactor, predictionType)
                     .then(creationResult => {
                         if (creationResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).send(creationResult);
+                            res.status(FORBIDDEN_STATUS).json({message:creationResult});
                         } else {
                             logger.info("session is created and added");
-                            res.send(creationResult.id);
+                            res.json({modelId:creationResult.id});
                         }
                     })
                     .catch((e) => {
                         logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                     });
             }
         }
