@@ -15,7 +15,7 @@ describe("Account", () => {
         return fetch(url)
             .then((res) => {
                 expect(res.ok).to.be.true;
-                return res.json();
+                return res.text();
             })
             .then((result) => {
                 expect(result.message).to.eql("AccountCreated");
@@ -37,7 +37,7 @@ describe("Account", () => {
         return fetch(url, option)
             .then((res) => {
                 expect(res.ok).to.be.true;
-                return res.json();
+                return res.text();
             })
             .then((result) => {
                 expect(result.message).to.eql("AccountCreated");
@@ -58,7 +58,7 @@ describe("Account", () => {
         return fetch(url, option)
             .then((res) => {
                 expect(res.ok).to.be.false;
-                return res.json();
+                return res.text();
             })
             .then((result) => {
                 expect(result.message).to.eql("UserNameAlreadyTaken");
@@ -82,8 +82,8 @@ describe("Account", () => {
                 return res.json();
             })
             .then((json) => {
-                expect(json.jwt).to.not.be.undefined;
-                token = json.jwt;
+                expect(json.bearerToken).to.not.be.undefined;
+                token = json.bearerToken;
             });
     });
 
@@ -102,10 +102,10 @@ describe("Account", () => {
         return fetch(url, option)
             .then((res) => {
                 expect(res.ok).to.be.false;
-                return res.json();
+                return res.text();
             })
-            .then((json) => {
-                expect(json).to.be.eql("Unauthorized");
+            .then((result) => {
+                expect(result).to.be.eql("Unauthorized");
             });
     });
 
@@ -156,7 +156,7 @@ describe("Account", () => {
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
-                return res.json();
+                return res.text();
             })
             .then((webSite) => {
                 expect(webSite.id).to.not.be.undefined;
