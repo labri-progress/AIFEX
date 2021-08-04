@@ -353,6 +353,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
   /models/{modelId}:
     get:
       description: returns Model 

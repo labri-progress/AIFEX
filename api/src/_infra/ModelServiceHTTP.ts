@@ -64,7 +64,7 @@ export default class ModelServiceHTTP implements ModelService {
         const ModelComputeURL = MODEL_URL + modelId + '/getprobabilitymap';
         let optionModelCompute = {
             method: 'POST',
-            body:    JSON.stringify(interactionList),
+            body:    JSON.stringify({interactionList}),
             headers: { 'Content-Type': 'application/json' },
         }
         return fetch(ModelComputeURL, optionModelCompute)
