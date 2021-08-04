@@ -305,4 +305,31 @@ describe("API", () => {
                 expect(result.explorationNumber).to.be.eql(0);
             });
     });
+
+    it("should compute the probabilities", () => {
+        const url = `${API_URL}/models/${modelId}/computeprobabilities`;
+        const body = {
+            interactionList: [
+                {index: 0, concreteType: "Action", kind: "start"},
+            ]
+        }
+        return fetch(url, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then(probaMap => {
+                // tslint:disable-next-line: no-magic-numbers
+                expect(probaMap).lengthOf(1);
+                expect(probaMap[0]).lengthOf(2);
+                expect(probaMap[0][0]).to.eql("click$value");
+                expect(probaMap[0][1]).to.eql(1);
+    
+            });
+    });
 });

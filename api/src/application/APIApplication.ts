@@ -182,4 +182,22 @@ export default class APIApplication {
             });
     }
 
+    computeProbabilities(token: Token, modelId: string, interactionList: Interaction[]): Promise<"Unauthorized" | Map<string,number>> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._modelService.computeProbabilities(modelId, interactionList)
+                            .then((result) => result);
+                    }
+                }
+            });
+    }
+
 }

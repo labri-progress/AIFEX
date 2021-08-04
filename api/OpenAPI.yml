@@ -266,7 +266,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Message'
       security:
-        - bearerAuth: []    
+        - bearerAuth: []
   /models/{modelId}/link/{sessionId}:
     post:
       description: link the model to a session
@@ -304,6 +304,55 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+  /models/{modelId}/computeprobabilities:
+    post:
+      description: get probabilities of the model for a given interaction mappingList
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                interactionList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      concreteType:
+                        type: string
+                        enum: [Action, Comment, Answer]
+                      kind:
+                        type: string
+                      value: 
+                        type: string
+                      date:
+                        type: string
+      responses:
+        '200':
+          description: The computed probabilities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    oneOf:
+                      - type: string
+                      - type: integer
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
   /models/{modelId}:
     get:
       description: returns Model 

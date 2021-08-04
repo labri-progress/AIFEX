@@ -339,4 +339,33 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
+    app.post("/models/:modelId/computeprobabilities", (req, res) => {
+        const modelId = req.params.modelId;
+        const {interactionList} = req.body;
+        logger.info(`get probabilities`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (modelId === undefined || interactionList === undefined) {
+                logger.warn(`modelId or interactionList are undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId or no InteractionList"});
+            } else {
+                api.computeProbabilities(req.token, modelId, interactionList)
+                    .then(probabilities => {
+                        if (probabilities === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else {
+                            logger.info("Probabilities are computed");
+                            res.json(Array.from(probabilities));
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
 }

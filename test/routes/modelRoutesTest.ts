@@ -165,7 +165,7 @@ describe("Model", () => {
             interactionList: [
                 {index: 1, concreteType: "Action", kind: "start"},
                 {index: 2, concreteType: "Action", kind: "click", value: "value"},
-            ],
+            ]
         };
         return fetch(url, {
             method: "POST",
