@@ -304,5 +304,5 @@ describe("API", () => {
             .then((result) => {
                 expect(result.explorationNumber).to.be.eql(0);
             });
-    }
+    });
 });
