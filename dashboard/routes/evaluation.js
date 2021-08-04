@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const requestWebSiteFromToken = require('../tokenUtilities').requestWebSiteFromToken;
+const getWebSites = require('../apiService').getWebSites;
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
@@ -13,7 +13,7 @@ module.exports = function attachRoutes(app, config) {
 
         logger.info(`GET evaluation for website (webSiteId : ${webSiteId})`);
 
-        requestWebSiteFromToken(req.session.jwt)
+        getWebSites(req.session.jwt)
             .then(webSiteList => {
                 webSite = webSiteList.find((webSite) => webSite.id === webSiteId);
                 const actionList = webSite.mappingList.map(mapping => {

@@ -1,9 +1,7 @@
 const fetch = require('node-fetch');
-const config = require('../config');
-const { token2WebSite } = require('../tokenUtilities');
-const addWebSite = require('../tokenUtilities').addWebSite;
-const removeWebSite = require('../tokenUtilities').removeWebSite;
-const requestWebSiteFromToken = require('../tokenUtilities').requestWebSiteFromToken;
+const { getWebSites } = require('../apiService');
+const addWebSite = require('../apiService').addWebSite;
+const removeWebSite = require('../apiService').removeWebSite;
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
@@ -13,7 +11,7 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.get('/dashboard/website/create', (req, res) => {
-        let firstWebSite = token2WebSite(req.session.jwt).length == 0;
+        let firstWebSite = getWebSites(req.session.jwt).length == 0;
         res.render('website/create.ejs', {
             account:req.session,
             webSite: undefined,
@@ -153,7 +151,7 @@ module.exports = function attachRoutes(app, config) {
         const {webSiteId} = req.params;
         logger.info(`GET WebSite update page (id : ${webSiteId})`);
         let webSiteData;
-        requestWebSiteFromToken(req.session.jwt)
+        getWebSites(req.session.jwt)
             .then(webSiteList => {
                 if (!webSiteList) {
                     throw new Error("Update "+webSiteId+" forbidden");

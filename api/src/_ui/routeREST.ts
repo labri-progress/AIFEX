@@ -134,6 +134,34 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
+    app.delete("/websites/:webSiteId", (req, res) => {
+        const webSiteId = req.params.webSiteId;
+        logger.info(`delete webSite by Id`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (webSiteId === undefined) {
+                logger.warn(`webSiteId`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No webSiteId"});
+            } else {
+                api.removeWebSite(req.token, webSiteId)
+                    .then(webSiteResult => {
+                        if (webSiteResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else {
+                            logger.info("webSite is removed");
+                            res.json({message:webSiteResult});
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
     app.post("/websites", (req, res) => {
         logger.info(`create websites`);
         const { name, url, mappingList } = req.body;
@@ -181,6 +209,34 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                         } else {
                             logger.info("Session by Id done");
                             res.json(sessionResult);
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
+    app.delete("/sessions/:sessionId", (req, res) => {
+        const sessionId = req.params.sessionId;
+        logger.info(`delete session by Id`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (sessionId === undefined) {
+                logger.warn(`sessionId`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
+            } else {
+                api.removeSession(req.token, sessionId)
+                    .then(sessionResult => {
+                        if (sessionResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else {
+                            logger.info("Session is removed");
+                            res.json({message:sessionResult});
                         }
                     })
                     .catch((e) => {
@@ -306,6 +362,35 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             }
         }
     });
+
+    app.delete("/models/:modelId", (req, res) => {
+        const modelId = req.params.modelId;
+        logger.info(`delete model by Id`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (modelId === undefined) {
+                logger.warn(`modelId is undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId"});
+            } else {
+                api.removeModel(req.token, modelId)
+                    .then(modelResult => {
+                        if (modelResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else {
+                            logger.info("Model by Id done");
+                            res.json({message:modelResult});
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
 
     app.post("/models/:modelId/link/:sessionId", (req, res) => {
         const modelId = req.params.modelId;

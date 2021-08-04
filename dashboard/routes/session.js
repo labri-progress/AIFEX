@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
-const requestWebSiteFromToken = require('../tokenUtilities').requestWebSiteFromToken;
-const addSession = require('../tokenUtilities').addSession;
-const removeSession = require('../tokenUtilities').removeSession;
+const getWebSites = require('../apiService').getWebSites;
+const addSession = require('../apiService').addSession;
+const removeSession = require('../apiService').removeSession;
 const logger = require('../logger');
 const buildInvitation = require("../invitations").buildInvitation;
 
@@ -14,7 +14,7 @@ module.exports = function attachRoutes(app, config) {
         let webSiteName = req.query.webSiteName;
         logger.info(`GET start session page for webSiteName (id = ${webSiteName})`);
         
-        requestWebSiteFromToken(req.session.jwt)
+        getWebSites(req.session.jwt)
             .then(webSiteList => {
                 if (webSiteList.length > 0) {
                     res.render('session/start.ejs', {

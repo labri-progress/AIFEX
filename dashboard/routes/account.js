@@ -1,8 +1,5 @@
 const fetch = require('node-fetch');
-const requestWebSiteFromAuthorizationSet = require('../tokenUtilities').requestWebSiteFromAuthorizationSet;
-const getUsernameAndAuthorizationSet = require('../tokenUtilities').getUsernameAndAuthorizationSet;
-const requestSessionFromAuthorizationSet = require('../tokenUtilities').requestSessionFromAuthorizationSet;
-const authorizationSet2Session = require('../tokenUtilities').authorizationSet2Session;
+const getAccount = require('../apiService').getAccount;
 const buildInvitation = require("../invitations").buildInvitation;
 const logger = require('../logger');
 
@@ -12,16 +9,15 @@ module.exports = function attachRoutes(app, config) {
         logger.info('use account');
         if (req.session.jwt) {
             logger.debug('token');
-            getUsernameAndAuthorizationSet(req.session.jwt)
-                .then(usernameAndAuthorizationSet => {
-                    if (usernameAndAuthorizationSet) {
-                        logger.debug(`get username: ${usernameAndAuthorizationSet.username}`);
-                        req.session.username = usernameAndAuthorizationSet.username;
-                        req.session.authorizationSet = usernameAndAuthorizationSet.authorizationSet;
+            getAccount(req.session.jwt)
+                .then(account => {
+                    if (account) {
+                        logger.debug(`get username: ${account.username}`);
+                        req.session.username = account.username;
                         next();
                         return;
                     } else {
-                        logger.debug(`cannot get usernameAndAuthorization`);
+                        logger.debug(`cannot get account`);
                         req.session.jwt = undefined;
                         req.session.username = undefined;
                         res.redirect('/');
@@ -101,7 +97,7 @@ module.exports = function attachRoutes(app, config) {
         signin(username, password)
             .then(token => {
                 logger.debug("token ok:", token);
-                req.session.jwt = token.jwt;
+                req.session.jwt = token.bearerToken;
                 req.session.username = username;
                 logger.debug(`sign ok`);
                 res.redirect('/');
@@ -142,33 +138,33 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.get('/account/account', (req, res) => {
-        logger.info("/account/account")
-        let webSiteList;
-        let sessionList;
-        logger.info(`GET account.ejs`);
-        requestWebSiteFromAuthorizationSet(req.session.authorizationSet)
-            .then(requestedWebSiteList => {
-                webSiteList = requestedWebSiteList;
-                return requestSessionFromAuthorizationSet(req.session.authorizationSet);
-            })
-            .then(requestedSessionList => {
-                sessionList = requestedSessionList;
-                const connectionCodeList = authorizationSet2Session(req.session.authorizationSet);
-                const serveurURLList = authorizationSet2Session(req.session.authorizationSet).map(connectionCode => {
-                    const [sessionId, modelId] = connectionCode.split('$');
-                    return buildInvitation(modelId, sessionId);
-                })
-                res.render('account/account.ejs', {account:req.session, serveurURLList, connectionCodeList, webSiteList, sessionList});
-            })
-            .catch(e => {
-                logger.error(`error ${e}`);
-                res.render('error.ejs',{account:req.session, message:'cannot read account', error:e})
-            })
+        // logger.info("/account/account")
+        // let webSiteList;
+        // let sessionList;
+        // logger.info(`GET account.ejs`);
+        // getWebSites(req.session.jwt)
+        //     .then(requestedWebSiteList => {
+        //         webSiteList = requestedWebSiteList;
+        //         return getSessions(req.session.jwt);
+        //     })
+        //     .then(requestedSessionList => {
+        //         sessionList = requestedSessionList;
+        //         const connectionCodeList = authorizationSet2Session(req.session.authorizationSet);
+        //         const serveurURLList = authorizationSet2Session(req.session.authorizationSet).map(connectionCode => {
+        //             const [sessionId, modelId] = connectionCode.split('$');
+        //             return buildInvitation(modelId, sessionId);
+        //         })
+        //         res.render('account/account.ejs', {account:req.session, serveurURLList, connectionCodeList, webSiteList, sessionList});
+        //     })
+        //     .catch(e => {
+        //         logger.error(`error ${e}`);
+        //         res.render('error.ejs',{account:req.session, message:'cannot read account', error:e})
+        //     })
     });
 
     function signup(username, email, password) {
         logger.info(`signup`);
-        const accountURL = 'http://' + config.account.host + ':' + config.account.port + '/account/signup';
+        const accountURL = 'http://' + config.api.host + ':' + config.api.port + '/signup';
         let bodySignup = {
             username,
             email,
@@ -202,7 +198,7 @@ module.exports = function attachRoutes(app, config) {
 
     function signin(username, password) {
         logger.info(`signin`);
-        const accountURL = 'http://' + config.account.host + ':' + config.account.port + '/account/signin';
+        const accountURL = 'http://' + config.api.host + ':' + config.api.port + '/signin';
         let bodySignin = {
             username, 
             password

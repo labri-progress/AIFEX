@@ -10,7 +10,6 @@ const URL: string = `http://${config.account.host}:${config.account.port}/accoun
 
 export default class AccountServiceHTTP implements AccountService {
 
-
     signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
         const route: string = URL + "signup/";
         return fetch(route, {
@@ -82,7 +81,28 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return "WebSiteAdded";
                 } else {
-                    throw "Unauthorized";
+                    return "Unauthorized";
+                }
+            })
+    }
+
+    removeWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteRemoved"> {
+        const accountRemoveWebSiteURL = 'http://' + config.account.host + ':' + config.account.port + '/account/removewebsite';
+        let bodyRemoveWebSite = {
+            token:token.token,
+            webSiteId,
+        }
+        let optionRemoveWebSite = {
+            method: 'POST',
+            body:    JSON.stringify(bodyRemoveWebSite),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountRemoveWebSiteURL, optionRemoveWebSite)
+            .then(response => {
+                if (response.ok) {
+                    return "WebSiteRemoved";
+                } else {
+                    return "Unauthorized";
                 }
             })
     }
@@ -104,9 +124,31 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return "SessionAdded";
                 } else {
-                    throw "Unauthorized";
+                    return "Unauthorized";
                 }
             })
+    }
+
+    removeSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionRemoved"> {
+        const accountRemoveSessionURL = 'http://' + config.account.host + ':' + config.account.port + '/account/removesession';
+        let bodyRemoveSession = {
+            token:token.token,
+            sessionId,
+        }
+        let optionRemoveSession = {
+            method: 'POST',
+            body:    JSON.stringify(bodyRemoveSession),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountRemoveSessionURL, optionRemoveSession)
+            .then(response => {
+                if (response.ok) {
+                    return "SessionRemoved";
+                } else {
+                    return "Unauthorized";
+                }
+            })
+        
     }
 
     addModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelAdded"> {
@@ -125,7 +167,28 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return "ModelAdded";
                 } else {
-                    throw "Unauthorized";
+                    return "Unauthorized";
+                }
+            })
+    }
+
+    removeModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelRemoved"> {
+        const accountRemoveModelURL = 'http://' + config.account.host + ':' + config.account.port + '/account/removemodel';
+        let bodyRemoveModel = {
+            token:token.token,
+            modelId,
+        }
+        let optionRemoveModel = {
+            method: 'POST',
+            body:    JSON.stringify(bodyRemoveModel),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountRemoveModelURL, optionRemoveModel)
+            .then(response => {
+                if (response.ok) {
+                    return "ModelRemoved";
+                } else {
+                    return "Unauthorized";
                 }
             })
     }

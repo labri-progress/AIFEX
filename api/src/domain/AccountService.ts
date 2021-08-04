@@ -10,10 +10,16 @@ export default interface AccountService {
     getAccount(token: Token): Promise<Account | "Unauthorized">;
 
     addWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteAdded">;
+    
+    removeWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteRemoved">;
 
     addSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionAdded">;
 
+    removeSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionRemoved">;
+
     addModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelAdded">;
+
+    removeModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelRemoved">;
 
 
 }

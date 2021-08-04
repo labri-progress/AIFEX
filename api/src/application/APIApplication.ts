@@ -8,7 +8,6 @@ import WebSiteService from "../domain/WebSiteService";
 import Account from "../domain/Account";
 import Screenshot from "../domain/Screenshot";
 import { Kind } from "../domain/Kind";
-import Exploration from "../domain/Exploration";
 import Interaction from "../domain/Interaction";
 import Model from "../domain/Model";
 import ModelService from "../domain/ModelService";
@@ -53,6 +52,24 @@ export default class APIApplication {
             });
     }
 
+    removeWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteRemoved"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === webSiteId && authorization.kind === Kind.WebSite);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._accountService.removeWebSite(token, webSiteId)
+                            .then((result) => result);
+                    }
+                }
+            });
+    }
+
     findWebSiteById(token: Token, webSiteId: string): Promise<WebSite | undefined | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
@@ -90,6 +107,24 @@ export default class APIApplication {
                         });
                 }
             })
+    }
+
+    removeSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionRemoved"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._accountService.removeSession(token, sessionId)
+                            .then((result) => result);
+                    }
+                }
+            });
     }
 
     findSessionById(token: Token, sessionId: string): Promise<Session | undefined | "Unauthorized"> {
@@ -143,6 +178,24 @@ export default class APIApplication {
                             return new Model(modelId, depth, interpolationfactor, predictionType, []);
                         }
                     });
+            });
+    }
+
+    removeModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelRemoved"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._accountService.removeModel(token, modelId)
+                            .then((result) => result);
+                    }
+                }
             });
     }
 

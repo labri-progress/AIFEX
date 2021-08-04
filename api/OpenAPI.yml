@@ -137,7 +137,30 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WebSite'
+                $ref: '#/components/schemas/Message'
+    delete:
+      description: delete WebSite 
+      parameters:
+        - in: path
+          name: webSiteId
+          schema:
+            type: string
+          required: true
+          description: ID of the WebSite to delete
+      responses:
+        '200':
+          description: The WebSite is deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
   /sessions:
@@ -179,6 +202,39 @@ paths:
       responses:
         '200':
           description: The Session
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    delete:
+      description: delete Session 
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the Session to delete
+      responses:
+        '200':
+          description: The Session is deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
   /sessions/{sessionId}/explorations:
@@ -372,6 +428,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Model'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    delete:
+      description: delete a Model 
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model to delete
+      responses:
+        '200':
+          description: The Model is deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
         '403':
           description: Unauthorized
           content:
