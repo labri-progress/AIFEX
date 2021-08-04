@@ -138,6 +138,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
     delete:
       description: delete WebSite 
       parameters:

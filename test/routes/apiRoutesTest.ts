@@ -333,4 +333,58 @@ describe("API", () => {
     
             });
     });
+
+    it("should remove the session", () => {
+        const url = `${API_URL}/sessions/${sessionId}`;
+        return fetch(url, {
+            method: "DELETE",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.message).to.be.eql("SessionRemoved");
+            });
+    });
+
+    it("should remove the model", () => {
+        const url = `${API_URL}/models/${modelId}`;
+        return fetch(url, {
+            method: "DELETE",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.message).to.be.eql("ModelRemoved");
+            });
+    });
+
+    it("should remove the webSite", () => {
+        const url = `${API_URL}/websites/${webSiteId}`;
+        return fetch(url, {
+            method: "DELETE",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.message).to.be.eql("WebSiteRemoved");
+            });
+    });
 });
