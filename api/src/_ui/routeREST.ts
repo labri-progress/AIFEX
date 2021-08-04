@@ -229,9 +229,9 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
             const token : Token = req.token;
-            if (sessionId === undefined) {
+            if (sessionId === undefined || interactionList === undefined ) {
                 logger.warn(`sessionId`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No interactionList"});
             } else {
                 api.addExploration(token, sessionId, testerName, interactionList, startDate, stopDate)
                     .then(explorationResult => {

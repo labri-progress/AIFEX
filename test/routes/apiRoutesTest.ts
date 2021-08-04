@@ -261,7 +261,7 @@ describe("API", () => {
     });
 
 
-    it("should ling the model to the session", () => {
+    it("should link the model to the session", () => {
         const url = `${API_URL}/models/${modelId}/link/${sessionId}`;
         return fetch(url, {
             method: "POST",
@@ -278,4 +278,31 @@ describe("API", () => {
                 expect(result.message).to.be.eql("ModelLinkedToSession");
             });
     });
+
+    it("should add an exploration to the session",() => {
+        const url = `${API_URL}/sessions/${sessionId}/explorations`;
+        const body = {
+            testerName: "testAPI",
+            interactionList: [
+                {index: 0, concreteType: "Action", kind: "start"},
+                {index: 1, concreteType: "Action", kind: "click", value: "value"},
+                {index: 2, concreteType: "Action", kind: "click", value: "value"},
+            ]
+        };
+        return fetch(url, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(body)})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.explorationNumber).to.be.eql(0);
+            });
+    }
 });
