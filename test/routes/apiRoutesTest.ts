@@ -318,7 +318,8 @@ describe("API", () => {
             headers: { 
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            },
+            body: JSON.stringify(body)})
             .then(res => {
                 expect(res.ok).to.be.true;
                 return res.json();
