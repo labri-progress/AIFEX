@@ -8,4 +8,6 @@ export default interface WebSiteService {
 
     createWebSite(name : string, url : string, mappingList : Mapping[]) : Promise<string>;
 
+    updateWebSite(id : string, name : string, url : string, mappingList : Mapping[]) : Promise<"WebSiteUpdated">;
+
 }

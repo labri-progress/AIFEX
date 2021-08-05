@@ -134,6 +134,35 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
+    app.patch("/websites/:webSiteId", (req, res) => {
+        const webSiteId = req.params.webSiteId;
+        const { name, url, mappingList } = req.body;
+        logger.info(`Patch webSites by Id`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (webSiteId === undefined) {
+                logger.warn(`webSiteId`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No webSiteId"});
+            } else {
+                api.updateWebSite(req.token, webSiteId, name, url, mappingList)
+                    .then(webSiteResult => {
+                        if (webSiteResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else {
+                            logger.info("webSites by Id done");
+                            res.json({message:webSiteResult});
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
     app.delete("/websites/:webSiteId", (req, res) => {
         const webSiteId = req.params.webSiteId;
         logger.info(`delete webSite by Id`);

@@ -216,7 +216,7 @@ module.exports = function attachRoutes(app, config) {
         const { connectionCode } = req.params;
         const [sessionId, modelId] = connectionCode.split('$');
         logger.info(`GET session in JSON (id = ${sessionId})`);
-        const sessionURL = 'http://' + config.session.host + ':' + config.session.port + '/session/'+sessionId;
+        const sessionURL = 'http://' + config.api.host + ':' + config.api.port + '/sessions/'+sessionId;
         fetch(sessionURL, {})
         .then(responseSession => {
             if (responseSession.ok) {

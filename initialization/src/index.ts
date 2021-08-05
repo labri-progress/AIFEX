@@ -65,7 +65,10 @@ async function loadDefault() {
         logger.info('connexion code : ',connexionCode);
         const sessionId = connexionCode.split('$')[0];
         await addSessionToAnonymous(token, sessionId);
-        logger.info('sessionAddesToAnonymous');
+        logger.info('sessionAddedToAnonymous');
+        const modelId = connexionCode.split('$')[1];
+        await addModelToAnonymous(token, modelId);
+        logger.info('modelAddedToAnonymous');
         await addAllExplorationToSession(sessionId);
         logger.info('allExplorationToSession');
     } catch (e) {
@@ -281,6 +284,27 @@ function addSessionToAnonymous(token, sessionId) {
     const body = {
         token,
         sessionId: sessionId
+    };
+    const option = {
+        method: "POST",
+        body:    JSON.stringify(body),
+        headers: { "Content-Type": "application/json" },
+    };
+    return fetch(url, option)
+        .then(res => {
+            if (res.ok) {
+                return true;
+            } else {
+                throw new Error('some website cannot be added to anonymous');
+            }
+        })
+}
+
+function addModelToAnonymous(token, modelId) {
+    const url = ACCOUNT_BASE_URL + "/addmodel";
+    const body = {
+        token,
+        modelId: modelId
     };
     const option = {
         method: "POST",

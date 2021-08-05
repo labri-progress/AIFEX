@@ -52,6 +52,25 @@ export default class APIApplication {
             });
     }
 
+    updateWebSite(token: Token, webSiteId: string, name: string, url: string, mappingList: Mapping[]): Promise<"Unauthorized" | "WebSiteUpdated"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === webSiteId && authorization.kind === Kind.WebSite);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._webSiteService.updateWebSite(webSiteId, name, url, mappingList)
+                            .then((result) => result);
+                    }
+                }
+            });
+    }
+
+
     removeWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteRemoved"> {
         return this.getAccount(token)
             .then((result) => {

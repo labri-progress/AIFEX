@@ -1,6 +1,5 @@
 const fetch = require('node-fetch');
-const getAccount = require('../apiService').getAccount;
-const buildInvitation = require("../invitations").buildInvitation;
+const {getAccount , getWebSites, getSessions, getModels} = require('../apiService');
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
@@ -138,28 +137,28 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.get('/account/account', (req, res) => {
-        // logger.info("/account/account")
-        // let webSiteList;
-        // let sessionList;
-        // logger.info(`GET account.ejs`);
-        // getWebSites(req.session.jwt)
-        //     .then(requestedWebSiteList => {
-        //         webSiteList = requestedWebSiteList;
-        //         return getSessions(req.session.jwt);
-        //     })
-        //     .then(requestedSessionList => {
-        //         sessionList = requestedSessionList;
-        //         const connectionCodeList = authorizationSet2Session(req.session.authorizationSet);
-        //         const serveurURLList = authorizationSet2Session(req.session.authorizationSet).map(connectionCode => {
-        //             const [sessionId, modelId] = connectionCode.split('$');
-        //             return buildInvitation(modelId, sessionId);
-        //         })
-        //         res.render('account/account.ejs', {account:req.session, serveurURLList, connectionCodeList, webSiteList, sessionList});
-        //     })
-        //     .catch(e => {
-        //         logger.error(`error ${e}`);
-        //         res.render('error.ejs',{account:req.session, message:'cannot read account', error:e})
-        //     })
+        logger.info("/account/account")
+        let webSiteList;
+        let sessionList;
+
+        logger.info(`GET account.ejs`);
+
+        Promise.all([getWebSites(req.session.jwt),getSessions(req.session.jwt),getModels(req.session.jwt)])
+            .then(([webSiteList, sessionList, modelList]) => {
+                let serveurURLList = [];
+                let connectionCodeList = [];
+                sessionList.forEach(session => {
+                    logger.debug(`session ${JSON.stringify(session.id)}`);
+                    let model4Session = modelList.find(model => model.sessionIdList.includes(session.id));
+                    connectionCodeList.push(`${session.id}$${model4Session.id}`);
+                    serveurURLList.push(`${process.env.PROTOCOL}://${process.env.HOST_ADDR}/join?sessionId=${session.id}&modelId=${model4Session.id}`);
+                });
+                res.render('account/account.ejs', {account:req.session, serveurURLList, connectionCodeList, webSiteList, sessionList});
+            })
+            .catch(e => {
+                logger.error(`error ${e}`);
+                res.render('error.ejs',{account:req.session, message:'cannot read account', error:e})
+            })
     });
 
     function signup(username, email, password) {

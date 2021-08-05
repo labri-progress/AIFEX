@@ -40,8 +40,30 @@ export default class WebSiteServiceHTTP implements WebSiteService {
                 } else {
                     throw new Error("Error"+response.statusText);
                 }
+            })   
+    }
+
+    updateWebSite(id : string, name : string, url : string, mappingList : Mapping[]) : Promise<"WebSiteUpdated"> {
+        let webSite = {
+            id,
+            name,
+            url,
+            mappingList
+        }
+        const webSiteUpdateURL = 'http://' + config.website.host + ':' + config.website.port + '/website/update';
+        let optionWebSiteUpdate = {
+            method: 'POST',
+            body:    JSON.stringify(webSite),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(webSiteUpdateURL, optionWebSiteUpdate)
+            .then(response => {
+                if (response.ok) {
+                    return "WebSiteUpdated"
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
             })
-            
     }
     
 }

@@ -189,6 +189,40 @@ describe("API", () => {
             });
     });
 
+    it("should update the webSite", () => {
+        const url = `${API_URL}/websites/${webSiteId}`;
+        const body = {
+            name: "MyWebSiteUpdated",
+            url: "http://mywebsiteupdated.com",
+            mappingList: [
+                {
+                    match: {
+                        event: "click",
+                        css: "body"
+                    },
+                    output: {
+                        prefix: "clickBody"
+                    }
+                }
+            ]
+        };
+        return fetch(url, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`}
+            })
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.message).to.be.eql("WebSiteUpdated");                
+            });
+    });
+
 
     it("should create a new session", () => {
         const url = `${API_URL}/sessions`;

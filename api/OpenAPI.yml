@@ -116,7 +116,7 @@ paths:
         - bearerAuth: []
   /websites/{webSiteId}:
     get:
-      description: returns WebSite 
+      description: return WebSite 
       parameters:
         - in: path
           name: webSiteId
@@ -132,6 +132,36 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/WebSite'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    patch:
+      description: update WebSite 
+      parameters:
+        - in: path
+          name: webSiteId
+          schema:
+            type: string
+          required: true
+          description: ID of the WebSite to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebSite'
+      responses:
+        '200':
+          description: The WebSite is updated
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Message'
         '403':
           description: Unauthorized
           content:
