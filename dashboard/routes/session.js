@@ -273,11 +273,10 @@ module.exports = function attachRoutes(app, config) {
 
     app.get('/dashboard/session/remove/:connectionCode', (req, res) => {
         const { connectionCode } = req.params;
+        const [sessionId] = connectionCode.split('$');
         logger.info(`remove session (${connectionCode})`);
-        console.log("removing", connectionCode)
-        removeSession(req.session.jwt, connectionCode)
-            .then(token => {
-                req.session.jwt = token.jwt;
+        removeSession(req.session.jwt, sessionId)
+            .then(() => {
                 res.redirect('/account/account');
             }).catch(e => {
                 logger.error(e);

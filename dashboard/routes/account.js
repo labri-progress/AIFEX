@@ -6,22 +6,34 @@ module.exports = function attachRoutes(app, config) {
     app.use((req, res, next) => {
         logger.info('use account');
         if (req.session.jwt) {
-            logger.debug('token');
-            getAccount(req.session.jwt)
-                .then(account => {
-                    if (account) {
-                        logger.debug(`get username: ${account.username}`);
-                        req.session.username = account.username;
-                        next();
-                        return;
-                    } else {
-                        logger.debug(`cannot get account`);
+            logger.debug('token is found');
+            if (req.session.username) {
+                logger.debug('username is found');
+                next();
+            } else {
+                getAccount(req.session.jwt)
+                    .then(account => {
+                        if (account) {
+                            logger.debug(`get username: ${account.username}`);
+                            req.session.username = account.username;
+                            next();
+                            return;
+                        } else {
+                            logger.debug(`cannot get account`);
+                            req.session.jwt = undefined;
+                            req.session.username = undefined;
+                            res.redirect('/');
+                            return;
+                        }
+                    })
+                    .catch(err => {
+                        logger.error('Error cannot get account');
+                        logger.error(err);
                         req.session.jwt = undefined;
-                        req.session.username = undefined;
                         res.redirect('/');
                         return;
-                    }
-                });
+                    })
+            }
         } else {
             logger.debug('no token');
             if (req.originalUrl === '/' || req.originalUrl === '') {
