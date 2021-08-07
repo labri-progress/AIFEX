@@ -1,5 +1,4 @@
-const fetch = require('node-fetch');
-const {getAccount , getWebSites, getSessions, getModels} = require('../apiService');
+const {signin, signup, getAccount , getWebSites, getSessions, getModels} = require('../apiService');
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
@@ -86,41 +85,50 @@ module.exports = function attachRoutes(app, config) {
     })
 
     app.get('/account/signin', (req, res) => {
-        logger.info(`GET signin.ejs`);
+        logger.info(`Get signin.ejs page`);
         res.render('account/signin.ejs', {account:req.session, kind:undefined});
     });
 
     app.post('/account/signin', (req, res) => {
         const { username , password} = req.body;
-        logger.info(`POST sign for ${username}`);
+        logger.info(`Signin for ${username}`);
         signin(username, password)
-            .then(token => {
-                logger.debug("token ok:", token);
-                req.session.jwt = token.bearerToken;
-                req.session.username = username;
-                logger.debug(`sign ok`);
-                res.redirect('/');
+            .then(result => {
+                if (result === "IncorrectUsernameOrPassword") {
+                    logger.debug("token nok:", result);
+                    res.render('account/signin.ejs', {account:req.session, kind:'danger', message:"Incorrect username or password."})
+                } else {
+                    logger.debug("token ok:", result);
+                    req.session.jwt = result;
+                    req.session.username = username;
+                    res.redirect('/');
+                }
             })
             .catch(reason => {
                 logger.error(`error ${reason}`);
                 //console.log('error', reason);
-                res.render('account/signin.ejs', {account:req.session, kind:'danger', message:"Incorrect username or password."})
+                res.render('account/signin.ejs', {account:req.session, kind:'danger', message:"Server Error"})
             })
     });
 
     app.get('/account/signup', (req, res) => {
-        logger.info(`GET signin.ejs`);
+        logger.info(`Get signup.ejs page`);
         res.render('account/signup.ejs', {account:req.session, kind:undefined});
     });
 
     app.post('/account/signup', (req, res) => {
         const { username , email, password} = req.body;
-        logger.info(`POST sign for ${username}`);
+        logger.info(`signup for ${username}`);
         //console.log('sign', username, password);
         signup(username, email, password)
-            .then(() => {
-                logger.debug(`sign up ok`);
-                res.render('account/signin.ejs', {account:req.session, kind:undefined});
+            .then((result) => {
+                if (result === "UserNameAlreadyTaken") {
+                    logger.debug(`sign up nok, UserNameAlreadyTaken`);
+                    res.render('account/signup.ejs', {account:req.session, kind:'danger', message:"Cannot create account. Try with another username."})
+                } else {
+                    logger.debug(`sign up ok`);
+                    res.render('account/signin.ejs', {account:req.session, kind:undefined});
+                }
             })
             .catch(reason => {
                 logger.error(`error ${reason}`);
@@ -130,18 +138,14 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.get('/account/signout', (req, res) => {
-        logger.info(`GET signout`);
+        logger.info(`signout`);
         req.session.jwt = undefined;
         req.session.username = undefined;
         res.redirect('/');
     });
 
     app.get('/account/account', (req, res) => {
-        logger.info("/account/account")
-        let webSiteList;
-        let sessionList;
-
-        logger.info(`GET account.ejs`);
+        logger.info("get account page")
 
         Promise.all([getWebSites(req.session.jwt),getSessions(req.session.jwt),getModels(req.session.jwt)])
             .then(([webSiteList, sessionList, modelList]) => {
@@ -161,73 +165,6 @@ module.exports = function attachRoutes(app, config) {
             })
     });
 
-    function signup(username, email, password) {
-        logger.info(`signup`);
-        const accountURL = 'http://' + config.api.host + ':' + config.api.port + '/signup';
-        let bodySignup = {
-            username,
-            email,
-            password
-        }
-        let optionSignup = {
-            method: 'POST',
-            body:    JSON.stringify(bodySignup),
-            headers: { 'Content-Type': 'application/json' },
-        }
-        return new Promise( (res, rej) => {
-            fetch(accountURL, optionSignup)
-                .then(responseAccount => {
-                    if (responseAccount.ok) {
-                        responseAccount.json()
-                            .then(() => {
-                                res();
-                            })
-                            .catch(e => {
-                                rej(e);
-                            })
-                    } else {
-                        rej({isUsernameExist: true});
-                    }
-                })
-                .catch(e => {
-                    rej(e);
-                });
-        });
-    }
-
-    function signin(username, password) {
-        logger.info(`signin`);
-        const accountURL = 'http://' + config.api.host + ':' + config.api.port + '/signin';
-        let bodySignin = {
-            username, 
-            password
-        }
-        let optionSignin = {
-            method: 'POST',
-            body:    JSON.stringify(bodySignin),
-            headers: { 'Content-Type': 'application/json' },
-        }
-        return new Promise((res, rej) => {
-            fetch(accountURL, optionSignin)
-                .then(responseAccount => {
-                    if (responseAccount.ok) {
-                        responseAccount.json()
-                            .then(token => {
-                                logger.info(`Logged in with token ${token}`)
-                                res(token);
-                            })
-                            .catch(e => {
-                                rej(e);
-                            })
-                    } else {
-                        rej({isUsernamePasswordWrong:true});
-                    }
-                })
-                .catch(e => {
-                    rej(e);
-                });
-        })
-    }
 
 }
 

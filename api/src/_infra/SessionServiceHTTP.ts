@@ -4,11 +4,12 @@ import Session, { SessionOverlayType } from "../domain/Session";
 import SessionService from "../domain/SessionService";
 import Screenshot from "../domain/Screenshot";
 import Interaction from "../domain/Interaction";
+import Video from "../domain/Video";
 
 const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;
 
 export default class SessionServiceHTTP implements SessionService {
-
+    
     findSessionById(id: string): Promise<Session | undefined > {
         const sessionGetURL = SESSION_URL + id;
         return fetch(sessionGetURL).then(response => {
@@ -72,6 +73,40 @@ export default class SessionServiceHTTP implements SessionService {
     }
 
     addScreenshots(screenshots: Screenshot[]): Promise<"ScreenshotsAdded"> {
+        const AddScreenshotsURL = `http://${config.session.host}:${config.session.port}/session/screenshotlist`;
+        let optionAddScreenshots = {
+            method: 'POST',
+            body:    JSON.stringify(screenshots),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(AddScreenshotsURL, optionAddScreenshots)
+            .then(response => {
+                if (response.ok) {
+                    return "ScreenshotsAdded"
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
+            })
+    }
+
+    findScreenshotsBySessionId(sessionId: string): Promise<Screenshot[]> {
+        const GetScreenshotsURL = `http://${config.session.host}:${config.session.port}/session/${sessionId}/screenshotlist`;
+        return fetch(GetScreenshotsURL)
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then(json => json.screenshotList);
+                } else {
+                    return [];
+                }
+            })
+    }
+
+    addVideo(video: Video): Promise<"VideoAdded"> {
         throw new Error("Method not implemented.");
     }
+
+    findVideosBySessionId(sessionId: string): Promise<Video[]> {
+        throw new Error("Method not implemented.");
+    }
+
 }

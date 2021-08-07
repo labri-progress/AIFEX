@@ -50,7 +50,7 @@ module.exports = function attachRoutes(app, config) {
 
         createWebSite(req.session.jwt, name, url, mappingList)
             .then(result => {
-                renderOption.webSite.id = result.webSiteId;
+                renderOption.webSite.id = result;
                 renderOption.successMessage = "WebSite has been created";
                 logger.info(renderOption.successMessage);
                 res.render('website/update.ejs', renderOption)

@@ -335,6 +335,67 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
+    app.post("/sessions/:sessionId/screenshots", (req, res) => {
+        const sessionId = req.params.sessionId;
+        const { screenshotList } = req.body;
+        logger.info(`Create screenshots`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            const token: Token = req.token;
+            if (sessionId === undefined || screenshotList === undefined) {
+                logger.warn(`sessionId or screenshotList undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No screenshotList"});
+            } else {
+                api.addScreenshots(token, sessionId, screenshotList)
+                    .then(screenshotResult => {
+                        if (screenshotResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else if (screenshotResult === "InvalidScreenshots") {
+                            res.status(INVALID_PARAMETERS_STATUS).json({message:"InvalidScreenshots"});
+                        } else {
+                            logger.info("Screenshots are added");
+                            res.json({message:"ScreenshotsAdded"});
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
+    app.get("/sessions/:sessionId/screenshots", (req, res) => {
+        const sessionId = req.params.sessionId;
+        logger.info(`Get screenshots`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            const token: Token = req.token;
+            if (sessionId === undefined) {
+                logger.warn(`sessionId undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
+            } else {
+                api.findScreenshotsBySessionId(token, sessionId)
+                    .then(screenshotResult => {
+                        if (screenshotResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else {
+                            logger.info("Screenshots are returned");
+                            res.json({screenshotList:screenshotResult});
+                        }
+                    })  
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
 
     app.post("/models", (req, res) => {
         logger.info(`create model`);

@@ -329,6 +329,72 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+  /sessions/{sessionId}/screenshots:
+    post:
+      description: add new screenshots
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScreenshotList'
+      responses:
+        '200':
+          description: Screenshot have been added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    get:
+      description: get screenshots of a session
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      responses:
+        '200':
+          description: Screenshot have been added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenshotList'
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
   /models:
     post:
       description: add a new model
@@ -579,6 +645,22 @@ components:
         predictionType:
           type: string
           enum: [CSP, SP, FIS]
+    ScreenshotList:
+      type: object
+      properties:
+        screenshotList:
+          type: array
+          items:
+            type: object
+            properties:
+              sessionId:
+                type: string
+              explorationNumber:
+                type: integer
+              interactionIndex:
+                type: integer
+              image:
+                type: string
   securitySchemes:
     bearerAuth:
       type: http

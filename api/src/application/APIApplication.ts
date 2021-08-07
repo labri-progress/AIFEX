@@ -12,6 +12,7 @@ import Interaction from "../domain/Interaction";
 import Model from "../domain/Model";
 import ModelService from "../domain/ModelService";
 import { ModelPredictionType } from "../domain/ModelPredictionType";
+import Video from "../domain/Video";
 
 export default class APIApplication {
     private _accountService: AccountService;
@@ -182,9 +183,61 @@ export default class APIApplication {
 
     }
 
-    addScreenshots(token: Token, screenshots: Screenshot[]): Promise<"Unauthorized" | "ScreenshotsAdded"> {
-        return this._sessionService.addScreenshots(screenshots);
+    addScreenshots(token: Token, sessionId: string, screenshots: Screenshot[]): Promise<"Unauthorized" | "InvalidScreenshots" | "ScreenshotsAdded"> {
+        if (screenshots.some(screenshot => screenshot.sessionId !== sessionId)) {
+            return Promise.resolve("InvalidScreenshots");
+        } else {
+            return this.getAccount(token)
+                .then((result) => {
+                    if (result === "Unauthorized") {
+                        return "Unauthorized";
+                    } else {
+                        const account: Account = result;
+                        const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                        if (!authorized) {
+                            return "Unauthorized";
+                        } else {
+                            return this._sessionService.addScreenshots(screenshots);
+                        }
+                    }
+                });
+        }
     }
+
+    findScreenshotsBySessionId(token: Token, sessionId: string): Promise<Screenshot[] | "Unauthorized"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._sessionService.findScreenshotsBySessionId(sessionId).then(result => result);
+                    }
+                }
+            });
+    }
+
+    addVideo(token: Token, video: Video): Promise<"Unauthorized" | "InvalidVideo" | "VideoAdded"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === video.sessionId && authorization.kind === Kind.Session);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._sessionService.addVideo(video);
+                    }
+                }
+            });
+    }
+
 
     createModel(token: Token, depth: number, interpolationfactor: number, predictionType : ModelPredictionType) : Promise<Model | "Unauthorized"> {
         return this._modelService.createModel(depth, interpolationfactor, predictionType)

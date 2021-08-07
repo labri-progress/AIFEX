@@ -1,6 +1,7 @@
 import Interaction from "./Interaction";
 import Screenshot from "./Screenshot";
 import Session, { SessionOverlayType } from "./Session";
+import Video from "./Video";
 
 export default interface SessionService {
 
@@ -10,6 +11,12 @@ export default interface SessionService {
 
     addExploration(sessionId: string, testerName: string, interactionList: Interaction[], startDate?: Date, stopDate?: Date): Promise<number>;
 
-    addScreenshots(screenshots: Screenshot[]): Promise<"ScreenshotsAdded">
+    addScreenshots(screenshots: Screenshot[]): Promise<"ScreenshotsAdded">;
+
+    findScreenshotsBySessionId(sessionId: string): Promise<Screenshot[]>;
+
+    addVideo(video: Video): Promise<"VideoAdded">;
+
+    findVideosBySessionId(sessionId: string): Promise<Video[]>;
 
 }
