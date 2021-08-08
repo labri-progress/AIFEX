@@ -358,8 +358,8 @@ describe("API", () => {
                 expect(res.ok).to.be.true;
                 return res.json();
             })
-            .then(probaMap => {
-                // tslint:disable-next-line: no-magic-numbers
+            .then(resJson => {
+                const probaMap = resJson.probabilities;
                 expect(probaMap).lengthOf(1);
                 expect(probaMap[0]).lengthOf(2);
                 expect(probaMap[0][0]).to.eql("click$value");
