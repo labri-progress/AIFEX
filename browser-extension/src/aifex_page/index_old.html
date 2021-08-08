@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+    <title>AIFEX</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/popup.css">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="./js/browserAPI.js" defer></script>
+
+    <script src="./js/popup.js" defer></script>
+    <script src="./js/connection.js" defer></script>
+    <script src="./js/record.js" defer></script>
+    <script src="./js/comment.js" defer></script>
+    <script src="./js/identity.js" defer></script>
+    <script src="./js/evaluation.js" defer></script>
+    <script src="./js/backgroundHandlers.js" defer></script>
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <h2>AIFEX</h2>
+        <button id="detach-button" class="popup_attach" type="button"><i class="fa fa-window-restore"></i></button>
+        <div id="main-content">
+            <div id="connection-component">
+                <h3>Link to AIFEX Server</h3>
+                <form id="linkToServerForm">
+                    <div class="form-group ">
+                        <label id="linkToServerMessage"> You are not connected.</label>
+                        <div class="input-group ">
+                            <input id="serverURLInput" class="form-control" type="text" placeholder="https://www.aifex.fr"
+                                required />
+                            <a id="linkToServerButton" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-sign-in"></i></a>
+                            <a id="unlinkToServerButton" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-sign-out"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="connection-component">
+                <h3>Connection</h3>
+                <form id="connectionForm">
+                    <div class="form-group ">
+                        <label id="connexionMessage" for="connectionURLInput"> You are not connected.</label>
+                        <div class="input-group ">
+                            <input id="connectionURLInput" class="form-control" type="text" placeholder="Connection URL"
+                                required />
+                            <a id="connectionSignIn" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-sign-in"></i></a>
+                            <a id="connectionSignOut" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-sign-out"></i></a>
+                            <a id="connectionSync" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-refresh"></i></a>
+                            <a id="openSessionWindow" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-window-maximize"></i></a>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <div id="toggleShouldTestInNewWindowGroup" class="input-group">
+                            <input id="toggleShouldTestInNewWindow" type="checkbox">
+                            Create a new window for the test session
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="connectedPart">
+                <div id="identity-component">
+                    <h3>Tester</h3>
+                    <form id="tester-identity-form" class="form-inline">
+                        <div class="form-group">
+                            <input id="testerNameInput" class="form-control" type="text" placeholder="anonymous"
+                                required />
+                            <p id="testerNameInfo"></p>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="record-component">
+                    <h3>Recording</h3>
+                    Recording Status: <span id="recording-status"></span>
+                    <div class="form-group">
+                        <div class="btn-group">
+                            <a id="play-button" class="btn btn-default">
+                                <i class="fa fa-play" title="Play"></i>
+                            </a>
+                            <a id="stop-button" class="btn btn-default">
+                                <i class="fa fa-stop" title="Stop"></i>
+                            </a>
+                            <a id="play-restart" class="btn btn-default">
+                                <i class="fa fa-repeat" title="Restart"></i>
+                            </a>
+                            <a id="trash" class="btn btn-default">
+                                <i class="fa fa-trash" title="Trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="mediaRecording">
+                        <label class="form-check-label">Record Video : </label>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="interactionListDropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Your exploration (<span id="explorationLength"></span>)
+                        </button>
+                        <div id="interactionListDropdownItemGroup" class="dropdown-menu scrollable-menu"
+                            aria-labelledby="interactionListDropdown">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="evaluation-component">
+                    <div id="scenario-title">
+                        <h3>Scenario</h3>
+                        <span id="evaluation-status-valid" class="badge badge-success">Valid</span>
+                        <span id="evaluation-status-invalid" class="badge badge-warning">In progress</span>
+                    </div>
+
+                    <div class="border" id="evaluation-scenario"></div>
+
+                    <div class="evaluation-step-header" id="evaluation-complete">
+                        Le scenario est fini. Terminez votre exploration en cliquant sur stop ou restart.
+                    </div>
+
+                    <div class="evaluation-step-header" id="evaluation-entering">
+                        Pour commencer le scenario faites une des actions suivantes :
+                        <div id="evaluation-entering-actions"></div>
+                    </div>
+                    <div class="evaluation-step-header" id="evaluation-finishing">
+                        Vous pouvez finir le scenario en faisant une des actions suivantes :
+                        <div id="evaluation-finishing-actions"> </div>
+                    </div>
+                    <div class="evaluation-step-header" id="evaluation-continuing">
+                        Continuez avec une des actions suivantes :
+                        <div id="evaluation-continuing-actions"> </div>
+                    </div>
+                </div>
+
+                <div id="comment-component">
+                    <h3>Comment</h3>
+                    <div id="commentList">
+                    </div>
+                    <form>
+                        <div id="commentSuccessul" class="alert-success" role="alert">
+                            Comment registered
+                        </div>
+
+                        <div class="form-group">
+                            <label htmlFor="commentType">Type</label>
+                            <select class="custom-select" id="commentType">
+                                <option value="Question">Question</option>
+                                <option value="Follow up">Follow up</option>
+                                <option value="Assumption">Assumption</option>
+                                <option value="Assumption">Bug</option>
+                                <option value="Idea">Idea</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label htmlFor="commentDescription">Description</label>
+                            <textarea class="form-control" rows="4" placeholder="Comment's description"
+                                id="commentDescription"></textarea>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="commentScreenshot"
+                                name="commentScreenshot">
+                            <label htmlFor="commentScreenshot" class="form-check-label">Attach Screenshot</label>
+                        </div>
+                        <div class="form-group">
+                            <div class="btn-group">
+                                <button type="submit" id="submitComment" class="btn btn-primary">Submit</button>
+                                <button id="clearComment" class="btn btn-secondary"> Clear</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

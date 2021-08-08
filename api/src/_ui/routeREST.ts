@@ -15,6 +15,18 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         res.json({message:'alive'});
     });
 
+    app.get('/plugin-info', (req, res) => {
+        logger.info('GET plugin info');
+        const info = api.getPluginInfo();
+        if (!info) {
+            logger.debug(`no pluginInfo`);
+            return res.send({})
+        } else {
+            logger.debug(`pluginInfo : ${info}`);
+            return res.send(info);
+        }
+    })
+
     app.post("/signup", (req, res) => {
         const { username, email, password } = req.body;
         logger.info(`signup`);

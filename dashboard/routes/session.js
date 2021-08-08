@@ -147,7 +147,8 @@ module.exports = function attachRoutes(app, config) {
         const [sessionId, modelId] = connectionCode.split('$');
         logger.info(`GET all ngramq model (id = ${modelId})`);
         getAllNgrams(req.session.jwt, modelId)
-            .then(ngrams => {
+            
+        .then(ngrams => {
                 logger.debug(`ngrams:${JSON.stringify(ngrams)}`);
                 res.render('session/ngrams.ejs', { ngrams:ngrams.ngrams, modelId, account: req.session, connectionCode });
             })

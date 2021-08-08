@@ -14,6 +14,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+  /plugin-info:
+    get:
+      responses:
+        '200':
+          description: Return the plugin informations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
   /signup:
     description: Create a new account
     post:

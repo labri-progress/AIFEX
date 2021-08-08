@@ -8,6 +8,10 @@ export default interface Interface4Popup {
 
     makeCompatibilityCheck(serverURL: string): Promise<CompatibilityCheck>;
 
+    linkServer(serverURL: string) : Promise<"LinkedToServer">;
+
+    unlinkServer() : void;
+
     connect(serverURL: string, sessionId: string, modelId: string): Promise<void>;
 
     disconnect(): Promise<void>;

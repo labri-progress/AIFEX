@@ -29,6 +29,21 @@ export default class APIApplication {
         this._modelService = modelService;
     }
 
+    getPluginInfo(): undefined | {version: string, name: string, description: string} {
+        if (process.env.PLUGIN_INFO) {
+            try {
+                const info = JSON.parse(process.env.PLUGIN_INFO)
+                return {
+                    version: info.version,
+                    name: info.name,
+                    description: info.description
+                }
+            } catch(error) {
+                return 
+            }
+        }
+    }
+
     signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
         return this._accountService.signup(username, email, password);
     }

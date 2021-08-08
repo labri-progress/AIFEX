@@ -11,13 +11,15 @@ module.exports = {
 		rules: [
 			{
 				test: /\.css$/,
+				exclude: /node_modules/,
 				use: [{ loader: "style-loader" }, { loader: "css-loader" }],
 			},
 			{
 				test: /\.tsx?$/,
-				use: "ts-loader",
 				exclude: /node_modules/,
+				use: "ts-loader"
 			},
+
 		],
 	},
 	plugins: [
@@ -34,6 +36,6 @@ module.exports = {
 			{ from: "./node_modules/jquery/dist/jquery.min.js", to: "aifex_page/js/jquery.min.js" },
             { from: "./node_modules/font-awesome/css/font-awesome.min.css", to: "aifex_page/css/font-awesome.min.css" },
             { from: "./node_modules/font-awesome/fonts", to: "aifex_page/fonts" },
-		]}),
+		]})
 	],
 };

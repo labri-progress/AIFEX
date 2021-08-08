@@ -8,6 +8,10 @@ import Screenshot from "./Screenshot";
 import CommentDistribution from "./CommentDistribution";
 
 export default interface AifexService {
+	ping(serverURL: string): Promise<void>;
+
+	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> ;
+
 	getSession(serverURL : string, webSiteId: string): Promise<Session | undefined> ;
 
 	getWebSite(serverURL: string, webSiteId: string): Promise<WebSite | undefined> ;
@@ -33,7 +37,7 @@ export default interface AifexService {
 
 	addVideo(serverURL: string, sessionId: string, explorationNumber:number, video:Blob): Promise<void> ;
 
-	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> ;
+	
 
 	evaluateSequence(serverURL: string, webSite: WebSite, exploration: Exploration): Promise<ExplorationEvaluation>;
 

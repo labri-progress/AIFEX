@@ -83,6 +83,7 @@ services:
       - NODE_ENV=${NODE_ENV}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - TOKEN_SECRET=${TOKEN_SECRET}
+      - PLUGIN_INFO=${PLUGIN_INFO}
     depends_on:
       - "account"
       - "website"

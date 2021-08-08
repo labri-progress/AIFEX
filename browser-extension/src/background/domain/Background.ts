@@ -20,9 +20,9 @@ import { OverlayType } from "./Session";
 
 export default class Background {
 
-    private _aifexService : AifexService;
-    private _browserService : BrowserService;
-    private _tabScriptService : TabScriptService;
+    private _aifexService: AifexService;
+    private _browserService: BrowserService;
+    private _tabScriptService: TabScriptService;
     private _popupService: PopupService;
 
     private _windowManager: WindowManager;
@@ -33,7 +33,9 @@ export default class Background {
     private _webSite: WebSite | undefined;
     private _sessionBaseURL: string | undefined;
 
-	private _testerName: string | "anonymous";
+    private _testerName: string | "anonymous";
+    private _token: string | undefined;
+
     private _exploration: Exploration | undefined;
     private _numberOfExplorationsMadeByTester: number;
 
@@ -44,14 +46,14 @@ export default class Background {
 
     private _probabilityMap: Map<string, number>;
     private _commentDistributions: CommentDistribution[] | undefined;
-    private _commentsUp : Comment[];
+    private _commentsUp: Comment[];
 
     private _isRecording: boolean;
     private _useTestScenario: boolean;
-    private _popupCommentPosition : {x:string, y:string};
-    private _screenshotList : Screenshot[];
+    private _popupCommentPosition: { x: string, y: string };
+    private _screenshotList: Screenshot[];
 
-    private _mediaRecordManager : MediaRecorderManager;
+    private _mediaRecordManager: MediaRecorderManager;
 
     private _shouldCreateNewWindowsOnConnect: boolean;
     private _shouldCloseWindowOnDisconnect: boolean;
@@ -59,7 +61,7 @@ export default class Background {
     private _aifexPopup: AifexPopup;
     private _overlayType: OverlayType;
 
-    constructor(aifexService : AifexService, popupService: PopupService, browserService : BrowserService, tabScriptService : TabScriptService) {
+    constructor(aifexService: AifexService, popupService: PopupService, browserService: BrowserService, tabScriptService: TabScriptService) {
         this._aifexService = aifexService;
         this._browserService = browserService;
         this._tabScriptService = tabScriptService;
@@ -73,7 +75,7 @@ export default class Background {
         this._shouldCloseWindowOnDisconnect = true;
         this._aifexPopup = new AifexPopup(this._browserService);
         this._aifexPopup.attachBrowserHandlers();
-        
+
         this._isRecording = false;
         this._useTestScenario = false;
         this._testerName = "anonymous";
@@ -84,7 +86,7 @@ export default class Background {
         this._probabilityMap = new Map();
         this._commentDistributions = [];
         this._commentsUp = [];
-        this._popupCommentPosition = { x:"75%", y:"75%"};
+        this._popupCommentPosition = { x: "75%", y: "75%" };
         this._screenshotList = [];
         this._exploration = new Exploration();
         this._explorationEvaluation = undefined;
@@ -101,31 +103,45 @@ export default class Background {
         this._probabilityMap = new Map();
         this._commentDistributions = [];
         this._commentsUp = [];
-        this._popupCommentPosition = { x:"75%", y:"75%"};
+        this._popupCommentPosition = { x: "75%", y: "75%" };
         this._screenshotList = [];
         this._exploration = new Exploration();
         this._explorationEvaluation = undefined;
         this._isRecording = false;
     }
 
-    makeCompatibilityCheck(serverURL: string) : Promise<CompatibilityCheck> {
+    makeCompatibilityCheck(serverURL: string): Promise<CompatibilityCheck> {
         return this._aifexService.getPluginInfo(serverURL)
             .then((pluginInfo) => {
                 return new CompatibilityCheck(this._browserService.getExtensionVesion(), pluginInfo.version, pluginInfo.url);
             })
     }
 
-    connect(serverURL: string, sessionId: string, modelId: string) : Promise<void>{
+    linkServer(serverURL: string): Promise<"LinkedToServer"> {
+        this.initialize();
+        return this._aifexService.ping(serverURL)
+            .then(() => {
+                this._serverURL = serverURL;
+                return "LinkedToServer";
+            })
+            
+    }
+
+    unlinkServer(): void {
+        this.initialize();
+    }
+
+    connect(serverURL: string, sessionId: string, modelId: string): Promise<void> {
         this.initialize();
         return this._aifexService.hasModel(serverURL, modelId)
-        .then((hasModel : boolean) => {
-            if (!hasModel) {
-                return Promise.reject('model not found');
-            }
-        })
-        .then( () => {
-            return this._aifexService.getSession(serverURL, sessionId)
-        })
+            .then((hasModel: boolean) => {
+                if (!hasModel) {
+                    return Promise.reject('model not found');
+                }
+            })
+            .then(() => {
+                return this._aifexService.getSession(serverURL, sessionId)
+            })
             .then((session) => {
                 if (session) {
                     this._sessionBaseURL = session.baseURL;
@@ -135,39 +151,39 @@ export default class Background {
                 } else {
                     return Promise.reject('session not found');
                 }
-        })
-        .then((webSiteId) => {
-            return this._aifexService.getWebSite(serverURL, webSiteId);
-        })
-        .then((webSite : WebSite | undefined) => {
-            if (webSite) {
-                this._webSite = webSite;
-                this._sessionId = sessionId;
-                this._modelId = modelId;
-                this._serverURL = serverURL;
-                if (this._useTestScenario) {
-                    return this._aifexService.getEvaluator(serverURL, webSite.id)
-                        .then((evaluator: Evaluator | undefined) => {
-                            if (evaluator === undefined) {
-                                this._useTestScenario = false;
-                            } else {
-                                this._useTestScenario = true;
-                                this._evaluator = evaluator;
-                            }
-                        }) 
+            })
+            .then((webSiteId) => {
+                return this._aifexService.getWebSite(serverURL, webSiteId);
+            })
+            .then((webSite: WebSite | undefined) => {
+                if (webSite) {
+                    this._webSite = webSite;
+                    this._sessionId = sessionId;
+                    this._modelId = modelId;
+                    this._serverURL = serverURL;
+                    if (this._useTestScenario) {
+                        return this._aifexService.getEvaluator(serverURL, webSite.id)
+                            .then((evaluator: Evaluator | undefined) => {
+                                if (evaluator === undefined) {
+                                    this._useTestScenario = false;
+                                } else {
+                                    this._useTestScenario = true;
+                                    this._evaluator = evaluator;
+                                }
+                            })
+                    }
+                } else {
+                    return Promise.reject(`webSite is undefined`);
                 }
-            } else {
-                return Promise.reject(`webSite is undefined`);
-            }
-        })
-        .then (() => {
-            if (this._shouldCreateNewWindowsOnConnect) {
-                this._windowManager.createConnectedWindow(this._sessionBaseURL);
-            } else {
-                this._windowManager.connectToExistingWindow();
-            }
-        })
-        .then(() => this.updateNumberOfExplorationByTester())
+            })
+            .then(() => {
+                if (this._shouldCreateNewWindowsOnConnect) {
+                    this._windowManager.createConnectedWindow(this._sessionBaseURL);
+                } else {
+                    this._windowManager.connectToExistingWindow();
+                }
+            })
+            .then(() => this.updateNumberOfExplorationByTester())
     }
 
     disconnect(): Promise<void> {
@@ -195,23 +211,23 @@ export default class Background {
         this._webSite = undefined;
     }
 
-    isConnected() : boolean {
+    isConnected(): boolean {
         return this._sessionId !== undefined;
     }
 
-    reloadWebsite() : Promise<void> {
+    reloadWebsite(): Promise<void> {
         if (!this._webSite || !this._serverURL) {
             return Promise.resolve();
         }
         return this._aifexService.getWebSite(this._serverURL, this._webSite.id)
-        .then((webSite) => {
-            this._webSite = webSite;
-        })
-        .then((_) => {
-            const state = this.getStateForTabScript();
-            const tabIds = this._windowManager.getConnectedTabIds();
-            return Promise.all(tabIds.map(id => this._tabScriptService.reload(id, state))).then(()=>{});
-        })
+            .then((webSite) => {
+                this._webSite = webSite;
+            })
+            .then((_) => {
+                const state = this.getStateForTabScript();
+                const tabIds = this._windowManager.getConnectedTabIds();
+                return Promise.all(tabIds.map(id => this._tabScriptService.reload(id, state))).then(() => { });
+            })
     }
 
     drawAttention(): Promise<void> {
@@ -220,43 +236,43 @@ export default class Background {
             return this._browserService.drawAttentionToWindow(id);
         }
         else {
-			return Promise.resolve();
-		}
-	}
+            return Promise.resolve();
+        }
+    }
 
-    startExploration() : Promise<void> {
+    startExploration(): Promise<void> {
         if (!this._isRecording) {
             this._exploration = new Exploration();
             this._isRecording = true;
             return this.processNewAction("start")
-            .then(() => {
-                const state = this.getStateForTabScript();
-                const tabIds = this._windowManager.getConnectedTabIds();
-                return Promise.all(tabIds.map(id => this._tabScriptService.startExploration(id, state)));
-            })
-            .catch((e) => {
-                this._exploration = undefined;
-                this._isRecording = false;
-                console.error(e)
-            })
-            .then(() => {
-                return this._mediaRecordManager.startRecording()
+                .then(() => {
+                    const state = this.getStateForTabScript();
+                    const tabIds = this._windowManager.getConnectedTabIds();
+                    return Promise.all(tabIds.map(id => this._tabScriptService.startExploration(id, state)));
+                })
                 .catch((e) => {
-                    this._mediaRecordManager.destroyRecording();
+                    this._exploration = undefined;
+                    this._isRecording = false;
                     console.error(e)
                 })
-            })
-            .then(() => {
-                if (this._useTestScenario) {
-                    this.evaluateExploration();
-                }
-            })
+                .then(() => {
+                    return this._mediaRecordManager.startRecording()
+                        .catch((e) => {
+                            this._mediaRecordManager.destroyRecording();
+                            console.error(e)
+                        })
+                })
+                .then(() => {
+                    if (this._useTestScenario) {
+                        this.evaluateExploration();
+                    }
+                })
         } else {
             return Promise.resolve();
         }
     }
 
-    removeExploration() : Promise<void> {
+    removeExploration(): Promise<void> {
         if (this._isRecording) {
             this._mediaRecordManager.stopRecording();
             this._exploration = undefined;
@@ -264,9 +280,9 @@ export default class Background {
             const state = this.getStateForTabScript();
             const tabIds = this._windowManager.getConnectedTabIds();
             return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
-            .then((_ : void[]) => {
-                return this._windowManager.reloadConnectedWindow(this._sessionBaseURL);
-            })
+                .then((_: void[]) => {
+                    return this._windowManager.reloadConnectedWindow(this._sessionBaseURL);
+                })
         } else {
             return this._windowManager.reloadConnectedWindow(this._sessionBaseURL);
         }
@@ -275,9 +291,9 @@ export default class Background {
     evaluateExploration(): Promise<void> {
         if (this._webSite && this._exploration && this._serverURL && this._useTestScenario) {
             return this._aifexService.evaluateSequence(this._serverURL, this._webSite, this._exploration)
-            .then((evaluation) => {
-                this._explorationEvaluation = evaluation;
-            })
+                .then((evaluation) => {
+                    this._explorationEvaluation = evaluation;
+                })
         } else {
             return Promise.resolve();
         }
@@ -296,7 +312,7 @@ export default class Background {
             if (!this._serverURL) {
                 return Promise.reject("Not connected to a server");
             }
-    
+
             if (!this._modelId) {
                 return Promise.reject("Not connected to a model");
             }
@@ -306,49 +322,49 @@ export default class Background {
         } else {
             return Promise.resolve();
         }
-        
+
     }
 
     private fetchComments(): Promise<void> {
-        if (!this._sessionId ) {
-			return Promise.reject("Not connected to a session");
+        if (!this._sessionId) {
+            return Promise.reject("Not connected to a session");
         }
         if (this._serverURL && this._exploration && this._modelId) {
             if (this._exploration.actions.length === 0) {
                 return Promise.resolve();
             } else {
                 return this._aifexService.getCommentDistributions(this._serverURL, this._modelId, this._exploration)
-                .then((commentDistributionList) => {
-                    if (commentDistributionList === undefined) {
-                        this._commentDistributions = []    
-                    } else {
-                        this._commentDistributions = commentDistributionList;
-                    }
-                })
+                    .then((commentDistributionList) => {
+                        if (commentDistributionList === undefined) {
+                            this._commentDistributions = []
+                        } else {
+                            this._commentDistributions = commentDistributionList;
+                        }
+                    })
             }
         } else {
             return Promise.resolve();
         }
-        
+
     }
 
-    getProbabilityMap():Map<string, number> {
-		if (this._isRecording && this._exploration !== undefined && this._exploration.actions.length !== 0) {
-			return this._probabilityMap;
+    getProbabilityMap(): Map<string, number> {
+        if (this._isRecording && this._exploration !== undefined && this._exploration.actions.length !== 0) {
+            return this._probabilityMap;
         } else {
             return new Map();
         }
     }
 
     getCommentDistributions(): CommentDistribution[] {
-		if (this._isRecording && this._exploration !== undefined && this._exploration.actions.length !== 0 && this._commentDistributions) {
-			return this._commentDistributions;
+        if (this._isRecording && this._exploration !== undefined && this._exploration.actions.length !== 0 && this._commentDistributions) {
+            return this._commentDistributions;
         } else {
             return [];
         }
     }
 
-    processNewAction(prefix : string, suffix? : string): Promise<void> {
+    processNewAction(prefix: string, suffix?: string): Promise<void> {
         if (this._isRecording && this._exploration) {
             this._exploration.addAction(prefix, suffix);
             this._commentsUp = [];
@@ -368,23 +384,23 @@ export default class Background {
                 promises.push(this.fetchProbabilityMap())
             }
             return Promise.all(promises)
-            .then(() => this.refreshPopup())
-            .catch((error) => console.error("Failed to process new action : ", prefix, error))
+                .then(() => this.refreshPopup())
+                .catch((error) => console.error("Failed to process new action : ", prefix, error))
         } else {
             return Promise.resolve();
         }
     }
 
-    addAnswerToExploration(question: Question, value: boolean) : Promise<void> {
-		if (this._isRecording && this._exploration) {
+    addAnswerToExploration(question: Question, value: boolean): Promise<void> {
+        if (this._isRecording && this._exploration) {
             this._exploration.addAnswer(question.text, value.toString());
 
             return this.evaluateExploration()
-            .then(() => this.refreshPopup())
+                .then(() => this.refreshPopup())
         } else {
             return Promise.resolve();
         }
-	}
+    }
 
     addCommentToExploration(comment: Comment): void {
         if (this._isRecording && this._exploration) {
@@ -409,7 +425,7 @@ export default class Background {
     private stopRecordingExploration(): Promise<boolean> {
         if (this._isRecording && this._exploration) {
             this._isRecording = false;
-            let exploration : Exploration = this._exploration;
+            let exploration: Exploration = this._exploration;
             return this.evaluateExploration()
                 .then(() => {
                     if (this._useTestScenario && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
@@ -420,45 +436,45 @@ export default class Background {
                     else {
                         exploration.stop();
                         return this._mediaRecordManager.stopRecording()
-                        .then(() => {
-                            const MIN_NUMBER_OF_ACTIONS = 2;
-                            const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
-                            if (HAS_MORE_THAN_START_END_ACTIONS) {
-                                console.log("Sending exploration")
-                                return this.sendExploration();
-                            }
-                        })
-                        .then(() => {
-                            this._exploration = new Exploration();
-                            this._screenshotList = [];
-                            this._commentsUp = [];
-                            const state = this.getStateForTabScript();
-                            const tabIds = this._windowManager.getConnectedTabIds();
-                            return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
-                        })
-                        .then((_ : void[]) => {
-                            return true;
-                        })
+                            .then(() => {
+                                const MIN_NUMBER_OF_ACTIONS = 2;
+                                const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
+                                if (HAS_MORE_THAN_START_END_ACTIONS) {
+                                    console.log("Sending exploration")
+                                    return this.sendExploration();
+                                }
+                            })
+                            .then(() => {
+                                this._exploration = new Exploration();
+                                this._screenshotList = [];
+                                this._commentsUp = [];
+                                const state = this.getStateForTabScript();
+                                const tabIds = this._windowManager.getConnectedTabIds();
+                                return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
+                            })
+                            .then((_: void[]) => {
+                                return true;
+                            })
 
-                }
-            })
+                    }
+                })
         } else {
             return Promise.resolve(true);
         }
     }
 
     stopExploration(): Promise<void> {
-        return this.stopRecordingExploration().then(() => {})    
+        return this.stopRecordingExploration().then(() => { })
     }
 
     restartExploration(): Promise<void> {
         return this.stopRecordingExploration()
             .then((isStopped) => {
                 if (isStopped) {
-                    return this._windowManager.reloadConnectedWindow(this._sessionBaseURL).then(()=> this.startExploration())
+                    return this._windowManager.reloadConnectedWindow(this._sessionBaseURL).then(() => this.startExploration())
                 }
             })
-	}
+    }
 
     sendExploration(): Promise<void> {
         if (this._serverURL && this._exploration && this._sessionId) {
@@ -474,38 +490,38 @@ export default class Background {
                 this._testerName,
                 this._exploration
             )
-            .then((explorationNumber) => {
-                if (this._serverURL && this._sessionId && this._screenshotList.length > 0) {
-                    this._aifexService.addScreenshotList(
-                        this._serverURL,
-                        this._sessionId,
-                        explorationNumber,
-                        this._screenshotList
-                    );
-                }
-                if (this._serverURL && this. _sessionId && this._mediaRecordManager.isPreparedToRecordMedia) {
-                    const video = this._mediaRecordManager.getRecordedChunks();
-                    if (video) {
-                        this._aifexService.addVideo(
+                .then((explorationNumber) => {
+                    if (this._serverURL && this._sessionId && this._screenshotList.length > 0) {
+                        this._aifexService.addScreenshotList(
                             this._serverURL,
                             this._sessionId,
                             explorationNumber,
-                            video
-                        )
+                            this._screenshotList
+                        );
                     }
-                } 
-                return this.updateNumberOfExplorationByTester()
-            })
+                    if (this._serverURL && this._sessionId && this._mediaRecordManager.isPreparedToRecordMedia) {
+                        const video = this._mediaRecordManager.getRecordedChunks();
+                        if (video) {
+                            this._aifexService.addVideo(
+                                this._serverURL,
+                                this._sessionId,
+                                explorationNumber,
+                                video
+                            )
+                        }
+                    }
+                    return this.updateNumberOfExplorationByTester()
+                })
         } else {
             return Promise.resolve();
-        }   
+        }
     }
 
     displayInvalidExploration(): Promise<void> {
         return this._popupService.displayInvalidExploration();
     }
 
-    changeTesterName(name:string): void {
+    changeTesterName(name: string): void {
         this._testerName = name;
     }
 
@@ -524,18 +540,18 @@ export default class Background {
         }
     }
 
-    setPopupCommentPosition(position : {x: string, y: string}): void {
+    setPopupCommentPosition(position: { x: string, y: string }): void {
         this._popupCommentPosition = position;
     }
 
-    getStateForPopup() : StateForPopup {
+    getStateForPopup(): StateForPopup {
         const state = new StateForPopup();
         state.serverURL = this._serverURL;
         if (this._serverURL && this._sessionId && this._modelId) {
             state.url = `${this._serverURL}/join?sessionId=${this._sessionId}&modelId=${this._modelId}`;
 
         }
-        
+
         state.numberOfExplorationsMadeByTester = this._numberOfExplorationsMadeByTester;
         state.isRecording = this._isRecording;
         state.testerName = this._testerName;
@@ -562,7 +578,7 @@ export default class Background {
     }
 
 
-    getStateForTabScript() : StateForTabScript {
+    getStateForTabScript(): StateForTabScript {
         const state = new StateForTabScript();
         state.isRecording = this._isRecording;
         state.webSite = this._webSite;
@@ -576,21 +592,21 @@ export default class Background {
         if (windowId && this._exploration) {
             let exploration = this._exploration;
             return this._browserService.takeScreenshot(windowId)
-            .then(image => {
-                this._screenshotList.push(new Screenshot(image,exploration.length - 1));
-            })
+                .then(image => {
+                    this._screenshotList.push(new Screenshot(image, exploration.length - 1));
+                })
         } else {
             return Promise.resolve();
-        } 
+        }
     }
 
-    setRecordMedia(recordMedia : boolean) : Promise<void>{
+    setRecordMedia(recordMedia: boolean): Promise<void> {
         if (recordMedia) {
             if (this._isRecording) {
                 return this._mediaRecordManager.prepareRecording()
-                .then(()=> {
-                    return this._mediaRecordManager.startRecording();
-                })
+                    .then(() => {
+                        return this._mediaRecordManager.startRecording();
+                    })
             } else {
                 return this._mediaRecordManager.prepareRecording();
             }
@@ -612,6 +628,6 @@ export default class Background {
             .catch((error) => {
                 console.error("Failed to toggle Popup detach", error.message);
             })
-	}
+    }
 
 }

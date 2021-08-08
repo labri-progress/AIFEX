@@ -42,6 +42,18 @@ export default class HandlerOfMessageSentByPopup {
 				return true;
 			}
 
+            case "linkServer": {
+                this._application.linkServer(msg.url)
+                    .then((result) => {
+                        logger.debug(`linkServer: ${result}`);
+                        sendResponse(result);
+                    })
+                    .catch((error) => {
+                        sendResponse(error);
+                    });
+                return true;
+            }
+
             case "connect": {
                 if (!msg.url) {
                     logger.debug(`connection refused`);

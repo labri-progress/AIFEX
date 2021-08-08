@@ -28,7 +28,7 @@ function render(state) {
     }
     shouldCreateNewWindowsOnConnect = state.shouldCreateNewWindowsOnConnect;
     if (!state.url) {
-        renderNotConnected(state);
+        renderNotLinkedToServer(state);
     } else {
         serverURL = state.url;
         testerName = state.testerName;
@@ -46,6 +46,14 @@ function render(state) {
             })
         }
     }
+}
+
+function renderNotLinkedToServer(state) {
+    document.getElementById("link-to-server-component").style.display = "block";
+    document.getElementById("linkToServerMessage").innerHTML = `You are not connected.`;
+    document.getElementById("serverURLInput").disabled = false;
+    document.getElementById("linkToServerButton").style.display = "table-cell";
+    document.getElementById("unlinkToServerButton").style.display = "none";
 }
 
 function renderNotConnected(state) {

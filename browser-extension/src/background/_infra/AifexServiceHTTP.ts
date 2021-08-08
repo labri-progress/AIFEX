@@ -20,6 +20,39 @@ const INTERNAL_SERVER_ERROR_STATUS = 500;
 
 export default class AifexServiceHTTP implements AifexService {
 
+	ping(serverURL: string): Promise<void> {
+		return fetch(`${serverURL}/api/ping`)
+			.then(response => {
+				console.log(response);
+				if (response.ok) {
+					console.log('ok');
+					return;
+				} else {
+					console.log('error');
+					throw new Error(response.statusText);
+				}
+			})
+	}
+
+	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> {
+		const option = {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+		};
+		return fetch(`${this.getDashboardURL(serverURL)}/plugin-info`, option)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error(response.statusText);
+			}
+			return response.json();
+		})
+		.then(details => {
+			details.url = `${serverURL}/download`
+			return new AifexPluginInfo(details.version, details.name, details.description, details.url);
+		})
+	}
+
+
 	getSession(serverURL: string, sessionId : string): Promise<Session | undefined> {
 		return fetch(`${this.getSessionURL(serverURL)}/session/${sessionId}`)
 		.then((response) => {
@@ -250,24 +283,6 @@ export default class AifexServiceHTTP implements AifexService {
 				return Promise.reject(new Error(`server error`));
 			}
 		});
-	}
-
-	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> {
-		const option = {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-		};
-		return fetch(`${this.getDashboardURL(serverURL)}/plugin-info`, option)
-		.then(response => {
-			if (!response.ok) {
-				throw new Error(response.statusText);
-			}
-			return response.json();
-		})
-		.then(details => {
-			details.url = `${serverURL}/download`
-			return new AifexPluginInfo(details.version, details.name, details.description, details.url);
-		})
 	}
 
 	evaluateSequence(serverURL: string, webSite: WebSite, exploration: Exploration): Promise<ExplorationEvaluation> {

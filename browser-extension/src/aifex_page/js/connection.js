@@ -1,9 +1,36 @@
-document.getElementById("connectionSignIn").addEventListener("click", handleConnection);
-document.getElementById("connectionForm").addEventListener("submit", handleConnection);
-document.getElementById("connectionSignOut").addEventListener("click", handleDisconnection);
-document.getElementById("connectionSync").addEventListener("click", handleSync);
-document.getElementById("openSessionWindow").addEventListener("click", handleDrawAttentionToWindow);
-document.getElementById("toggleShouldTestInNewWindow").addEventListener("change", handleTestOnNewWindow);
+document.getElementById("linkToServerButton").addEventListener("click", handleServerLink);
+// document.getElementById("unlinkToServerButton").addEventListener("click", handleServerUnLink);
+// document.getElementById("connectionSignIn").addEventListener("click", handleConnection);
+// document.getElementById("connectionForm").addEventListener("submit", handleConnection);
+// document.getElementById("connectionSignOut").addEventListener("click", handleDisconnection);
+// document.getElementById("connectionSync").addEventListener("click", handleSync);
+// document.getElementById("openSessionWindow").addEventListener("click", handleDrawAttentionToWindow);
+// document.getElementById("toggleShouldTestInNewWindow").addEventListener("change", handleTestOnNewWindow);
+
+function handleServerLink(e) {
+    console.log('link server');
+    e.preventDefault();
+    const INPUT_URL = document.getElementById("serverURLInput").value;
+    try {
+        new URL(INPUT_URL);
+    } catch (e) {
+        document.getElementById('linkToServerMessage').innerHTML = 'Incorrect URL, please enter a correct URL.';
+        return;
+    }
+    sendMessage({kind: "linkServer", url: INPUT_URL})
+        .then(response => {
+            console.log(response);
+            if (!response) {
+                console.error(`Background does not answer`);
+            }
+            else if (response.error) {
+                document.getElementById('linkToServerMessage').innerHTML = 'Error, cannot link';
+            }
+            else {
+                document.getElementById('linkToServerMessage').innerHTML = 'You are linked to the server. WebSite is refreshed !'
+            }
+        })
+}
 
 function handleConnection(e) {
     console.log('connect');

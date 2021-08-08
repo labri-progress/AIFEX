@@ -24,6 +24,14 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 	/* For Popup        */
 	/************************/
 
+	linkServer(serverURL: any): Promise<"LinkedToServer"> {
+		return this._background.linkServer(serverURL);
+	}
+
+	unlinkServer(): void {
+		return this._background.unlinkServer();
+	}
+
 	getStateForPopup(): StateForPopup {
 		return this._background.getStateForPopup();
 	}
