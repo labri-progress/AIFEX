@@ -460,7 +460,7 @@ paths:
         - bearerAuth: []
   /models/{modelId}/computeprobabilities:
     post:
-      description: get probabilities of the model for a given interaction mappingList
+      description: get probabilities of the model for a given interaction list
       parameters:
         - in: path
           name: modelId
@@ -494,13 +494,125 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
+                type: object
+                properties:
+                  probabilities:                  
+                      type: array
+                      items:
+                        type: array
+                        items:
+                          oneOf:
+                            - type: string
+                            - type: integer
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /models/{modelId}/getcommentdistributions:
+    post:
+      description: get distributions of the comment for a given interaction list
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                interactionList:
                   type: array
                   items:
-                    oneOf:
-                      - type: string
-                      - type: integer
+                    type: object
+                    properties:
+                      concreteType:
+                        type: string
+                        enum: [Action, Comment, Answer]
+                      kind:
+                        type: string
+                      value: 
+                        type: string
+                      date:
+                        type: string
+      responses:
+        '200':
+          description: The comment distributions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  commentdistributions:                  
+                      type: array
+                      items:
+                        type: array
+                        items:
+                          oneOf:
+                            - type: string
+                            - type: object
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /models/{modelId}/ngrams:
+    get:
+      description: get all ngrams 
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model
+      responses:
+        '200':
+          description: The ngrams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ngrams:                  
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                          n:
+                            type: integer
+                          occurence: 
+                            type: integer
+                          nextActions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                key: 
+                                  type: string
+                                occurence:
+                                  type: integer
+                          nextComments:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                key: 
+                                  type: string
+                                occurence:
+                                  type: integer
         '403':
           description: Unauthorized
           content:

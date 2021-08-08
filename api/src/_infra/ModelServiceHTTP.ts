@@ -1,8 +1,10 @@
 import fetch from "node-fetch";
+import CommentDistribution from "../domain/CommentDistribution";
 import Interaction from "../domain/Interaction";
 import Model from "../domain/Model";
 import { ModelPredictionType } from "../domain/ModelPredictionType";
 import ModelService from "../domain/ModelService";
+import Ngram from "../domain/Ngram";
 import config from "./config";
 
 
@@ -80,6 +82,55 @@ export default class ModelServiceHTTP implements ModelService {
                         });
                 } else {
                     return new Map();
+                }
+            })
+    }
+
+    getCommentDistributions(modelId: string, interactionList: Interaction[]): Promise<Map<string,CommentDistribution[]>> {
+        const ModelComputeURL = MODEL_URL + modelId + '/getcommentdistributions';
+        let optionModelCompute = {
+            method: 'POST',
+            body:    JSON.stringify({interactionList}),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(ModelComputeURL, optionModelCompute)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                        .then(dataArray => {
+                            let commentDistributions : Map<string,CommentDistribution[]> = new Map();
+                            dataArray.forEach((data: { note: string; distributions: any[]; })  => {
+                                commentDistributions.set(data.note, data.distributions.map((d) => new CommentDistribution(d.context, d.noteOccurence, d.contextOccurence)));
+                            });
+                            return commentDistributions;
+                        });
+                } else {
+                    return new Map();
+                }
+            })
+    }
+
+    getAllNgram(modelId: string): Promise<Ngram[]> {
+        const ModelComputeURL = MODEL_URL + modelId + '/analyze/allngram';
+        return fetch(ModelComputeURL)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                        .then(dataArray => {
+                            let ngrams : Ngram[] = [];
+                            dataArray.forEach((data: {
+                                key: string,
+                                n: number,
+                                occurence: number,
+                                successorStimulusSet: any[],
+                                successorNoteSet: any[],
+                            })  => {
+                                ngrams.push(new Ngram(data.key, data.n, data.occurence, data.successorStimulusSet, data.successorNoteSet));
+                            });
+                            return ngrams;
+                        });
+                } else {
+                    return [];
                 }
             })
     }

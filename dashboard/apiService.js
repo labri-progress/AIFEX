@@ -383,6 +383,21 @@ module.exports.linkModelToSession = function (token, modelId, sessionId) {
         })
 }
 
+module.exports.getAllNgrams = function (token, modelId) {
+    const apiGetAllNgramsURL = 'http://' + config.api.host + ':' + config.api.port + '/models/' + modelId + '/ngrams';
+    return fetch(apiGetAllNgramsURL, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('cannot get all ngrams');
+            }
+        })
+}
+
 
 
 

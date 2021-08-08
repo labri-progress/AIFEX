@@ -1,4 +1,4 @@
-const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId } = require('../apiService');
+const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams } = require('../apiService');
 const logger = require('../logger');
 const buildInvitation = require("../invitations").buildInvitation;
 
@@ -145,17 +145,11 @@ module.exports = function attachRoutes(app, config) {
     app.get('/dashboard/session/:connectionCode/ngrams/', (req, res) => {
         const { connectionCode } = req.params
         const [sessionId, modelId] = connectionCode.split('$');
-        logger.info(`GET session ngram model (id = ${modelId})`);
-        const modelURL = 'http://' + config.model.host + ':' + config.model.port + '/model/' + modelId + '/analyze/allngram';
-
-        fetch(modelURL)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-            })
+        logger.info(`GET all ngramq model (id = ${modelId})`);
+        getAllNgrams(req.session.jwt, modelId)
             .then(ngrams => {
-                res.render('session/ngrams.ejs', { ngrams, modelId, account: req.session, connectionCode });
+                logger.debug(`ngrams:${JSON.stringify(ngrams)}`);
+                res.render('session/ngrams.ejs', { ngrams:ngrams.ngrams, modelId, account: req.session, connectionCode });
             })
             .catch(e => {
                 logger.error(e);

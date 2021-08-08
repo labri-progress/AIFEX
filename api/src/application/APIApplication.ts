@@ -13,6 +13,8 @@ import Model from "../domain/Model";
 import ModelService from "../domain/ModelService";
 import { ModelPredictionType } from "../domain/ModelPredictionType";
 import Video from "../domain/Video";
+import CommentDistribution from "../domain/CommentDistribution";
+import Ngram from "../domain/Ngram";
 
 export default class APIApplication {
     private _accountService: AccountService;
@@ -319,6 +321,42 @@ export default class APIApplication {
                         return "Unauthorized";
                     } else {
                         return this._modelService.computeProbabilities(modelId, interactionList)
+                            .then((result) => result);
+                    }
+                }
+            });
+    }
+
+    getCommentDistributions(token: Token, modelId: string, interactionList: Interaction[]): Promise<"Unauthorized" | Map<string,CommentDistribution[]>> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._modelService.getCommentDistributions(modelId, interactionList)
+                            .then((result) => result);
+                    }
+                }
+            });
+    }
+
+    getAllNgram(token: Token, modelId: string): Promise<"Unauthorized" | Ngram[]> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._modelService.getAllNgram(modelId)
                             .then((result) => result);
                     }
                 }

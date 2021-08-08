@@ -42,8 +42,8 @@
                                     <td><%= ngram.n %></td>
                                     <td><%= ngram.key %></td>
                                     <td><%= ngram.occurence %></td>
-                                    <td><% for (successor of ngram.successorNoteSet) { %>
-                                        <%= `${successor.key} (${successor.occurence})` %>
+                                    <td><% for (comment of ngram.nextComments) { %>
+                                        <%= `${comment.key} (${comment.occurence})` %>
                                         <% } %>
                                     </td>
                                 </tr>

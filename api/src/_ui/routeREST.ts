@@ -532,7 +532,64 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                         } else {
                             logger.info("Probabilities are computed");
-                            res.json(Array.from(probabilities));
+                            res.json({probalities:Array.from(probabilities)});
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
+    app.post("/models/:modelId/getcommentdistributions", (req, res) => {
+        const modelId = req.params.modelId;
+        const {interactionList} = req.body;
+        logger.info(`get comment distributions`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (modelId === undefined || interactionList === undefined) {
+                logger.warn(`modelId or interactionList are undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId or no InteractionList"});
+            } else {
+                api.getCommentDistributions(req.token, modelId, interactionList)
+                    .then(commentDistributions => {
+                        if (commentDistributions === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else {
+                            logger.info("Comment distributions are computed");
+                            res.json({commentdistributios:Array.from(commentDistributions)});
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
+    app.get("/models/:modelId/ngrams", (req, res) => {
+        const modelId = req.params.modelId;
+        logger.info(`get all ngram`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (modelId === undefined) {
+                logger.warn(`modelId is undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId"});
+            } else {
+                api.getAllNgram(req.token, modelId)
+                    .then(result => {
+                        if (result === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else {
+                            logger.info("All ngram are computed");
+                            res.json({ngrams:result});
                         }
                     })
                     .catch((e) => {
