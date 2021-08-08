@@ -544,7 +544,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                         } else {
                             logger.info("Probabilities are computed");
-                            res.json({probalities:Array.from(probabilities)});
+                            res.json({probabilities:Array.from(probabilities)});
                         }
                     })
                     .catch((e) => {
