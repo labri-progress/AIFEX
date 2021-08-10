@@ -47,7 +47,14 @@ export default class AccountService {
             })
     }
 
-    getUsernameAndAuthorizationSet(token: Token): Promise<{username:string, authorizationSet:{key:string, kind:Kind}[]} | "InvalidToken"> {
+    getAccount(token: Token): Promise<
+        {
+            username:string, 
+            authorizationSet:{key:string, kind:Kind}[], 
+            receivedInvitationSet:{username:string, authorization:{kind:Kind,key:string}}[],
+            sentInvitationSet:{username:string, authorization:{kind:Kind,key:string}}[]
+        } 
+        | "InvalidToken"> {
         const username = this._tokenService.token2Username(token);
         if (username) {
             return this._accountRepository.findAccountByUserName(username)
@@ -57,6 +64,12 @@ export default class AccountService {
                             username: result.username,
                             authorizationSet: result.authorizationSet.map(authorization=> {
                                 return {key:authorization.key, kind: authorization.kind};
+                            }),
+                            receivedInvitationSet: result.receivedInvitationSet.map(invitation=> {
+                                return {username:invitation.username, authorization:{kind:invitation.authorization.kind,key:invitation.authorization.key}};
+                            }),
+                            sentInvitationSet: result.sentInvitationSet.map(invitation=> {
+                                return {username:invitation.username, authorization:{kind:invitation.authorization.kind,key:invitation.authorization.key}};
                             })
                         }
                     } else {

@@ -58,7 +58,7 @@ export default class AccountServiceHTTP implements AccountService {
                         logger.debug(JSON.stringify(result));
                         const authSet = result.authorizationSet.map((authInJson: { kind: Kind; key: string; }) => new Authorization(authInJson.kind, authInJson.key));
                         const receivInv = result.receivedInvitationSet.map((invInJson: {username: string, authorization: { kind: Kind; key: string; }}) => new Invitation(invInJson.username, new Authorization(invInJson.authorization.kind, invInJson.authorization.key)));
-                        const sendInv = result.sendInvitationSet.map((invInJson: {username: string, authorization: { kind: Kind; key: string; }}) => new Invitation(invInJson.username, new Authorization(invInJson.authorization.kind, invInJson.authorization.key)));
+                        const sendInv = result.sentInvitationSet.map((invInJson: {username: string, authorization: { kind: Kind; key: string; }}) => new Invitation(invInJson.username, new Authorization(invInJson.authorization.kind, invInJson.authorization.key)));
                         return new Account(result.username, authSet, receivInv, sendInv);
                     });
                 } else {

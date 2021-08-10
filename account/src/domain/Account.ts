@@ -41,7 +41,7 @@ export default class Account {
         return [...this._authorizationSet];
     }
 
-    get sendInvitationSet(): Invitation[] {
+    get sentInvitationSet(): Invitation[] {
         return [...this._sentInvitationSet];
     }
 

@@ -40,7 +40,7 @@ export default class AccountRepositoryMongo implements AccountRepository {
                 }
             };
         });
-        const sendInvitationSet = account.sendInvitationSet.map((invitation) => {
+        const sendInvitationSet = account.sentInvitationSet.map((invitation) => {
             return {
                 username: invitation.username, 
                 authorization: {
