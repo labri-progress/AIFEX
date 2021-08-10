@@ -40,6 +40,10 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.makeCompatibilityCheck(serverURL);
 	}
 
+	signin(username: string, password: string): Promise<"SignedIn" | "Unauthorized"> {
+		return this._background.signin(username, password);
+	}
+
 	connect(serverURL: string, sessionId: string, modelId: string): Promise<void> {
 		return this._background.connect(serverURL, sessionId, modelId);
 	}

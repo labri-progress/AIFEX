@@ -4,6 +4,7 @@ import config from "./config";
 import Token from "../domain/Token";
 import Account from "../domain/Account";
 import Authorization from "../domain/Authorization";
+import Invitation from "../domain/Invitation";
 import { Kind } from "../domain/Kind";
 import { logger } from "../logger";
 const URL: string = `http://${config.account.host}:${config.account.port}/account/`;
@@ -55,8 +56,10 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return response.json().then( (result) => {
                         logger.debug(JSON.stringify(result));
-                        const authSet = result.authorizationSet.map((authInJson: { kind: Kind; key: string; }) => new Authorization(authInJson.kind, authInJson.key))
-                        return new Account(result.username, authSet);
+                        const authSet = result.authorizationSet.map((authInJson: { kind: Kind; key: string; }) => new Authorization(authInJson.kind, authInJson.key));
+                        const receivInv = result.receivedInvitationSet.map((invInJson: {username: string, authorization: { kind: Kind; key: string; }}) => new Invitation(invInJson.username, new Authorization(invInJson.authorization.kind, invInJson.authorization.key)));
+                        const sendInv = result.sendInvitationSet.map((invInJson: {username: string, authorization: { kind: Kind; key: string; }}) => new Invitation(invInJson.username, new Authorization(invInJson.authorization.kind, invInJson.authorization.key)));
+                        return new Account(result.username, authSet, receivInv, sendInv);
                     });
                 } else {
                     return "Unauthorized";

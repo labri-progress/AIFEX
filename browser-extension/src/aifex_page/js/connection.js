@@ -1,4 +1,4 @@
-document.getElementById("linkToServerButton").addEventListener("click", handleServerLink);
+document.getElementById("signinButton").addEventListener("click", handleSignin);
 // document.getElementById("unlinkToServerButton").addEventListener("click", handleServerUnLink);
 // document.getElementById("connectionSignIn").addEventListener("click", handleConnection);
 // document.getElementById("connectionForm").addEventListener("submit", handleConnection);
@@ -7,38 +7,9 @@ document.getElementById("linkToServerButton").addEventListener("click", handleSe
 // document.getElementById("openSessionWindow").addEventListener("click", handleDrawAttentionToWindow);
 // document.getElementById("toggleShouldTestInNewWindow").addEventListener("change", handleTestOnNewWindow);
 
-function handleServerLink(e) {
-    console.log('link server');
-    e.preventDefault();
-    const INPUT_URL = document.getElementById("serverURLInput").value;
-    try {
-        new URL(INPUT_URL);
-    } catch (e) {
-        document.getElementById('linkToServerMessage').innerHTML = 'Incorrect URL, please enter a correct URL.';
-        return;
-    }
-    sendMessage({ kind: "linkServer", url: INPUT_URL })
-        .then(response => {
-            console.log(response);
-            if (!response) {
-                console.error(`Background does not answer`);
-                document.getElementById('linkToServerMessage').innerHTML = 'Something goes wrong, the extension does not answer.';
-            }
-            else if (response.error) {
-                document.getElementById('linkToServerMessage').innerHTML = 'The server does not answer, please check the URL.';
-            }
-            else {
-                sendMessage({ kind: "checkDeprecated", url: INPUT_URL })
-                    .then(extensionInfo => {
-                        if (extensionInfo.latestVersion && extensionInfo.currentVersion !== extensionInfo.latestVersion) {
-                            document.getElementById('connexionMessage').innerHTML = `Your current version ${extensionInfo.currentVersion} of the AIFEX Extention is deprecated, please get latest version <a href="${extensionInfo.url}"> ${extensionInfo.latestVersion} </a>`;
-                        } else {
-                            getState();
-                        }
-                    });
-            }
-        })
-}
+
+
+
 
 function handleConnection(e) {
     console.log('connect');

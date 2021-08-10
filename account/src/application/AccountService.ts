@@ -6,6 +6,7 @@ import { Kind } from "../domain/Kind";
 import TokenService from "../domain/TokenService";
 import CryptoService from "../domain/CryptoService";
 import Account from "../domain/Account";
+import Invitation from "../domain/Invitation";
 
 export default class AccountService {
 
@@ -109,6 +110,58 @@ export default class AccountService {
         }
     }
 
+    addInvitation(token: Token, invitation: Invitation): Promise<"UsernameIsAuthorized" | "IncorrectUsername" | "IncorrectOtherUsername"> {
+        const username = this._tokenService.token2Username(token);
+        if (username === undefined) {
+            return Promise.resolve("IncorrectUsername");
+        } else {
+            return Promise.all([this._accountRepository.findAccountByUserName(username), this._accountRepository.findAccountByUserName(invitation.username)])
+                .then(([userAccount, otherAccount]) => {
+                    if (userAccount === undefined) {
+                        return "IncorrectUsername";
+                    } else {
+                        if (otherAccount === undefined) {
+                            return "IncorrectOtherUsername";
+                        } else {
+                            userAccount.addSentInvitation(invitation);
+                            otherAccount.addReceivedInvitation(new Invitation(username, invitation.authorization));
+                            return Promise.all([this._accountRepository.updateAccount(userAccount), this._accountRepository.updateAccount(otherAccount)])
+                                .then(() => {
+                                    return "UsernameIsAuthorized";
+                                });
+                        }
+                    }
+                });
+        }
+    }
+
+    removeInvitation(token: Token, invitation: Invitation): Promise<"UsernameIsUnauthorized" | "IncorrectUsername" | "IncorrectOtherUsername"> {
+        const username = this._tokenService.token2Username(token);
+        if (username === undefined) {
+            return Promise.resolve("IncorrectUsername");
+        } else {
+            return Promise.all([this._accountRepository.findAccountByUserName(username), this._accountRepository.findAccountByUserName(invitation.username)])
+                .then(([userAccount, otherAccount]) => {
+                    if (userAccount === undefined) {
+                        return "IncorrectUsername";
+                    } else {
+                        if (otherAccount === undefined) {
+                            return "IncorrectOtherUsername";
+                        } else {
+                            userAccount.removeSentInvitation(invitation);
+                            otherAccount.removeReceivedInvitation(new Invitation(username, invitation.authorization));
+                            return Promise.all([this._accountRepository.updateAccount(userAccount), this._accountRepository.updateAccount(otherAccount)])
+                                .then(() => {
+                                    return "UsernameIsUnauthorized";
+                                });
+                        }
+                    }
+                });
+        }
+    }
+
+
+
     verify(token: Token): boolean {
         return this._tokenService.verify(token);
     }
@@ -123,7 +176,9 @@ export default class AccountService {
                     if (foundAccount === undefined) {
                         return false;
                     } else {
-                        return Promise.resolve(foundAccount.authorizationSet.some((authorization) => authorization.kind === kind && authorization.key === id));
+                        const isAuthorized = foundAccount.authorizationSet.some((authorization) => authorization.kind === kind && authorization.key === id);
+                        const isInvited = foundAccount.receivedInvitationSet.some((invitation) => invitation.authorization.kind === kind && invitation.authorization.key === id);
+                        return Promise.resolve(isAuthorized || isInvited);
                     }
                 })
         }

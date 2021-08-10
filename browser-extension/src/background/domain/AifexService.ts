@@ -6,11 +6,14 @@ import ExplorationEvaluation from "./ExplorationEvaluation";
 import Evaluator from "./Evaluator";
 import Screenshot from "./Screenshot";
 import CommentDistribution from "./CommentDistribution";
+import Token from "./Token";
 
 export default interface AifexService {
 	ping(serverURL: string): Promise<void>;
 
 	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> ;
+
+	signin(serverURL: string, email: string, password: string): Promise<Token | "Unauthorized">;
 
 	getSession(serverURL : string, webSiteId: string): Promise<Session | undefined> ;
 

@@ -8,6 +8,7 @@ import Action from "../domain/Action";
 import Evaluator from "../domain/Evaluator";
 import Screenshot from "../domain/Screenshot";
 import CommentDistribution from "../domain/CommentDistribution";
+import Token from "../domain/Token";
 
 
 
@@ -39,7 +40,7 @@ export default class AifexServiceHTTP implements AifexService {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 		};
-		return fetch(`${this.getDashboardURL(serverURL)}/plugin-info`, option)
+		return fetch(`${serverURL}/api/plugin-info`, option)
 		.then(response => {
 			if (!response.ok) {
 				throw new Error(response.statusText);
@@ -52,6 +53,23 @@ export default class AifexServiceHTTP implements AifexService {
 		})
 	}
 
+	signin(serverURL: string, username: string, password: string): Promise<Token | "Unauthorized"> {
+		const SIGNIN_URL = serverURL + '/api/signin';
+		const option = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ username, password })
+		};
+		return fetch(SIGNIN_URL, option)
+			.then(response => {
+				if (response.ok) {
+					return response.json().then(data => new Token(data.bearerToken));
+				} else {
+					return "Unauthorized"
+				}
+			});
+		
+	}
 
 	getSession(serverURL: string, sessionId : string): Promise<Session | undefined> {
 		return fetch(`${this.getSessionURL(serverURL)}/session/${sessionId}`)

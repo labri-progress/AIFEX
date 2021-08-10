@@ -17,6 +17,7 @@ import Screenshot from "./Screenshot";
 import Comment from "./Comment"
 import CommentDistribution from "./CommentDistribution";
 import { OverlayType } from "./Session";
+import Token from "./Token";
 
 export default class Background {
 
@@ -34,7 +35,7 @@ export default class Background {
     private _sessionBaseURL: string | undefined;
 
     private _testerName: string | "anonymous";
-    private _token: string | undefined;
+    private _token: Token | undefined;
 
     private _exploration: Exploration | undefined;
     private _numberOfExplorationsMadeByTester: number;
@@ -129,6 +130,23 @@ export default class Background {
 
     unlinkServer(): void {
         this.initialize();
+    }
+
+    signin(username: string, password: string): Promise<"SignedIn" | "Unauthorized"> {
+        if (this._serverURL === undefined) {
+            return Promise.reject("Server URL is not defined");
+        } else {
+            return this._aifexService.signin(this._serverURL, username, password)
+                .then((result) => {
+                    if (result === "Unauthorized") {
+                        return "Unauthorized";
+                    } else {
+                        this._token = result;
+                        this._testerName = username;
+                        return "SignedIn";
+                    }
+                })
+        }
     }
 
     connect(serverURL: string, sessionId: string, modelId: string): Promise<void> {
@@ -547,6 +565,7 @@ export default class Background {
     getStateForPopup(): StateForPopup {
         const state = new StateForPopup();
         state.serverURL = this._serverURL;
+        state.token = this._token;
         if (this._serverURL && this._sessionId && this._modelId) {
             state.url = `${this._serverURL}/join?sessionId=${this._sessionId}&modelId=${this._modelId}`;
 

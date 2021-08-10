@@ -1,60 +1,30 @@
-let currentWindow;
+let renderFunctionOfComponents = [];
 
-let serverURL;
-let testerName;
-let isTabScriptDisplayingUserView;
-let shouldCreateNewWindowsOnConnect;
-
-getState();
+function addComponentToPopup(renderFunction) {
+    renderFunctionOfComponents.push(renderFunction);
+}
 
 document.getElementById("detach-button").addEventListener("click", (e) => {
     e.preventDefault();
     toggleDetachPopup()
 });
 
-function getState() {
-    sendMessage({kind: "getStateForPopup"})
-    .then(newState => {
-        if (newState !== undefined) {
-            state = newState
-            render(state);
-        }
-    });
+getStateAndRender();
+
+function getStateAndRender() {
+    sendMessage({ kind: "getStateForPopup" })
+        .then(newState => {
+            if (newState !== undefined) {
+                state = newState
+                renderComponents(state);
+            }
+        });
 }
 
-function render(state) {
-    if (state === undefined) {
-        throw new Error("state is undefined");
-    }
-    shouldCreateNewWindowsOnConnect = state.shouldCreateNewWindowsOnConnect;
-    if (!state.url) {
-        renderNotLinkedToServer(state);
-    } else {
-        serverURL = state.url;
-        testerName = state.testerName;
-        isTabScriptDisplayingUserView = state.isTabScriptDisplayingUserView;
-        if (state.popupIsDetached) {
-            renderConnected(state);
-        } else {
-            getCurrentWindow()
-            .then( window => {
-                if (window.id === state.managedWindowId) {
-                    renderConnected(state);
-                } else {
-                    renderConnectedInOtherWindow(state);
-                }
-            })
-        }
-    }
+function renderComponents(state) {
+    renderFunctionOfComponents.forEach(renderFunction => renderFunction(state));
 }
 
-function renderNotLinkedToServer(state) {
-    document.getElementById("link-to-server-component").style.display = "block";
-    document.getElementById("linkToServerMessage").innerHTML = `You are not connected.`;
-    document.getElementById("serverURLInput").disabled = false;
-    document.getElementById("linkToServerButton").style.display = "table-cell";
-    document.getElementById("unlinkToServerButton").style.display = "none";
-}
 
 function renderNotConnected(state) {
     document.getElementById("connection-component").style.display = "block";
@@ -107,10 +77,10 @@ function renderConnected(state) {
         document.getElementById("testerNameInput").value = null
         document.getElementById("testerNameInfo").innerText = `Please enter your tester name.`
     }
-    
+
     const interactionListGroup = document.getElementById("interactionListDropdownItemGroup")
     const explorationLengthSpan = document.getElementById("explorationLength")
-    while(interactionListGroup.hasChildNodes()) {
+    while (interactionListGroup.hasChildNodes()) {
         interactionListGroup.firstChild.remove()
     }
     explorationLengthSpan.innerText = state.interactionList.length;
@@ -127,7 +97,7 @@ function renderConnected(state) {
     } else {
         document.getElementById("play-restart").style.display = "block";
     }
-    
+
     if (state.isRecording) {
         document.getElementById("recording-status").innerHTML = "recording";
         document.getElementById("play-button").classList.add("btn-success")
@@ -143,13 +113,13 @@ function toggleDetachPopup() {
     sendMessage({
         kind: "toggleDetachPopup",
     })
-    .then(response => {
-        if (response.error) {
-            console.error(error)
-        } else {
-            window.close();
-        }
-    });
+        .then(response => {
+            if (response.error) {
+                console.error(error)
+            } else {
+                window.close();
+            }
+        });
 }
 
 function displayInvalidExploration() {

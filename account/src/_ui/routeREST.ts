@@ -2,8 +2,9 @@ import AccountService from "../application/AccountService";
 import Token from "../domain/Token";
 import Authorization from "../domain/Authorization";
 import { Kind } from "../domain/Kind";
-import e, { Response, Express } from "express";
+import { Response, Express } from "express";
 import { logger } from "../logger";
+import Invitation from "../domain/Invitation";
 
 const UNAUTHORIZED_STATUS = 401;
 const FORBIDDEN_STATUS = 403;
@@ -171,6 +172,53 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         } else {
             const authorization = new Authorization(Kind.Session, sessionId);
             removeAuthorization(accountService, res, new Token(token), authorization)
+                .catch((e) => {
+                    logger.error(`removesession error ${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                })
+        }
+    });
+
+    app.post("/account/invite", (req, res) => {
+        const { token, username, kind, key } = req.body;
+        logger.info(`invite`);
+        if (token === undefined || username === undefined || kind === undefined || key === undefined) {
+            logger.debug(`missing parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token, username, kind or key are missing" });
+        } else {
+            const invitation = new Invitation(username, new Authorization(kind, key));
+            accountService.addInvitation(token, invitation)
+                .then((result) => {
+                    if (result === "UsernameIsAuthorized") {
+                        res.json({message: result});
+                    } else {
+                        res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or otherusername is not valid" });
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`removesession error ${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                })
+        }
+    });
+
+
+    app.post("/account/revoke", (req, res) => {
+        const { token, username, kind, key } = req.body;
+        logger.info(`revoke`);
+        if (token === undefined || username === undefined || kind === undefined || key === undefined) {
+            logger.debug(`missing parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token, username, kind or key are missing" });
+        } else {
+            const invitation = new Invitation(username, new Authorization(kind, key));
+            accountService.removeInvitation(token, invitation)
+                .then((result) => {
+                    if (result === "UsernameIsUnauthorized") {
+                        res.json({message: result});
+                    } else {
+                        res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or otherusername is not valid" });
+                    }
+                })
                 .catch((e) => {
                     logger.error(`removesession error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });

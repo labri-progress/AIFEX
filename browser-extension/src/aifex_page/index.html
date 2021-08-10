@@ -14,9 +14,12 @@
     <script src="./js/jquery.min.js"></script>
     <script src="./js/bootstrap.bundle.min.js"></script>
     <script src="./js/browserAPI.js" defer></script>
-
     <script src="./js/popup.js" defer></script>
-    <script src="./js/connection.js" defer></script>
+
+    <!-- Components Render Function-->
+    <script src="./js/linkToServerComponent.js" defer></script>
+    <script src="./js/signinComponent.js" defer></script>
+    <script src="./js/connectToSessionComponent.js" defer></script>
     <!--<script src="./js/record.js" defer></script>
     <script src="./js/comment.js" defer></script>
     <script src="./js/identity.js" defer></script>
@@ -27,16 +30,16 @@
 
 <body>
     <header class="UserAndlogo">
-        <h2>Arthur</h2>
+        <h2>AIFEX</h2>
         <button id="detach-button" class="logo" type="button"><img src="img/externalWindow.svg"/></button>
     </header>
 
     <div class="trait"></div>
 
-    <p>Link to the server</p>
     <div class="container-fluid">
         <div id="main-content">
-            <div id="link-to-server-component">
+            <div id="linkToServerComponent">
+                <p>Link to the server</p>
                 <form id="linkToServerForm">
                     <div class="form-group ">
                         <label id="linkToServerMessage"> You are not connected.</label>
@@ -45,12 +48,58 @@
                                 placeholder="https://www.aifex.fr" required />
                             <a id="linkToServerButton" class="btn btn-default input-group-addon"><i
                                     class="fa fa-sign-in"></i></a>
-                            <a id="unlinkToServerButton" class="btn btn-default input-group-addon"><i
-                                    class="fa fa-sign-out"></i></a>
                         </div>
                     </div>
                 </form>
             </div>
+
+            <div id="signinComponent">
+                <p>Please Sign In</p>
+                <form id="signinForm">
+                    <div class="form-group ">
+                        <label id="signinMessage"> You are not logged.</label>
+                        <div class="input-group">
+                            <label htmlFor="username">Username</label>
+                            <input id="username" class="form-control" type="text" required />
+                        </div>
+                        <div class="input-group">
+                            <label htmlFor="username">Password</label>
+                            <input id="password" class="form-control" type="password" required />
+                        </div>
+                        <a id="signinButton" class="btn btn-default input-group-addon"><i
+                            class="fa fa-sign-in"></i></a>
+                    </div>
+                </form>
+            </div>
+
+
+            <div id="connectToSessionComponent">
+                <h3>Connection</h3>
+                <form id="connectionForm">
+                    <div class="form-group ">
+                        <label id="connexionMessage" for="connectionURLInput"> You are not connected.</label>
+                        <div class="input-group ">
+                            <input id="connectionURLInput" class="form-control" type="text" placeholder="Connection URL"
+                                required />
+                            <a id="connectionSignIn" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-sign-in"></i></a>
+                            <a id="connectionSignOut" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-sign-out"></i></a>
+                            <a id="connectionSync" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-refresh"></i></a>
+                            <a id="openSessionWindow" class="btn btn-default input-group-addon"><i
+                                    class="fa fa-window-maximize"></i></a>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <div id="toggleShouldTestInNewWindowGroup" class="input-group">
+                            <input id="toggleShouldTestInNewWindow" type="checkbox">
+                            Create a new window for the test session
+                        </div>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
 </body>

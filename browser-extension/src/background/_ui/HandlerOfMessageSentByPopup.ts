@@ -49,8 +49,20 @@ export default class HandlerOfMessageSentByPopup {
                         sendResponse(result);
                     })
                     .catch((error) => {
-                        sendResponse(error);
+                        sendResponse({error});
                     });
+                return true;
+            }
+
+            case "signin": {
+                this._application.signin(msg.username, msg.password)
+                    .then((result) => {
+                        if (result === "SignedIn") {                            
+                            sendResponse({message:result});
+                        } else {
+                            sendResponse({error:result});
+                        }
+                    })
                 return true;
             }
 

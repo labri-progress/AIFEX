@@ -12,6 +12,8 @@ export default interface Interface4Popup {
 
     unlinkServer() : void;
 
+    signin(username: string, password: string): Promise<"SignedIn" | "Unauthorized">;
+
     connect(serverURL: string, sessionId: string, modelId: string): Promise<void>;
 
     disconnect(): Promise<void>;

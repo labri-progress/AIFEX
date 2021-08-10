@@ -4,9 +4,11 @@ import ExplorationEvaluation from "./ExplorationEvaluation";
 import PopupAction from "./PopupAction";
 import WebSite from "./Website";
 import Comment from "./Comment";
+import Token from "./Token";
 export default class StateForPopup {
     public serverURL: string | undefined;
     public url: string | undefined;
+    public token: Token | undefined;
     public followedConnection : string | undefined;
     public numberOfExplorationsMadeByTester : number;
     public isRecording : boolean;

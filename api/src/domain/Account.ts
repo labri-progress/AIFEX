@@ -1,19 +1,17 @@
 import Authorization from "./Authorization";
+import Invitation from "./Invitation";
 
 export default class Account  {
-    private _username : string;//id
-    private _authorizationSet : Authorization[];
+    readonly username : string;//id
+    readonly authorizationSet : Authorization[];
+    readonly receivedInvitationSet: Invitation[];
+    readonly sentInvitationSet: Invitation[];
 
-    constructor(username : string, authorizationSet: Authorization[]) {
-        this._username = username;
-        this._authorizationSet = authorizationSet;
+    constructor(username : string, authorizationSet: Authorization[], receivedInvitationSet: Invitation[], sendInvitationSet: Invitation[]) {
+        this.username = username;
+        this.authorizationSet = authorizationSet;
+        this.receivedInvitationSet = receivedInvitationSet;
+        this.sentInvitationSet = sendInvitationSet;
     }
 
-    get username() : string {
-        return this._username;
-    }
-
-    get authorizationSet() : Authorization[] {
-        return [...this._authorizationSet];
-    }
 }
