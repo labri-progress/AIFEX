@@ -1,4 +1,5 @@
 import Account from "./Account";
+import { Kind } from "./Kind";
 import Token from "./Token";
 
 export default interface AccountService {
@@ -9,17 +10,21 @@ export default interface AccountService {
 
     getAccount(token: Token): Promise<Account | "Unauthorized">;
 
-    addWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteAdded">;
+    addInvitation(fromUsername: string, toUsername: string, key: string, kind: Kind): Promise<"IncorrectUsername" | "InvitationIsAdded">
+
+    removeInvitation(fromUsername: string, toUsername: string, key: string, kind: Kind): Promise<"IncorrectUsername" | "InvitationIsRemoved">;
+
+    addWebSite(username: string, webSiteId: string): Promise<"WebSiteAdded" | "IncorrectUsername">;
     
-    removeWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteRemoved">;
+    removeWebSite(username: string, webSiteId: string): Promise<"WebSiteRemoved" | "IncorrectUsername">;
 
-    addSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionAdded">;
+    addSession(username: string, sessionId: string): Promise<"SessionAdded" | "IncorrectUsername" >;
 
-    removeSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionRemoved">;
+    removeSession(username: string, sessionId: string): Promise<"SessionRemoved" | "IncorrectUsername">;
 
-    addModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelAdded">;
+    addModel(username: string, modelId: string): Promise<"ModelAdded" | "IncorrectUsername">;
 
-    removeModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelRemoved">;
+    removeModel(username: string, modelId: string): Promise<"ModelRemoved" | "IncorrectUsername">;
 
 
 }

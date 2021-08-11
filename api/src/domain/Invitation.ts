@@ -1,11 +1,13 @@
 import Authorization from "./Authorization";
 
 export default class Invitation {
-    readonly username: string;
+    readonly fromUsername: string;
+    readonly toUsername: string;
     readonly authorization: Authorization;
 
-    constructor(username: string, authorization: Authorization) {
-        this.username = username;
+    constructor(fromUsername: string, toUsername: string, authorization: Authorization) {
+        this.fromUsername = fromUsername;
+        this.toUsername = toUsername;
         this.authorization = authorization;
     }
 

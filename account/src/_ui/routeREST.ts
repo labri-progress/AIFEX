@@ -84,14 +84,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/addwebsite", (req, res) => {
-        const { token, webSiteId } = req.body;
+        const { username, webSiteId } = req.body;
         logger.info(`addwebsite, webSiteId : ${webSiteId})`);
-        if (token === undefined || webSiteId === undefined) {
+        if (username === undefined || webSiteId === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token or webSiteIf are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or webSiteIf are missing" });
         } else {
             const authorization = new Authorization(Kind.WebSite, webSiteId);
-            addAuthorization(accountService, res, new Token(token), authorization)
+            addAuthorization(accountService, res, username, authorization)
                 .catch((e) => {
                     logger.error(`addwebsite error ${e}`)
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -100,14 +100,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/removewebsite", (req, res) => {
-        const { token, webSiteId } = req.body;
+        const { username, webSiteId } = req.body;
         logger.info(`removewebsite, webSiteId ${webSiteId}`);
-        if (token === undefined || webSiteId === undefined) {
+        if (username === undefined || webSiteId === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token of webSiteId are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username of webSiteId are missing" });
         } else {
             const authorization = new Authorization(Kind.WebSite, webSiteId);
-            removeAuthorization(accountService, res, new Token(token), authorization)
+            removeAuthorization(accountService, res, username, authorization)
                 .catch((e) => {
                     logger.error(`removewebsite error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -116,14 +116,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/addmodel", (req, res) => {
-        const { token, modelId } = req.body;
+        const { username, modelId } = req.body;
         logger.info(`addModel,  modelId (${modelId}`);
-        if (token === undefined || modelId === undefined) {
+        if (username === undefined || modelId === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token or modelId are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or modelId are missing" });
         } else {
             const authorization = new Authorization(Kind.Model, modelId);
-            addAuthorization(accountService, res, new Token(token), authorization)
+            addAuthorization(accountService, res, username, authorization)
                 .catch((e) => {
                     logger.error(`addModel error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -132,14 +132,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/removemodel", (req, res) => {
-        const { token, modelId } = req.body;
+        const { username, modelId } = req.body;
         logger.info(`removemodel`);
-        if (token === undefined || modelId === undefined) {
+        if (username === undefined || modelId === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token or modelId are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or modelId are missing" });
         } else {
             const authorization = new Authorization(Kind.Model, modelId);
-            removeAuthorization(accountService, res, new Token(token), authorization)
+            removeAuthorization(accountService, res, username, authorization)
                 .catch((e) => {
                     logger.error(`removemodel error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -148,14 +148,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/addsession", (req, res) => {
-        const { token, sessionId } = req.body;
+        const { username, sessionId } = req.body;
         logger.info(`addsession`);
-        if (token === undefined || sessionId === undefined) {
+        if (username === undefined || sessionId === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token or sessionId are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or sessionId are missing" });
         } else {
             const authorization = new Authorization(Kind.Session, sessionId);
-            addAuthorization(accountService, res, new Token(token), authorization)
+            addAuthorization(accountService, res, username, authorization)
                 .catch((e) => {
                     logger.error(`addsession error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -164,14 +164,14 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
     app.post("/account/removesession", (req, res) => {
-        const { token, sessionId } = req.body;
+        const { username, sessionId } = req.body;
         logger.info(`removesession`);
-        if (token === undefined || sessionId === undefined) {
+        if (username === undefined || sessionId === undefined) {
             logger.debug(`missing parameters`);
             res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or sessionId are missing" });
         } else {
             const authorization = new Authorization(Kind.Session, sessionId);
-            removeAuthorization(accountService, res, new Token(token), authorization)
+            removeAuthorization(accountService, res, username, authorization)
                 .catch((e) => {
                     logger.error(`removesession error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
@@ -179,20 +179,19 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         }
     });
 
-    app.post("/account/invite", (req, res) => {
-        const { token, username, kind, key } = req.body;
-        logger.info(`invite`);
-        if (token === undefined || username === undefined || kind === undefined || key === undefined) {
+    app.post("/account/addinvitation", (req, res) => {
+        const { fromUsername, toUsername, kind, key } = req.body;
+        logger.info(`add invitation`);
+        if (fromUsername === undefined || toUsername === undefined || kind === undefined || key === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token, username, kind or key are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "fromUsername, toUsername, kind or key are missing" });
         } else {
-            const invitation = new Invitation(username, new Authorization(kind, key));
-            accountService.addInvitation(token, invitation)
+            accountService.addInvitation(fromUsername, toUsername, key, kind)
                 .then((result) => {
-                    if (result === "UsernameIsAuthorized") {
+                    if (result === "InvitationIsAdded") {
                         res.json({message: result});
                     } else {
-                        res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or otherusername is not valid" });
+                        res.status(INVALID_PARAMETERS_STATUS).send({ error: "fromUsername or toUsername is not valid" });
                     }
                 })
                 .catch((e) => {
@@ -203,20 +202,19 @@ export default function attachRoutes(app: Express, accountService: AccountServic
     });
 
 
-    app.post("/account/revoke", (req, res) => {
-        const { token, username, kind, key } = req.body;
-        logger.info(`revoke`);
-        if (token === undefined || username === undefined || kind === undefined || key === undefined) {
+    app.post("/account/removeinvitation", (req, res) => {
+        const { fromUsername, toUsername, kind, key } = req.body;
+        logger.info(`remove invitation`);
+        if (fromUsername === undefined || toUsername === undefined || kind === undefined || key === undefined) {
             logger.debug(`missing parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).send({ error: "token, username, kind or key are missing" });
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "fromUsername, toUsername, kind or key are missing" });
         } else {
-            const invitation = new Invitation(username, new Authorization(kind, key));
-            accountService.removeInvitation(token, invitation)
+            accountService.removeInvitation(fromUsername, toUsername, key, kind)
                 .then((result) => {
-                    if (result === "UsernameIsUnauthorized") {
+                    if (result === "InvitationIsRemoved") {
                         res.json({message: result});
                     } else {
-                        res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or otherusername is not valid" });
+                        res.status(INVALID_PARAMETERS_STATUS).send({ error: "fromUsername or toUsername is not valid" });
                     }
                 })
                 .catch((e) => {
@@ -261,10 +259,69 @@ export default function attachRoutes(app: Express, accountService: AccountServic
                 })
         }
     });
-}
 
-function addAuthorization(accountService: AccountService, res: Response, token: Token, authorization: Authorization): Promise<void> {
-    return accountService.addAuthorization(token, authorization)
+    app.post("/account/makeauthorizationpublic", (req, res) => {
+        const { kind, key} = req.body;
+        logger.info(`make authorization public`);
+        if (kind === undefined || key === undefined) {
+            logger.debug(`missing parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "kind or key are missing" });
+        } else {
+            accountService.makeAuthorizationPublic(kind, key)
+                .then((result) => {
+                    logger.info("authorization is now public");
+                    res.json({message:result});
+                })
+                .catch((e) => {
+                    logger.error(`make authorization public error ${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                }
+            )
+        }
+    });
+
+    app.post("/account/revokepublicauthorization", (req, res) => {
+        const { kind, key} = req.body;
+        logger.info(`revoke public authorization`);
+        if (kind === undefined || key === undefined) {
+            logger.debug(`missing parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "kind or key are missing" });
+        } else {
+            accountService.revokePublicAuthorization(kind, key)
+                .then((result) => {
+                    logger.info("authorization is now private");
+                    res.json({message:result});
+                })
+                .catch((e) => {
+                    logger.error(`revoke public authorization error ${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                })
+        }
+    });
+
+    app.post("/account/isauthorizationpublic", (req, res) => {
+        const { kind, key} = req.body;
+        logger.info(`is authorization public`);
+        if (kind === undefined || key === undefined) {
+            logger.debug(`missing parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).send({ error: "kind or key are missing" });
+        } else {
+            accountService.isAuthorizationPublic(kind, key)
+                .then((result) => {
+                    logger.info("authorization is public");
+                    res.json({authorized:result});
+                })
+                .catch((e) => {
+                    logger.error(`is authorization public error ${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
+                })
+        }
+    });
+
+}   
+
+function addAuthorization(accountService: AccountService, res: Response, username: string, authorization: Authorization): Promise<void> {
+    return accountService.addAuthorization(username, authorization)
         .then((result) => {
             if (result === "IncorrectUsername") {
                 logger.debug('addAuthorization incorrect username');
@@ -278,8 +335,8 @@ function addAuthorization(accountService: AccountService, res: Response, token: 
         })
 }
 
-function removeAuthorization(accountService: AccountService, res: Response, token: Token, authorization: Authorization): Promise<void> {
-    return accountService.removeAuthorization(token, authorization)
+function removeAuthorization(accountService: AccountService, res: Response, username: string, authorization: Authorization): Promise<void> {
+    return accountService.removeAuthorization(username, authorization)
         .then((result) => {
             if (result === "IncorrectUsername") {
                 logger.debug('remove authorization incorrect username');

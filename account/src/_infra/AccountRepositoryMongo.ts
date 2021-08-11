@@ -17,10 +17,10 @@ export default class AccountRepositoryMongo implements AccountRepository {
             receivedInvitationSet: [],
 
         })
-        .then(() => {
-            return "AccountCreated";
-        });
-             
+            .then(() => {
+                return "AccountCreated";
+            });
+
     }
 
     public updateAccount(account: Account): Promise<"AccountUpdated"> {
@@ -33,7 +33,8 @@ export default class AccountRepositoryMongo implements AccountRepository {
         });
         const receivedInvitationSet = account.receivedInvitationSet.map((invitation) => {
             return {
-                username: invitation.username, 
+                fromUsername: invitation.fromUsername,
+                toUsername: invitation.toUsername,
                 authorization: {
                     kind: invitation.authorization.kind,
                     key: invitation.authorization.key
@@ -42,7 +43,8 @@ export default class AccountRepositoryMongo implements AccountRepository {
         });
         const sendInvitationSet = account.sentInvitationSet.map((invitation) => {
             return {
-                username: invitation.username, 
+                fromUsername: invitation.fromUsername,
+                toUsername: invitation.toUsername,
                 authorization: {
                     kind: invitation.authorization.kind,
                     key: invitation.authorization.key
@@ -70,12 +72,12 @@ export default class AccountRepositoryMongo implements AccountRepository {
                 });
 
                 accountDocument.receivedInvitationSet.forEach((invitationDoc) => {
-                    const invitation = new Invitation(invitationDoc.username, new Authorization(invitationDoc.authorization.kind, invitationDoc.authorization.key));
+                    const invitation = new Invitation(invitationDoc.fromUsername, invitationDoc.toUsername, new Authorization(invitationDoc.authorization.kind, invitationDoc.authorization.key));
                     account.addReceivedInvitation(invitation);
                 });
 
                 accountDocument.sentInvitationSet.forEach((invitationDoc) => {
-                    const invitation = new Invitation(invitationDoc.username, new Authorization(invitationDoc.authorization.kind, invitationDoc.authorization.key));
+                    const invitation = new Invitation(invitationDoc.fromUsername, invitationDoc.toUsername, new Authorization(invitationDoc.authorization.kind, invitationDoc.authorization.key));
                     account.addSentInvitation(invitation);
                 });
                 return account;

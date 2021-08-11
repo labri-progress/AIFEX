@@ -21,8 +21,8 @@ export interface AccountDocument extends Document {
     salt : number[],
     hash : number[],
     authorizationSet: {kind:Kind, key: string}[],
-    receivedInvitationSet: {username:string, authorization:{kind:Kind, key: string}}[],
-    sentInvitationSet: {username:string, authorization:{kind:Kind, key: string}}[],
+    receivedInvitationSet: {fromUsername:string, toUsername:string, authorization:{kind:Kind, key: string}}[],
+    sentInvitationSet: {fromUsername:string, toUsername:string, authorization:{kind:Kind, key: string}}[],
 }
 
 export default model<AccountDocument>("Account", ACCOUNT_SCHEMA);

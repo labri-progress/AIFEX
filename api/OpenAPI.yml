@@ -708,6 +708,23 @@ components:
               kind:
                 type: string
                 enum: [WebSite, Model, Session]
+        receivedInvitationSet:
+          type: array
+          items:
+            type: object
+            properties:
+              fromUsername:
+                type: string
+              toUsername:
+                type: string
+              authorization:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  kind:
+                    type: string
+                    enum: [WebSite, Model, Session]
     WebSite:
       type: object
       properties:

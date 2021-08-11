@@ -99,15 +99,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     } else {
                         logger.info("return account");
                         logger.debug(`account: ${JSON.stringify(accountResult)}`);
-                        res.json({
-                            username: accountResult.username,
-                            authorizationSet: accountResult.authorizationSet.map(auth => {
-                                return {
-                                    kind: auth.kind,
-                                    key: auth.key
-                                }
-                            })
-                        });
+                        res.json(accountResult);
                     }
                 })
                 .catch((e) => {
@@ -115,6 +107,56 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                 });
 
+        }
+    });
+
+    app.post("/invitations", (req, res) => {
+        logger.input(`POST invitations`);
+        const { toUsername, kind, key } = req.body;
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            api.addInvitation(req.token, toUsername, kind, key)
+                .then(result => {
+                    if (result === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else if (result === "IncorrectUsername") {
+                        res.status(INVALID_PARAMETERS_STATUS).json({message:"Incorrect username"});
+                    } else {
+                        logger.info("invitation created");
+                        res.json({message:result});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
+        }
+    });
+
+    app.delete("/invitations", (req, res) => {
+        logger.info(`DELETE invitations`);
+        const { toUsername, kind, key } = req.body;
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            api.removeInvitation(req.token, toUsername, kind, key)
+                .then(result => {
+                    if (result === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else if (result === "IncorrectUsername") {
+                        res.status(INVALID_PARAMETERS_STATUS).json({message:"Incorrect username"});
+                    } else {
+                        logger.info("invitation removed");
+                        res.json({message:result});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
         }
     });
 

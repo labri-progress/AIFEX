@@ -57,8 +57,8 @@ export default class AccountServiceHTTP implements AccountService {
                     return response.json().then( (result) => {
                         logger.debug(JSON.stringify(result));
                         const authSet = result.authorizationSet.map((authInJson: { kind: Kind; key: string; }) => new Authorization(authInJson.kind, authInJson.key));
-                        const receivInv = result.receivedInvitationSet.map((invInJson: {username: string, authorization: { kind: Kind; key: string; }}) => new Invitation(invInJson.username, new Authorization(invInJson.authorization.kind, invInJson.authorization.key)));
-                        const sendInv = result.sentInvitationSet.map((invInJson: {username: string, authorization: { kind: Kind; key: string; }}) => new Invitation(invInJson.username, new Authorization(invInJson.authorization.kind, invInJson.authorization.key)));
+                        const receivInv = result.receivedInvitationSet.map((invInJson: {fromUsername: string, toUsername: string, authorization: { kind: Kind; key: string; }}) => new Invitation(invInJson.fromUsername, invInJson.toUsername, new Authorization(invInJson.authorization.kind, invInJson.authorization.key)));
+                        const sendInv = result.sentInvitationSet.map((invInJson: {fromUsername: string, toUsername: string, authorization: { kind: Kind; key: string; }}) => new Invitation(invInJson.fromUsername, invInJson.toUsername, new Authorization(invInJson.authorization.kind, invInJson.authorization.key)));
                         return new Account(result.username, authSet, receivInv, sendInv);
                     });
                 } else {
@@ -67,11 +67,56 @@ export default class AccountServiceHTTP implements AccountService {
             })
     }
 
+    addInvitation(fromUsername: string, toUsername: string, key: string, kind: Kind): Promise<"IncorrectUsername" | "InvitationIsAdded"> {
+        const accountAddInvitationURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addinvitation';
+        let bodyAddInvitation = {
+            fromUsername,
+            toUsername,
+            key,
+            kind
+        }
+        let optionAddInvitation = {
+            method: 'POST',
+            body:    JSON.stringify(bodyAddInvitation),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountAddInvitationURL, optionAddInvitation)
+            .then(response => {
+                if (response.ok) {
+                    return "InvitationIsAdded";
+                } else {
+                    return "IncorrectUsername";
+                }
+            })
+    }
+    removeInvitation(fromUsername: string, toUsername: string, key: string, kind: Kind): Promise<"IncorrectUsername" | "InvitationIsRemoved"> {
+        const accountRemoveInvitationURL = 'http://' + config.account.host + ':' + config.account.port + '/account/removeinvitation';
+        let bodyRemoveInvitation = {
+            fromUsername,
+            toUsername,
+            key,
+            kind
+        }
+        let optionRemoveInvitation = {
+            method: 'POST',
+            body:    JSON.stringify(bodyRemoveInvitation),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountRemoveInvitationURL, optionRemoveInvitation)
+            .then(response => {
+                if (response.ok) {
+                    return "InvitationIsRemoved";
+                } else {
+                    return "IncorrectUsername";
+                }
+            })
+    }
 
-    addWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteAdded" > {
+
+    addWebSite(username: string, webSiteId: string): Promise<"WebSiteAdded" | "IncorrectUsername" > {
         const accountAddWebSiteURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addwebsite';
         let bodyAddWebSite = {
-            token:token.token,
+            username,
             webSiteId,
         }
         let optionAddWebSite = {
@@ -84,15 +129,15 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return "WebSiteAdded";
                 } else {
-                    return "Unauthorized";
+                    return "IncorrectUsername";
                 }
             })
     }
 
-    removeWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteRemoved"> {
+    removeWebSite(username: string, webSiteId: string): Promise<"WebSiteRemoved" | "IncorrectUsername"> {
         const accountRemoveWebSiteURL = 'http://' + config.account.host + ':' + config.account.port + '/account/removewebsite';
         let bodyRemoveWebSite = {
-            token:token.token,
+            username,
             webSiteId,
         }
         let optionRemoveWebSite = {
@@ -105,16 +150,16 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return "WebSiteRemoved";
                 } else {
-                    return "Unauthorized";
+                    return "IncorrectUsername";
                 }
             })
     }
 
 
-    addSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionAdded"> {
+    addSession(username: string, sessionId: string): Promise<"SessionAdded" | "IncorrectUsername"> {
         const accountAddSessionURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addsession';
         let bodyAddSession = {
-            token:token.token,
+            username,
             sessionId,
         }
         let optionAddsession = {
@@ -127,15 +172,15 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return "SessionAdded";
                 } else {
-                    return "Unauthorized";
+                    return "IncorrectUsername";
                 }
             })
     }
 
-    removeSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionRemoved"> {
+    removeSession(username: string, sessionId: string): Promise<"SessionRemoved" | "IncorrectUsername"> {
         const accountRemoveSessionURL = 'http://' + config.account.host + ':' + config.account.port + '/account/removesession';
         let bodyRemoveSession = {
-            token:token.token,
+            username,
             sessionId,
         }
         let optionRemoveSession = {
@@ -148,16 +193,16 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return "SessionRemoved";
                 } else {
-                    return "Unauthorized";
+                    return "IncorrectUsername";
                 }
             })
         
     }
 
-    addModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelAdded"> {
+    addModel(username: string, modelId: string): Promise<"ModelAdded" | "IncorrectUsername"> {
         const accountAddModelURL = 'http://' + config.account.host + ':' + config.account.port + '/account/addmodel';
         let bodyAddSession = {
-            token:token.token,
+            username,
             modelId,
         }
         let optionAddModel = {
@@ -170,15 +215,15 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return "ModelAdded";
                 } else {
-                    return "Unauthorized";
+                    return "IncorrectUsername";
                 }
             })
     }
 
-    removeModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelRemoved"> {
+    removeModel(username: string, modelId: string): Promise<"ModelRemoved" | "IncorrectUsername"> {
         const accountRemoveModelURL = 'http://' + config.account.host + ':' + config.account.port + '/account/removemodel';
         let bodyRemoveModel = {
-            token:token.token,
+            username,
             modelId,
         }
         let optionRemoveModel = {
@@ -191,7 +236,7 @@ export default class AccountServiceHTTP implements AccountService {
                 if (response.ok) {
                     return "ModelRemoved";
                 } else {
-                    return "Unauthorized";
+                    return "IncorrectUsername";
                 }
             })
     }

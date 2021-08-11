@@ -56,17 +56,59 @@ export default class APIApplication {
         return this._accountService.getAccount(token);
     }
 
+    addInvitation(token: Token, toUsername: string, kind: Kind, key: string ) : Promise<"Unauthorized" | "InvitationIsAdded" | "IncorrectUsername" > {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === key && authorization.kind === kind);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._accountService.addInvitation(account.username, toUsername, key, kind);
+                    }
+                }
+            });
+    }
+
+    removeInvitation(token: Token, toUsername: string, kind: Kind, key: string): Promise<"Unauthorized" | "InvitationIsRemoved" |"IncorrectUsername"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === key && authorization.kind === kind);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._accountService.removeInvitation(account.username, toUsername, key, kind);
+                    }
+                }
+            });
+    }    
+
     createWebSite(token: Token, name: string, url: string, mappingList: Mapping[]): Promise<WebSite | "Unauthorized"> {
-        return this._webSiteService.createWebSite(name, url, mappingList)
-            .then((webSiteId) => {
-                return this._accountService.addWebSite(token, webSiteId)
-                    .then((addResult) => {
-                        if (addResult === "Unauthorized") {
-                            return "Unauthorized";
-                        } else {
-                            return new WebSite(webSiteId, name, url, mappingList);
-                        }
-                    });
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    return this._webSiteService.createWebSite(name, url, mappingList)
+                        .then((webSiteId) => {
+                            return this._accountService.addWebSite(result.username, webSiteId)
+                                .then((addResult) => {
+                                    if (addResult === "IncorrectUsername") {
+                                        return "Unauthorized";
+                                    } else {
+                                        return new WebSite(webSiteId, name, url, mappingList);
+                                    }
+                                });
+                        });
+                }
             });
     }
 
@@ -88,7 +130,6 @@ export default class APIApplication {
             });
     }
 
-
     removeWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteRemoved"> {
         return this.getAccount(token)
             .then((result) => {
@@ -100,8 +141,14 @@ export default class APIApplication {
                     if (!authorized) {
                         return "Unauthorized";
                     } else {
-                        return this._accountService.removeWebSite(token, webSiteId)
-                            .then((result) => result);
+                        return this._accountService.removeWebSite(account.username, webSiteId)
+                            .then((result) => {
+                                if (result === "IncorrectUsername") {
+                                    return "Unauthorized";
+                                } else {
+                                    return "WebSiteRemoved";
+                                }
+                            });
                     }
                 }
             });
@@ -125,25 +172,33 @@ export default class APIApplication {
     }
 
     createSession(token: Token, webSiteId: string, baseURL: string, name: string, overlayType: SessionOverlayType): Promise<Session | "Unauthorized"> {
-        return this.findWebSiteById(token, webSiteId)
-            .then((findResult) => {
-                if (findResult === undefined || findResult === "Unauthorized") {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
                     return "Unauthorized";
                 } else {
-                    const webSite: WebSite = findResult;
-                    return this._sessionService.createSession(webSiteId, baseURL, name, overlayType)
-                        .then((sessionId) => {
-                            return this._accountService.addSession(token, sessionId)
-                                .then((addSessionResult) => {
-                                    if (addSessionResult === "Unauthorized") {
-                                        return "Unauthorized";
-                                    } else {
-                                        return new Session(sessionId, name, baseURL, webSite, new Date(), new Date(), false, overlayType, []);
-                                    }
-                                })
+                    const account: Account = result;
+                    return this.findWebSiteById(token, webSiteId)
+                        .then((findResult) => {
+                            if (findResult === undefined || findResult === "Unauthorized") {
+                                return "Unauthorized";
+                            } else {
+                                const webSite: WebSite = findResult;
+                                return this._sessionService.createSession(webSiteId, baseURL, name, overlayType)
+                                    .then((sessionId) => {
+                                        return this._accountService.addSession(account.username, sessionId)
+                                            .then((addSessionResult) => {
+                                                if (addSessionResult === "IncorrectUsername") {
+                                                    return "Unauthorized";
+                                                } else {
+                                                    return new Session(sessionId, name, baseURL, webSite, new Date(), new Date(), false, overlayType, []);
+                                                }
+                                            })
+                                    });
+                            }
                         });
                 }
-            })
+            });
     }
 
     removeSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionRemoved"> {
@@ -157,8 +212,14 @@ export default class APIApplication {
                     if (!authorized) {
                         return "Unauthorized";
                     } else {
-                        return this._accountService.removeSession(token, sessionId)
-                            .then((result) => result);
+                        return this._accountService.removeSession(account.username, sessionId)
+                            .then((result) => {
+                                if (result === "IncorrectUsername") {
+                                    return "Unauthorized";
+                                } else {
+                                    return "SessionRemoved";
+                                }
+                            });
                     }
                 }
             });
@@ -189,7 +250,9 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    if (!authorized) {
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                    //TODO: const isPublic
+                    if (!authorized && !invited) {
                         return "Unauthorized";
                     } else {
                         return this._sessionService.addExploration(sessionId, testerName, interactionList, startDate, stopDate)
@@ -197,7 +260,6 @@ export default class APIApplication {
                     }
                 }
             });
-
     }
 
     addScreenshots(token: Token, sessionId: string, screenshots: Screenshot[]): Promise<"Unauthorized" | "InvalidScreenshots" | "ScreenshotsAdded"> {
@@ -211,7 +273,8 @@ export default class APIApplication {
                     } else {
                         const account: Account = result;
                         const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                        if (!authorized) {
+                        const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                        if (!authorized && !invited) {
                             return "Unauthorized";
                         } else {
                             return this._sessionService.addScreenshots(screenshots);
@@ -255,18 +318,25 @@ export default class APIApplication {
             });
     }
 
-
     createModel(token: Token, depth: number, interpolationfactor: number, predictionType : ModelPredictionType) : Promise<Model | "Unauthorized"> {
-        return this._modelService.createModel(depth, interpolationfactor, predictionType)
-            .then((modelId) => {
-                return this._accountService.addModel(token, modelId)
-                    .then((addResult) => {
-                        if (addResult === "Unauthorized") {
-                            return "Unauthorized";
-                        } else {
-                            return new Model(modelId, depth, interpolationfactor, predictionType, []);
-                        }
-                    });
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    return this._modelService.createModel(depth, interpolationfactor, predictionType)
+                        .then((modelId) => {
+                            return this._accountService.addModel(account.username, modelId)
+                                .then((addResult) => {
+                                    if (addResult === "IncorrectUsername") {
+                                        return "Unauthorized";
+                                    } else {
+                                        return new Model(modelId, depth, interpolationfactor, predictionType, []);
+                                    }
+                                });
+                        });
+                }
             });
     }
 
@@ -281,8 +351,14 @@ export default class APIApplication {
                     if (!authorized) {
                         return "Unauthorized";
                     } else {
-                        return this._accountService.removeModel(token, modelId)
-                            .then((result) => result);
+                        return this._accountService.removeModel(account.username, modelId)
+                            .then((result) => {
+                                if (result === "IncorrectUsername") {
+                                    return "Unauthorized";
+                                } else {
+                                    return "ModelRemoved";
+                                }
+                            });
                     }
                 }
             });

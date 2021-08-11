@@ -68,11 +68,15 @@ export default class Account {
     }
 
     addReceivedInvitation(newInvitation: Invitation): void {
+        if (newInvitation.toUsername !== this._username) {
+            throw new Error("cannot add invitation with a different username");
+        }
         const invitation = this._receivedInvitations.find(invitation => {
-            const sameUsername = invitation.username === newInvitation.username;
+            const sameFromUsername = invitation.fromUsername === newInvitation.fromUsername;
+            const sameToUsername = invitation.toUsername === newInvitation.toUsername;
             const sameKey = invitation.authorization.key === newInvitation.authorization.key;
             const sameKind = invitation.authorization.kind === newInvitation.authorization.kind;
-            return sameUsername && sameKey && sameKind;
+            return sameFromUsername && sameToUsername && sameKey && sameKind;
         });
         
         if (invitation) {
@@ -82,10 +86,11 @@ export default class Account {
 
     removeReceivedInvitation(existingInvitation: Invitation): void {
         const index = this._receivedInvitations.findIndex(invitation => {
-            const sameUsername = (invitation.username === existingInvitation.username);
-            const sameKey = (invitation.authorization.key === existingInvitation.authorization.key);
-            const sameKind = (invitation.authorization.kind === existingInvitation.authorization.kind);
-            return sameUsername && sameKey && sameKind;
+            const sameFromUsername = invitation.fromUsername === existingInvitation.fromUsername;
+            const sameToUsername = invitation.toUsername === existingInvitation.toUsername;
+            const sameKey = invitation.authorization.key === existingInvitation.authorization.key;
+            const sameKind = invitation.authorization.kind === existingInvitation.authorization.kind;
+            return sameFromUsername && sameToUsername && sameKey && sameKind;
         });
 
         if (index !== -1) {
@@ -94,11 +99,15 @@ export default class Account {
     }
 
     addSentInvitation(newInvitation: Invitation): void {
+        if (newInvitation.fromUsername !== this._username) {
+            throw new Error("cannot add invitation with a different username");
+        }
         const invitation = this._sentInvitationSet.find(invitation => {
-            const sameUsername = invitation.username === newInvitation.username;
+            const sameFromUsername = invitation.fromUsername === newInvitation.fromUsername;
+            const sameToUsername = invitation.toUsername === newInvitation.toUsername;
             const sameKey = invitation.authorization.key === newInvitation.authorization.key;
             const sameKind = invitation.authorization.kind === newInvitation.authorization.kind;
-            return sameUsername && sameKey && sameKind;
+            return sameFromUsername && sameToUsername && sameKey && sameKind;
         });
         
         if (invitation) {
@@ -108,10 +117,11 @@ export default class Account {
 
     removeSentInvitation(existingInvitation: Invitation): void {
         const index = this._sentInvitationSet.findIndex(invitation => {
-            const sameUsername = (invitation.username === existingInvitation.username);
-            const sameKey = (invitation.authorization.key === existingInvitation.authorization.key);
-            const sameKind = (invitation.authorization.kind === existingInvitation.authorization.kind);
-            return sameUsername && sameKey && sameKind;
+            const sameFromUsername = invitation.fromUsername === existingInvitation.fromUsername;
+            const sameToUsername = invitation.toUsername === existingInvitation.toUsername;
+            const sameKey = invitation.authorization.key === existingInvitation.authorization.key;
+            const sameKind = invitation.authorization.kind === existingInvitation.authorization.kind;
+            return sameFromUsername && sameToUsername && sameKey && sameKind;
         });
 
         if (index !== -1) {

@@ -7,15 +7,18 @@ import TokenService from "../domain/TokenService";
 import CryptoService from "../domain/CryptoService";
 import Account from "../domain/Account";
 import Invitation from "../domain/Invitation";
+import PublicAuthorizationRepository from "../domain/PublicAuthorizationRepository";
 
 export default class AccountService {
 
     private _accountRepository: AccountRepository;
+    private _publicAuthorizationRepository: PublicAuthorizationRepository;
     private _tokenService: TokenService;
     private _cryptoService: CryptoService;
 
-    constructor(accountRepository: AccountRepository, tokenService: TokenService, cryptoService: CryptoService) {
+    constructor(accountRepository: AccountRepository, publicAuthorizationRepository: PublicAuthorizationRepository, tokenService: TokenService, cryptoService: CryptoService) {
         this._accountRepository = accountRepository;
+        this._publicAuthorizationRepository = publicAuthorizationRepository;
         this._tokenService = tokenService;
         this._cryptoService = cryptoService;
     }
@@ -51,8 +54,8 @@ export default class AccountService {
         {
             username:string, 
             authorizationSet:{key:string, kind:Kind}[], 
-            receivedInvitationSet:{username:string, authorization:{kind:Kind,key:string}}[],
-            sentInvitationSet:{username:string, authorization:{kind:Kind,key:string}}[]
+            receivedInvitationSet:{fromUsername:string, toUsername: string, authorization:{kind:Kind,key:string}}[],
+            sentInvitationSet:{fromUsername:string, toUsername: string, authorization:{kind:Kind,key:string}}[]
         } 
         | "InvalidToken"> {
         const username = this._tokenService.token2Username(token);
@@ -66,10 +69,10 @@ export default class AccountService {
                                 return {key:authorization.key, kind: authorization.kind};
                             }),
                             receivedInvitationSet: result.receivedInvitationSet.map(invitation=> {
-                                return {username:invitation.username, authorization:{kind:invitation.authorization.kind,key:invitation.authorization.key}};
+                                return {fromUsername:invitation.fromUsername, toUsername: invitation.toUsername, authorization:{kind:invitation.authorization.kind,key:invitation.authorization.key}};
                             }),
                             sentInvitationSet: result.sentInvitationSet.map(invitation=> {
-                                return {username:invitation.username, authorization:{kind:invitation.authorization.kind,key:invitation.authorization.key}};
+                                return {fromUsername:invitation.fromUsername, toUsername: invitation.toUsername, authorization:{kind:invitation.authorization.kind,key:invitation.authorization.key}};
                             })
                         }
                     } else {
@@ -81,96 +84,78 @@ export default class AccountService {
         }
     }
 
-    addAuthorization(token: Token, authorization: Authorization): Promise<"AuthorizationAdded" | "IncorrectUsername"> {
-        const username = this._tokenService.token2Username(token);
-        if (username === undefined) {
-            return Promise.resolve("IncorrectUsername");
-        } else {
-            return this._accountRepository.findAccountByUserName(username)
-                .then((foundAccount) => {
-                    if (foundAccount === undefined) {
-                        return "IncorrectUsername";
+    addAuthorization(username: string, authorization: Authorization): Promise<"AuthorizationAdded" | "IncorrectUsername"> {
+        return this._accountRepository.findAccountByUserName(username)
+            .then((foundAccount) => {
+                if (foundAccount === undefined) {
+                    return "IncorrectUsername";
+                } else {
+                    foundAccount.addAuthorization(authorization);
+                    logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
+                    return this._accountRepository.updateAccount(foundAccount)
+                        .then(() => {
+                            logger.debug(`account repository updated`);
+                            return "AuthorizationAdded";
+                        })
+                }
+            })
+    }
+
+    removeAuthorization(username: string, authorization: Authorization): Promise<"AuthorizationRemoved" | "IncorrectUsername"> {
+        return this._accountRepository.findAccountByUserName(username)
+            .then(foundAccount => {
+                if (foundAccount === undefined) {
+                    return "IncorrectUsername";
+                } else {
+                    foundAccount.removeAuthorization(authorization);
+                    return this._accountRepository.updateAccount(foundAccount)
+                        .then(() => {
+                            return "AuthorizationRemoved";
+                        })
+                }
+            })
+    }
+
+    addInvitation(fromUsername: string, toUsername: string, key: string, kind: Kind): Promise<"IncorrectFromUsername" | "IncorrectToUsername" | "InvitationIsAdded"> {
+        return Promise.all([this._accountRepository.findAccountByUserName(fromUsername), this._accountRepository.findAccountByUserName(toUsername)])
+            .then(([fromAccount, toAccount]) => {
+                if (fromAccount === undefined) {
+                    return "IncorrectFromUsername";
+                } else {
+                    if (toAccount === undefined) {
+                        return "IncorrectToUsername";
                     } else {
-                        foundAccount.addAuthorization(authorization);
-                        logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
-                        return this._accountRepository.updateAccount(foundAccount)
+                        const invitation = new Invitation(fromUsername, toUsername, new Authorization(kind, key));
+                        fromAccount.addSentInvitation(invitation);
+                        toAccount.addReceivedInvitation(invitation);
+                        return Promise.all([this._accountRepository.updateAccount(fromAccount), this._accountRepository.updateAccount(toAccount)])
                             .then(() => {
-                                logger.debug(`account repository updated`);
-                                return "AuthorizationAdded";
-                            })
+                                return "InvitationIsAdded";
+                            });
                     }
-                })
-        }
+                }
+            });
     }
 
-    removeAuthorization(token: Token, authorization: Authorization): Promise<"AuthorizationRemoved" | "IncorrectUsername"> {
-        const username = this._tokenService.token2Username(token);
-        if (username === undefined) {
-            return Promise.resolve("IncorrectUsername");
-        } else {
-            return this._accountRepository.findAccountByUserName(username)
-                .then(foundAccount => {
-                    if (foundAccount === undefined) {
-                        return "IncorrectUsername";
+    removeInvitation(fromUsername: string, toUsername: string, key: string, kind: Kind): Promise<"IncorrectFromUsername" | "IncorrectToUsername" | "InvitationIsRemoved"> {
+        return Promise.all([this._accountRepository.findAccountByUserName(fromUsername), this._accountRepository.findAccountByUserName(toUsername)])
+            .then(([fromAccount, toAccount]) => {
+                if (fromAccount === undefined) {
+                    return "IncorrectFromUsername";
+                } else {
+                    if (toAccount === undefined) {
+                        return "IncorrectToUsername";
                     } else {
-                        foundAccount.removeAuthorization(authorization);
-                        return this._accountRepository.updateAccount(foundAccount)
+                        const invitation = new Invitation(fromUsername, toUsername, new Authorization(kind, key));
+                        fromAccount.removeSentInvitation(invitation);
+                        toAccount.removeReceivedInvitation(invitation);
+                        return Promise.all([this._accountRepository.updateAccount(fromAccount), this._accountRepository.updateAccount(toAccount)])
                             .then(() => {
-                                return "AuthorizationRemoved";
-                            })
+                                return "InvitationIsRemoved";
+                            });
                     }
-                })
-        }
-    }
-
-    addInvitation(token: Token, invitation: Invitation): Promise<"UsernameIsAuthorized" | "IncorrectUsername" | "IncorrectOtherUsername"> {
-        const username = this._tokenService.token2Username(token);
-        if (username === undefined) {
-            return Promise.resolve("IncorrectUsername");
-        } else {
-            return Promise.all([this._accountRepository.findAccountByUserName(username), this._accountRepository.findAccountByUserName(invitation.username)])
-                .then(([userAccount, otherAccount]) => {
-                    if (userAccount === undefined) {
-                        return "IncorrectUsername";
-                    } else {
-                        if (otherAccount === undefined) {
-                            return "IncorrectOtherUsername";
-                        } else {
-                            userAccount.addSentInvitation(invitation);
-                            otherAccount.addReceivedInvitation(new Invitation(username, invitation.authorization));
-                            return Promise.all([this._accountRepository.updateAccount(userAccount), this._accountRepository.updateAccount(otherAccount)])
-                                .then(() => {
-                                    return "UsernameIsAuthorized";
-                                });
-                        }
-                    }
-                });
-        }
-    }
-
-    removeInvitation(token: Token, invitation: Invitation): Promise<"UsernameIsUnauthorized" | "IncorrectUsername" | "IncorrectOtherUsername"> {
-        const username = this._tokenService.token2Username(token);
-        if (username === undefined) {
-            return Promise.resolve("IncorrectUsername");
-        } else {
-            return Promise.all([this._accountRepository.findAccountByUserName(username), this._accountRepository.findAccountByUserName(invitation.username)])
-                .then(([userAccount, otherAccount]) => {
-                    if (userAccount === undefined) {
-                        return "IncorrectUsername";
-                    } else {
-                        if (otherAccount === undefined) {
-                            return "IncorrectOtherUsername";
-                        } else {
-                            userAccount.removeSentInvitation(invitation);
-                            otherAccount.removeReceivedInvitation(new Invitation(username, invitation.authorization));
-                            return Promise.all([this._accountRepository.updateAccount(userAccount), this._accountRepository.updateAccount(otherAccount)])
-                                .then(() => {
-                                    return "UsernameIsUnauthorized";
-                                });
-                        }
-                    }
-                });
-        }
+                }
+            });
     }
 
 
@@ -196,5 +181,18 @@ export default class AccountService {
                 })
         }
     }
+
+    makeAuthorizationPublic(kind: Kind, key: string): Promise<"AuthorizationIsPublic"> {
+        return this._publicAuthorizationRepository.makeAuthorizationPublic(new Authorization(kind, key));
+    }
+
+    revokePublicAuthorization(kind: Kind, key: string): Promise<"AuthorizationIsNoMorePublic"> {
+        return this._publicAuthorizationRepository.revokePublicAuthorization(new Authorization(kind, key));
+    }
+
+    isAuthorizationPublic(kind: Kind, key: string): Promise<boolean> {
+        return this._publicAuthorizationRepository.isAuthorizationPublic(new Authorization(kind, key));
+    }
+
 
 }
