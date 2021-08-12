@@ -59,7 +59,7 @@ describe("Account", () => {
     it("should add a site list", () => {
         const url = `${ACCOUNT_URL}/addwebsite`;
         const body = {
-            token,
+            username: "test",
             webSiteId: "JPS8_Kiv"
         };
         return fetch(url, {
@@ -81,7 +81,7 @@ describe("Account", () => {
         const url = `${ACCOUNT_URL}/addsession`;
         const sessionId = "JPSfea8_Kiv";
         const body = {
-            token,
+            username: "test",
             sessionId
         };
         return fetch(url, {
@@ -102,7 +102,7 @@ describe("Account", () => {
     it("should remove a session", () => {
         const url = `${ACCOUNT_URL}/removesession`;
         const body = {
-            token,
+            username: "test",
             sessionId: "JPSfea8_Kiv"
         };
         return fetch(url, {

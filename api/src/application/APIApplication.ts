@@ -163,7 +163,8 @@ export default class APIApplication {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === webSiteId && authorization.kind === Kind.WebSite);
                     const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === webSiteId && invitation.authorization.kind === Kind.WebSite);
-                    if (!authorized || !invited) {
+                    const isPublic = this._accountService.isAuthorizationPublic(Kind.WebSite, webSiteId);
+                    if (!authorized && !invited && !isPublic) {
                         return "Unauthorized";
                     } else {
                         return this._webSiteService.findWebSiteById(webSiteId).then((result) => result);
@@ -235,7 +236,8 @@ export default class APIApplication {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
                     const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                    if (!authorized || !invited) {
+                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, sessionId);
+                    if (!authorized && !invited && !isPublic) {
                         return "Unauthorized";
                     } else {
                         return this._sessionService.findSessionById(sessionId).then((result) => result);
@@ -253,8 +255,8 @@ export default class APIApplication {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
                     const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                    //TODO: const isPublic
-                    if (!authorized && !invited) {
+                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, sessionId);
+                    if (!authorized && !invited && !isPublic) {
                         return "Unauthorized";
                     } else {
                         return this._sessionService.addExploration(sessionId, testerName, interactionList, startDate, stopDate)
@@ -276,7 +278,8 @@ export default class APIApplication {
                         const account: Account = result;
                         const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
                         const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                        if (!authorized && !invited) {
+                        const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, sessionId);
+                        if (!authorized && !invited && !isPublic) {
                             return "Unauthorized";
                         } else {
                             return this._sessionService.addScreenshots(screenshots);
@@ -295,7 +298,8 @@ export default class APIApplication {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
                     const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                    if (!authorized || !invited) {
+                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, sessionId);
+                    if (!authorized && !invited && !isPublic) {
                         return "Unauthorized";
                     } else {
                         return this._sessionService.findScreenshotsBySessionId(sessionId).then(result => result);
@@ -313,7 +317,8 @@ export default class APIApplication {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === video.sessionId && authorization.kind === Kind.Session);
                     const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === video.sessionId && invitation.authorization.kind === Kind.Session);
-                    if (!authorized || !invited) {
+                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, video.sessionId);
+                    if (!authorized && !invited && !isPublic) {
                         return "Unauthorized";
                     } else {
                         return this._sessionService.addVideo(video);
@@ -377,7 +382,8 @@ export default class APIApplication {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
                     const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
-                    if (!authorized || !invited) {
+                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Model, modelId);
+                    if (!authorized && !invited && !isPublic) {
                         return "Unauthorized";
                     } else {
                         return this._modelService.findModelById(modelId).then((result) => result);
@@ -395,7 +401,7 @@ export default class APIApplication {
                     const account: Account = result;
                     const modelAuthorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
                     const sessionAuthorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    if (!modelAuthorized || !sessionAuthorized) {
+                    if (!modelAuthorized && !sessionAuthorized) {
                         return "Unauthorized";
                     } else {
                         return this._modelService.linkModelToSession(modelId, sessionId)
@@ -414,7 +420,8 @@ export default class APIApplication {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
                     const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
-                    if (!authorized || !invited) {
+                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Model, modelId);
+                    if (!authorized && !invited && !isPublic) {
                         return "Unauthorized";
                     } else {
                         return this._modelService.computeProbabilities(modelId, interactionList)
@@ -433,7 +440,8 @@ export default class APIApplication {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
                     const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
-                    if (!authorized || !invited) {
+                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Model, modelId);
+                    if (!authorized && !invited && !isPublic) {
                         return "Unauthorized";
                     } else {
                         return this._modelService.getCommentDistributions(modelId, interactionList)
@@ -452,7 +460,8 @@ export default class APIApplication {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
                     const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
-                    if (!authorized || !invited) {
+                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Model, modelId);
+                    if (!authorized && !invited && !isPublic) {
                         return "Unauthorized";
                     } else {
                         return this._modelService.getAllNgram(modelId)
