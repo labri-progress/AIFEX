@@ -2,6 +2,7 @@ import { Application } from 'express';
 import { logger } from "../logger";
 import Token from "../domain/Token";
 import APIApplication from '../application/APIApplication';
+import { Kind } from '../domain/Kind';
 
 const FORBIDDEN_STATUS = 403;
 const NOT_FOUND_STATUS = 404;
@@ -106,57 +107,64 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     logger.error(`error:${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                 });
-
         }
     });
 
     app.post("/invitations", (req, res) => {
-        logger.input(`POST invitations`);
+        logger.info(`Add invitation`);
         const { toUsername, kind, key } = req.body;
         if (req.token === undefined) {
             logger.warn(`no token`);
             res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
-            api.addInvitation(req.token, toUsername, kind, key)
-                .then(result => {
-                    if (result === "Unauthorized") {
-                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                    } else if (result === "IncorrectUsername") {
-                        res.status(INVALID_PARAMETERS_STATUS).json({message:"Incorrect username"});
-                    } else {
-                        logger.info("invitation created");
-                        res.json({message:result});
-                    }
-                })
-                .catch((e) => {
-                    logger.error(`error:${e}`);
-                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                });
+            if (toUsername === undefined || kind === undefined || key === undefined) {
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No toUsername, kind or key"});
+            } else {
+                api.addInvitation(req.token, toUsername, kind, key)
+                    .then(result => {
+                        if (result === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else if (result === "IncorrectUsername") {
+                            res.status(INVALID_PARAMETERS_STATUS).json({message:"Incorrect username"});
+                        } else {
+                            logger.info("invitation created");
+                            res.json({message:result});
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
         }
     });
 
     app.delete("/invitations", (req, res) => {
-        logger.info(`DELETE invitations`);
+        logger.info(`Delete invitations`);
         const { toUsername, kind, key } = req.body;
         if (req.token === undefined) {
             logger.warn(`no token`);
             res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
-            api.removeInvitation(req.token, toUsername, kind, key)
-                .then(result => {
-                    if (result === "Unauthorized") {
-                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                    } else if (result === "IncorrectUsername") {
-                        res.status(INVALID_PARAMETERS_STATUS).json({message:"Incorrect username"});
-                    } else {
-                        logger.info("invitation removed");
-                        res.json({message:result});
-                    }
-                })
-                .catch((e) => {
-                    logger.error(`error:${e}`);
-                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                });
+            if (toUsername === undefined || kind === undefined || key === undefined) {
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No toUsername, kind or key"});
+            } else {
+                api.removeInvitation(req.token, toUsername, kind, key)
+                    .then(result => {
+                        if (result === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                        } else if (result === "IncorrectUsername") {
+                            res.status(INVALID_PARAMETERS_STATUS).json({message:"Incorrect username"});
+                        } else {
+                            logger.info("invitation removed");
+                            res.json({message:result});
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
         }
     });
 
@@ -650,6 +658,82 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                         logger.error(`error:${e}`);
                         res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                     });
+            }
+        }
+    });
+
+    app.get("/public_authorizations", (req, res) => {
+        const {key, kind} = req.query;
+        logger.info(`get public authorization`);
+        if (key === undefined || kind === undefined) {
+            logger.warn(`key or kind is undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No key or kind"});
+        } else {
+            if (kind !== Kind.Model && kind !== Kind.Session && kind !== Kind.WebSite) {
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid Kind"});
+            } else {
+                if (typeof key !== "string") {
+                    res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid key"});
+                } else {
+                    api.isAuthorizationPublic(kind, key)
+                        .then(result => {
+                            res.json({isPublic:result});
+                        })
+                }
+            }
+        }
+    });
+
+    app.post("/public_authorizations", (req, res) => {
+        const {key, kind} = req.body;
+        logger.info(`add a new public authorization`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (key === undefined || kind === undefined) {
+                logger.warn(`key or kind is undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No key or kind"});
+            } else {
+                if (kind !== Kind.Model && kind !== Kind.Session && kind !== Kind.WebSite) {
+                    res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid Kind"});
+                } else {
+                    if (typeof key !== "string") {
+                        res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid key"});
+                    } else {
+                        api.makeAuthorizationPublic(req.token, kind, key)
+                            .then(result => {
+                                res.json({message:result});
+                            })
+                    }
+                }
+            }
+        }
+    });
+
+    app.delete("/public_authorizations", (req, res) => {
+        const {key, kind} = req.body;
+        logger.info(`delete public authorization`);
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            if (key === undefined || kind === undefined) {
+                logger.warn(`key or kind is undefined`);
+                res.status(INVALID_PARAMETERS_STATUS).json({message:"No key or kind"});
+            } else {
+                if (kind !== Kind.Model && kind !== Kind.Session && kind !== Kind.WebSite) {
+                    res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid Kind"});
+                } else {
+                    if (typeof key !== "string") {
+                        res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid key"});
+                    } else {
+                        api.revokePublicAuthorization(req.token, kind, key)
+                            .then(result => {
+                                res.json({message:result});
+                            })
+                    }
+                }
             }
         }
     });

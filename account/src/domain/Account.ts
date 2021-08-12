@@ -79,7 +79,7 @@ export default class Account {
             return sameFromUsername && sameToUsername && sameKey && sameKind;
         });
         
-        if (invitation) {
+        if (!invitation) {
             this._receivedInvitations.push(newInvitation);
         }
     }
@@ -110,7 +110,7 @@ export default class Account {
             return sameFromUsername && sameToUsername && sameKey && sameKind;
         });
         
-        if (invitation) {
+        if (!invitation) {
             this._sentInvitationSet.push(newInvitation);
         }
     }

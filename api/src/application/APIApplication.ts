@@ -162,7 +162,8 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === webSiteId && authorization.kind === Kind.WebSite);
-                    if (!authorized) {
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === webSiteId && invitation.authorization.kind === Kind.WebSite);
+                    if (!authorized || !invited) {
                         return "Unauthorized";
                     } else {
                         return this._webSiteService.findWebSiteById(webSiteId).then((result) => result);
@@ -233,7 +234,8 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    if (!authorized) {
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                    if (!authorized || !invited) {
                         return "Unauthorized";
                     } else {
                         return this._sessionService.findSessionById(sessionId).then((result) => result);
@@ -292,7 +294,8 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    if (!authorized) {
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                    if (!authorized || !invited) {
                         return "Unauthorized";
                     } else {
                         return this._sessionService.findScreenshotsBySessionId(sessionId).then(result => result);
@@ -309,7 +312,8 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === video.sessionId && authorization.kind === Kind.Session);
-                    if (!authorized) {
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                    if (!authorized || !invited) {
                         return "Unauthorized";
                     } else {
                         return this._sessionService.addVideo(video);
@@ -372,7 +376,8 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
-                    if (!authorized) {
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
+                    if (!authorized || !invited) {
                         return "Unauthorized";
                     } else {
                         return this._modelService.findModelById(modelId).then((result) => result);
@@ -408,7 +413,8 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
-                    if (!authorized) {
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
+                    if (!authorized || !invited) {
                         return "Unauthorized";
                     } else {
                         return this._modelService.computeProbabilities(modelId, interactionList)
@@ -426,7 +432,8 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
-                    if (!authorized) {
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
+                    if (!authorized || !invited) {
                         return "Unauthorized";
                     } else {
                         return this._modelService.getCommentDistributions(modelId, interactionList)
@@ -444,7 +451,8 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
-                    if (!authorized) {
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
+                    if (!authorized || !invited) {
                         return "Unauthorized";
                     } else {
                         return this._modelService.getAllNgram(modelId)
@@ -452,6 +460,46 @@ export default class APIApplication {
                     }
                 }
             });
+    }
+
+    makeAuthorizationPublic(token: Token, kind: Kind, key: string): Promise<"Unauthorized" | "AuthorizationIsPublic"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === key && authorization.kind === kind);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._accountService.makeAuthorizationPublic(kind, key)
+                            .then((result) => result);
+                    }
+                }
+            });
+    }
+
+    revokePublicAuthorization(token: Token, kind: Kind, key: string): Promise<"Unauthorized" | "AuthorizationIsNoMorePublic"> {
+        return this.getAccount(token)
+            .then((result) => {
+                if (result === "Unauthorized") {
+                    return "Unauthorized";
+                } else {
+                    const account: Account = result;
+                    const authorized = account.authorizationSet.some((authorization) => authorization.key === key && authorization.kind === kind);
+                    if (!authorized) {
+                        return "Unauthorized";
+                    } else {
+                        return this._accountService.revokePublicAuthorization(kind, key)
+                            .then((result) => result);
+                    }
+                }
+            });
+    }
+
+    isAuthorizationPublic(kind: Kind, key: string) : Promise<boolean> {
+        return this._accountService.isAuthorizationPublic(kind, key);
     }
 
 }

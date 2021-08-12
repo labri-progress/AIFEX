@@ -4,7 +4,6 @@ import Authorization from "../domain/Authorization";
 import { Kind } from "../domain/Kind";
 import { Response, Express } from "express";
 import { logger } from "../logger";
-import Invitation from "../domain/Invitation";
 
 const UNAUTHORIZED_STATUS = 401;
 const FORBIDDEN_STATUS = 403;

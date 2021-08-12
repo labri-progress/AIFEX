@@ -193,7 +193,7 @@ function addSiteListToAnonymous(token, websiteList) {
         logger.info(`adding website ${webSite.name} (id = ${webSite._id}) to anonymous`);
         const url = ACCOUNT_BASE_URL + "/addwebsite";
         const body = {
-            token,
+            username: "anonymous",
             webSiteId: webSite._id
         };
         const option = {
@@ -282,7 +282,7 @@ function createSessionAndModel(webSiteId) {
 function addSessionToAnonymous(token, sessionId) {
     const url = ACCOUNT_BASE_URL + "/addsession";
     const body = {
-        token,
+        username: "anonymous",
         sessionId: sessionId
     };
     const option = {
@@ -303,7 +303,7 @@ function addSessionToAnonymous(token, sessionId) {
 function addModelToAnonymous(token, modelId) {
     const url = ACCOUNT_BASE_URL + "/addmodel";
     const body = {
-        token,
+        username: "anonymous",
         modelId: modelId
     };
     const option = {

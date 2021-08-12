@@ -26,5 +26,10 @@ export default interface AccountService {
 
     removeModel(username: string, modelId: string): Promise<"ModelRemoved" | "IncorrectUsername">;
 
+    makeAuthorizationPublic(kind: Kind, key: string): Promise<"AuthorizationIsPublic"> ;
+
+    revokePublicAuthorization(kind: Kind, key: string): Promise<"AuthorizationIsNoMorePublic"> ;
+
+    isAuthorizationPublic(kind: Kind, key: string): Promise<boolean> ;
 
 }

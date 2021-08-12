@@ -241,4 +241,67 @@ export default class AccountServiceHTTP implements AccountService {
             })
     }
 
+    makeAuthorizationPublic(kind: Kind, key: string): Promise<"AuthorizationIsPublic"> {
+        const accountMakeAuthorizationPublicURL = 'http://' + config.account.host + ':' + config.account.port + '/account/makeauthorizationpublic';
+        let bodyMakeAuthorizationPublic = {
+            kind,
+            key,
+        }
+        let optionMakeAuthorizationPublic = {
+            method: 'POST',
+            body:    JSON.stringify(bodyMakeAuthorizationPublic),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountMakeAuthorizationPublicURL, optionMakeAuthorizationPublic)
+            .then(response => {
+                if (response.ok) {
+                    return "AuthorizationIsPublic";
+                } else {
+                    throw new Error('Something goes wrong while making the authorization public');
+                }
+            })
+    }
+
+    revokePublicAuthorization(kind: Kind, key: string): Promise<"AuthorizationIsNoMorePublic"> {
+        const accountRevokePublicAuthorizationURL = 'http://' + config.account.host + ':' + config.account.port + '/account/revokepublicauthorization';
+        let bodyRevokePublicAuthorization = {
+            kind,
+            key,
+        }
+        let optionRevokePublicAuthorization = {
+            method: 'POST',
+            body:    JSON.stringify(bodyRevokePublicAuthorization),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountRevokePublicAuthorizationURL, optionRevokePublicAuthorization)
+            .then(response => {
+                if (response.ok) {
+                    return "AuthorizationIsNoMorePublic";
+                } else {
+                    throw new Error('Something goes wrong while revoking the authorization public');
+                }
+            })
+    }
+
+    isAuthorizationPublic(kind: Kind, key: string): Promise<boolean> {
+        const accountIsAuthorizationPublicURL = 'http://' + config.account.host + ':' + config.account.port + '/account/isauthorizationpublic';
+        let bodyIsAuthorizationPublic = {
+            kind,
+            key,
+        }
+        let optionIsAuthorizationPublic = {
+            method: 'POST',
+            body:    JSON.stringify(bodyIsAuthorizationPublic),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(accountIsAuthorizationPublicURL, optionIsAuthorizationPublic)
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then((resultJson) => !!resultJson.authorized);
+                } else {
+                    throw new Error('Something goes wrong while checking the authorization public');
+                }
+            })
+    }
+
 }

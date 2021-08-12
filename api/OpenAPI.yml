@@ -104,6 +104,67 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+  /invitations:
+    post:
+      description: Create an invitation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                toUsername:
+                  type: string
+                kind:
+                  type: string
+                  enum: [WebSite, Model, Session]
+                key:
+                  type: string
+      responses:
+        '200':
+          description: Invitation is created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    delete:
+      description: Delete an invitation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                toUsername:
+                  type: string
+                kind:
+                  type: string
+                  enum: [WebSite, Model, Session]
+                key:
+                  type: string
+      responses:
+        '200':
+          description: Invitation is deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
   /websites:
     post:
       description: add a new WebSite
@@ -686,6 +747,86 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+  /public_authorizations:
+    get:
+      description: check that an authorization is public
+      parameters:
+        - in: query
+          name: kind
+          schema:
+            type: string
+            enum: [WebSite, Model, Session]
+          required: true
+        - in: query
+          name: key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: is public or not
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isPublic:
+                    type: boolean
+    post:
+      description: add an new public authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  enum: [WebSite, Model, Session]
+                key:
+                  type: string
+      responses:
+        '200':
+          description: authorization is public
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    delete:
+      description: remove a public authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  enum: [WebSite, Model, Session]
+                key:
+                  type: string
+      responses:
+        '200':
+          description: authorization is no more public
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
 components:
   schemas:
     Message:
@@ -709,6 +850,23 @@ components:
                 type: string
                 enum: [WebSite, Model, Session]
         receivedInvitationSet:
+          type: array
+          items:
+            type: object
+            properties:
+              fromUsername:
+                type: string
+              toUsername:
+                type: string
+              authorization:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  kind:
+                    type: string
+                    enum: [WebSite, Model, Session]
+        sentInvitationSet:
           type: array
           items:
             type: object

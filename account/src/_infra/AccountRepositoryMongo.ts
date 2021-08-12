@@ -41,7 +41,7 @@ export default class AccountRepositoryMongo implements AccountRepository {
                 }
             };
         });
-        const sendInvitationSet = account.sentInvitationSet.map((invitation) => {
+        const sentInvitationSet = account.sentInvitationSet.map((invitation) => {
             return {
                 fromUsername: invitation.fromUsername,
                 toUsername: invitation.toUsername,
@@ -51,7 +51,7 @@ export default class AccountRepositoryMongo implements AccountRepository {
                 }
             };
         });
-        return AccountModel.updateOne({ username }, { $set: { authorizationSet, receivedInvitationSet, sendInvitationSet } })
+        return AccountModel.updateOne({ username }, { $set: { authorizationSet, receivedInvitationSet, sentInvitationSet } })
             .exec()
             .then(() => {
                 return "AccountUpdated";
