@@ -312,7 +312,7 @@ export default class APIApplication {
                 } else {
                     const account: Account = result;
                     const authorized = account.authorizationSet.some((authorization) => authorization.key === video.sessionId && authorization.kind === Kind.Session);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === video.sessionId && invitation.authorization.kind === Kind.Session);
                     if (!authorized || !invited) {
                         return "Unauthorized";
                     } else {
