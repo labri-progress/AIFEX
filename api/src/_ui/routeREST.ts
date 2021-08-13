@@ -120,7 +120,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             if (toUsername === undefined || kind === undefined || key === undefined) {
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"No toUsername, kind or key"});
             } else {
-                api.addInvitation(req.token, toUsername, kind, key)
+                api.addInvitation(toUsername, kind, key, req.token)
                     .then(result => {
                         if (result === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
@@ -149,7 +149,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             if (toUsername === undefined || kind === undefined || key === undefined) {
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"No toUsername, kind or key"});
             } else {
-                api.removeInvitation(req.token, toUsername, kind, key)
+                api.removeInvitation(toUsername, kind, key, req.token)
                     .then(result => {
                         if (result === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
@@ -171,29 +171,21 @@ export default function attachRoutes(app: Application, api: APIApplication) {
     app.get("/websites/:webSiteId", (req, res) => {
         const webSiteId = req.params.webSiteId;
         logger.info(`webSites by Id`);
-        if (req.token === undefined) {
-            logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).json({message:"No token"});
-        } else {
-            if (webSiteId === undefined) {
-                logger.warn(`webSiteId`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No webSiteId"});
-            } else {
-                api.findWebSiteById(req.token, webSiteId)
-                    .then(webSiteResult => {
-                        if (webSiteResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                        } else {
-                            logger.info("webSites by Id done");
-                            res.json(webSiteResult);
-                        }
-                    })
-                    .catch((e) => {
-                        logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                    });
-            }
-        }
+        
+        api.findWebSiteById(webSiteId, req.token)
+            .then(webSiteResult => {
+                if (webSiteResult === "Unauthorized") {
+                    res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                } else {
+                    logger.info("webSites by Id done");
+                    res.json(webSiteResult);
+                }
+            })
+            .catch((e) => {
+                logger.error(`error:${e}`);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+            });
+        
     });
 
     app.patch("/websites/:webSiteId", (req, res) => {
@@ -208,7 +200,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 logger.warn(`webSiteId`);
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"No webSiteId"});
             } else {
-                api.updateWebSite(req.token, webSiteId, name, url, mappingList)
+                api.updateWebSite(webSiteId, name, url, mappingList, req.token)
                     .then(webSiteResult => {
                         if (webSiteResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
@@ -236,7 +228,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 logger.warn(`webSiteId`);
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"No webSiteId"});
             } else {
-                api.removeWebSite(req.token, webSiteId)
+                api.removeWebSite(webSiteId, req.token)
                     .then(webSiteResult => {
                         if (webSiteResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
@@ -265,7 +257,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             if (name === undefined || url === undefined || mappingList === undefined) {
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
             } else {
-                api.createWebSite(req.token, name, url, mappingList)
+                api.createWebSite(name, url, mappingList, req.token)
                     .then(creationResult => {
                         if (creationResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:creationResult});
@@ -285,28 +277,23 @@ export default function attachRoutes(app: Application, api: APIApplication) {
     app.get("/sessions/:sessionId", (req, res) => {
         const sessionId = req.params.sessionId;
         logger.info(`Session By Id`);
-        if (req.token === undefined) {
-            logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        if (sessionId === undefined) {
+            logger.warn(`sessionId`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
         } else {
-            if (sessionId === undefined) {
-                logger.warn(`sessionId`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
-            } else {
-                api.findSessionById(req.token, sessionId)
-                    .then(sessionResult => {
-                        if (sessionResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                        } else {
-                            logger.info("Session by Id done");
-                            res.json(sessionResult);
-                        }
-                    })
-                    .catch((e) => {
-                        logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                    });
-            }
+            api.findSessionById(sessionId, req.token)
+                .then(sessionResult => {
+                    if (sessionResult === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("Session by Id done");
+                        res.json(sessionResult);
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
         }
     });
 
@@ -321,7 +308,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 logger.warn(`sessionId`);
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
             } else {
-                api.removeSession(req.token, sessionId)
+                api.removeSession(sessionId, req.token)
                     .then(sessionResult => {
                         if (sessionResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
@@ -349,7 +336,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             if (baseURL === undefined || name === undefined || overlayType === undefined) {
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
             } else {
-                api.createSession(token, webSiteId, baseURL, name, overlayType)
+                api.createSession(webSiteId, baseURL, name, overlayType, token)
                     .then(creationResult => {
                         if (creationResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:creationResult});
@@ -371,29 +358,23 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         const sessionId = req.params.sessionId;
         const { testerName, interactionList, startDate, stopDate } = req.body;
         logger.info(`Session By Id`);
-        if (req.token === undefined) {
-            logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        if (sessionId === undefined || interactionList === undefined ) {
+            logger.warn(`sessionId`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No interactionList"});
         } else {
-            const token : Token = req.token;
-            if (sessionId === undefined || interactionList === undefined ) {
-                logger.warn(`sessionId`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No interactionList"});
-            } else {
-                api.addExploration(token, sessionId, testerName, interactionList, startDate, stopDate)
-                    .then(explorationResult => {
-                        if (explorationResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                        } else {
-                            logger.info("Exploration is added");
-                            res.json({explorationNumber:explorationResult});
-                        }
-                    })
-                    .catch((e) => {
-                        logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                    });
-            }
+            api.addExploration(sessionId, testerName, interactionList, startDate, stopDate, req.token)
+                .then(explorationResult => {
+                    if (explorationResult === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("Exploration is added");
+                        res.json({explorationNumber:explorationResult});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
         }
     });
 
@@ -401,61 +382,51 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         const sessionId = req.params.sessionId;
         const { screenshotList } = req.body;
         logger.info(`Create screenshots`);
-        if (req.token === undefined) {
-            logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        if (sessionId === undefined || screenshotList === undefined) {
+            logger.warn(`sessionId or screenshotList undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No screenshotList"});
         } else {
-            const token: Token = req.token;
-            if (sessionId === undefined || screenshotList === undefined) {
-                logger.warn(`sessionId or screenshotList undefined`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No screenshotList"});
-            } else {
-                api.addScreenshots(token, sessionId, screenshotList)
-                    .then(screenshotResult => {
-                        if (screenshotResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                        } else if (screenshotResult === "InvalidScreenshots") {
-                            res.status(INVALID_PARAMETERS_STATUS).json({message:"InvalidScreenshots"});
-                        } else {
-                            logger.info("Screenshots are added");
-                            res.json({message:"ScreenshotsAdded"});
-                        }
-                    })
-                    .catch((e) => {
-                        logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                    });
-            }
+            api.addScreenshots(sessionId, screenshotList, req.token)
+                .then(screenshotResult => {
+                    if (screenshotResult === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else if (screenshotResult === "InvalidScreenshots") {
+                        res.status(INVALID_PARAMETERS_STATUS).json({message:"InvalidScreenshots"});
+                    } else {
+                        logger.info("Screenshots are added");
+                        res.json({message:"ScreenshotsAdded"});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
         }
+        
     });
 
     app.get("/sessions/:sessionId/screenshots", (req, res) => {
         const sessionId = req.params.sessionId;
         logger.info(`Get screenshots`);
-        if (req.token === undefined) {
-            logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        if (sessionId === undefined) {
+            logger.warn(`sessionId undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
         } else {
-            const token: Token = req.token;
-            if (sessionId === undefined) {
-                logger.warn(`sessionId undefined`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId"});
-            } else {
-                api.findScreenshotsBySessionId(token, sessionId)
-                    .then(screenshotResult => {
-                        if (screenshotResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                        } else {
-                            logger.info("Screenshots are returned");
-                            res.json({screenshotList:screenshotResult});
-                        }
-                    })  
-                    .catch((e) => {
-                        logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                    });
-            }
+            api.findScreenshotsBySessionId(sessionId, req.token)
+                .then(screenshotResult => {
+                    if (screenshotResult === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("Screenshots are returned");
+                        res.json({screenshotList:screenshotResult});
+                    }
+                })  
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
         }
+        
     });
 
 
@@ -470,7 +441,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             if (depth === undefined || interpolationfactor === undefined || predictionType === undefined) {
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
             } else {
-                api.createModel(token, depth, interpolationfactor, predictionType)
+                api.createModel(depth, interpolationfactor, predictionType, token)
                     .then(creationResult => {
                         if (creationResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:creationResult});
@@ -490,29 +461,25 @@ export default function attachRoutes(app: Application, api: APIApplication) {
     app.get("/models/:modelId", (req, res) => {
         const modelId = req.params.modelId;
         logger.info(`model by Id`);
-        if (req.token === undefined) {
-            logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        if (modelId === undefined) {
+            logger.warn(`modelId is undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId"});
         } else {
-            if (modelId === undefined) {
-                logger.warn(`modelId is undefined`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId"});
-            } else {
-                api.findModelById(req.token, modelId)
-                    .then(modelResult => {
-                        if (modelResult === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                        } else {
-                            logger.info("Model by Id done");
-                            res.json(modelResult);
-                        }
-                    })
-                    .catch((e) => {
-                        logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                    });
-            }
+            api.findModelById(modelId, req.token)
+                .then(modelResult => {
+                    if (modelResult === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("Model by Id done");
+                        res.json(modelResult);
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
         }
+        
     });
 
     app.delete("/models/:modelId", (req, res) => {
@@ -526,7 +493,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 logger.warn(`modelId is undefined`);
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId"});
             } else {
-                api.removeModel(req.token, modelId)
+                api.removeModel(modelId, req.token)
                     .then(modelResult => {
                         if (modelResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
@@ -556,7 +523,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 logger.warn(`modelId or sessionId is undefined`);
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId or sessionId"});
             } else {
-                api.linkModelToSession(req.token, modelId, sessionId)
+                api.linkModelToSession(modelId, sessionId, req.token)
                     .then(linkResult => {
                         if (linkResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
@@ -576,93 +543,83 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
-    app.post("/models/:modelId/computeprobabilities", (req, res) => {
+    app.post("/models/:modelId/probabilities", (req, res) => {
         const modelId = req.params.modelId;
         const {interactionList} = req.body;
         logger.info(`get probabilities`);
-        if (req.token === undefined) {
-            logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        
+        if (modelId === undefined || interactionList === undefined) {
+            logger.warn(`modelId or interactionList are undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId or no InteractionList"});
         } else {
-            if (modelId === undefined || interactionList === undefined) {
-                logger.warn(`modelId or interactionList are undefined`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId or no InteractionList"});
-            } else {
-                api.computeProbabilities(req.token, modelId, interactionList)
-                    .then(probabilities => {
-                        if (probabilities === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                        } else {
-                            logger.info("Probabilities are computed");
-                            res.json({probabilities:Array.from(probabilities)});
-                        }
-                    })
-                    .catch((e) => {
-                        logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                    });
-            }
+            api.computeProbabilities(modelId, interactionList, req.token)
+                .then(probabilities => {
+                    if (probabilities === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("Probabilities are computed");
+                        res.json({probabilities:Array.from(probabilities)});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
         }
+
     });
 
-    app.post("/models/:modelId/getcommentdistributions", (req, res) => {
+    app.post("/models/:modelId/comment-distributions", (req, res) => {
         const modelId = req.params.modelId;
         const {interactionList} = req.body;
         logger.info(`get comment distributions`);
-        if (req.token === undefined) {
-            logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        if (modelId === undefined || interactionList === undefined) {
+            logger.warn(`modelId or interactionList are undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId or no InteractionList"});
         } else {
-            if (modelId === undefined || interactionList === undefined) {
-                logger.warn(`modelId or interactionList are undefined`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId or no InteractionList"});
-            } else {
-                api.getCommentDistributions(req.token, modelId, interactionList)
-                    .then(commentDistributions => {
-                        if (commentDistributions === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                        } else {
-                            logger.info("Comment distributions are computed");
-                            res.json({commentdistributios:Array.from(commentDistributions)});
-                        }
-                    })
-                    .catch((e) => {
-                        logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                    });
-            }
+            api.getCommentDistributions(modelId, interactionList, req.token)
+                .then(commentDistributions => {
+                    if (commentDistributions === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("Comment distributions are computed");
+                        res.json({commentdistributios:Array.from(commentDistributions)});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
         }
+
     });
 
     app.get("/models/:modelId/ngrams", (req, res) => {
         const modelId = req.params.modelId;
         logger.info(`get all ngram`);
-        if (req.token === undefined) {
-            logger.warn(`no token`);
-            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        
+        if (modelId === undefined) {
+            logger.warn(`modelId is undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId"});
         } else {
-            if (modelId === undefined) {
-                logger.warn(`modelId is undefined`);
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId"});
-            } else {
-                api.getAllNgram(req.token, modelId)
-                    .then(result => {
-                        if (result === "Unauthorized") {
-                            res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
-                        } else {
-                            logger.info("All ngram are computed");
-                            res.json({ngrams:result});
-                        }
-                    })
-                    .catch((e) => {
-                        logger.error(`error:${e}`);
-                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-                    });
-            }
+            api.getAllNgram(modelId, req.token)
+                .then(result => {
+                    if (result === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("All ngram are computed");
+                        res.json({ngrams:result});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
         }
+        
     });
 
-    app.get("/public_authorizations", (req, res) => {
+    app.get("/public/authorizations", (req, res) => {
         const {key, kind} = req.query;
         logger.info(`get public authorization`);
         if (key === undefined || kind === undefined) {
@@ -684,7 +641,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
-    app.post("/public_authorizations", (req, res) => {
+    app.post("/public/authorizations", (req, res) => {
         const {key, kind} = req.body;
         logger.info(`add a new public authorization`);
         if (req.token === undefined) {
@@ -701,7 +658,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     if (typeof key !== "string") {
                         res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid key"});
                     } else {
-                        api.makeAuthorizationPublic(req.token, kind, key)
+                        api.makeAuthorizationPublic(kind, key, req.token)
                             .then(result => {
                                 res.json({message:result});
                             })
@@ -711,7 +668,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
-    app.delete("/public_authorizations", (req, res) => {
+    app.delete("/public/authorizations", (req, res) => {
         const {key, kind} = req.body;
         logger.info(`delete public authorization`);
         if (req.token === undefined) {
@@ -728,7 +685,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     if (typeof key !== "string") {
                         res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid key"});
                     } else {
-                        api.revokePublicAuthorization(req.token, kind, key)
+                        api.revokePublicAuthorization(kind, key, req.token)
                             .then(result => {
                                 res.json({message:result});
                             })

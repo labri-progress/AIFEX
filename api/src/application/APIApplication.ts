@@ -52,11 +52,15 @@ export default class APIApplication {
         return this._accountService.signin(username, password);
     }
 
-    getAccount(token: Token): Promise<Account | "Unauthorized"> {
-        return this._accountService.getAccount(token);
+    getAccount(token: Token | undefined): Promise<Account | "Unauthorized"> {
+        if (token === undefined) {
+            return Promise.resolve("Unauthorized");
+        } else {
+            return this._accountService.getAccount(token);
+        }
     }
 
-    addInvitation(token: Token, toUsername: string, kind: Kind, key: string ) : Promise<"Unauthorized" | "InvitationIsAdded" | "IncorrectUsername" > {
+    addInvitation(toUsername: string, kind: Kind, key: string, token: Token) : Promise<"Unauthorized" | "InvitationIsAdded" | "IncorrectUsername" > {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -73,7 +77,7 @@ export default class APIApplication {
             });
     }
 
-    removeInvitation(token: Token, toUsername: string, kind: Kind, key: string): Promise<"Unauthorized" | "InvitationIsRemoved" |"IncorrectUsername"> {
+    removeInvitation(toUsername: string, kind: Kind, key: string, token: Token): Promise<"Unauthorized" | "InvitationIsRemoved" |"IncorrectUsername"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -90,7 +94,7 @@ export default class APIApplication {
             });
     }    
 
-    createWebSite(token: Token, name: string, url: string, mappingList: Mapping[]): Promise<WebSite | "Unauthorized"> {
+    createWebSite(name: string, url: string, mappingList: Mapping[], token: Token): Promise<WebSite | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -112,7 +116,7 @@ export default class APIApplication {
             });
     }
 
-    updateWebSite(token: Token, webSiteId: string, name: string, url: string, mappingList: Mapping[]): Promise<"Unauthorized" | "WebSiteUpdated"> {
+    updateWebSite(webSiteId: string, name: string, url: string, mappingList: Mapping[], token: Token): Promise<"Unauthorized" | "WebSiteUpdated"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -130,7 +134,7 @@ export default class APIApplication {
             });
     }
 
-    removeWebSite(token: Token, webSiteId: string): Promise<"Unauthorized" | "WebSiteRemoved"> {
+    removeWebSite(webSiteId: string, token: Token): Promise<"Unauthorized" | "WebSiteRemoved"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -154,33 +158,32 @@ export default class APIApplication {
             });
     }
 
-    findWebSiteById(token: Token, webSiteId: string): Promise<WebSite | undefined | "Unauthorized"> {
-        return this.getAccount(token)
-            .then((result) => {
-                if (result === "Unauthorized") {
-                    "Unauthorized";
+    findWebSiteById(webSiteId: string, token?: Token): Promise<WebSite | undefined | "Unauthorized"> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.WebSite, webSiteId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === webSiteId && authorization.kind === Kind.WebSite);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === webSiteId && invitation.authorization.kind === Kind.WebSite);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._webSiteService.findWebSiteById(webSiteId).then((result) => result);
                 } else {
-                    const account: Account = result;
-                    const authorized = account.authorizationSet.some((authorization) => authorization.key === webSiteId && authorization.kind === Kind.WebSite);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === webSiteId && invitation.authorization.kind === Kind.WebSite);
-                    const isPublic = this._accountService.isAuthorizationPublic(Kind.WebSite, webSiteId);
-                    if (!authorized && !invited && !isPublic) {
-                        return "Unauthorized";
-                    } else {
-                        return this._webSiteService.findWebSiteById(webSiteId).then((result) => result);
-                    }
+                    return "Unauthorized";
                 }
             });
     }
 
-    createSession(token: Token, webSiteId: string, baseURL: string, name: string, overlayType: SessionOverlayType): Promise<Session | "Unauthorized"> {
+    createSession(webSiteId: string, baseURL: string, name: string, overlayType: SessionOverlayType, token: Token): Promise<Session | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
                     return "Unauthorized";
                 } else {
                     const account: Account = result;
-                    return this.findWebSiteById(token, webSiteId)
+                    return this.findWebSiteById(webSiteId, token)
                         .then((findResult) => {
                             if (findResult === undefined || findResult === "Unauthorized") {
                                 return "Unauthorized";
@@ -203,7 +206,7 @@ export default class APIApplication {
             });
     }
 
-    removeSession(token: Token, sessionId: string): Promise<"Unauthorized" | "SessionRemoved"> {
+    removeSession(sessionId: string, token: Token): Promise<"Unauthorized" | "SessionRemoved"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -227,107 +230,102 @@ export default class APIApplication {
             });
     }
 
-    findSessionById(token: Token, sessionId: string): Promise<Session | undefined | "Unauthorized"> {
-        return this.getAccount(token)
-            .then((result) => {
-                if (result === "Unauthorized") {
-                    return "Unauthorized";
+    findSessionById(sessionId: string, token?: Token): Promise<Session | undefined | "Unauthorized"> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._sessionService.findSessionById(sessionId).then((result) => result);
                 } else {
-                    const account: Account = result;
-                    const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, sessionId);
-                    if (!authorized && !invited && !isPublic) {
-                        return "Unauthorized";
-                    } else {
-                        return this._sessionService.findSessionById(sessionId).then((result) => result);
-                    }
+                    return "Unauthorized";
                 }
             });
     }
 
-    addExploration(token: Token, sessionId: string, testerName: string, interactionList: Interaction[], startDate?: Date, stopDate?: Date): Promise<"Unauthorized" | number> {
-        return this.getAccount(token)
-            .then((result) => {
-                if (result === "Unauthorized") {
-                    return "Unauthorized";
-                } else {
-                    const account: Account = result;
-                    const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, sessionId);
-                    if (!authorized && !invited && !isPublic) {
-                        return "Unauthorized";
-                    } else {
-                        return this._sessionService.addExploration(sessionId, testerName, interactionList, startDate, stopDate)
+    addExploration(sessionId: string, testerName: string, interactionList: Interaction[], startDate?: Date, stopDate?: Date, token?: Token): Promise<"Unauthorized" | number> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._sessionService.addExploration(sessionId, testerName, interactionList, startDate, stopDate)
                             .then((result) => result);
-                    }
+                } else {
+                    return "Unauthorized";
                 }
             });
     }
 
-    addScreenshots(token: Token, sessionId: string, screenshots: Screenshot[]): Promise<"Unauthorized" | "InvalidScreenshots" | "ScreenshotsAdded"> {
+    addScreenshots(sessionId: string, screenshots: Screenshot[], token?: Token): Promise<"Unauthorized" | "InvalidScreenshots" | "ScreenshotsAdded"> {
         if (screenshots.some(screenshot => screenshot.sessionId !== sessionId)) {
             return Promise.resolve("InvalidScreenshots");
         } else {
-            return this.getAccount(token)
-                .then((result) => {
-                    if (result === "Unauthorized") {
-                        return "Unauthorized";
+            return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+                .then(([isPublic, maybeAccount]) => {
+                    let authorized = false;
+                    let invited = false;
+                    if (maybeAccount !== "Unauthorized") {
+                        const account: Account = maybeAccount;
+                        authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                        invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                    }
+                    if (isPublic || authorized || invited) {
+                        return this._sessionService.addScreenshots(screenshots);
                     } else {
-                        const account: Account = result;
-                        const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                        const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                        const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, sessionId);
-                        if (!authorized && !invited && !isPublic) {
-                            return "Unauthorized";
-                        } else {
-                            return this._sessionService.addScreenshots(screenshots);
-                        }
+                        return "Unauthorized";
                     }
                 });
         }
     }
 
-    findScreenshotsBySessionId(token: Token, sessionId: string): Promise<Screenshot[] | "Unauthorized"> {
-        return this.getAccount(token)
-            .then((result) => {
-                if (result === "Unauthorized") {
-                    return "Unauthorized";
+    findScreenshotsBySessionId(sessionId: string, token?: Token): Promise<Screenshot[] | "Unauthorized"> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._sessionService.findScreenshotsBySessionId(sessionId).then(result => result);
                 } else {
-                    const account: Account = result;
-                    const authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, sessionId);
-                    if (!authorized && !invited && !isPublic) {
-                        return "Unauthorized";
-                    } else {
-                        return this._sessionService.findScreenshotsBySessionId(sessionId).then(result => result);
-                    }
+                    return "Unauthorized";
                 }
             });
     }
 
-    addVideo(token: Token, video: Video): Promise<"Unauthorized" | "InvalidVideo" | "VideoAdded"> {
-        return this.getAccount(token)
-            .then((result) => {
-                if (result === "Unauthorized") {
-                    return "Unauthorized";
+    addVideo(video: Video, token?: Token): Promise<"Unauthorized" | "InvalidVideo" | "VideoAdded"> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, video.sessionId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === video.sessionId && authorization.kind === Kind.Session);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === video.sessionId && invitation.authorization.kind === Kind.Session);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._sessionService.addVideo(video);
                 } else {
-                    const account: Account = result;
-                    const authorized = account.authorizationSet.some((authorization) => authorization.key === video.sessionId && authorization.kind === Kind.Session);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === video.sessionId && invitation.authorization.kind === Kind.Session);
-                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Session, video.sessionId);
-                    if (!authorized && !invited && !isPublic) {
-                        return "Unauthorized";
-                    } else {
-                        return this._sessionService.addVideo(video);
-                    }
+                    return "Unauthorized";
                 }
             });
     }
 
-    createModel(token: Token, depth: number, interpolationfactor: number, predictionType : ModelPredictionType) : Promise<Model | "Unauthorized"> {
+    createModel(depth: number, interpolationfactor: number, predictionType : ModelPredictionType, token: Token) : Promise<Model | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -349,7 +347,7 @@ export default class APIApplication {
             });
     }
 
-    removeModel(token: Token, modelId: string): Promise<"Unauthorized" | "ModelRemoved"> {
+    removeModel(modelId: string, token: Token): Promise<"Unauthorized" | "ModelRemoved"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -373,26 +371,25 @@ export default class APIApplication {
             });
     }
 
-    findModelById(token: Token, modelId: string): Promise<Model | undefined | "Unauthorized"> {
-        return this.getAccount(token)
-            .then((result) => {
-                if (result === "Unauthorized") {
-                    return "Unauthorized";
+    findModelById(modelId: string, token?: Token): Promise<Model | undefined | "Unauthorized"> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Model, modelId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._modelService.findModelById(modelId).then((result) => result);
                 } else {
-                    const account: Account = result;
-                    const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
-                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Model, modelId);
-                    if (!authorized && !invited && !isPublic) {
-                        return "Unauthorized";
-                    } else {
-                        return this._modelService.findModelById(modelId).then((result) => result);
-                    }
+                    return "Unauthorized";
                 }
             });
     }
 
-    linkModelToSession(token: Token, modelId: string, sessionId: string): Promise<"Unauthorized" | "ModelLinkedToSession" | "ModelIsUnknown"> {
+    linkModelToSession(modelId: string, sessionId: string, token: Token): Promise<"Unauthorized" | "ModelLinkedToSession" | "ModelIsUnknown"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -411,67 +408,64 @@ export default class APIApplication {
             });
     }
 
-    computeProbabilities(token: Token, modelId: string, interactionList: Interaction[]): Promise<"Unauthorized" | Map<string,number>> {
-        return this.getAccount(token)
-            .then((result) => {
-                if (result === "Unauthorized") {
-                    return "Unauthorized";
-                } else {
-                    const account: Account = result;
-                    const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
-                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Model, modelId);
-                    if (!authorized && !invited && !isPublic) {
-                        return "Unauthorized";
-                    } else {
-                        return this._modelService.computeProbabilities(modelId, interactionList)
+    computeProbabilities(modelId: string, interactionList: Interaction[], token?: Token): Promise<"Unauthorized" | Map<string,number>> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Model, modelId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._modelService.computeProbabilities(modelId, interactionList)
                             .then((result) => result);
-                    }
+                } else {
+                    return "Unauthorized";
                 }
             });
     }
 
-    getCommentDistributions(token: Token, modelId: string, interactionList: Interaction[]): Promise<"Unauthorized" | Map<string,CommentDistribution[]>> {
-        return this.getAccount(token)
-            .then((result) => {
-                if (result === "Unauthorized") {
-                    return "Unauthorized";
-                } else {
-                    const account: Account = result;
-                    const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
-                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Model, modelId);
-                    if (!authorized && !invited && !isPublic) {
-                        return "Unauthorized";
-                    } else {
-                        return this._modelService.getCommentDistributions(modelId, interactionList)
+    getCommentDistributions(modelId: string, interactionList: Interaction[], token?: Token): Promise<"Unauthorized" | Map<string,CommentDistribution[]>> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Model, modelId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._modelService.getCommentDistributions(modelId, interactionList)
                             .then((result) => result);
-                    }
+                } else {
+                    return "Unauthorized";
                 }
             });
     }
 
-    getAllNgram(token: Token, modelId: string): Promise<"Unauthorized" | Ngram[]> {
-        return this.getAccount(token)
-            .then((result) => {
-                if (result === "Unauthorized") {
-                    return "Unauthorized";
-                } else {
-                    const account: Account = result;
-                    const authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
-                    const invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
-                    const isPublic = this._accountService.isAuthorizationPublic(Kind.Model, modelId);
-                    if (!authorized && !invited && !isPublic) {
-                        return "Unauthorized";
-                    } else {
-                        return this._modelService.getAllNgram(modelId)
+    getAllNgram(modelId: string, token?: Token): Promise<"Unauthorized" | Ngram[]> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Model, modelId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._modelService.getAllNgram(modelId)
                             .then((result) => result);
-                    }
+                } else {
+                    return "Unauthorized";
                 }
             });
     }
 
-    makeAuthorizationPublic(token: Token, kind: Kind, key: string): Promise<"Unauthorized" | "AuthorizationIsPublic"> {
+    makeAuthorizationPublic(kind: Kind, key: string, token: Token): Promise<"Unauthorized" | "AuthorizationIsPublic"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -489,7 +483,7 @@ export default class APIApplication {
             });
     }
 
-    revokePublicAuthorization(token: Token, kind: Kind, key: string): Promise<"Unauthorized" | "AuthorizationIsNoMorePublic"> {
+    revokePublicAuthorization(kind: Kind, key: string, token: Token): Promise<"Unauthorized" | "AuthorizationIsNoMorePublic"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {

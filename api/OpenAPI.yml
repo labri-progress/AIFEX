@@ -535,7 +535,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
-  /models/{modelId}/computeprobabilities:
+  /models/{modelId}/probabilities:
     post:
       description: get probabilities of the model for a given interaction list
       parameters:
@@ -589,7 +589,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
-  /models/{modelId}/getcommentdistributions:
+  /models/{modelId}/comment-distributions:
     post:
       description: get distributions of the comment for a given interaction list
       parameters:
@@ -747,7 +747,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
-  /public_authorizations:
+  /public/authorizations:
     get:
       description: check that an authorization is public
       parameters:
