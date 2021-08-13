@@ -78,7 +78,6 @@ services:
       dockerfile: ./Dockerfile.prod
     environment:
       - NODE_ENV=${NODE_ENV}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - TOKEN_SECRET=${TOKEN_SECRET}
     depends_on:
       - "account"

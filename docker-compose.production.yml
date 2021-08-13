@@ -1,6 +1,38 @@
 version: "3.3"
 services:
-        
+  
+  website:
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
+  session:
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
+  model:
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
+  evaluator:
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
+  account:
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
+  printer:
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
+  api:
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
+  dashboard:
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
   reverseproxy:
     build:
       context: reverseproxy/
@@ -27,4 +59,23 @@ services:
       - "website"
       - "account"
     
-  
+  elasticsearch:
+    image: elasticsearch:7.12.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kibana:
+    image: kibana:7.12.1
+    environment:
+      - "SERVER_BASEPATH=/kibana"
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
