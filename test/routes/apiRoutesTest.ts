@@ -341,7 +341,7 @@ describe("API", () => {
     });
 
     it("should compute the probabilities", () => {
-        const url = `${API_URL}/models/${modelId}/computeprobabilities`;
+        const url = `${API_URL}/models/${modelId}/probabilities`;
         const body = {
             interactionList: [
                 {index: 0, concreteType: "Action", kind: "start"},
