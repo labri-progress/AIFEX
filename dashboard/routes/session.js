@@ -1,4 +1,4 @@
-const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams } = require('../apiService');
+const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeAuthorizationPublic, revokePublicAuthorization } = require('../apiService');
 const logger = require('../logger');
 const buildInvitation = require("../invitations").buildInvitation;
 
@@ -73,8 +73,8 @@ module.exports = function attachRoutes(app, config) {
 
         logger.info(`GET view session (sessionId = ${sessionId}), (modelId = ${modelId})`);
 
-        Promise.all([getSessionById(req.session.jwt,sessionId), getModelById(req.session.jwt,modelId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId)])
-            .then(([session, model, screenshot, video]) => {
+        Promise.all([getSessionById(req.session.jwt,sessionId), getModelById(req.session.jwt,modelId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId), isAuthorizationPublic("Session",sessionId)])
+            .then(([session, model, screenshot, video, isSessionPublic]) => {
                 logger.debug(`screenshot:${JSON.stringify(screenshot)}`);
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
@@ -88,7 +88,8 @@ module.exports = function attachRoutes(app, config) {
                     model,
                     connectionCode,
                     screenshot,
-                    video
+                    video,
+                    isSessionPublic
                 });
             })
             .catch(e => {
@@ -279,6 +280,34 @@ module.exports = function attachRoutes(app, config) {
                 res.render('error.ejs', { message, account: req.session, error: e });
             })
     });
+
+    app.post('/dashboard/public/authorization', (req, res) => {
+        const { key, kind, isPublic } = req.body;
+        logger.info(`Post public authorization (${key}, ${kind}, ${isPublic})`);
+        if (isPublic) {
+            makeAuthorizationPublic(req.session.jwt, kind, key)
+                .then(() => {
+                    res.json({message: 'Authorization is now public'});
+                })
+                .catch(e => {
+                    logger.error(e.message);
+                    let message = 'Failed to make authorization public';
+                    res.json({message: message});
+                });
+        } else {
+            revokePublicAuthorization(req.session.jwt, kind, key)
+                .then(() => {
+                    res.json({message: 'Authorization is no more public'});
+                })
+                .catch(e => {
+                    logger.error(e.message);
+                    let message = 'Failed to revoke authorization public';
+                    res.json({message: message});
+                });
+        }
+    
+    });
+
 
 
 }

@@ -14,7 +14,7 @@ module.exports.signup = function (username, email, password) {
         body: JSON.stringify(bodySignup)
     }
     return fetch(SIGNUP_URL, optionSignup)
-        .then (response => {
+        .then(response => {
             if (response.ok) {
                 return "AccountCreated"
             } else {
@@ -35,7 +35,7 @@ module.exports.signin = function (username, password) {
         body: JSON.stringify(bodySignin)
     }
     return fetch(SIGNIN_URL, optionSignin)
-        .then (response => {
+        .then(response => {
             if (response.ok) {
                 return response.json().then(json => json.bearerToken)
             } else {
@@ -48,7 +48,7 @@ module.exports.getAccount = function (token) {
     const VERIFY_URL = `http://${config.api.host}:${config.api.port}/account`;
     return fetch(VERIFY_URL, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     })
         .then(response => {
             if (response.ok) {
@@ -63,7 +63,7 @@ module.exports.getWebSiteById = function (token, webSiteId) {
     const webSiteByIDURL = `http://${config.api.host}:${config.api.port}/website/${webSiteId}`;
     return fetch(webSiteByIDURL, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     })
         .then(response => {
             if (response.ok) {
@@ -84,10 +84,10 @@ module.exports.updateWebSite = function (token, webSiteId, name, url, mappingLis
     let optionUpdateWebSite = {
         method: 'PATCH',
         body: JSON.stringify(bodyUpdateWebSite),
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
     return fetch(apiUpdateWebSiteURL, optionUpdateWebSite)
-        .then(response => { 
+        .then(response => {
             if (response.ok) {
                 return response.json();
             } else {
@@ -100,7 +100,7 @@ module.exports.removeWebSite = function (token, webSiteId) {
     const apiRemoveWebSiteURL = 'http://' + config.api.host + ':' + config.api.port + '/websites/' + webSiteId;
     let optionRemoveWebSite = {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
     return fetch(apiRemoveWebSiteURL, optionRemoveWebSite)
         .then(response => {
@@ -122,7 +122,7 @@ module.exports.createWebSite = function (token, name, url, mappingList) {
     let optionCreateWebSite = {
         method: 'POST',
         body: JSON.stringify(bodyCreateWebSite),
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
     return fetch(apiCreateWebSiteURL, optionCreateWebSite)
         .then(response => {
@@ -142,7 +142,7 @@ module.exports.getWebSites = function (token) {
                 const WEBSITE_URL = `http://${config.api.host}:${config.api.port}/websites/${webSiteAuthorization.key}`;
                 return fetch(WEBSITE_URL, {
                     method: 'GET',
-                    headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+                    headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
                 });
             });
             return Promise.all(webSiteFetchList)
@@ -166,22 +166,22 @@ module.exports.getSessionById = function (token, sessionId) {
     const SESSION_URL = `http://${config.api.host}:${config.api.port}/sessions/${sessionId}`;
     return fetch(SESSION_URL, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     })
         .then(response => {
             if (response.ok) {
                 return response.json();
             } else {
                 return undefined;
-            }   
-        })  
+            }
+        })
 }
 
 module.exports.removeSession = function (token, sessionId) {
     const apiRemoveSessionURL = 'http://' + config.api.host + ':' + config.api.port + '/sessions/' + sessionId;
     let optionRemoveSession = {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
     return fetch(apiRemoveSessionURL, optionRemoveSession)
         .then(response => {
@@ -193,7 +193,7 @@ module.exports.removeSession = function (token, sessionId) {
         })
 }
 
-module.exports.createSession = function (token, webSiteId, name, baseURL, overlayType ) {
+module.exports.createSession = function (token, webSiteId, name, baseURL, overlayType) {
     const apiCreateSessionURL = 'http://' + config.api.host + ':' + config.api.port + '/sessions';
     let bodyCreateSession = {
         name,
@@ -204,7 +204,7 @@ module.exports.createSession = function (token, webSiteId, name, baseURL, overla
     let optionCreateSession = {
         method: 'POST',
         body: JSON.stringify(bodyCreateSession),
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
     return fetch(apiCreateSessionURL, optionCreateSession)
         .then(response => {
@@ -225,7 +225,7 @@ module.exports.getSessions = function (token) {
                 const SESSION_URL = `http://${config.api.host}:${config.api.port}/sessions/${sessionAuthorization.key}`;
                 return fetch(SESSION_URL, {
                     method: 'GET',
-                    headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+                    headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
                 });
             });
             return Promise.all(sessionFetchList)
@@ -253,7 +253,7 @@ module.exports.addScreenshots = function (token, sessionId, screenshotList) {
     let optionAddScreenshots = {
         method: 'POST',
         body: JSON.stringify(bodyAddScreenshots),
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
     return fetch(apiAddScreenshotsURL, optionAddScreenshots)
         .then(response => {
@@ -269,7 +269,7 @@ module.exports.getScreenshotsBySessionId = function (token, sessionId) {
     const apiGetScreenshotsURL = 'http://' + config.api.host + ':' + config.api.port + '/sessions/' + sessionId + '/screenshots';
     return fetch(apiGetScreenshotsURL, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     })
         .then(response => {
             if (response.ok) {
@@ -280,8 +280,8 @@ module.exports.getScreenshotsBySessionId = function (token, sessionId) {
         })
 }
 
-module.exports.getVideosBySessionId = function(token, sessionId) {
-    return Promise.resolve({videoList:[]});
+module.exports.getVideosBySessionId = function (token, sessionId) {
+    return Promise.resolve({ videoList: [] });
 }
 
 
@@ -295,7 +295,7 @@ module.exports.createModel = function (token, depth, interpolationfactor, predic
     let optionCreateModel = {
         method: 'POST',
         body: JSON.stringify(bodyCreateModel),
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
     return fetch(apiCreateModelURL, optionCreateModel)
         .then(response => {
@@ -311,7 +311,7 @@ module.exports.getModelById = function (token, modelId) {
     const MODEL_URL = `http://${config.api.host}:${config.api.port}/models/${modelId}`;
     return fetch(MODEL_URL, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     })
         .then(response => {
             if (response.ok) {
@@ -326,7 +326,7 @@ module.exports.removeModel = function (token, modelId) {
     const apiRemoveModelURL = 'http://' + config.api.host + ':' + config.api.port + '/models/' + modelId;
     let optionRemoveModel = {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
     return fetch(apiRemoveModelURL, optionRemoveModel)
         .then(response => {
@@ -341,13 +341,13 @@ module.exports.removeModel = function (token, modelId) {
 
 module.exports.getModels = function (token) {
     return module.exports.getAccount(token)
-        .then(account => { 
+        .then(account => {
             const modelsAuthorization = account.authorizationSet.filter(authorization => authorization.kind === "Model");
             const modelFetchList = modelsAuthorization.map(modelAuthorization => {
                 const MODEL_URL = `http://${config.api.host}:${config.api.port}/models/${modelAuthorization.key}`;
                 return fetch(MODEL_URL, {
                     method: 'GET',
-                    headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+                    headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
                 });
             });
             return Promise.all(modelFetchList)
@@ -371,7 +371,7 @@ module.exports.linkModelToSession = function (token, modelId, sessionId) {
     const apiLinkModelToSessionURL = 'http://' + config.api.host + ':' + config.api.port + '/models/' + modelId + '/link/' + sessionId;
     let optionLinkModelToSession = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
     return fetch(apiLinkModelToSessionURL, optionLinkModelToSession)
         .then(response => {
@@ -387,7 +387,7 @@ module.exports.getAllNgrams = function (token, modelId) {
     const apiGetAllNgramsURL = 'http://' + config.api.host + ':' + config.api.port + '/models/' + modelId + '/ngrams';
     return fetch(apiGetAllNgramsURL, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json',"Authorization": `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     })
         .then(response => {
             if (response.ok) {
@@ -397,6 +397,60 @@ module.exports.getAllNgrams = function (token, modelId) {
             }
         })
 }
+
+module.exports.isAuthorizationPublic = function (kind, key) {
+    let isPublicAuthorizationURL = 'http://' + config.api.host + ':' + config.api.port + '/public/authorizations?';
+    isPublicAuthorizationURL += 'kind=' + kind + '&';
+    isPublicAuthorizationURL += 'key=' + key;
+
+    return fetch(isPublicAuthorizationURL)
+        .then(response => {
+            if (response.ok) {
+                return response.json().then((resultInJson) => resultInJson.isPublic);
+            } else {
+                throw new Error('cannot get public authorizations');
+            }
+        })
+}
+
+module.exports.makeAuthorizationPublic = function(token, kind, key) {
+    let makePublicAuthorizationURL = 'http://' + config.api.host + ':' + config.api.port + '/public/authorizations';
+    return fetch(makePublicAuthorizationURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+            kind,
+            key
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('cannot make authorization public');
+            }
+        });
+}
+
+module.exports.revokePublicAuthorization = function (token, kind, key) {
+    let revokePublicAuthorizationURL = 'http://' + config.api.host + ':' + config.api.port + '/public/authorizations';
+    return fetch(revokePublicAuthorizationURL, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+            kind,
+            key
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('cannot revoke public authorization');
+            }
+        });
+}
+
 
 
 

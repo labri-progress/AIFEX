@@ -12,7 +12,7 @@ module.exports = function attachRoutes(app, config) {
         logger.info(`GET join session (modelId = ${modelId}), (sessionId = ${sessionId})`);
         
 
-        Promise.all([getSessionById(req.session.token, sessionId), getModelById(req.session.token, modelId)])
+        Promise.all([getSessionById(req.session.jwt, sessionId), getModelById(req.session.jwt, modelId)])
             .then(([session, model]) => {
                 res.render('session/invitation.ejs', {
                     account: req.session,

@@ -307,8 +307,8 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         } else {
             accountService.isAuthorizationPublic(kind, key)
                 .then((result) => {
-                    logger.info("authorization is public");
-                    res.json({authorized:result});
+                    logger.info("is authorization public ? : "+result);
+                    res.json({isPublic:result});
                 })
                 .catch((e) => {
                     logger.error(`is authorization public error ${e}`);

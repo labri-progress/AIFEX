@@ -621,7 +621,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.get("/public/authorizations", (req, res) => {
         const {key, kind} = req.query;
-        logger.info(`get public authorization`);
+        logger.info(`is authorization public ?`);
         if (key === undefined || kind === undefined) {
             logger.warn(`key or kind is undefined`);
             res.status(INVALID_PARAMETERS_STATUS).json({message:"No key or kind"});
@@ -634,6 +634,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 } else {
                     api.isAuthorizationPublic(kind, key)
                         .then(result => {
+                            logger.debug('result : '+result);
                             res.json({isPublic:result});
                         })
                 }
@@ -653,13 +654,16 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"No key or kind"});
             } else {
                 if (kind !== Kind.Model && kind !== Kind.Session && kind !== Kind.WebSite) {
+                    logger.debug('not a valid kind: '+kind);
                     res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid Kind"});
                 } else {
                     if (typeof key !== "string") {
+                        logger.debug('not a valid key'+key);
                         res.status(INVALID_PARAMETERS_STATUS).json({message:"Not a valid key"});
                     } else {
                         api.makeAuthorizationPublic(kind, key, req.token)
                             .then(result => {
+                                logger.debug('result : '+result);
                                 res.json({message:result});
                             })
                     }

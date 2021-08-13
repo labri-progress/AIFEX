@@ -297,7 +297,7 @@ export default class AccountServiceHTTP implements AccountService {
         return fetch(accountIsAuthorizationPublicURL, optionIsAuthorizationPublic)
             .then(response => {
                 if (response.ok) {
-                    return response.json().then((resultJson) => !!resultJson.authorized);
+                    return response.json().then((resultJson) => !!resultJson.isPublic);
                 } else {
                     throw new Error('Something goes wrong while checking the authorization public');
                 }
