@@ -16,6 +16,17 @@ export default class HandlerOfMessageSentByPopup {
     private handleMessage(msg : any, sender : any, sendResponse : Function): boolean {
         logger.info(`Popup asks for ${msg.kind}`);
         switch (msg.kind) {
+            case "changePopupPageKind": {
+                if (!msg.popupPageKind) {
+                    logger.debug(`no page`);
+                    sendResponse({error: "page is missing"});
+                    return true;
+                } else {
+                    this._application.changePopupPageKind(msg.popupPageKind);
+
+                }
+            }
+
             case "checkDeprecated": {
                 if (!msg.url) {
                     logger.debug(`cannot check plugin version`);

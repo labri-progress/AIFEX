@@ -1,7 +1,11 @@
 import CompatibilityCheck from "../domain/CompatibilityCheck";
+import { PopupPageKind } from "../domain/PopupPageKind";
 import StateForPopup from "../domain/StateForPopup";
 
 export default interface Interface4Popup {
+
+    changePopupPageKind(popupPageKind: PopupPageKind): void;
+
     toggleDetachPopup(): Promise<void>;
 
     getStateForPopup(): StateForPopup;

@@ -1,6 +1,6 @@
-function renderSigninComponent(state) {
+function renderSigninComponent() {
     let component = document.getElementById('signinComponent');
-    if (state.serverURL && !state.token) {
+    if (state.pageKind === 'Configure') {
         component.style.display = "block";
     } else {
         component.style.display = "none";

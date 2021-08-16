@@ -18,6 +18,7 @@ import Comment from "./Comment"
 import CommentDistribution from "./CommentDistribution";
 import { OverlayType } from "./Session";
 import Token from "./Token";
+import { PopupPageKind } from "./PopupPageKind";
 
 export default class Background {
 
@@ -49,6 +50,7 @@ export default class Background {
     private _commentDistributions: CommentDistribution[] | undefined;
     private _commentsUp: Comment[];
 
+    private _popupPageKind: PopupPageKind;
     private _isRecording: boolean;
     private _useTestScenario: boolean;
     private _popupCommentPosition: { x: string, y: string };
@@ -81,6 +83,7 @@ export default class Background {
         this._useTestScenario = false;
         this._testerName = "anonymous";
         this._numberOfExplorationsMadeByTester = 0;
+        this._popupPageKind = PopupPageKind.Home;
 
         this._overlayType = "rainbow";
 
@@ -109,6 +112,10 @@ export default class Background {
         this._exploration = new Exploration();
         this._explorationEvaluation = undefined;
         this._isRecording = false;
+    }
+
+    changePopupPageKind(popupPageKind: PopupPageKind): void {
+        this._popupPageKind = popupPageKind;
     }
 
     makeCompatibilityCheck(serverURL: string): Promise<CompatibilityCheck> {
@@ -564,8 +571,10 @@ export default class Background {
 
     getStateForPopup(): StateForPopup {
         const state = new StateForPopup();
+        state.pageKind = this._popupPageKind;
         state.serverURL = this._serverURL;
         state.token = this._token;
+
         if (this._serverURL && this._sessionId && this._modelId) {
             state.url = `${this._serverURL}/join?sessionId=${this._sessionId}&modelId=${this._modelId}`;
 

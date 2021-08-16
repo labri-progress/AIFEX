@@ -5,6 +5,7 @@ import Comment from "../domain/Comment";
 import CommentDistribution from "../domain/CommentDistribution";
 import CompatibilityCheck from "../domain/CompatibilityCheck";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
+import { PopupPageKind } from "../domain/PopupPageKind";
 import PopupService from "../domain/PopupService";
 import Question from "../domain/Question";
 import StateForPopup from "../domain/StateForPopup";
@@ -23,6 +24,10 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 	/************************/
 	/* For Popup        */
 	/************************/
+
+	changePopupPageKind(popupPageKind: PopupPageKind): void {
+		return this._background.changePopupPageKind(popupPageKind);
+	}
 
 	linkServer(serverURL: any): Promise<"LinkedToServer"> {
 		return this._background.linkServer(serverURL);

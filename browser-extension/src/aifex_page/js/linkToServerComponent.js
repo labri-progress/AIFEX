@@ -1,6 +1,6 @@
-function renderLinkToServerComponent(state) {
+function renderLinkToServerComponent() {
     let component = document.getElementById('linkToServerComponent');
-    if (!state.serverURL) {
+    if (state.pageKind === 'Configure') {
         component.style.display = "block";
     } else {
         component.style.display = "none";
@@ -50,3 +50,5 @@ document.getElementById("linkToServerButton").addEventListener("click", handleSe
 document.getElementById("serverURLInput").addEventListener("keydown", handleServerLink);
 
 addComponentToPopup(renderLinkToServerComponent);
+
+console.log('LinkToServer Component has been launched');

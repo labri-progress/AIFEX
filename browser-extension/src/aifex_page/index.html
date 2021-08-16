@@ -17,6 +17,8 @@
     <script src="./js/popup.js" defer></script>
 
     <!-- Components Render Function-->
+    <script src="./js/headerComponent.js" defer></script>
+    <script src="./js/homeComponent.js" defer></script>
     <script src="./js/linkToServerComponent.js" defer></script>
     <script src="./js/signinComponent.js" defer></script>
     <script src="./js/connectToSessionComponent.js" defer></script>
@@ -38,8 +40,14 @@
 
     <div class="container-fluid">
         <div id="main-content">
+            <div id="homeComponent">
+                <p>Join a session or create a new one ?</p>
+                <button id="goToJoinSession"> Join </button>
+                <button id="goToCreateSession"> Create </button>
+            </div>
+
             <div id="linkToServerComponent">
-                <p>Link to the server</p>
+                <p>Changing the AIFEX server</p>
                 <form id="linkToServerForm">
                     <div class="form-group ">
                         <label id="linkToServerMessage"> You are not connected.</label>
@@ -54,7 +62,7 @@
             </div>
 
             <div id="signinComponent">
-                <p>Please Sign In</p>
+                <p>Sign In</p>
                 <form id="signinForm">
                     <div class="form-group ">
                         <label id="signinMessage"> You are not logged.</label>
@@ -74,27 +82,15 @@
 
 
             <div id="connectToSessionComponent">
-                <h3>Connection</h3>
+                <h3>Connect to a session</h3>
                 <form id="connectionForm">
                     <div class="form-group ">
-                        <label id="connexionMessage" for="connectionURLInput"> You are not connected.</label>
+                        <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
                         <div class="input-group ">
                             <input id="connectionURLInput" class="form-control" type="text" placeholder="Connection URL"
                                 required />
                             <a id="connectionSignIn" class="btn btn-default input-group-addon"><i
                                     class="fa fa-sign-in"></i></a>
-                            <a id="connectionSignOut" class="btn btn-default input-group-addon"><i
-                                    class="fa fa-sign-out"></i></a>
-                            <a id="connectionSync" class="btn btn-default input-group-addon"><i
-                                    class="fa fa-refresh"></i></a>
-                            <a id="openSessionWindow" class="btn btn-default input-group-addon"><i
-                                    class="fa fa-window-maximize"></i></a>
-                        </div>
-                    </div>
-                    <div class="form-group ">
-                        <div id="toggleShouldTestInNewWindowGroup" class="input-group">
-                            <input id="toggleShouldTestInNewWindow" type="checkbox">
-                            Create a new window for the test session
                         </div>
                     </div>
                 </form>
