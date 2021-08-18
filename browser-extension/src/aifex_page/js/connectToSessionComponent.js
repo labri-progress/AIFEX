@@ -7,10 +7,15 @@ function renderConnectToSessionComponent() {
     }
 }
 
-function handleConnection(e) {
+function handleConnexion(e) {
     console.log('connect');
+    if (e.type === "keydown" && e.key !== "Enter") {
+        console.log("key",e.key);
+        return;
+    }
     e.preventDefault();
-    const INPUT_URL = document.getElementById("connectionURLInput").value;
+
+    const INPUT_URL = document.getElementById("connexionURLInput").value;
     try {
         new URL(INPUT_URL);
     } catch (e) {
@@ -21,7 +26,6 @@ function handleConnection(e) {
         .then(extensionInfo => {
             if (extensionInfo.latestVersion && extensionInfo.currentVersion !== extensionInfo.latestVersion) {
                 document.getElementById('connexionMessage').innerHTML = `Your current version ${extensionInfo.currentVersion} of the AIFEX Extention is deprecated, please get latest version <a href="${extensionInfo.url}"> ${extensionInfo.latestVersion} </a>`;
-                //alert(`Your current version ${extensionInfo.currentVersion} of the AIFEX Exstention is deprecated, please get latest version ${extensionInfo.latestVersion} at ${extensionInfo.url}`)
             } else {
                 sendMessage({
                     kind: "connect",
@@ -29,12 +33,15 @@ function handleConnection(e) {
                 })
                     .then((response) => {
                         if (!response) {
-                            console.error(`Background does not answer`);
+                            console.log(`Background does not answer`);
                         }
-                        else if (response.error) {
-                            console.error(response.error);
-                            document.getElementById('connexionMessage').innerHTML = response.error;
+                        else if (response !== "Connected") {
+                            console.error(response);
+                            document.getElementById('connexionMessage').innerHTML = response;
                             return;
+                        } else if (response.error) { 
+                            console.log(response.error);
+                            document.getElementById('connexionMessage').innerHTML = response.error;
                         } else {
                             getState();
                         }
@@ -43,5 +50,9 @@ function handleConnection(e) {
         })
 }
 
+document.getElementById("connexionButton").addEventListener("click", handleConnexion);
+document.getElementById("connexionURLInput").addEventListener("keydown", handleConnexion);
 
 addComponentToPopup(renderConnectToSessionComponent);
+
+console.log('ConnectToSession Component has been launched');

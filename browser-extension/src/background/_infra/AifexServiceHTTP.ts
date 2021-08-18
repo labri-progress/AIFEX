@@ -10,19 +10,19 @@ import Screenshot from "../domain/Screenshot";
 import CommentDistribution from "../domain/CommentDistribution";
 import Token from "../domain/Token";
 
-
-
-
 const OK_STATUS = 200;
 const INVALID_PARAMETERS_STATUS = 400;
+const FORBIDDEN_STATUS = 403;
 const NOT_FOUND_STATUS = 404;
 const INTERNAL_SERVER_ERROR_STATUS = 500;
-
 
 export default class AifexServiceHTTP implements AifexService {
 
 	ping(serverURL: string): Promise<void> {
-		return fetch(`${serverURL}/api/ping`)
+		return fetch(`${serverURL}/api/ping`,{
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+		})
 			.then(response => {
 				console.log(response);
 				if (response.ok) {
@@ -41,16 +41,16 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { "Content-Type": "application/json" },
 		};
 		return fetch(`${serverURL}/api/plugin-info`, option)
-		.then(response => {
-			if (!response.ok) {
-				throw new Error(response.statusText);
-			}
-			return response.json();
-		})
-		.then(details => {
-			details.url = `${serverURL}/download`
-			return new AifexPluginInfo(details.version, details.name, details.description, details.url);
-		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(response.statusText);
+				}
+				return response.json();
+			})
+			.then(details => {
+				details.url = `${serverURL}/download`
+				return new AifexPluginInfo(details.version, details.name, details.description, details.url);
+			})
 	}
 
 	signin(serverURL: string, username: string, password: string): Promise<Token | "Unauthorized"> {
@@ -68,76 +68,92 @@ export default class AifexServiceHTTP implements AifexService {
 					return "Unauthorized"
 				}
 			});
-		
+
 	}
 
-	getSession(serverURL: string, sessionId : string): Promise<Session | undefined> {
-		return fetch(`${this.getSessionURL(serverURL)}/session/${sessionId}`)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return response
-					.json()
-					.then((session: {
-						id: string,
-						webSite: { id: string },
-						overlayType: "rainbow" | "bluesky" | "shadow",
-						useTestScenario: boolean,
-						baseURL: string
-					}) => {
-					return new Session(session.id, session.webSite.id, session.overlayType, session.useTestScenario, session.baseURL);
-				});
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`sessionId is malformed`);
-			}
-			if (response.status === NOT_FOUND_STATUS) {
-				return;
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
-			}
+	getSession(serverURL: string, sessionId: string, token?: Token): Promise<Session | undefined | "Unauthorized"> {
+		const SESSION_URL = serverURL + '/api/sessions/' + sessionId;
+		return fetch(SESSION_URL, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
 		})
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response
+						.json()
+						.then((session: {
+							id: string,
+							webSite: { id: string },
+							overlayType: "rainbow" | "bluesky" | "shadow",
+							useTestScenario: boolean,
+							baseURL: string
+						}) => {
+							return new Session(session.id, session.webSite.id, session.overlayType, session.useTestScenario, session.baseURL);
+						});
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return undefined;
+				}
+				if (response.status === NOT_FOUND_STATUS) {
+					return undefined;
+				}
+				if (response.status === FORBIDDEN_STATUS) {
+					return "Unauthorized";
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(`server error`);
+				}
+			})
 	}
 
-	getWebSite(serverURL: string, webSiteId: string): Promise<WebSite | undefined> {
-		return fetch(`${this.getWebSiteURL(serverURL)}/website/${webSiteId}`)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return response
-				.json()
-				.then(websiteData => {
-					return new WebSite(websiteData.id, websiteData.name, websiteData.mappingList);
-				})
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`sessionId is malformed`);
-			}
-			if (response.status === NOT_FOUND_STATUS) {
-				return;
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
-			}
-		})		
+	getWebSite(serverURL: string, webSiteId: string, token?: Token): Promise<WebSite | undefined | "Unauthorized"> {
+		return fetch(`${serverURL}/api/websites/${webSiteId}`, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
+		})
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response
+						.json()
+						.then(websiteData => {
+							return new WebSite(websiteData.id, websiteData.name, websiteData.mappingList);
+						})
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(`sessionId is malformed`);
+				}
+				if (response.status === NOT_FOUND_STATUS) {
+					return;
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(`server error`);
+				}
+			})
 	}
 
-	hasModel(serverURL: string, modelId: string): Promise<boolean>  {
-		return fetch(`${this.getModelURL(serverURL)}/model/${modelId}`)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return true;
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`modelId is malformed`);
-			}
-			if (response.status === NOT_FOUND_STATUS) {
+	hasModel(serverURL: string, modelId: string, token?:Token): Promise<boolean | "Unauthorized"> {
+		return fetch(`${serverURL}/api/models/${modelId}`,{
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
+		})
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return true;
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return false;
+				}
+				if (response.status === NOT_FOUND_STATUS) {
+					return false;
+				}
+				if (response.status === FORBIDDEN_STATUS) {
+					return "Unauthorized";
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(`server error`);
+				}
 				return false;
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
-			}
-			return false;
-		})	
+			})
 	}
 
 	getProbabilityMap(
@@ -157,22 +173,22 @@ export default class AifexServiceHTTP implements AifexService {
 			`${this.getModelURL(serverURL)}/model/${modelId}/getprobabilitymap`,
 			option
 		)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return response
-				.json()
-				.then((jsonMap) => {
-					return new Map(jsonMap);
-				});
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`modelId and/or interaction list is malformed`);
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
-			}
-			return new Map();
-		})
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response
+						.json()
+						.then((jsonMap) => {
+							return new Map(jsonMap);
+						});
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(`modelId and/or interaction list is malformed`);
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(`server error`);
+				}
+				return new Map();
+			})
 	}
 
 	addExploration(
@@ -195,20 +211,20 @@ export default class AifexServiceHTTP implements AifexService {
 		return fetch(
 			`${this.getSessionURL(serverURL)}/session/${sessionId}/exploration/add`,
 			option)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return response.json();
-			}
-			if (response.status === NOT_FOUND_STATUS) {
-				return Promise.reject(new Error(`sessionId not found`));
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(new Error(`server error`));
-			}
-		});
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response.json();
+				}
+				if (response.status === NOT_FOUND_STATUS) {
+					return Promise.reject(new Error(`sessionId not found`));
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(new Error(`server error`));
+				}
+			});
 	}
 
 	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration): Promise<CommentDistribution[] | undefined> {
@@ -223,37 +239,37 @@ export default class AifexServiceHTTP implements AifexService {
 		return fetch(
 			`${this.getModelURL(serverURL)}/model/${modelId}/getcommentdistributions`,
 			option)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return response
-				.json()
-				.then((commentDistributionsData : { 
-					note : string, 
-					distributions : { 
-						commentOccurence: number,
-						contextOccurece: number,
-						context: string[] 
-					}[]
-				}[]) => {
-					return commentDistributionsData.map(commentDistributionData => {
-						return new CommentDistribution(commentDistributionData.note, commentDistributionData.distributions)
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response
+						.json()
+						.then((commentDistributionsData: {
+							note: string,
+							distributions: {
+								commentOccurence: number,
+								contextOccurece: number,
+								context: string[]
+							}[]
+						}[]) => {
+							return commentDistributionsData.map(commentDistributionData => {
+								return new CommentDistribution(commentDistributionData.note, commentDistributionData.distributions)
 
-					})
-				})
-			}
-			if (response.status === NOT_FOUND_STATUS) {
-				return Promise.reject(new Error(`sessionId not found`));
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(new Error(`server error`));
-			}
-		});
+							})
+						})
+				}
+				if (response.status === NOT_FOUND_STATUS) {
+					return Promise.reject(new Error(`sessionId not found`));
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(new Error(`server error`));
+				}
+			});
 	}
 
-	addScreenshotList(serverURL: string, sessionId: string, explorationNumber : number, list : Screenshot[]): Promise<void> {
+	addScreenshotList(serverURL: string, sessionId: string, explorationNumber: number, list: Screenshot[]): Promise<void> {
 		const screenshotList = list.map((screenshot) => {
 			screenshot.sessionId = sessionId;
 			screenshot.explorationNumber = explorationNumber;
@@ -268,20 +284,20 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { "Content-Type": "application/json" },
 		};
 		return fetch(`${this.getSessionURL(serverURL)}/session/addscreenshotlist`, option)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return;
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(new Error(`screenshotList is malformed`));
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(new Error(`server error`));
-			}
-		});
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return;
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(new Error(`screenshotList is malformed`));
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(new Error(`server error`));
+				}
+			});
 	}
 
-	addVideo(serverURL: string, sessionId: string, explorationNumber:number, video:Blob): Promise<void> {
+	addVideo(serverURL: string, sessionId: string, explorationNumber: number, video: Blob): Promise<void> {
 		const fd = new FormData();
 		fd.append('video', video, 'video.webm');
 
@@ -290,17 +306,17 @@ export default class AifexServiceHTTP implements AifexService {
 			body: fd
 		};
 		return fetch(`${this.getSessionURL(serverURL)}/session/addVideo/${sessionId}/${explorationNumber}`, option)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return;
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(new Error(`sessionId and/or explorationNumber and/or video is malformed`));
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(new Error(`server error`));
-			}
-		});
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return;
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(new Error(`sessionId and/or explorationNumber and/or video is malformed`));
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(new Error(`server error`));
+				}
+			});
 	}
 
 	evaluateSequence(serverURL: string, webSite: WebSite, exploration: Exploration): Promise<ExplorationEvaluation> {
@@ -314,87 +330,88 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { "Content-Type": "application/json" },
 		};
 		return fetch(`${this.getEvaluatorURL(serverURL)}/evaluator/evaluateSequence`, option)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return response.json();
-			} else {
-				return Promise.reject(new Error(`Evaluator error`));
-			}
-		})
-		.then((evaluationData : {
-			evaluation: {
-				continuingActionList: {prefix: string, suffix?: string}[],
-				enteringInteractionList: {prefix: string, suffix?: string}[],
-				finishingInteractionList: {prefix: string, suffix?: string}[],
-				isAccepted: boolean,
-			}}) => {
-			const evaluation = evaluationData.evaluation;
-			if (!evaluation) {
-				return Promise.reject(new Error(`Evaluator error`));
-			} else {
-				return new ExplorationEvaluation(
-					evaluation.isAccepted,
-					evaluation.enteringInteractionList.map(interaction => new Action(interaction.prefix, interaction.suffix)),
-					evaluation.continuingActionList.map(interaction => new Action(interaction.prefix, interaction.suffix)),
-					evaluation.finishingInteractionList.map(interaction => new Action(interaction.prefix, interaction.suffix)),
-				);
-			}
-		})
-		
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response.json();
+				} else {
+					return Promise.reject(new Error(`Evaluator error`));
+				}
+			})
+			.then((evaluationData: {
+				evaluation: {
+					continuingActionList: { prefix: string, suffix?: string }[],
+					enteringInteractionList: { prefix: string, suffix?: string }[],
+					finishingInteractionList: { prefix: string, suffix?: string }[],
+					isAccepted: boolean,
+				}
+			}) => {
+				const evaluation = evaluationData.evaluation;
+				if (!evaluation) {
+					return Promise.reject(new Error(`Evaluator error`));
+				} else {
+					return new ExplorationEvaluation(
+						evaluation.isAccepted,
+						evaluation.enteringInteractionList.map(interaction => new Action(interaction.prefix, interaction.suffix)),
+						evaluation.continuingActionList.map(interaction => new Action(interaction.prefix, interaction.suffix)),
+						evaluation.finishingInteractionList.map(interaction => new Action(interaction.prefix, interaction.suffix)),
+					);
+				}
+			})
+
 	}
 
-	getEvaluator(serverURL: string, webSiteId : string) : Promise<Evaluator | undefined> {
+	getEvaluator(serverURL: string, webSiteId: string): Promise<Evaluator | undefined> {
 		const option = {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 		};
 		return fetch(`${this.getEvaluatorURL(serverURL)}/evaluator/getEvaluator/${webSiteId}`, option)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return response.json();
-			}
-			if (response.ok) {
-				return;
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`webSiteId is malformed`);
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
-			}
-		})
-		.then((evaluatorJSON: {
-			webSiteId: string,
-			description: string,
-			expression: String,
-			id: string,
-		}) => {
-			if (evaluatorJSON){
-				return new Evaluator(evaluatorJSON.description);
-			} else {
-				return;
-			}
-		})
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response.json();
+				}
+				if (response.ok) {
+					return;
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(`webSiteId is malformed`);
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(`server error`);
+				}
+			})
+			.then((evaluatorJSON: {
+				webSiteId: string,
+				description: string,
+				expression: String,
+				id: string,
+			}) => {
+				if (evaluatorJSON) {
+					return new Evaluator(evaluatorJSON.description);
+				} else {
+					return;
+				}
+			})
 	}
 
 	getNumberOfExplorationForTesterName(serverURL: string, sessionId: string, testerName: string): Promise<number> {
 		return fetch(`${this.getSessionURL(serverURL)}/session/${sessionId}/numberOfTesterExploration/${testerName}`)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return response.json();
-			}
-			if (response.ok) {
-				return;
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(`webSiteId is malformed`);
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(`server error`);
-			}
-		}).then((data: {numberOfExplorations: number}) => {
-			return data.numberOfExplorations
-		}) 
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response.json();
+				}
+				if (response.ok) {
+					return;
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(`webSiteId is malformed`);
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(`server error`);
+				}
+			}).then((data: { numberOfExplorations: number }) => {
+				return data.numberOfExplorations
+			})
 	}
 
 	private getDashboardURL(serverURL: string) {
@@ -412,7 +429,7 @@ export default class AifexServiceHTTP implements AifexService {
 			return SERVER_URL.origin;
 		}
 	}
-	
+
 	private getSessionURL(serverURL: string) {
 		const SERVER_URL = new URL(serverURL);
 		const SERVER_IN_PRODUCTION = SERVER_URL.protocol === 'https:';

@@ -4,9 +4,9 @@ import Token from "../domain/Token";
 import APIApplication from '../application/APIApplication';
 import { Kind } from '../domain/Kind';
 
+const INVALID_PARAMETERS_STATUS = 400;
 const FORBIDDEN_STATUS = 403;
 const NOT_FOUND_STATUS = 404;
-const INVALID_PARAMETERS_STATUS = 400;
 const INTERNAL_SERVER_ERROR_STATUS = 500;
 
 export default function attachRoutes(app: Application, api: APIApplication) {
@@ -176,6 +176,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             .then(webSiteResult => {
                 if (webSiteResult === "Unauthorized") {
                     res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                } else if (webSiteResult === undefined) {
+                    res.status(NOT_FOUND_STATUS).json({message:"Not found"});
                 } else {
                     logger.info("webSites by Id done");
                     res.json(webSiteResult);
@@ -285,6 +287,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 .then(sessionResult => {
                     if (sessionResult === "Unauthorized") {
                         res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else if (sessionResult === undefined) {
+                        res.status(NOT_FOUND_STATUS).json({message:"Not found"});
                     } else {
                         logger.info("Session by Id done");
                         res.json(sessionResult);
@@ -469,6 +473,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 .then(modelResult => {
                     if (modelResult === "Unauthorized") {
                         res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else if(modelResult === undefined) {
+                        res.status(NOT_FOUND_STATUS).json({message:"Model not found"});
                     } else {
                         logger.info("Model by Id done");
                         res.json(modelResult);

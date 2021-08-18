@@ -15,11 +15,11 @@ export default interface AifexService {
 
 	signin(serverURL: string, email: string, password: string): Promise<Token | "Unauthorized">;
 
-	getSession(serverURL : string, webSiteId: string): Promise<Session | undefined> ;
+	getSession(serverURL : string, sessionId: string, token?: Token): Promise<Session | undefined | "Unauthorized"> ;
 
-	getWebSite(serverURL: string, webSiteId: string): Promise<WebSite | undefined> ;
+	getWebSite(serverURL: string, webSiteId: string, token?: Token): Promise<WebSite | undefined | "Unauthorized"> ;
 
-	hasModel(serverURL: string, modelId: string): Promise<boolean> ;
+	hasModel(serverURL: string, modelId: string, token?:Token): Promise<boolean | "Unauthorized"> ;
 
 	getProbabilityMap(
 		serverURL: string, 

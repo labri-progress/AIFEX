@@ -209,8 +209,20 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/WebSite'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'      
         '403':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
@@ -311,8 +323,24 @@ paths:
       responses:
         '200':
           description: The Session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'      
         '403':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
@@ -715,8 +743,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Model'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'      
         '403':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:

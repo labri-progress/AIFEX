@@ -33,7 +33,9 @@ export default class HandlerOfMessageSentByPopup {
                     sendResponse({error: "URL is missing"});
                     return true;
                 } else {
-                    this._application.makeCompatibilityCheck(msg.url)
+                    try {
+                        const connexionURL = new URL(msg.url);
+                        this._application.makeCompatibilityCheck(connexionURL.origin)
                         .then((compatibilityCheck) => {
                             logger.debug(`compatibilityCheck: ${compatibilityCheck}`);
                             sendResponse(compatibilityCheck);
@@ -42,6 +44,10 @@ export default class HandlerOfMessageSentByPopup {
                             logger.error("popup asks for checkDeprecated", error);
                             sendResponse({error});
                         });
+                    } catch (error) {
+                        logger.error("wrong URL",error);
+                        sendResponse({error});
+                    }
                     return true;
                 }
 			}
@@ -82,31 +88,33 @@ export default class HandlerOfMessageSentByPopup {
                     logger.debug(`connection refused`);
                     sendResponse({error: "URL is missing"});
                     return true;
-                }
-                const CONNECTION_URL = new URL(msg.url);
-                const sessionId = CONNECTION_URL.searchParams.get('sessionId');
-                const modelId = CONNECTION_URL.searchParams.get('modelId');
-                const serverURL = CONNECTION_URL.origin;
-                logger.debug(`sessionId=${sessionId}, modelId=${modelId}, serverURL=${serverURL}`)
-                if (!sessionId || !modelId || ! serverURL) {
-                    logger.debug(`URL is invalid`);
-                    sendResponse({error: "URL is invalid"});
-                    return true;
-                }
-                this._application
-                    .connect(serverURL, sessionId, modelId)
-                    .then(() => {
-                        logger.debug(`connection accepted`);
-                        sendResponse("ok");
-                    })
-                    .catch((error: string) => {
-                        if (error === "session not found" || error === "model not found") {
-                            logger.warn(error);
-                        } else {
-                            logger.error("Connection failed", new Error(error))
+                } else {
+                    try {
+                        const CONNECTION_URL = new URL(msg.url);
+                        const sessionId = CONNECTION_URL.searchParams.get('sessionId');
+                        const modelId = CONNECTION_URL.searchParams.get('modelId');
+                        const serverURL = CONNECTION_URL.origin;
+                        logger.debug(`sessionId=${sessionId}, modelId=${modelId}, serverURL=${serverURL}`)
+                        if (!sessionId || !modelId || ! serverURL) {
+                            logger.debug(`URL is invalid`);
+                            sendResponse({error: "URL is invalid"});
+                            return true;
                         }
-                        sendResponse({error: "Connection failed"})
-                });
+                        this._application
+                            .connect(serverURL, sessionId, modelId)
+                            .then((connexionResult) => {
+                                logger.debug(`connection : ${connexionResult}`);
+                                sendResponse(connexionResult);
+                            })
+                            .catch((error: string) => {
+                                logger.error("Connection failed", new Error(error))
+                                sendResponse({error})
+                        });
+                    } catch(error) {
+                        logger.error("Invalid URL", new Error(error))
+                        sendResponse({error})
+                    }
+                }
                 return true;
             }
 

@@ -49,7 +49,7 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.signin(username, password);
 	}
 
-	connect(serverURL: string, sessionId: string, modelId: string): Promise<void> {
+	connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
 		return this._background.connect(serverURL, sessionId, modelId);
 	}
 

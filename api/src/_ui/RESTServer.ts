@@ -55,11 +55,13 @@ export default class RESTServer {
             
             if (bearerHeader) {
                 const bearer = bearerHeader.split(' ');
-                const bearerToken = bearer[1];
-                try {
-                    jsonwebtoken.verify(bearerToken, config.tokenSecret);
-                    req.token = new Token(bearerToken);
-                } catch(e) {
+                if (bearer.length > 1) {
+                    const bearerToken = bearer[1];
+                    try {
+                        jsonwebtoken.verify(bearerToken, config.tokenSecret);
+                        req.token = new Token(bearerToken);
+                    } catch(e) {
+                    }
                 }
             }
             next();

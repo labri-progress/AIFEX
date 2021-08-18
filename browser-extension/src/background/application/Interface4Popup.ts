@@ -18,7 +18,7 @@ export default interface Interface4Popup {
 
     signin(username: string, password: string): Promise<"SignedIn" | "Unauthorized">;
 
-    connect(serverURL: string, sessionId: string, modelId: string): Promise<void>;
+    connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound">;
 
     disconnect(): Promise<void>;
 

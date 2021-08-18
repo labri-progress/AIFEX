@@ -156,59 +156,55 @@ export default class Background {
         }
     }
 
-    connect(serverURL: string, sessionId: string, modelId: string): Promise<void> {
+    connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
         this.initialize();
-        return this._aifexService.hasModel(serverURL, modelId)
-            .then((hasModel: boolean) => {
-                if (!hasModel) {
-                    return Promise.reject('model not found');
-                }
-            })
-            .then(() => {
-                return this._aifexService.getSession(serverURL, sessionId)
-            })
-            .then((session) => {
-                if (session) {
-                    this._sessionBaseURL = session.baseURL;
-                    this._overlayType = session.overlayType as OverlayType;
-                    this._useTestScenario = session.useTestScenario;
-                    return session.webSiteId;
+        return Promise.all([this._aifexService.hasModel(serverURL, modelId, this._token), this._aifexService.getSession(serverURL, sessionId, this._token)])
+            .then(([modelResult, sessionResult]) => {
+                if (modelResult === "Unauthorized" || sessionResult === "Unauthorized") { 
+                    return "Unauthorized";
+                } else if (modelResult === false || sessionResult === undefined) {
+                    return "NotFound";
                 } else {
-                    return Promise.reject('session not found');
-                }
-            })
-            .then((webSiteId) => {
-                return this._aifexService.getWebSite(serverURL, webSiteId);
-            })
-            .then((webSite: WebSite | undefined) => {
-                if (webSite) {
-                    this._webSite = webSite;
-                    this._sessionId = sessionId;
-                    this._modelId = modelId;
-                    this._serverURL = serverURL;
-                    if (this._useTestScenario) {
-                        return this._aifexService.getEvaluator(serverURL, webSite.id)
-                            .then((evaluator: Evaluator | undefined) => {
-                                if (evaluator === undefined) {
-                                    this._useTestScenario = false;
+                    this._sessionBaseURL = sessionResult.baseURL;
+                    this._overlayType = sessionResult.overlayType as OverlayType;
+                    this._useTestScenario = sessionResult.useTestScenario;
+                    return this._aifexService.getWebSite(serverURL, sessionResult.webSiteId, this._token)
+                        .then((webSiteResult) => {
+                            if (webSiteResult === "Unauthorized") {
+                                return "Unauthorized"
+                            } else if (webSiteResult === undefined) {
+                                return "NotFound";
+                            } else {
+                                this._webSite = webSiteResult;
+                                this._sessionId = sessionId;
+                                this._modelId = modelId;
+                                this._serverURL = serverURL;
+                                // if (this._useTestScenario) {
+                                //     return this._aifexService.getEvaluator(serverURL, webSite.id)
+                                //         .then((evaluator: Evaluator | undefined) => {
+                                //             if (evaluator === undefined) {
+                                //                 this._useTestScenario = false;
+                                //             } else {
+                                //                 this._useTestScenario = true;
+                                //                 this._evaluator = evaluator;
+                                //             }
+                                //         })
+                                // }
+                                let windowManagement;
+                                if (this._shouldCreateNewWindowsOnConnect) {
+                                    windowManagement = this._windowManager.createConnectedWindow(this._sessionBaseURL);
                                 } else {
-                                    this._useTestScenario = true;
-                                    this._evaluator = evaluator;
+                                    windowManagement = this._windowManager.connectToExistingWindow();
                                 }
-                            })
-                    }
-                } else {
-                    return Promise.reject(`webSite is undefined`);
-                }
-            })
-            .then(() => {
-                if (this._shouldCreateNewWindowsOnConnect) {
-                    this._windowManager.createConnectedWindow(this._sessionBaseURL);
-                } else {
-                    this._windowManager.connectToExistingWindow();
-                }
-            })
-            .then(() => this.updateNumberOfExplorationByTester())
+                                return windowManagement
+                                    .then(() => {
+                                        this._popupPageKind = PopupPageKind.Explore;
+                                        return "Connected";
+                                    })
+                            }
+                        });
+                } 
+            });
     }
 
     disconnect(): Promise<void> {
@@ -244,9 +240,10 @@ export default class Background {
         if (!this._webSite || !this._serverURL) {
             return Promise.resolve();
         }
-        return this._aifexService.getWebSite(this._serverURL, this._webSite.id)
+        return this._aifexService.getWebSite(this._serverURL, this._webSite.id, this._token)
             .then((webSite) => {
-                this._webSite = webSite;
+                //TODO: check if the website has changed
+                //this._webSite = webSite;
             })
             .then((_) => {
                 const state = this.getStateForTabScript();
