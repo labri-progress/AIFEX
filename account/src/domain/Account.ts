@@ -49,13 +49,16 @@ export default class Account {
         return [...this._receivedInvitations];
     }
 
-    addAuthorization(newAuthorization: Authorization): void {
+    addAuthorization(newAuthorization: Authorization): "AuthorizationAdded" | "AuthorizationWasAlreadyThere" {
         if (!this._authorizationSet.find(authorization => authorization.key === newAuthorization.key)) {
             this._authorizationSet.push(newAuthorization);
+            return "AuthorizationAdded";
+        } else {
+            return "AuthorizationWasAlreadyThere";
         }
     }
 
-    removeAuthorization(existingAuthorization: Authorization): void {
+    removeAuthorization(existingAuthorization: Authorization): "AuthorizationRemoved" | "AuthorizationWasNotThere" {
         const index = this._authorizationSet.findIndex(authorization => {
             const sameKey = (authorization.key === existingAuthorization.key);
             const sameKind = (authorization.kind === existingAuthorization.kind);
@@ -64,6 +67,9 @@ export default class Account {
 
         if (index !== -1) {
             this._authorizationSet.splice(index, 1);
+            return "AuthorizationRemoved";
+        } else {
+            return "AuthorizationWasNotThere";
         }
     }
 

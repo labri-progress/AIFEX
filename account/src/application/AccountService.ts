@@ -84,34 +84,42 @@ export default class AccountService {
         }
     }
 
-    addAuthorization(username: string, authorization: Authorization): Promise<"AuthorizationAdded" | "IncorrectUsername"> {
+    addAuthorization(username: string, authorization: Authorization): Promise<"AuthorizationAdded" | "AuthorizationWasAlreadyThere" | "IncorrectUsername"> {
         return this._accountRepository.findAccountByUserName(username)
             .then((foundAccount) => {
                 if (foundAccount === undefined) {
                     return "IncorrectUsername";
                 } else {
-                    foundAccount.addAuthorization(authorization);
-                    logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
-                    return this._accountRepository.updateAccount(foundAccount)
-                        .then(() => {
-                            logger.debug(`account repository updated`);
-                            return "AuthorizationAdded";
-                        })
+                    let addResult = foundAccount.addAuthorization(authorization);
+                    if (addResult === "AuthorizationAdded") {
+                        logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
+                        return this._accountRepository.updateAccount(foundAccount)
+                            .then(() => {
+                                logger.debug(`account repository updated`);
+                                return "AuthorizationAdded";
+                            })
+                    } else {
+                        return "AuthorizationWasAlreadyThere";
+                    }
                 }
             })
     }
 
-    removeAuthorization(username: string, authorization: Authorization): Promise<"AuthorizationRemoved" | "IncorrectUsername"> {
+    removeAuthorization(username: string, authorization: Authorization): Promise<"AuthorizationRemoved" | "AuthorizationWasNotThere" | "IncorrectUsername"> {
         return this._accountRepository.findAccountByUserName(username)
             .then(foundAccount => {
                 if (foundAccount === undefined) {
                     return "IncorrectUsername";
                 } else {
-                    foundAccount.removeAuthorization(authorization);
-                    return this._accountRepository.updateAccount(foundAccount)
-                        .then(() => {
-                            return "AuthorizationRemoved";
-                        })
+                    const removeResult = foundAccount.removeAuthorization(authorization);
+                    if (removeResult === "AuthorizationRemoved") {
+                        return this._accountRepository.updateAccount(foundAccount)
+                            .then(() => {
+                                return "AuthorizationRemoved";
+                            })
+                    } else {
+                        return "AuthorizationWasNotThere";
+                    }
                 }
             })
     }

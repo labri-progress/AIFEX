@@ -326,9 +326,9 @@ function addAuthorization(accountService: AccountService, res: Response, usernam
                 logger.debug('addAuthorization incorrect username');
                 res.status(NOT_FOUND_STATUS).json({message:result});
             } else {
-                logger.debug('addAuthorization done');
+                logger.debug('addAuthorization: '+result);
                 res.json({
-                    message: "AuthorizationAdded",
+                    message: result,
                 });
             }
         })
@@ -341,9 +341,9 @@ function removeAuthorization(accountService: AccountService, res: Response, user
                 logger.debug('remove authorization incorrect username');
                 res.status(NOT_FOUND_STATUS).json({message:result});
             } else {
-                logger.debug('remove authorization done');
+                logger.debug('remove authorization: '+result);
                 res.json({
-                    message: "AuthorizationRemoved",
+                    message: result,
                 });
             }
         })

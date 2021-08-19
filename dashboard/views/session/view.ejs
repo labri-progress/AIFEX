@@ -169,14 +169,15 @@
 
     <script defer>
         document.getElementById('isPublicCheckbox').addEventListener('click', (event) => {
-            let URL = "/dashboard/public/authorization"
+            let URL = "/dashboard/public/connexionCode"
             fetch(URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     isPublic: event.target.checked,
-                    key:"<%= session.id %>",
-                    kind:"Session"
+                    sessionId:"<%= session.id %>",
+                    modelId:"<%= connectionCode.split('$')[1]%>",
+                    webSiteId:"<%=session.webSite.id %>"
                 })
             }).then((response) => {
                 console.log(response);

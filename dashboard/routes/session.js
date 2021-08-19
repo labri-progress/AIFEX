@@ -1,4 +1,4 @@
-const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeAuthorizationPublic, revokePublicAuthorization } = require('../apiService');
+const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode } = require('../apiService');
 const logger = require('../logger');
 const buildInvitation = require("../invitations").buildInvitation;
 
@@ -281,23 +281,23 @@ module.exports = function attachRoutes(app, config) {
             })
     });
 
-    app.post('/dashboard/public/authorization', (req, res) => {
-        const { key, kind, isPublic } = req.body;
-        logger.info(`Post public authorization (${key}, ${kind}, ${isPublic})`);
+    app.post('/dashboard/public/connexionCode', (req, res) => {
+        const { isPublic, sessionId, modelId, webSiteId } = req.body;
+        logger.info(`Post public session (${sessionId}, ${modelId}, ${webSiteId}, ${isPublic})`);
         if (isPublic) {
-            makeAuthorizationPublic(req.session.jwt, kind, key)
+            makeConnexionCodePublic(req.session.jwt, sessionId, modelId, webSiteId)
                 .then(() => {
-                    res.json({message: 'Authorization is now public'});
+                    res.json({message: 'Session is now public'});
                 })
                 .catch(e => {
                     logger.error(e.message);
-                    let message = 'Failed to make authorization public';
+                    let message = 'Failed to make Session public';
                     res.json({message: message});
                 });
         } else {
-            revokePublicAuthorization(req.session.jwt, kind, key)
+            revokePublicConnexionCode(req.session.jwt, sessionId, modelId, webSiteId)
                 .then(() => {
-                    res.json({message: 'Authorization is no more public'});
+                    res.json({message: 'Session is no more public'});
                 })
                 .catch(e => {
                     logger.error(e.message);

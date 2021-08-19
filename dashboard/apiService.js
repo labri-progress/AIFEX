@@ -413,42 +413,76 @@ module.exports.isAuthorizationPublic = function (kind, key) {
         })
 }
 
-module.exports.makeAuthorizationPublic = function(token, kind, key) {
+module.exports.makeConnexionCodePublic = function(token, sessionId, modelId, webSiteId) {
     let makePublicAuthorizationURL = 'http://' + config.api.host + ':' + config.api.port + '/public/authorizations';
-    return fetch(makePublicAuthorizationURL, {
+    let makeSessionPublic = fetch(makePublicAuthorizationURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
         body: JSON.stringify({
-            kind,
-            key
+            kind: "Session",
+            key: sessionId,
         })
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
+    });
+    let makeModelPublic = fetch(makePublicAuthorizationURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+            kind: "Model",
+            key: modelId,
+        })
+    });
+    let makeWebSitePublic = fetch(makePublicAuthorizationURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+            kind: "WebSite",
+            key: webSiteId,
+        })
+    });
+    return Promise.all([makeSessionPublic, makeModelPublic, makeWebSitePublic])
+        .then((responses) => {
+            if (responses.every(response => response.ok)) {
+                return responses[0].json();
             } else {
                 throw new Error('cannot make authorization public');
             }
-        });
+        })
 }
 
-module.exports.revokePublicAuthorization = function (token, kind, key) {
-    let revokePublicAuthorizationURL = 'http://' + config.api.host + ':' + config.api.port + '/public/authorizations';
-    return fetch(revokePublicAuthorizationURL, {
+module.exports.revokePublicConnexionCode = function (token, sessionId, modelId, webSiteId) {
+    let makePublicAuthorizationURL = 'http://' + config.api.host + ':' + config.api.port + '/public/authorizations';
+    let makeSessionPublic = fetch(makePublicAuthorizationURL, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
         body: JSON.stringify({
-            kind,
-            key
+            kind: "Session",
+            key: sessionId,
         })
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
+    });
+    let makeModelPublic = fetch(makePublicAuthorizationURL, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+            kind: "Model",
+            key: modelId,
+        })
+    });
+    let makeWebSitePublic = fetch(makePublicAuthorizationURL, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+            kind: "WebSite",
+            key: webSiteId,
+        })
+    });
+    return Promise.all([makeSessionPublic, makeModelPublic, makeWebSitePublic])
+        .then((responses) => {
+            if (responses.every(response => response.ok)) {
+                return responses[0].json();
             } else {
-                throw new Error('cannot revoke public authorization');
+                throw new Error('cannot make authorization public');
             }
-        });
+        })
 }
 
 
