@@ -655,7 +655,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  commentdistributions:                  
+                  commentDistributions:                  
                       type: array
                       items:
                         type: array

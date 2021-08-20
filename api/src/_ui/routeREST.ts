@@ -589,7 +589,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                         res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                     } else {
                         logger.info("Comment distributions are computed");
-                        res.json({commentdistributions:Array.from(commentDistributions)});
+                        res.json({commentDistributions:Array.from(commentDistributions)});
                     }
                 })
                 .catch((e) => {
