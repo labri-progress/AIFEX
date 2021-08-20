@@ -32,18 +32,18 @@ function handleConnexion(e) {
                     url: INPUT_URL
                 })
                     .then((response) => {
-                        if (!response) {
-                            console.log(`Background does not answer`);
-                        }
-                        else if (response !== "Connected") {
-                            console.error(response);
-                            document.getElementById('connexionMessage').innerHTML = response;
-                            return;
-                        } else if (response.error) { 
-                            console.log(response.error);
-                            document.getElementById('connexionMessage').innerHTML = response.error;
+                        console.log(response);
+                        if (response === "Connected") {
+                            getStateAndRender();
                         } else {
-                            getState();
+                            if (!response) {
+                                console.log(`Background does not answer`);
+                            } else if (response.error) { 
+                                console.log(response.error);
+                                document.getElementById('connexionMessage').innerHTML = response.error;
+                            } else {
+                                document.getElementById('connexionMessage').innerHTML = response;
+                            }
                         }
                     })
             }

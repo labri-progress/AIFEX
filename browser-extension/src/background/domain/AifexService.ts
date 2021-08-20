@@ -24,23 +24,23 @@ export default interface AifexService {
 	getProbabilityMap(
 		serverURL: string, 
 		modelId: string,
-		exploration: Exploration
+		exploration: Exploration,
+		token?: Token
 	): Promise<Map<string, number>> ;
 
 	addExploration(
 		serverURL: string, 
 		sessionId: string,
 		testerName: string,
-		exploration: Exploration
+		exploration: Exploration,
+		token?: Token
 	): Promise<number> ;
 
-	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration): Promise<CommentDistribution[] | undefined> ;
+	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration, token?:Token): Promise<CommentDistribution[] | undefined> ;
 
 	addScreenshotList(serverURL: string, sessionId: string, explorationNumber : number, list : Screenshot[]): Promise<void> ;
 
 	addVideo(serverURL: string, sessionId: string, explorationNumber:number, video:Blob): Promise<void> ;
-
-	
 
 	evaluateSequence(serverURL: string, webSite: WebSite, exploration: Exploration): Promise<ExplorationEvaluation>;
 

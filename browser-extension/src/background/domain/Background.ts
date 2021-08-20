@@ -338,7 +338,7 @@ export default class Background {
             if (!this._modelId) {
                 return Promise.reject("Not connected to a model");
             }
-            return this._aifexService.getProbabilityMap(this._serverURL, this._modelId, this._exploration).then((probabilityMap) => {
+            return this._aifexService.getProbabilityMap(this._serverURL, this._modelId, this._exploration, this._token).then((probabilityMap) => {
                 this._probabilityMap = probabilityMap
             })
         } else {
@@ -355,7 +355,7 @@ export default class Background {
             if (this._exploration.actions.length === 0) {
                 return Promise.resolve();
             } else {
-                return this._aifexService.getCommentDistributions(this._serverURL, this._modelId, this._exploration)
+                return this._aifexService.getCommentDistributions(this._serverURL, this._modelId, this._exploration, this._token)
                     .then((commentDistributionList) => {
                         if (commentDistributionList === undefined) {
                             this._commentDistributions = []
@@ -510,7 +510,8 @@ export default class Background {
                 this._serverURL,
                 this._sessionId,
                 this._testerName,
-                this._exploration
+                this._exploration,
+                this._token
             )
                 .then((explorationNumber) => {
                     if (this._serverURL && this._sessionId && this._screenshotList.length > 0) {

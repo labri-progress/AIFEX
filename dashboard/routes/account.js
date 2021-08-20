@@ -86,10 +86,11 @@ module.exports = function attachRoutes(app, config) {
                 return;
             }
     
-            if (req.originalUrl.indexOf('/dashboard/session/view/') !== -1 ) {
-                next();
-                return;
-            }
+            // TODO: when the session is public, the page can be accessed
+            // if (req.originalUrl.indexOf('/dashboard/session/view/') !== -1 ) {
+            //     next();
+            //     return;
+            // }
 
             res.redirect('/account/signin');
             return;

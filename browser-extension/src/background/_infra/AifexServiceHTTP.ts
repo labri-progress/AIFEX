@@ -159,7 +159,8 @@ export default class AifexServiceHTTP implements AifexService {
 	getProbabilityMap(
 		serverURL: string,
 		modelId: string,
-		exploration: Exploration
+		exploration: Exploration,
+		token?: Token
 	): Promise<Map<string, number>> {
 		const body = {
 			interactionList: exploration.interactionsToJSON(),
@@ -167,10 +168,10 @@ export default class AifexServiceHTTP implements AifexService {
 		const option = {
 			method: "POST",
 			body: JSON.stringify(body),
-			headers: { "Content-Type": "application/json" },
+			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
 		};
 		return fetch(
-			`${this.getModelURL(serverURL)}/model/${modelId}/getprobabilitymap`,
+			`${serverURL}/api/models/${modelId}/probabilities`,
 			option
 		)
 			.then((response) => {
@@ -178,7 +179,7 @@ export default class AifexServiceHTTP implements AifexService {
 					return response
 						.json()
 						.then((jsonMap) => {
-							return new Map(jsonMap);
+							return new Map(jsonMap.probabilities);
 						});
 				}
 				if (response.status === INVALID_PARAMETERS_STATUS) {
@@ -195,7 +196,8 @@ export default class AifexServiceHTTP implements AifexService {
 		serverURL: string,
 		sessionId: string,
 		testerName: string,
-		exploration: Exploration
+		exploration: Exploration,
+		token?:Token
 	): Promise<number> {
 		const body = {
 			testerName,
@@ -206,10 +208,10 @@ export default class AifexServiceHTTP implements AifexService {
 		const option = {
 			method: "POST",
 			body: JSON.stringify(body),
-			headers: { "Content-Type": "application/json" },
+			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
 		};
 		return fetch(
-			`${this.getSessionURL(serverURL)}/session/${sessionId}/exploration/add`,
+			`${serverURL}/api/sessions/${sessionId}/explorations`,
 			option)
 			.then((response) => {
 				if (response.status === OK_STATUS) {
@@ -227,41 +229,35 @@ export default class AifexServiceHTTP implements AifexService {
 			});
 	}
 
-	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration): Promise<CommentDistribution[] | undefined> {
+	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration, token?:Token): Promise<CommentDistribution[] | undefined> {
 		const body = {
 			interactionList: exploration.interactionsToJSON()
 		};
 		const option = {
 			method: "POST",
 			body: JSON.stringify(body),
-			headers: { "Content-Type": "application/json" },
+			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
 		};
 		return fetch(
-			`${this.getModelURL(serverURL)}/model/${modelId}/getcommentdistributions`,
+			`${serverURL}/api/models/${modelId}/comment-distributions`,
 			option)
 			.then((response) => {
 				if (response.status === OK_STATUS) {
 					return response
 						.json()
 						.then((commentDistributionsData: {
-							note: string,
-							distributions: {
-								commentOccurence: number,
-								contextOccurece: number,
-								context: string[]
-							}[]
-						}[]) => {
-							return commentDistributionsData.map(commentDistributionData => {
-								return new CommentDistribution(commentDistributionData.note, commentDistributionData.distributions)
-
-							})
+							commentDistributions: any[]}) => {
+								console.log(JSON.stringify(commentDistributionsData));
+								return commentDistributionsData.commentDistributions.map(commentDistributionData => {
+									return new CommentDistribution(commentDistributionData[0], commentDistributionData[1]);
+								})
 						})
 				}
 				if (response.status === NOT_FOUND_STATUS) {
-					return Promise.reject(new Error(`sessionId not found`));
+					return Promise.reject(new Error(`modelId not found`));
 				}
 				if (response.status === INVALID_PARAMETERS_STATUS) {
-					return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
+					return Promise.reject(new Error(`modelId and/or exploration is malformed`));
 				}
 				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
 					return Promise.reject(new Error(`server error`));
