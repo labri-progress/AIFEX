@@ -209,7 +209,7 @@ module.exports.createSession = function (token, webSiteId, name, baseURL, overla
     return fetch(apiCreateSessionURL, optionCreateSession)
         .then(response => {
             if (response.ok) {
-                return response.json().then(json => json.modelId);
+                return response.json().then(json => json.sessionId);
             } else {
                 throw new Error('cannot create session');
             }
@@ -300,7 +300,7 @@ module.exports.createModel = function (token, depth, interpolationfactor, predic
     return fetch(apiCreateModelURL, optionCreateModel)
         .then(response => {
             if (response.ok) {
-                return response.json();
+                return response.json().then((resultInJson) => resultInJson.modelId);
             } else {
                 throw new Error('cannot create model');
             }

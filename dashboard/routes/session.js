@@ -53,15 +53,18 @@ module.exports = function attachRoutes(app, config) {
         let createSessionPromise = createSession(req.session.jwt, webSiteId, name, baseURL, overlayType)
         let createModelPromise = createModel(req.session.jwt, depth, interpolationfactor, "CSP")
         return Promise.all([createSessionPromise, createModelPromise])
-            .then(([sessionId, modelId]) => {
+            .then(([createdSessionId, createdModelId]) => {
+                sessionId = createdSessionId;
+                modelId = createdModelId;
                 return linkModelToSession(req.session.jwt, modelId, sessionId)
             })
             .then(() => {
                 connectionCode = `${sessionId}$${modelId}`;
+                logger.debug('session and model are creating, a the link between them has been setted');
                 res.redirect(`/dashboard/session/view/${connectionCode}`);
             })
             .catch(e => {
-                logger.error(e);
+                logger.error('Error while creating session, model and settig a link between them: '+e);
                 let message = 'Cannot create the session';
                 res.render('error.ejs', { message, account: req.session, error: e });
             })

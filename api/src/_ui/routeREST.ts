@@ -520,7 +520,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
     app.post("/models/:modelId/link/:sessionId", (req, res) => {
         const modelId = req.params.modelId;
         const sessionId = req.params.sessionId;
-        logger.info(`link model to session`);
+        logger.info(`link model to session: ${JSON.stringify(modelId)}, ${JSON.stringify(sessionId)}`);
         if (req.token === undefined) {
             logger.warn(`no token`);
             res.status(FORBIDDEN_STATUS).json({message:"No token"});
@@ -532,12 +532,13 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 api.linkModelToSession(modelId, sessionId, req.token)
                     .then(linkResult => {
                         if (linkResult === "Unauthorized") {
+                            logger.info("Link: Not Authorized");
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                         } else if (linkResult === "ModelIsUnknown") {
-                            logger.info("Model not found");
+                            logger.info("Link: Model not found");
                             res.status(NOT_FOUND_STATUS).json({message:"ModelNotFound"});
                         } else {
-                            logger.info("Model by Id done");
+                            logger.info("Link is done");
                             res.json({message:linkResult});
                         }
                     })
