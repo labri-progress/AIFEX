@@ -55,9 +55,9 @@
                                     <% exploration.interactionList.forEach((interaction, intIndex)=> { %>
                                         <p>
                                             <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber
-                                                == explIndex && sc.interactionIndex == intIndex)) { %>
+                                                == exploration.explorationNumber && sc.interactionIndex == intIndex)) { %>
                                                 <a
-                                                    href="/static/screenshot/<%=session.id%>_<%=explIndex%>_<%=intIndex%>.jpg">
+                                                    href="/static/screenshot/<%=session.id%>_<%=exploration.explorationNumber%>_<%=intIndex%>.jpg">
                                                     <% } %>
 
                                                         <span class="<%= interaction.concreteType%>">

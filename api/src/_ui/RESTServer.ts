@@ -1,4 +1,3 @@
-import bodyParser from "body-parser";
 import express from "express";
 import http from "http";
 import morgan from "morgan";
@@ -46,8 +45,8 @@ export default class RESTServer {
         });
 
         // request parser
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(express.urlencoded({ limit: '50mb', extended: true }));
+        app.use(express.json({limit: '50mb'}));
 
         // bearer token
         app.use((req, res, next) => {

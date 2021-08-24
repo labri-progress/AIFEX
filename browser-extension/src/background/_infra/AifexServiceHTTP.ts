@@ -215,7 +215,7 @@ export default class AifexServiceHTTP implements AifexService {
 			option)
 			.then((response) => {
 				if (response.status === OK_STATUS) {
-					return response.json();
+					return response.json().then(json => json.explorationNumber);
 				}
 				if (response.status === NOT_FOUND_STATUS) {
 					return Promise.reject(new Error(`sessionId not found`));
@@ -279,16 +279,18 @@ export default class AifexServiceHTTP implements AifexService {
 			body: JSON.stringify(body),
 			headers: { "Content-Type": "application/json" },
 		};
-		return fetch(`${this.getSessionURL(serverURL)}/session/addscreenshotlist`, option)
+		return fetch(`${serverURL}/api/sessions/${sessionId}/screenshots`, option)
 			.then((response) => {
 				if (response.status === OK_STATUS) {
 					return;
 				}
-				if (response.status === INVALID_PARAMETERS_STATUS) {
+				else if (response.status === INVALID_PARAMETERS_STATUS) {
 					return Promise.reject(new Error(`screenshotList is malformed`));
 				}
-				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+				else if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
 					return Promise.reject(new Error(`server error`));
+				} else {
+					return Promise.reject(new Error('error'+response.status));
 				}
 			});
 	}

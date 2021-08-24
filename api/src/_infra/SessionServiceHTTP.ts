@@ -73,10 +73,10 @@ export default class SessionServiceHTTP implements SessionService {
     }
 
     addScreenshots(screenshots: Screenshot[]): Promise<"ScreenshotsAdded"> {
-        const AddScreenshotsURL = `http://${config.session.host}:${config.session.port}/session/screenshotlist`;
+        const AddScreenshotsURL = `http://${config.session.host}:${config.session.port}/session/addscreenshotlist`;
         let optionAddScreenshots = {
             method: 'POST',
-            body:    JSON.stringify(screenshots),
+            body:    JSON.stringify({screenshotList:screenshots}),
             headers: { 'Content-Type': 'application/json' },
         }
         return fetch(AddScreenshotsURL, optionAddScreenshots)

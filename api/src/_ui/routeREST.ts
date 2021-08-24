@@ -361,7 +361,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
     app.post("/sessions/:sessionId/explorations", (req, res) => {
         const sessionId = req.params.sessionId;
         const { testerName, interactionList, startDate, stopDate } = req.body;
-        logger.info(`Session By Id`);
+        logger.info(`Add a new exploration to the session`);
         if (sessionId === undefined || interactionList === undefined ) {
             logger.warn(`sessionId`);
             res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No interactionList"});
@@ -386,6 +386,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         const sessionId = req.params.sessionId;
         const { screenshotList } = req.body;
         logger.info(`Create screenshots`);
+        logger.debug(`screenshotList:${JSON.stringify(screenshotList)}`);
         if (sessionId === undefined || screenshotList === undefined) {
             logger.warn(`sessionId or screenshotList undefined`);
             res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No screenshotList"});
