@@ -12,7 +12,7 @@ function join(e) {
     state.pageKind = 'ConnectToSession';
     sendMessage({ kind: "changePopupPageKind", popupPageKind: 'ConnectToSession'})
         .then(() => {
-            renderComponents();
+            getStateAndRender();
         });
 }
 
@@ -21,7 +21,7 @@ function create(e) {
     state.pageKind = 'CreateSession';
     sendMessage({ kind: "changePopupPageKind", popupPageKind: 'CreateSession'})
         .then(() => {
-            renderComponents();
+            getStateAndRender();
         });
 }
 
