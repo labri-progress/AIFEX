@@ -3,7 +3,7 @@ import * as fs from "fs";
 import "mocha";
 import * as path from "path";
 import AntlrStepParser from "../../src/_infra/AntlrStepParser";
-import StepNFA from "../../src/domain/StepNFA";
+import StepNFA from "../../src/_infra/StepNFA";
 
 describe("Domain - NFA", () => {
     const parser = new AntlrStepParser();

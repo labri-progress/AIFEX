@@ -1,6 +1,6 @@
-import ObjectiveService from "../application/SequenceEvaluationApplication";
+import ObjectiveService from "../application/EvaluationApplication";
 import {Express} from "express";
-import SequenceEvaluator from "../domain/SequenceEvaluator";
+import Evaluator from "../domain/Evaluator";
 import {logger} from "../logger";
 
 const SUCCESS_STATUS = 200;
@@ -23,17 +23,17 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
             return res.status(STATUS_WRONG_PARAMETERS).send("WebSiteId is required");
         }
         evaluatorService.getSequenceEvaluator(webSiteId)
-            .then((evaluator: SequenceEvaluator | undefined) => {
+            .then((evaluator: Evaluator | undefined) => {
                 if (!evaluator) {
                     return res.status(STATUS_REPONSE_IS_NULL).send(null);
                 }
-                logger.info(`sending evaluator ${evaluator.id} for website ${evaluator.webSiteId}`);
+                logger.info(`sending evaluator ${evaluator.id} for website ${evaluator.sessionId}`);
 
             return res.send({
                 id: evaluator.id,
                 description: evaluator.description,
                 expression: evaluator.step?.expression,
-                webSiteId: evaluator.webSiteId
+                webSiteId: evaluator.sessionId
             });
         }).catch((error: Error) => {
             logger.error(`getEvaluator error for websiteId ${webSiteId}: ${error}`);

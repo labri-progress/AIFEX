@@ -3,7 +3,7 @@ import express, { NextFunction } from "express";
 import {Express, RequestHandler} from "express"
 import http from "http";
 import sourceMapSupport from "source-map-support";
-import ConstraintService from "../application/SequenceEvaluationApplication";
+import ConstraintService from "../application/EvaluationApplication";
 import routeRest from "./routeREST";
 import morgan from "morgan";
 import {Request, Response} from "express";

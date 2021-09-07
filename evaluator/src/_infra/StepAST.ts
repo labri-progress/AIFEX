@@ -1,8 +1,8 @@
 
-import IInteraction from "./Interaction";
+import IInteraction from "../domain/Action";
 import StepNFA from "./StepNFA";
-import { STEP_OPERATOR } from "./StepOperator";
-import StepState from "./StepState";
+import { STEP_OPERATOR } from "../domain/StepOperator";
+import StepState from "../domain/StepState";
 export default class StepAST {
 
     public label: STEP_OPERATOR | IInteraction;

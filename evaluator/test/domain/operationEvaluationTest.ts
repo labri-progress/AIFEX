@@ -2,11 +2,11 @@ import chai = require("chai");
 const expect = chai.expect;
 import "mocha";
 import AntlrStepParser from "../../src/_infra/AntlrStepParser";
-import InteractionFactory from "../../src/domain/InteractionFactory";
-import SequenceEvaluator from "../../src/domain/SequenceEvaluator";
-import StepFactory from "../../src/domain/StepFactory";
+import Evaluator from "../../src/domain/Evaluator";
+import StepFactory from "../../src/_infra/DFAStepFactory";
 import SequenceEvaluation from "../../src/domain/SequenceEvaluation";
 import Step from "../../src/domain/Step";
+import Action from "../../src/domain/Action";
 
 const stepParser = new AntlrStepParser();
 const stepFactory = new StepFactory(stepParser);
@@ -16,24 +16,23 @@ describe("Domain - SequenceEvaluator", () => {
         describe("Action", () => {
 
             const text = "action1"
-            let evaluator: SequenceEvaluator;
-            let webSiteId = "1";
+            let evaluator: Evaluator;
+            let sessionId = "1";
             let step: Step; 
 
             it ("initialize evaluator", () => {
-                evaluator = new SequenceEvaluator(webSiteId);
                 return stepFactory.createStep(text).then((step: Step | undefined) => {
                         if (step === undefined) {
                             throw("step is undefined");
                         }
-                        evaluator.setStep(step);
+                        evaluator = new Evaluator(sessionId, step);
                         return;
                     })
             })
 
             it ("Valide sequence", () => {
                 const interactionList = [
-                    InteractionFactory.parseInteraction("action1"),
+                    Action.labelToAction("action1"),
                 ];
                 
                 return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
@@ -45,29 +44,26 @@ describe("Domain - SequenceEvaluator", () => {
 
         describe("Action with suffix", () => {
             const text = "action1$mySuffix"
-            let evaluator: SequenceEvaluator;
-            let webSiteId = "1";
+            let evaluator: Evaluator;
+            let sessionId = "1";
             let step: Step; 
 
             it ("initialize evaluator", () => {
-                evaluator = new SequenceEvaluator(webSiteId);
                 return stepFactory.createStep(text)
                     .then((createdStep: Step | undefined) => {
                         if (!createdStep) {
                             throw new Error("Step is undefined")
                         }
                         step = createdStep;
-
-                        evaluator.setStep(step);
+                        evaluator = new Evaluator(sessionId, step);
                         return
                     })
             })
 
             it ("Valide sequence", () => {
                 const interactionList = [
-                    InteractionFactory.parseInteraction("action1$mySuffix"),
+                    Action.labelToAction("action1$mySuffix"),
                 ];
-                
                 return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
                     expect(evaluationResult.isAccepted).eql(true)
                 })
@@ -77,12 +73,11 @@ describe("Domain - SequenceEvaluator", () => {
 
         describe("Action with simple quote suffix", () => {
             const text = "action1$'my Suffix'"
-            let evaluator: SequenceEvaluator;
-            let webSiteId = "1";
+            let evaluator: Evaluator;
+            let sessionId = "1";
             let step: Step; 
 
             it ("initialize evaluator", () => {
-                evaluator = new SequenceEvaluator(webSiteId);
                 return stepFactory.createStep(text)
                     .then((createdStep: Step | undefined) => {
                         if (!createdStep) {
@@ -90,14 +85,14 @@ describe("Domain - SequenceEvaluator", () => {
                         }
                         step = createdStep;
 
-                        evaluator.setStep(step);
+                        evaluator = new Evaluator(sessionId, step);
                         return;
                     })
             })
 
             it ("Valide sequence", () => {
                 const interactionList = [
-                    InteractionFactory.parseInteraction("action1$my Suffix"),
+                    Action.labelToAction("action1$my Suffix"),
                 ];
                 
                 return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
@@ -110,12 +105,12 @@ describe("Domain - SequenceEvaluator", () => {
 
     describe("Action with double quote suffix", () => {
         const text = "action1$\"my Suffix\""
-        let evaluator: SequenceEvaluator;
-        let webSiteId = "1";
+        let evaluator: Evaluator;
+        let sessionId = "1";
         let step: Step; 
 
         it ("initialize evaluator", () => {
-            evaluator = new SequenceEvaluator(webSiteId);
+            
             return stepFactory.createStep(text)
                 .then((createdStep: Step | undefined) => {
                     if (createdStep === undefined) {
@@ -123,13 +118,13 @@ describe("Domain - SequenceEvaluator", () => {
                     }
                     step = createdStep;
 
-                    evaluator.setStep(step);
+                    evaluator = new Evaluator(sessionId, step);
                 })
         })
 
         it ("Valide sequence", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("action1$my Suffix"),
+                Action.labelToAction("action1$my Suffix"),
             ];
             
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
@@ -141,27 +136,26 @@ describe("Domain - SequenceEvaluator", () => {
 
     describe("KleenPlus", () => {
         const text = "(clickButton1 or clickButton2)+ clickButton3"
-        let evaluator: SequenceEvaluator;
-        let webSiteId = "1";
+        let evaluator: Evaluator;
+        let sessionId = "1";
         let step: Step; 
 
         it ("initialize evaluator", () => {
-            evaluator = new SequenceEvaluator(webSiteId);
             return stepFactory.createStep(text)
                 .then((createdStep: Step | undefined) => {
                     if (!createdStep) {
                         throw new Error("step is undefined")
                     }
                     step = createdStep;
-                    evaluator.setStep(step);
+                    evaluator = new Evaluator(sessionId, step);
                 })
         })
 
         it ("Valide sequence", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("clickButton1"),
-                InteractionFactory.parseInteraction("clickButton1"),
-                InteractionFactory.parseInteraction("clickButton3"),
+                Action.labelToAction("clickButton1"),
+                Action.labelToAction("clickButton1"),
+                Action.labelToAction("clickButton3"),
             ];
             
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
@@ -171,7 +165,7 @@ describe("Domain - SequenceEvaluator", () => {
 
         it ("Invalid sequence 1", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("clickButton3"),
+                Action.labelToAction("clickButton3"),
             ];
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
@@ -180,7 +174,7 @@ describe("Domain - SequenceEvaluator", () => {
 
         it ("Invalid sequence 2", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("clickButton1"),
+                Action.labelToAction("clickButton1"),
             ];
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
@@ -189,8 +183,8 @@ describe("Domain - SequenceEvaluator", () => {
 
         it ("Invalid sequence 2", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("clickButton3"),
-                InteractionFactory.parseInteraction("clickButton3")
+                Action.labelToAction("clickButton3"),
+                Action.labelToAction("clickButton3")
             ];
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
@@ -201,12 +195,11 @@ describe("Domain - SequenceEvaluator", () => {
     describe("Iteration", () => {
 
         const text = "(clickButton1 or clickButton2)[2] clickButton3"
-        let evaluator: SequenceEvaluator;
-        let webSiteId = "1";
+        let evaluator: Evaluator;
+        let sessionId = "1";
         let step: Step; 
 
         it ("initialize evaluator", () => {
-            evaluator = new SequenceEvaluator(webSiteId);
             return stepFactory.createStep(text)
                 .then((createdStep: Step | undefined) => {
                     if (!createdStep) {
@@ -214,15 +207,15 @@ describe("Domain - SequenceEvaluator", () => {
                     }
                     step = createdStep;
 
-                    evaluator.setStep(step);
+                    evaluator = new Evaluator(sessionId, step);
                 })
         })
 
         it ("Valide sequence", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("clickButton1"),
-                InteractionFactory.parseInteraction("clickButton1"),
-                InteractionFactory.parseInteraction("clickButton3"),
+                Action.labelToAction("clickButton1"),
+                Action.labelToAction("clickButton1"),
+                Action.labelToAction("clickButton3"),
             ];
             
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
@@ -232,9 +225,9 @@ describe("Domain - SequenceEvaluator", () => {
         })
         it ("Valide sequence 2", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("clickButton1"),
-                InteractionFactory.parseInteraction("clickButton2"),
-                InteractionFactory.parseInteraction("clickButton3"),
+                Action.labelToAction("clickButton1"),
+                Action.labelToAction("clickButton2"),
+                Action.labelToAction("clickButton3"),
             ];
             
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
@@ -243,8 +236,8 @@ describe("Domain - SequenceEvaluator", () => {
         })
         it ("Invalid sequence 1", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("clickButton1"),
-                InteractionFactory.parseInteraction("clickButton3"),
+                Action.labelToAction("clickButton1"),
+                Action.labelToAction("clickButton3"),
             ];
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
@@ -253,8 +246,8 @@ describe("Domain - SequenceEvaluator", () => {
 
         it ("Invalid sequence 2", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("clickButton2"),
-                InteractionFactory.parseInteraction("clickButton3"),
+                Action.labelToAction("clickButton2"),
+                Action.labelToAction("clickButton3"),
             ];
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
@@ -263,10 +256,10 @@ describe("Domain - SequenceEvaluator", () => {
 
         it ("Invalid sequence 3", () => {
             const interactionList = [
-                InteractionFactory.parseInteraction("clickButton2"),
-                InteractionFactory.parseInteraction("clickButton2"),
-                InteractionFactory.parseInteraction("clickButton2"),
-                InteractionFactory.parseInteraction("clickButton3")
+                Action.labelToAction("clickButton2"),
+                Action.labelToAction("clickButton2"),
+                Action.labelToAction("clickButton2"),
+                Action.labelToAction("clickButton3")
             ];
             return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)

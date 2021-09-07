@@ -1,7 +1,6 @@
-import Interaction from "./Interaction";
+export type ActionLabel = string;
 
-export default class Action implements Interaction {
-
+export default class Action {
     public prefix: string;
     public suffix: string|undefined;
 
@@ -10,15 +9,20 @@ export default class Action implements Interaction {
         this.suffix = suffix;
     }
 
-    public getLabel(): string {
-        return this.prefix;
-    }
-
-    public toString(): string {
+    get label(): ActionLabel {
         if (!this.suffix) {
             return this.prefix;
         }
-        return `${this.prefix}$${this.suffix}`;
+        return `${this.prefix}$${this.suffix}`;    
     }
 
+    public static labelToAction(value: string): Action {
+        if (value.includes("$")) {
+            const [prefix, suffix] = value.split("$");
+            return new Action(prefix, suffix);
+        } else {
+            return new Action(value);
+        }
+
+    }
 }

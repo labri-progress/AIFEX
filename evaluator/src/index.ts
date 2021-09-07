@@ -1,19 +1,19 @@
 import config from "./_infra/config";
 import mongoose from "mongoose";
 import sourcemap from "source-map-support";
-import SequenceEvaluatorRepositoryMongo from "./_infra/SequenceEvaluatorRepositoryMongo";
+import SequenceEvaluatorRepositoryMongo from "./_infra/EvaluatorRepositoryMongo";
 import RESTServer from "./_ui/RESTServer";
-import SequenceEvaluationApplication from "./application/SequenceEvaluationApplication";
+import EvaluationApplication from "./application/EvaluationApplication";
 import AntlrStepParser from "./_infra/AntlrStepParser";
 import {logger} from "./logger";
-import SequenceEvaluatorRepository from "./domain/SequenceEvaluatorRepository";
+import EvaluatorRepository from "./domain/EvaluatorRepository";
 
 sourcemap.install();
 
 connectWithRetry();
-const sequenceEvaluatorRepositoryMongo: SequenceEvaluatorRepository = new SequenceEvaluatorRepositoryMongo();
+const sequenceEvaluatorRepositoryMongo: EvaluatorRepository = new SequenceEvaluatorRepositoryMongo();
 const stepParser = new AntlrStepParser()
-const sequenceConstraintService = new SequenceEvaluationApplication(sequenceEvaluatorRepositoryMongo, stepParser);
+const sequenceConstraintService = new EvaluationApplication(sequenceEvaluatorRepositoryMongo, stepParser);
 
 function connectWithRetry(): Promise<void> {
   return mongoose.connect(config.database, { useUnifiedTopology: true, useNewUrlParser: true })

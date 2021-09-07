@@ -1,9 +1,9 @@
 // Generated from ./src/domain/grammar/StepGrammar.g4 by ANTLR 4.7.1
 // jshint ignore: start
 var antlr4 = require('antlr4/index');
-const StepAST  = require("../../domain/StepAST").default;
+const StepAST  = require("../StepAST").default;
 const { STEP_OPERATOR } = require("../../domain/StepOperator");
-const InteractionFactory = require("../../domain/InteractionFactory").default;
+const Action = require("../../domain/Action").default;
 
 // This class defines a complete generic visitor for a parse tree produced by StepGrammarParser.
 
@@ -31,7 +31,7 @@ StepGrammarVisitor.prototype.visitAction = function(ctx) {
       suffix = ctx.DOUBLE_STRING().getText().replace(/['"]+/g, '')
     } 
   }
-  return new StepAST(InteractionFactory.createAction(prefix, suffix));
+  return new StepAST(Action.labelToAction(`${prefix}$${suffix}`));
 };
 
 // Visit a parse tree produced by StepGrammarParser#string.

@@ -1,19 +1,21 @@
 
-import InteractionFactory from "../domain/InteractionFactory";
 import IStepParser from "../domain/IStepParser";
 import SequenceEvaluation from "../domain/SequenceEvaluation";
-import SequenceEvaluator from "../domain/SequenceEvaluator";
-import SequenceEvaluatorRepository from "../domain/SequenceEvaluatorRepository";
-import StepFactory from "../domain/StepFactory";
+import Evaluator from "../domain/Evaluator";
+import EvaluatorRepository from "../domain/EvaluatorRepository";
+import StepFactory from "../_infra/DFAStepFactory";
+import StepDFA from "../_infra/StepDFA";
+import Action from "../domain/Action";
+import DFAStepFactory from "../_infra/DFAStepFactory";
 
-export default class SequenceEvaluationApplication {
+export default class EvaluationApplication {
 
-    public sequenceEvaluatorRepository: SequenceEvaluatorRepository;
+    public sequenceEvaluatorRepository: EvaluatorRepository;
     private stepFactory: StepFactory;
 
-    constructor(sequenceEvaluatorRepository: SequenceEvaluatorRepository, stepParser: IStepParser) {
+    constructor(sequenceEvaluatorRepository: EvaluatorRepository, stepParser: IStepParser) {
         this.sequenceEvaluatorRepository = sequenceEvaluatorRepository;
-        this.stepFactory = new StepFactory(stepParser);
+        this.stepFactory = new DFAStepFactory(stepParser);
     }
 
     public createSequenceEvaluator(webSiteId: string, description: string, expression: string): Promise<void> {
@@ -31,7 +33,7 @@ export default class SequenceEvaluationApplication {
         return this.sequenceEvaluatorRepository.removeSequenceEvaluator(webSiteId)
     }
 
-    public getSequenceEvaluator(webSiteId: string): Promise<SequenceEvaluator | undefined> {
+    public getSequenceEvaluator(webSiteId: string): Promise<Evaluator | undefined> {
         if (webSiteId === undefined || webSiteId === null) {
             return Promise.resolve(undefined);
         }
@@ -42,31 +44,29 @@ export default class SequenceEvaluationApplication {
     }
 
     public evaluateSequence(webSiteId: string, sequence: string[]): Promise<SequenceEvaluation | null> {
-        const interactionList = sequence.map((interactionText) => InteractionFactory.parseInteraction(interactionText));
+        const actionList: Action[] = sequence.map((actionLabelList) => Action.labelToAction(actionLabelList));
         return this.sequenceEvaluatorRepository.getSequenceEvaluatorByWebSiteId(webSiteId, this.stepFactory)
         .then((evaluator) => {
             if (!evaluator) {
                 return null;
             }
-            return evaluator.evaluate(interactionList);
+            return evaluator.evaluate(actionList);
         });
 
     }
 
-    public evaluateFromExpression(expression: string, interactionList: string[]) : Promise<boolean | void> {
-        const evaluator = new SequenceEvaluator("evaluator", "0");
+    public evaluateFromExpression(expression: string, actionLabelList: string[]) : Promise<boolean | void> {
 
         return this.stepFactory.createStep(expression).then(step => {
             if (step === undefined) {
                 throw new Error("Failed to create step");
-            } else {
-                evaluator.setStep(step);
             }
-            const interactions = interactionList.map(interaction => {
-                const [prefix, suffix] = interaction.split("$");
-                return InteractionFactory.createAction(prefix, suffix)
+            const evaluator = new Evaluator("evaluator", step, "0");
+
+            const actionSequence = actionLabelList.map(action => {
+                return Action.labelToAction(action)
             })
-            return evaluator.evaluate(interactions)
+            return evaluator.evaluate(actionSequence)
         }).then((evaluation) => {
             return evaluation.isAccepted;
         })
@@ -80,8 +80,9 @@ export default class SequenceEvaluationApplication {
 
     public expressionToDot(expression: string): Promise<string | null> {
         return this.stepFactory.createStep(expression).then((step) => {
-            if (step?.stepDFA) {
-                return step.stepDFA.toDot("Expression");
+            if (step !== null) {
+                let stepDFA: StepDFA = step as StepDFA;
+                return stepDFA.toDot("Expression");
             }
             return null;
         })

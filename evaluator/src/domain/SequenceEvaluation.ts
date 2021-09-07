@@ -1,22 +1,15 @@
 import Action from "./Action";
-import Interaction from "./Interaction";
 
 export default class SequenceEvaluation {
 
-    public enteringInteractionList: Interaction[];
-    public continuingActionList: Action[];
-    public finishingInteractionList: Interaction[];
+    public nextActionList: Action[];
     public isAccepted: boolean;
 
     constructor(
-        stepEnteringInteractionList: Action[]= [], 
-        stepUpdatingActionList: Action[]= [], 
-        stepFinishingInteractionList: Action[]= [], 
+        nextActionList: Action[]= [], 
         isAccepted: boolean = false) {
 
-        this.enteringInteractionList = stepEnteringInteractionList;
-        this.continuingActionList = stepUpdatingActionList;
-        this.finishingInteractionList = stepFinishingInteractionList;
+        this.nextActionList = nextActionList;
         this.isAccepted = isAccepted;
     }
 

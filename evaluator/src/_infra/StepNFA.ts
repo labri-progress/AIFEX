@@ -1,4 +1,4 @@
-import StepState, { transitionType } from "./StepState";
+import StepState, { transitionType } from "../domain/StepState";
 export default class StepNFA {
 
     get isDFA(): boolean {

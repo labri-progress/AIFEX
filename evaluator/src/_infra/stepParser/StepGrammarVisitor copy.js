@@ -1,7 +1,7 @@
 // Generated from ./src/domain/grammar/StepGrammar.g4 by ANTLR 4.7.1
 // jshint ignore: start
 var antlr4 = require('antlr4/index');
-import StepAST from "../../domain/StepAST";
+import StepAST from "../StepAST";
 import { STEP_OPERATOR } from "../../domain/StepOperator";
 import InteractionFactory from "../../domain/InteractionFactory";
 

@@ -1,21 +1,21 @@
 
-import SequenceEvaluator from "../domain/SequenceEvaluator";
-import SequenceEvaluatorRepository from "../domain/SequenceEvaluatorRepository";
+import Evaluator from "../domain/Evaluator";
+import EvaluatorRepository from "../domain/EvaluatorRepository";
 import Step from "../domain/Step";
-import StepFactory from "../domain/StepFactory";
+import StepFactory from "./DFAStepFactory";
 import { logger } from "../logger";
 
-import {EvaluatorDocument, sequenceEvaluatorModel} from "./SequenceEvaluatorSchema";
+import {EvaluatorDocument, sequenceEvaluatorModel} from "./EvaluatorSchema";
 
-export default class SequenceEvaluatorRepositoryMongo implements SequenceEvaluatorRepository {
+export default class SequenceEvaluatorRepositoryMongo implements EvaluatorRepository {
 
-    public getSequenceEvaluatorByWebSiteId(webSiteId: string, stepFactory: StepFactory): Promise<SequenceEvaluator | undefined> {
-        let evaluator: SequenceEvaluator;
+    public getSequenceEvaluatorByWebSiteId(webSiteId: string, stepFactory: StepFactory): Promise<Evaluator | undefined> {
+        let evaluator: Evaluator;
         return sequenceEvaluatorModel.findOne({webSiteId})
             .then((sequenceEvaluatorData: EvaluatorDocument | null) => {
                 if (sequenceEvaluatorData !== null) {
                     logger.info(`Evaluator found, ${sequenceEvaluatorData}`)
-                    evaluator = new SequenceEvaluator(sequenceEvaluatorData.webSiteId, sequenceEvaluatorData._id, sequenceEvaluatorData.description);
+                    evaluator = new Evaluator(sequenceEvaluatorData.webSiteId, sequenceEvaluatorData._id, sequenceEvaluatorData.description);
                     if (sequenceEvaluatorData.expression !== undefined) {
                         return stepFactory.createStep(sequenceEvaluatorData.expression)
                             .then((step: Step | undefined) => {
@@ -39,15 +39,15 @@ export default class SequenceEvaluatorRepositoryMongo implements SequenceEvaluat
             })
     }
 
-    public createSequenceEvaluator(webSiteId: string, description: string, stepFactory: StepFactory, expression: string): Promise<SequenceEvaluator> {
-        let evaluator: SequenceEvaluator
+    public createSequenceEvaluator(webSiteId: string, description: string, stepFactory: StepFactory, expression: string): Promise<Evaluator> {
+        let evaluator: Evaluator
         return sequenceEvaluatorModel.create({
             webSiteId,
             expression,
             description,
         } as EvaluatorDocument)
         .then((createdSequenceEvaluator: EvaluatorDocument) => {
-            evaluator = new SequenceEvaluator(createdSequenceEvaluator.webSiteId, createdSequenceEvaluator._id, createdSequenceEvaluator.description);
+            evaluator = new Evaluator(createdSequenceEvaluator.webSiteId, createdSequenceEvaluator._id, createdSequenceEvaluator.description);
             return stepFactory.createStep(createdSequenceEvaluator.expression)
         }).then((step: Step | undefined) => {
             evaluator.step = step;
