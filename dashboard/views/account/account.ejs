@@ -79,7 +79,6 @@
                 <td><%= sessionList[i].explorationList.length %></td>
                 <td><%= sessionList[i].webSite.name %></td>
                 <td><%= sessionList[i].overlayType %></td>
-                <td><%= sessionList[i].useTestScenario?'Yes':'No' %></td>
                 <td class="download-session" sessionId="<%= connectionCode %>"><a href="/" ><i class="fas fa-download"></i></a></td>
                 <td><a href="/dashboard/session/remove/<%=connectionCode %>" ><i class="fas fa-trash-alt"></i></a></td>
               </tr>

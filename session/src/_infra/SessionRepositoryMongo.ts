@@ -25,7 +25,6 @@ export default class SessionRepositoryMongo implements SessionRepository {
             webSiteId: session.webSite.id,
             baseURL: session.baseURL,
             name: session.name,
-            useTestScenario: session.useTestScenario,
             overlayType: session.overlayType
         })
         .then( () => {
@@ -129,16 +128,11 @@ export default class SessionRepositoryMongo implements SessionRepository {
                 overlayType = sessionData.overlayType as SessionOverlayType;
                 createdAt = sessionData.createdAt;
                 updatedAt = sessionData.updatedAt;
-                let useTestScenario: boolean;
-                if (sessionData.useTestScenario === undefined) {
-                    useTestScenario = true;
-                } else {
-                    useTestScenario = sessionData.useTestScenario;
-                }
+               
                 return this._webSiteRepository.findWebSiteById(sessionData.webSiteId)
                 .then((webSite) => {
                     if (webSite !== undefined) {
-                        session = new Session(webSite, baseURL, id, name, useTestScenario, createdAt, updatedAt, overlayType);
+                        session = new Session(webSite, baseURL, id, name, createdAt, updatedAt, overlayType);
                         return ExplorationSchema.find({sessionId: session.id})
                         .then((explorationDataList) => {
                             explorationDataList

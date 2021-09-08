@@ -15,13 +15,11 @@ export default class Session {
     private _createdAt: Date | undefined;
     private _updatedAt: Date | undefined;
     private _overlayType: SessionOverlayType;
-    private _useTestScenario: boolean;
 
     constructor(webSite: WebSite,
         baseURL: string,
         id: string,
         name: string,
-        useTestScenario: boolean,
         createdAt?: Date,
         updatedAt?: Date,
         overlayType: SessionOverlayType = "rainbow")
@@ -34,7 +32,6 @@ export default class Session {
         this._updatedAt = updatedAt;
         this._name = name;
         this._overlayType = overlayType;
-        this._useTestScenario = useTestScenario;
     }
 
     get id(): string {
@@ -71,10 +68,6 @@ export default class Session {
 
     get overlayType(): SessionOverlayType {
         return this._overlayType;
-    }
-
-    get useTestScenario(): boolean {
-        return this._useTestScenario;
     }
 
     public static getOverlayTypes(): SessionOverlayType[] {

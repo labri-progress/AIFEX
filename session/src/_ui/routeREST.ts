@@ -20,8 +20,8 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
     });
 
     app.post("/session/create", (req, res) => {
-        const { webSiteId, baseURL, name, overlayType, useTestScenario } = req.body;
-        logger.info(`create session webSiteId ${webSiteId}, baseURL ${baseURL}, name ${name}, overlayType ${overlayType}, useTestScenario ${useTestScenario}`);
+        const { webSiteId, baseURL, name, overlayType } = req.body;
+        logger.info(`create session webSiteId ${webSiteId}, baseURL ${baseURL}, name ${name}, overlayType ${overlayType}`);
         if (webSiteId === undefined) {
             logger.warn(`webSiteId must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("webSiteId is undefined");
@@ -39,7 +39,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
 
         const overlayTypeValue: SessionOverlayType = overlayType as SessionOverlayType;
 
-        sessionService.createNewSessionForWebSiteId(webSiteId, baseURL, name, useTestScenario, overlayTypeValue)
+        sessionService.createNewSessionForWebSiteId(webSiteId, baseURL, name, overlayTypeValue)
         .then((sessionId) => {
             if (sessionId) {
                 logger.debug(`session created`);
@@ -73,7 +73,6 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
                     webSite: session.webSite,
                     createdAt: session.createdAt,
                     updatedAt: session.updatedAt,
-                    useTestScenario: session.useTestScenario,
                     overlayType: session.overlayType,
                     explorationList: session.explorationList.map((exploration) => {
                         return {

@@ -36,10 +36,8 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.post('/dashboard/session/start', (req, res) => {
-        let { webSiteId, name, baseURL, interpolationfactor, depth, overlayType, useTestScenario } = req.body;
-                
-        useTestScenario = useTestScenario === "yes"
-        
+        let { webSiteId, name, baseURL, interpolationfactor, depth, overlayType } = req.body;
+                        
         logger.info(`POST start session for WebSite (id = ${webSiteId})`);
         
         let connectionCode;
@@ -58,7 +56,6 @@ module.exports = function attachRoutes(app, config) {
             webSiteId,
             name,
             overlayType,
-            useTestScenario,
             baseURL,
         }
         let optionSessionCreate = {
@@ -149,9 +146,7 @@ module.exports = function attachRoutes(app, config) {
             .then(([session, model,screenshot, video]) => {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))                
                 session.participants = participants;
-                if (session.useTestScenario === undefined) {
-                    session.useTestScenario = false;
-                }
+
                 res.render('session/view.ejs', {
                     account: req.session,
                     serverURL: buildInvitation(model.id, session.id),
@@ -194,9 +189,7 @@ module.exports = function attachRoutes(app, config) {
             .then(([session, screenshot, video]) => {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))                
                 session.participants = participants;
-                if (session.useTestScenario === undefined) {
-                    session.useTestScenario = false;
-                }
+
                 res.render('session/explorations.ejs',{
                     account:req.session, 
                     serverURL: buildInvitation(modelId, sessionId),
@@ -283,9 +276,7 @@ module.exports = function attachRoutes(app, config) {
             .then(([session, screenshot, video]) => {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))                
                 session.participants = participants;
-                if (session.useTestScenario === undefined) {
-                    session.useTestScenario = false;
-                }
+
                 res.render('session/comments.ejs',{
                     account:req.session, 
                     serverURL: buildInvitation(modelId, sessionId),

@@ -24,10 +24,10 @@ export default class SessionServiceHTTP implements SessionService {
             const ids : string[] = this.token2SessionIds(token);
             if (ids.includes(id)) {
                 const sessionGetURL = SESSION_URL + id;
-                return fetch(sessionGetURL).then(response => {
+                return fetch(sessionGetURL).then((response) => {
                     if (response.ok) {
                         return response.json().then(sessionData => {
-                            return new Session(sessionData.webSite, sessionData.baseURL, sessionData.id, sessionData.name, sessionData.useTestScenario);
+                            return new Session(sessionData.webSite, sessionData.baseURL, sessionData.id, sessionData.name);
                         })
                     } else {
                         throw new Error("Error:"+response.status)
@@ -47,7 +47,6 @@ export default class SessionServiceHTTP implements SessionService {
             baseURL,
             name,
             overlayType : overlayType.toString(),
-            useTestScenario : false
         }
         const SessionCreateURL = 'http://' + config.session.host + ':' + config.session.port + '/session/create';
         let optionSessionCreate = {
@@ -56,7 +55,7 @@ export default class SessionServiceHTTP implements SessionService {
             headers: { 'Content-Type': 'application/json' },
         }
         return fetch(SessionCreateURL, optionSessionCreate)
-            .then(response => {
+            .then((response) => {
                 if (response.ok) {
                     return response.json()
                 } else {
