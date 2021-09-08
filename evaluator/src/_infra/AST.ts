@@ -1,23 +1,23 @@
 
 import IInteraction from "../domain/Action";
-import StepNFA from "./StepNFA";
+import EvaluatorNFA from "./NFA";
 import { STEP_OPERATOR } from "../domain/StepOperator";
 import StepState from "../domain/StepState";
-export default class StepAST {
+export default class AST {
 
     public label: STEP_OPERATOR | IInteraction;
-    public left: StepAST;
-    public right: StepAST;
+    public left: AST;
+    public right: AST;
     public parameter: string;
 
-    constructor(label: STEP_OPERATOR | IInteraction, left: StepAST, right: StepAST, parameter: string) {
+    constructor(label: STEP_OPERATOR | IInteraction, left: AST, right: AST, parameter: string) {
         this.left = left;
         this.right = right;
         this.label = label;
         this.parameter = parameter;
     }
 
-    public buildNFA(): Promise<StepNFA> {
+    public buildNFA(): Promise<EvaluatorNFA> {
         if (this.label === STEP_OPERATOR.or) {
             return this.buildOr();
         } else if (this.label === STEP_OPERATOR.arrow) {
@@ -35,51 +35,51 @@ export default class StepAST {
         }
     }
 
-    private buildOr(): Promise<StepNFA> {
+    private buildOr(): Promise<EvaluatorNFA> {
         return  Promise.all([this.left.buildNFA(), this.right.buildNFA()])
         .then(([leftNFA, rightNFA]) => {
             return leftNFA.or(rightNFA);
         });
     }
 
-    private buildArrow(): Promise<StepNFA> {
+    private buildArrow(): Promise<EvaluatorNFA> {
         return  Promise.all([this.left.buildNFA(), this.right.buildNFA()])
         .then(([leftNFA, rightNFA]) => {
             return leftNFA.arrow(rightNFA);
         });
     }
 
-    private buildSeq(): Promise < StepNFA > {
+    private buildSeq(): Promise < EvaluatorNFA > {
         return  Promise.all([this.left.buildNFA(), this.right.buildNFA()])
         .then(([leftNFA, rightNFA]) => {
             return leftNFA.sequence(rightNFA);
         });
     }
 
-    private buildInteraction(): Promise < StepNFA > {
+    private buildInteraction(): Promise < EvaluatorNFA > {
         const start = new StepState();
         const end = new StepState();
-        const interaction = this.label as IInteraction;
-        const nfa = new StepNFA(start, [end], [start, end ], new Map());
-        nfa.addTransition(start, end, interaction.toString());
+        const action = this.label as IInteraction;
+        const nfa = new EvaluatorNFA(start, [end], [start, end ], new Map());
+        nfa.addTransition(start, end, action.toString());
 
         return Promise.resolve(nfa);
     }
 
-    private buildNot():Promise<StepNFA> {
+    private buildNot():Promise<EvaluatorNFA> {
         return this.left.buildNFA().then((stepNFA) => {
             return stepNFA.negation();
         })
     }
 
-    private buildKleenPlus():Promise<StepNFA> {
+    private buildKleenPlus():Promise<EvaluatorNFA> {
         return this.left.buildNFA()
             .then(stepNFA => {
                 return stepNFA.kleenPlus();
             });
     }
 
-    private buildIteration(): Promise<StepNFA> {
+    private buildIteration(): Promise<EvaluatorNFA> {
         return this.left.buildNFA().then(stepNFA => {
             let numberOfIteration;
             try {

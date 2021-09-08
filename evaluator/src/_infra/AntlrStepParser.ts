@@ -1,7 +1,7 @@
 import antlr4, { Recognizer } from "antlr4";
 import { ErrorListener } from "antlr4/error/ErrorListener";
 import IStepParser from "../domain/IStepParser";
-import StepAST from "./StepAST";
+import AST from "./AST";
 // tslint:disable-next-line: no-var-requires
 const grammarLexer = require("./stepParser/StepGrammarLexer.js");
 // tslint:disable-next-line: no-var-requires
@@ -11,7 +11,7 @@ const grammarVisitor = require("./stepParser/StepGrammarVisitor.js");
 
 export default class AntlrStepParser implements IStepParser {
 
-    public parseStepExpression(text: string): Promise<StepAST> {
+    public parseStepExpression(text: string): Promise<AST> {
         return new Promise((resolve, reject) => {
             const chars = new antlr4.InputStream(text);
             const lexer = new grammarLexer.StepGrammarLexer(chars);

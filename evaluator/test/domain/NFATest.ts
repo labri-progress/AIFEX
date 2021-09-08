@@ -3,7 +3,7 @@ import * as fs from "fs";
 import "mocha";
 import * as path from "path";
 import AntlrStepParser from "../../src/_infra/AntlrStepParser";
-import StepNFA from "../../src/_infra/StepNFA";
+import EvaluatorNFA from "../../src/_infra/NFA";
 
 describe("Domain - NFA", () => {
     const parser = new AntlrStepParser();
@@ -14,7 +14,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 const dot = nfa.toDot("or");
                 fs.writeFileSync(path.join(__dirname, "../graph/action.dot"), dot);
             });
@@ -24,7 +24,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click or search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 const dot = nfa.toDot("or");
                 fs.writeFileSync(path.join(__dirname, "../graph/or.dot"), dot);
             });
@@ -34,7 +34,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click and search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 const dot = nfa.toDot("and");
                 fs.writeFileSync(path.join(__dirname, "../graph/and.dot"), dot);
             });
@@ -44,7 +44,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click => search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 const dot = nfa.toDot("arrow");
                 fs.writeFileSync(path.join(__dirname, "../graph/arrow.dot"), dot);
             });
@@ -54,7 +54,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 const dot = nfa.toDot("or");
                 fs.writeFileSync(path.join(__dirname, "../graph/seq.dot"), dot);
             });
@@ -64,7 +64,7 @@ describe("Domain - NFA", () => {
             const stringTest = "!search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 const dot = nfa.toDot("not");
                 fs.writeFileSync(path.join(__dirname, "../graph/not.dot"), dot);
             });
@@ -74,7 +74,7 @@ describe("Domain - NFA", () => {
             const stringTest = "search+";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 const dot = nfa.toDot("kleenPlus");
                 fs.writeFileSync(path.join(__dirname, "../graph/kleenPlus.dot"), dot);
             });
@@ -84,7 +84,7 @@ describe("Domain - NFA", () => {
             const stringTest = "search[3]";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 const dot = nfa.toDot("iteration");
                 fs.writeFileSync(path.join(__dirname, "../graph/iteration.dot"), dot);
             });
@@ -98,7 +98,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click or search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 return nfa.toDFA();
             }).then((dfa) => {
                 const dot = dfa.toDot("DFA_or");
@@ -110,7 +110,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click or search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 return nfa.toDFA();
             }).then((dfa) => {
                 return dfa.negation();
@@ -125,7 +125,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click and search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 return nfa.toDFA();
             }).then((dfa) => {
                 const dot = dfa.toDot("DFA_and");
@@ -137,7 +137,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click => search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 return nfa.toDFA();
             }).then((dfa) => {
                 const dot = dfa.toDot("DFA_arrow");
@@ -149,7 +149,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click search";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 return nfa.toDFA();
             }).then((dfa) => {
                 const dot = dfa.toDot("DFA_seq");
@@ -161,7 +161,7 @@ describe("Domain - NFA", () => {
             const stringTest = "click";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 return nfa.toDFA();
             }).then((dfa) => {
                 const dot = dfa.toDot("DFA_action");
@@ -173,7 +173,7 @@ describe("Domain - NFA", () => {
             const stringTest = "((typeSearch clickSearchButton) or (typeSearch pressEnter)) => addToBasket => checkout";
             return parser.parseStepExpression(stringTest).then((AST) => {
                 return AST.buildNFA();
-            }).then((nfa: StepNFA) => {
+            }).then((nfa: EvaluatorNFA) => {
                 const dot = nfa.toDot("NFA_Checkout");
                 fs.writeFileSync(path.join(__dirname, "../graph/nfa_Checkout.dot"), dot);
                 return nfa.toDFA();

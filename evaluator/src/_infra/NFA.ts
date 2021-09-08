@@ -1,5 +1,19 @@
 import StepState, { transitionType } from "../domain/StepState";
-export default class StepNFA {
+export default class EvaluatorNFA {
+
+
+
+    public startState: StepState;
+    public finalStates: StepState[];
+    public transitions: Map<StepState, Map<string, StepState[]>>;
+    public states: StepState[];
+
+    constructor(start: StepState, finals: StepState[] = [], states: StepState[] = [], transitions: Map<StepState, Map<string, StepState[]>>= new Map()) {
+        this.startState = start;
+        this.finalStates = finals;
+        this.states = states;
+        this.transitions = transitions;
+    }
 
     get isDFA(): boolean {
         for (const [src, transition] of this.transitions) {
@@ -12,18 +26,6 @@ export default class StepNFA {
             }
         }
         return true;
-    }
-
-    public startState: StepState;
-    public finalStates: StepState[];
-    public transitions: Map<StepState, Map<string, StepState[]>>;
-    public states: StepState[];
-
-    constructor(start: StepState, finals: StepState[] = [], states: StepState[] = [], transitions: Map<StepState, Map<string, StepState[]>>= new Map()) {
-        this.startState = start;
-        this.finalStates = finals;
-        this.states = states;
-        this.transitions = transitions;
     }
 
     public isFinalState(state: StepState): boolean {
@@ -55,11 +57,11 @@ export default class StepNFA {
         }
     }
 
-    public or(rightNFA: StepNFA): Promise<StepNFA> {
+    public or(rightNFA: EvaluatorNFA): Promise<EvaluatorNFA> {
         const startState = new StepState();
         const newTransitionMap = new Map();
         return rightNFA.copy().then((right) => {
-            const orNFA = new StepNFA(startState,
+            const orNFA = new EvaluatorNFA(startState,
                 [...this.finalStates, ...right.finalStates],
                 [...this.states, ...right.states, startState],
                 newTransitionMap);
@@ -77,11 +79,11 @@ export default class StepNFA {
         });
     }
 
-    public arrow(right: StepNFA): Promise<StepNFA> {
+    public arrow(right: EvaluatorNFA): Promise<EvaluatorNFA> {
         const loopState = new StepState();
         const newTransitionMap = new Map();
         return right.copy().then((rightNFA) => {
-            const arrowNFA = new StepNFA(this.startState,
+            const arrowNFA = new EvaluatorNFA(this.startState,
                 rightNFA.finalStates,
                 [...this.states, ...rightNFA.states, loopState],
                 newTransitionMap);
@@ -103,10 +105,10 @@ export default class StepNFA {
         });
     }
 
-    public sequence(right: StepNFA): Promise<StepNFA> {
+    public sequence(right: EvaluatorNFA): Promise<EvaluatorNFA> {
         const newTransitionMap = new Map();
         return right.copy().then((rightNFA) => {
-            const seqNFA = new StepNFA(this.startState, rightNFA.finalStates, [...this.states, ...rightNFA.states], newTransitionMap);
+            const seqNFA = new EvaluatorNFA(this.startState, rightNFA.finalStates, [...this.states, ...rightNFA.states], newTransitionMap);
             for (const [src, transition] of [...this.transitions, ...rightNFA.transitions]) {
                 for (const [action, destinations] of transition) {
                     for (const dest of destinations) {
@@ -122,7 +124,7 @@ export default class StepNFA {
 
     }
 
-    public negation(): Promise<StepNFA> {
+    public negation(): Promise<EvaluatorNFA> {
         let getDFA;
         if (this.isDFA) {
             getDFA = this.copy();
@@ -130,7 +132,7 @@ export default class StepNFA {
             getDFA = this.toDFA();
         }
         return getDFA.then((dfa) => {
-            const negationNFA = new StepNFA(dfa.startState,
+            const negationNFA = new EvaluatorNFA(dfa.startState,
                 dfa.states.filter((state) => !dfa.finalStates.some((final) => final === state)),
                 dfa.states,
                 dfa.transitions,
@@ -139,14 +141,14 @@ export default class StepNFA {
         });
     }
 
-    public kleenPlus(): Promise<StepNFA> {
+    public kleenPlus(): Promise<EvaluatorNFA> {
         return this.copy().then((iteratedNFA) => {
             const startState = iteratedNFA.startState;
             const endState = new StepState();
             const iterationState = new StepState();
             const transitions =  new Map([...iteratedNFA.transitions]);
 
-            const NFA = new StepNFA(startState, [endState], [endState, iterationState, ...iteratedNFA.states], transitions);
+            const NFA: EvaluatorNFA = new EvaluatorNFA(startState, [endState], [endState, iterationState, ...iteratedNFA.states], transitions);
             iteratedNFA.finalStates.forEach((iteratedNFAfinalState) => {
                 NFA.addTransition(iteratedNFAfinalState, iterationState, transitionType.epsilon)
             });
@@ -158,7 +160,7 @@ export default class StepNFA {
         })
     }
 
-    public iteration(numberOfIteration: number): Promise<StepNFA> {
+    public iteration(numberOfIteration: number): Promise<EvaluatorNFA> {
         const copyPromises = [];
         if (numberOfIteration === 0) {
             return this.negation();
@@ -178,10 +180,10 @@ export default class StepNFA {
 
                 const transitions: any[] = copies.reduce((acc: any, copy: any) => [...copy.transitions, ...acc], []);
 
-                const NFA = new StepNFA(
+                const NFA: EvaluatorNFA = new EvaluatorNFA(
                     copies[0].startState,
                     [finalState],
-                    copies.reduce((acc: StepState[], copy: StepNFA) => [...copy.states, ...acc], [...iterationStates, finalState]),
+                    copies.reduce((acc: StepState[], copy: EvaluatorNFA) => [...copy.states, ...acc], [...iterationStates, finalState]),
                     new Map(transitions))
 
                 iterationStates.forEach((iterationState: StepState) => {
@@ -189,7 +191,7 @@ export default class StepNFA {
                 })
 
                 for (let i = 0; i < copies.length-1; i++) {
-                    const copy: StepNFA = copies[i]
+                    const copy: EvaluatorNFA = copies[i]
                     for (const copyFinalState of copy.finalStates) {
                         NFA.addTransition(copyFinalState, iterationStates[i], transitionType.epsilon);
                         NFA.addTransition(iterationStates[i], copies[i+1].startState, transitionType.epsilon);
@@ -203,7 +205,7 @@ export default class StepNFA {
         }
     }
 
-    public copy(): Promise<StepNFA> {
+    public copy(): Promise<EvaluatorNFA> {
         return new Promise((resolve) => {
             const stateMap = new Map();
             for (const state of this.states) {
@@ -214,7 +216,7 @@ export default class StepNFA {
             const states = Array.from(stateMap.values());
             const transitionMap = new Map();
 
-            const copyNFA = new StepNFA(startState, finalStateList, states, transitionMap);
+            const copyNFA = new EvaluatorNFA(startState, finalStateList, states, transitionMap);
 
             for (const [src, transition] of this.transitions) {
                 for (const [action, destinations] of transition) {
@@ -269,7 +271,7 @@ export default class StepNFA {
         this.finalStates = this.finalStates.filter((final) => statesIn.get(final));
     }
 
-    public toDFA(): Promise<StepNFA> {
+    public toDFA(): Promise<EvaluatorNFA> {
         return new Promise((resolve) => {
             const stateLabelMap = new Map<StepState, string>();
             const labelStateMap = new Map<string, StepState>();
@@ -395,7 +397,7 @@ export default class StepNFA {
             const newStartStateLabels: string[] = Array.from(labeledTransitions.keys())[0];
             const startState = dfaStateLabelMap.get(newStartStateLabels.toString());
             if (startState) {
-                const DFA = new StepNFA(startState, finalStatesDFA, Array.from(dfaTransitions.keys()), dfaTransitions);
+                const DFA = new EvaluatorNFA(startState, finalStatesDFA, Array.from(dfaTransitions.keys()), dfaTransitions);
                 DFA.removeIsolated();
                 resolve(DFA);
             }

@@ -19,7 +19,7 @@
     "@types/express": "^4.17.12",
     "@types/mocha": "^5.2.7",
     "@types/morgan": "^1.9.2",
-    "@types/node": "^14.17.4",
+    "@types/node": "^14.17.15",
     "@types/shortid": "^0.0.29",
     "@types/socket.io": "^2.1.13",
     "@types/source-map-support": "^0.5.3",

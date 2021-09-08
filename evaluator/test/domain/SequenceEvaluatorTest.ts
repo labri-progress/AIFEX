@@ -7,7 +7,7 @@ import Evaluator from "../../src/domain/Evaluator";
 import StepFactory from "../../src/_infra/DFAStepFactory";
 import Step from "../../src/domain/Step";
 
-describe("Domain - SequenceEvaluator", () => {
+describe("Domain", () => {
 
     const stepParser = new AntlrStepParser();
     const stepFactory = new StepFactory(stepParser);
@@ -59,7 +59,7 @@ describe("Domain - SequenceEvaluator", () => {
                     Action.labelToAction("typeProductName"),
             ];
                 return evaluator.evaluate(interactions).then((evaluation) => {
-                    expect(evaluation.nextActionList).to.eql([]);
+                    expect(evaluation.nextActionList).to.eql([new Action("clickOnSearchButton"), new Action("pressEnterKey")]);
                     expect(evaluation.isAccepted).eql(false);
                 });
             });
@@ -76,7 +76,7 @@ describe("Domain - SequenceEvaluator", () => {
                     Action.labelToAction("wrongAction"),
             ];
                 return evaluator.evaluate(interactions).then((evaluation) => {
-                    expect(evaluation.nextActionList).to.eql([]);
+                    expect(evaluation.nextActionList).to.eql([new Action("clickSearchBar")]);
                     expect(evaluation.isAccepted).to.eql(false);
                 });
             });

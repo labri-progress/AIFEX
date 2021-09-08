@@ -1,7 +1,7 @@
 // Generated from ./src/domain/grammar/StepGrammar.g4 by ANTLR 4.7.1
 // jshint ignore: start
 var antlr4 = require('antlr4/index');
-const StepAST  = require("../StepAST").default;
+const StepAST  = require("../AST").default;
 const { STEP_OPERATOR } = require("../../domain/StepOperator");
 const Action = require("../../domain/Action").default;
 
@@ -23,15 +23,18 @@ StepGrammarVisitor.prototype.constructor = StepGrammarVisitor;
 
 // Visit a parse tree produced by StepGrammarParser#action.
 StepGrammarVisitor.prototype.visitAction = function(ctx) {
-  let [prefix, suffix] = ctx.ID().map(value => value.getText());
-  if (suffix == undefined) {
-    if (ctx.SINGLE_STRING()) {
+  let [prefix, suffix] = ctx.getText().split("$");
+  if (ctx.SINGLE_STRING()) {
       suffix = ctx.SINGLE_STRING().getText().replace(/['"]+/g, '')
-    } else if (ctx.DOUBLE_STRING()) {
+      return new StepAST(Action.labelToAction(`${prefix}$${suffix}`));
+
+  } else if (ctx.DOUBLE_STRING()) {
       suffix = ctx.DOUBLE_STRING().getText().replace(/['"]+/g, '')
-    } 
+      return new StepAST(Action.labelToAction(`${prefix}$${suffix}`));
+  } else if (suffix) {
+    return new StepAST(Action.labelToAction(`${prefix}$${suffix}`));
   }
-  return new StepAST(Action.labelToAction(`${prefix}$${suffix}`));
+  return new StepAST(Action.labelToAction(`${prefix}`));
 };
 
 // Visit a parse tree produced by StepGrammarParser#string.

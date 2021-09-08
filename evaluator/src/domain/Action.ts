@@ -25,4 +25,12 @@ export default class Action {
         }
 
     }
+
+    public toString(): string {
+        if (this.suffix) {
+            return `${this.prefix}$${this.suffix}`;
+        } else {
+            return this.prefix;
+        }
+    }
 }

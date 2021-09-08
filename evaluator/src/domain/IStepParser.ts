@@ -1,5 +1,5 @@
-import StepAST from "../_infra/StepAST";
+import AST from "../_infra/AST";
 
 export default interface IStepParser {
-    parseStepExpression(text: string): Promise<StepAST>;
+    parseStepExpression(text: string): Promise<AST>;
 }

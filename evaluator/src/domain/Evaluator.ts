@@ -33,10 +33,7 @@ export default class Evaluator {
 
             const step = this.step;
             if (step) {
-                const {
-                    isAccepted,
-                    nextActionList
-                } = this.evaluateStep(sequence, step);
+                const { isAccepted, nextActionList } = this.evaluateStep(sequence, step);
                 sequenceEvaluation.nextActionList = nextActionList;
                 sequenceEvaluation.isAccepted = isAccepted;
             }

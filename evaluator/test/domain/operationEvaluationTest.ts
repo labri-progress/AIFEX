@@ -77,7 +77,7 @@ describe("Domain - SequenceEvaluator", () => {
             let sessionId = "1";
             let step: Step; 
 
-            it ("initialize evaluator", () => {
+            before("initialize evaluator", () => {
                 return stepFactory.createStep(text)
                     .then((createdStep: Step | undefined) => {
                         if (!createdStep) {
@@ -90,7 +90,7 @@ describe("Domain - SequenceEvaluator", () => {
                     })
             })
 
-            it ("Valide sequence", () => {
+            it("Valide sequence", () => {
                 const interactionList = [
                     Action.labelToAction("action1$my Suffix"),
                 ];

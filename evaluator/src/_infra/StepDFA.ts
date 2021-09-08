@@ -1,41 +1,41 @@
 
 import Step from "../domain/Step";
 import Action from "../domain/Action";
-import StepNFA from "./StepNFA";
+import EvaluatorNFA from "./NFA";
 import StepState, { transitionType } from "../domain/StepState";
 
 export default class StepDFA implements Step {
     public expression: string;
-    public stepDFA: StepNFA | null;
+    public evaluatorNFA: EvaluatorNFA | null;
 
-    constructor(expression: string, dfa: StepNFA | null) {
+    constructor(expression: string, dfa: EvaluatorNFA | null) {
         this.expression = expression;
-        this.stepDFA = dfa;
+        this.evaluatorNFA = dfa;
     }
     get isEmpty(): boolean {
-        if (!this.stepDFA) {
+        if (!this.evaluatorNFA) {
             return true;
         }
-        return this.nextTransitionMap(this.stepDFA.startState).size > 0;
+        return this.nextTransitionMap(this.evaluatorNFA.startState).size === 0;
     }
     
     isCompleted(state: StepState): boolean {
-        if (!this.stepDFA) {
+        if (!this.evaluatorNFA) {
             return true;
         }
-        return this.stepDFA.finalStates.includes(state);
+        return this.evaluatorNFA.finalStates.includes(state);
     }
 
     nextTransitionMap(state: StepState): Map<string, StepState> {
         const transitionMap = new Map();
-        if (!this.stepDFA) {
+        if (!this.evaluatorNFA) {
             return transitionMap;
         }
-        const map = this.stepDFA?.transitions.get(state);
+        const map = this.evaluatorNFA?.transitions.get(state);
         if (map === undefined) {
             return transitionMap;
         } else {
-            for (const [label, nextStateList] of map) {
+            for (const [label, nextStateList] of map.entries()) {
                 // It is a DFA, so there is only one state per label
                 transitionMap.set(label, nextStateList[0])
             }
@@ -44,10 +44,10 @@ export default class StepDFA implements Step {
     }
 
     get firstActionList(): Action[] {
-        if (!this.stepDFA) {
+        if (!this.evaluatorNFA) {
             return [];
         }
-        const transitions = this.stepDFA.transitions.get(this.stepDFA.startState)
+        const transitions = this.evaluatorNFA.transitions.get(this.evaluatorNFA.startState)
         if (transitions === undefined || transitions === null) {
             return [];
         }
@@ -56,10 +56,10 @@ export default class StepDFA implements Step {
     }
 
     public followSequence(sequence: Action[]): StepState {
-        if (!this.stepDFA) {
+        if (!this.evaluatorNFA) {
             throw new Error("Step has not been initialized")
         }
-        let state: StepState | "Exit" | null = this.stepDFA.startState;
+        let state: StepState | "Exit" | null = this.evaluatorNFA.startState;
         const actionsNotConsumed = sequence.slice();
         while (actionsNotConsumed.length > 0 && !this.isEnteringAction(actionsNotConsumed[0])) {
             actionsNotConsumed.shift();
@@ -74,9 +74,9 @@ export default class StepDFA implements Step {
                 throw new Error("Reached a null state");
             }
             else if (state === "Exit") {
-                state = this.stepDFA.startState;
+                state = this.evaluatorNFA.startState;
             }
-            if (this.stepDFA.isFinalState(state)) {
+            if (this.evaluatorNFA.isFinalState(state)) {
                 break;
             }
         }
@@ -84,10 +84,10 @@ export default class StepDFA implements Step {
     }
 
     public toDot(title: string) : string | null {
-        if (! this.stepDFA) {
+        if (! this.evaluatorNFA) {
             return null
         }
-        return this.stepDFA.toDot(title);
+        return this.evaluatorNFA.toDot(title);
     }
 
     private isEnteringAction(action: Action): boolean {
@@ -104,26 +104,26 @@ export default class StepDFA implements Step {
     }
 
     private followAction(currentState: StepState, action: Action): StepState | "Exit" | null{
-        if (!this.stepDFA) {
+        if (!this.evaluatorNFA) {
             return null;
         }
         let successor = this.getSuccessor(currentState, action);
         if (successor) {
             return successor;
         }
-        successor = this.getSuccessor(this.stepDFA.startState, action);
+        successor = this.getSuccessor(this.evaluatorNFA.startState, action);
         if (successor) {
             return successor;
         }
-        return this.stepDFA.startState;
+        return this.evaluatorNFA.startState;
     }
 
     private getSuccessor(state: StepState, action: Action): StepState | "Exit" | null {
-        if (! this.stepDFA) {
+        if (! this.evaluatorNFA) {
             return null;
         }
-        if (this.stepDFA.transitions.has(state)) {
-            const transition = this.stepDFA.transitions.get(state);
+        if (this.evaluatorNFA.transitions.has(state)) {
+            const transition = this.evaluatorNFA.transitions.get(state);
             if (!transition) {
                 return "Exit";
             }
