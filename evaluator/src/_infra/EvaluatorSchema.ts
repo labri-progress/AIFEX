@@ -1,7 +1,7 @@
 import {model, Schema, Document} from "mongoose";
 
 const SEQUENCE_EVALUATOR_SCHEMA: Schema = new Schema({
-    webSiteId: {type: String, required: true},
+    sessionId: {type: String, required: true},
     description: {type: String},
     expression: {type: String},
 },
@@ -11,7 +11,7 @@ const SEQUENCE_EVALUATOR_SCHEMA: Schema = new Schema({
 
 export interface EvaluatorDocument extends Document {
     _id: string,
-    webSiteId: string,
+    sessionId: string,
     description: string,
     expression: string
   }

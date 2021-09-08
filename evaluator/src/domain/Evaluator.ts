@@ -1,6 +1,6 @@
 import { generate } from "shortid";
 import Action, { ActionLabel } from "./Action";
-import SequenceEvaluation from "./SequenceEvaluation";
+import Evaluation from "./Evaluation";
 import Step from "./Step";
 import StepState from "./StepState";
 
@@ -27,9 +27,9 @@ export default class Evaluator {
         return this.step.expression;
     }
 
-    public evaluate(sequence: Action[]): Promise<SequenceEvaluation> {
+    public evaluate(sequence: Action[]): Promise<Evaluation> {
         return new Promise((resolve) => {
-            const sequenceEvaluation = new SequenceEvaluation();
+            const sequenceEvaluation = new Evaluation();
 
             const step = this.step;
             if (step) {

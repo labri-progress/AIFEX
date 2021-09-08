@@ -9,65 +9,51 @@ import {EvaluatorDocument, sequenceEvaluatorModel} from "./EvaluatorSchema";
 
 export default class SequenceEvaluatorRepositoryMongo implements EvaluatorRepository {
 
-    public getSequenceEvaluatorByWebSiteId(webSiteId: string, stepFactory: StepFactory): Promise<Evaluator | undefined> {
+    public getSequenceEvaluatorByWebSiteId(sessionId: string, stepFactory: StepFactory): Promise<Evaluator> {
         let evaluator: Evaluator;
-        return sequenceEvaluatorModel.findOne({webSiteId})
+        return sequenceEvaluatorModel.findOne({sessionId: sessionId})
             .then((sequenceEvaluatorData: EvaluatorDocument | null) => {
                 if (sequenceEvaluatorData !== null) {
                     logger.info(`Evaluator found, ${sequenceEvaluatorData}`)
-                    evaluator = new Evaluator(sequenceEvaluatorData.webSiteId, sequenceEvaluatorData._id, sequenceEvaluatorData.description);
-                    if (sequenceEvaluatorData.expression !== undefined) {
                         return stepFactory.createStep(sequenceEvaluatorData.expression)
-                            .then((step: Step | undefined) => {
-                                if (!evaluator) {
-                                    return undefined;
-                                }
-                                evaluator.step = step;
+                            .then((step: Step) => {
+                                evaluator = new Evaluator(sequenceEvaluatorData.sessionId, step, sequenceEvaluatorData._id, sequenceEvaluatorData.description);
                                 return evaluator;
                              })
-                    } else {
-                        return evaluator;
-                    }
                 } else {
-                    logger.info(`Evaluator not found for website ${webSiteId}`)
-                    return undefined;
+                    throw new Error(`Evaluator not found for website ${sessionId}`);
                 }
-            })
-            .catch((error) => {
-                logger.error(`Error getSequenceEvaluatorByWebSiteId : ${error}`)
-                return undefined;
             })
     }
 
-    public createSequenceEvaluator(webSiteId: string, description: string, stepFactory: StepFactory, expression: string): Promise<Evaluator> {
-        let evaluator: Evaluator
+    public createSequenceEvaluator(sessionId: string, description: string, stepFactory: StepFactory, expression: string): Promise<Evaluator> {
+        let evaluator: Evaluator;
         return sequenceEvaluatorModel.create({
-            webSiteId,
+            sessionId: sessionId,
             expression,
             description,
         } as EvaluatorDocument)
-        .then((createdSequenceEvaluator: EvaluatorDocument) => {
-            evaluator = new Evaluator(createdSequenceEvaluator.webSiteId, createdSequenceEvaluator._id, createdSequenceEvaluator.description);
-            return stepFactory.createStep(createdSequenceEvaluator.expression)
-        }).then((step: Step | undefined) => {
-            evaluator.step = step;
-            return evaluator;
-        })
+        .then((evaluatorCreated: EvaluatorDocument) => {
+            return stepFactory.createStep(expression).then((step: Step) => {
+                evaluator = new Evaluator(evaluatorCreated.sessionId, step, evaluatorCreated._id, evaluatorCreated.description);
+                return evaluator;
+            });
+        });
     }
 
-    public updateSequenceEvaluator(webSiteId: string, description: string, expression: string): Promise <void> {
+    public updateSequenceEvaluator(sessionId: string, description: string, expression: string): Promise <void> {
         if (expression.length === 0) {
             return Promise.reject("Expression cannot be empty")
         }
         return sequenceEvaluatorModel.updateOne({
-            webSiteId,
+            sessionId: sessionId,
         }, {
             description,
             expression,
         }).then(() => {return})
     }
 
-    public removeSequenceEvaluator(webSiteId: string): Promise<void> {
-        return sequenceEvaluatorModel.remove({webSiteId}).then(() => {return})
+    public removeSequenceEvaluator(sessionId: string): Promise<void> {
+        return sequenceEvaluatorModel.remove({sessionId}).then(() => {return})
     }
 }

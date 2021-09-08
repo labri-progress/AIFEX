@@ -4,7 +4,7 @@ import "mocha";
 import AntlrStepParser from "../../src/_infra/AntlrStepParser";
 import Evaluator from "../../src/domain/Evaluator";
 import StepFactory from "../../src/_infra/DFAStepFactory";
-import SequenceEvaluation from "../../src/domain/SequenceEvaluation";
+import Evaluation from "../../src/domain/Evaluation";
 import Step from "../../src/domain/Step";
 import Action from "../../src/domain/Action";
 
@@ -35,7 +35,7 @@ describe("Domain - SequenceEvaluator", () => {
                     Action.labelToAction("action1"),
                 ];
                 
-                return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+                return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                     expect(evaluationResult.isAccepted).eql(true)
                 })
             })
@@ -64,7 +64,7 @@ describe("Domain - SequenceEvaluator", () => {
                 const interactionList = [
                     Action.labelToAction("action1$mySuffix"),
                 ];
-                return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+                return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                     expect(evaluationResult.isAccepted).eql(true)
                 })
             })
@@ -95,7 +95,7 @@ describe("Domain - SequenceEvaluator", () => {
                     Action.labelToAction("action1$my Suffix"),
                 ];
                 
-                return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+                return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                     expect(evaluationResult.isAccepted).eql(true)
                 })
             })
@@ -127,7 +127,7 @@ describe("Domain - SequenceEvaluator", () => {
                 Action.labelToAction("action1$my Suffix"),
             ];
             
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(true)
             })
         })
@@ -158,7 +158,7 @@ describe("Domain - SequenceEvaluator", () => {
                 Action.labelToAction("clickButton3"),
             ];
             
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(true)
             })
         })
@@ -167,7 +167,7 @@ describe("Domain - SequenceEvaluator", () => {
             const interactionList = [
                 Action.labelToAction("clickButton3"),
             ];
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
             })
         })
@@ -176,7 +176,7 @@ describe("Domain - SequenceEvaluator", () => {
             const interactionList = [
                 Action.labelToAction("clickButton1"),
             ];
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
             })
         })
@@ -186,7 +186,7 @@ describe("Domain - SequenceEvaluator", () => {
                 Action.labelToAction("clickButton3"),
                 Action.labelToAction("clickButton3")
             ];
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
             })
         })
@@ -218,7 +218,7 @@ describe("Domain - SequenceEvaluator", () => {
                 Action.labelToAction("clickButton3"),
             ];
             
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(true)
 
             })
@@ -230,7 +230,7 @@ describe("Domain - SequenceEvaluator", () => {
                 Action.labelToAction("clickButton3"),
             ];
             
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(true)
             })
         })
@@ -239,7 +239,7 @@ describe("Domain - SequenceEvaluator", () => {
                 Action.labelToAction("clickButton1"),
                 Action.labelToAction("clickButton3"),
             ];
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
             })
         })
@@ -249,7 +249,7 @@ describe("Domain - SequenceEvaluator", () => {
                 Action.labelToAction("clickButton2"),
                 Action.labelToAction("clickButton3"),
             ];
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
             })
         })
@@ -261,7 +261,7 @@ describe("Domain - SequenceEvaluator", () => {
                 Action.labelToAction("clickButton2"),
                 Action.labelToAction("clickButton3")
             ];
-            return evaluator.evaluate(interactionList).then((evaluationResult:SequenceEvaluation) => {
+            return evaluator.evaluate(interactionList).then((evaluationResult:Evaluation) => {
                 expect(evaluationResult.isAccepted).eql(false)
             })
         })

@@ -1,6 +1,6 @@
 
 import IStepParser from "../domain/IStepParser";
-import SequenceEvaluation from "../domain/SequenceEvaluation";
+import Evaluation from "../domain/Evaluation";
 import Evaluator from "../domain/Evaluator";
 import EvaluatorRepository from "../domain/EvaluatorRepository";
 import StepFactory from "../_infra/DFAStepFactory";
@@ -18,40 +18,37 @@ export default class EvaluationApplication {
         this.stepFactory = new DFAStepFactory(stepParser);
     }
 
-    public createSequenceEvaluator(webSiteId: string, description: string, expression: string): Promise<void> {
+    public createSequenceEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
 
-        return this.sequenceEvaluatorRepository.createSequenceEvaluator(webSiteId, description, this.stepFactory, expression)
+        return this.sequenceEvaluatorRepository.createSequenceEvaluator(sessionId, description, this.stepFactory, expression)
             .then((_sequenceEvaluator) => {return; });
     }
 
-    public updateSequenceEvaluator(webSiteId: string, description: string, expression: string): Promise<void> {
-        return this.sequenceEvaluatorRepository.updateSequenceEvaluator(webSiteId, description, expression)
+    public updateSequenceEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
+        return this.sequenceEvaluatorRepository.updateSequenceEvaluator(sessionId, description, expression)
         .then(() => {return; });
     }
 
-    public removeSequenceEvaluator(webSiteId: string): Promise<void> {
-        return this.sequenceEvaluatorRepository.removeSequenceEvaluator(webSiteId)
+    public removeSequenceEvaluator(sessionId: string): Promise<void> {
+        return this.sequenceEvaluatorRepository.removeSequenceEvaluator(sessionId)
     }
 
-    public getSequenceEvaluator(webSiteId: string): Promise<Evaluator | undefined> {
-        if (webSiteId === undefined || webSiteId === null) {
+    public getSequenceEvaluator(sessionId: string): Promise<Evaluator | undefined> {
+        if (sessionId === undefined || sessionId === null) {
             return Promise.resolve(undefined);
         }
-        return this.sequenceEvaluatorRepository.getSequenceEvaluatorByWebSiteId(webSiteId, this.stepFactory)
+        return this.sequenceEvaluatorRepository.getSequenceEvaluatorByWebSiteId(sessionId, this.stepFactory)
             .then((evaluator) => {
                 return evaluator;
             });
     }
 
-    public evaluateSequence(webSiteId: string, sequence: string[]): Promise<SequenceEvaluation | null> {
+    public evaluateSequence(sessionId: string, sequence: string[]): Promise<Evaluation> {
         const actionList: Action[] = sequence.map((actionLabelList) => Action.labelToAction(actionLabelList));
-        return this.sequenceEvaluatorRepository.getSequenceEvaluatorByWebSiteId(webSiteId, this.stepFactory)
+        return this.sequenceEvaluatorRepository.getSequenceEvaluatorByWebSiteId(sessionId, this.stepFactory)
         .then((evaluator) => {
-            if (!evaluator) {
-                return null;
-            }
             return evaluator.evaluate(actionList);
-        });
+        })
 
     }
 

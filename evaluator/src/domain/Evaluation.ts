@@ -1,6 +1,6 @@
 import Action from "./Action";
 
-export default class SequenceEvaluation {
+export default class Evaluation {
 
     public nextActionList: Action[];
     public isAccepted: boolean;

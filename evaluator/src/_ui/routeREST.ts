@@ -2,6 +2,7 @@ import ObjectiveService from "../application/EvaluationApplication";
 import {Express} from "express";
 import Evaluator from "../domain/Evaluator";
 import {logger} from "../logger";
+import Evaluation from "../domain/Evaluation";
 
 const SUCCESS_STATUS = 200;
 const STATUS_REPONSE_IS_NULL = 204;
@@ -15,14 +16,14 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
         res.send("alive");
     });
 
-    app.get("/evaluator/getEvaluator/:webSiteId", (req, res) => {
-        const { webSiteId } = req.params;
-        logger.info(`getEvaluator for webSiteId ${webSiteId}`);
-        if (webSiteId === undefined) {
+    app.get("/evaluator/:sessionId", (req, res) => {
+        const { sessionId } = req.params;
+        logger.info(`getEvaluator for sessionId ${sessionId}`);
+        if (sessionId === undefined) {
             logger.warn("WebSiteId is required")
             return res.status(STATUS_WRONG_PARAMETERS).send("WebSiteId is required");
         }
-        evaluatorService.getSequenceEvaluator(webSiteId)
+        evaluatorService.getSequenceEvaluator(sessionId)
             .then((evaluator: Evaluator | undefined) => {
                 if (!evaluator) {
                     return res.status(STATUS_REPONSE_IS_NULL).send(null);
@@ -33,31 +34,35 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
                 id: evaluator.id,
                 description: evaluator.description,
                 expression: evaluator.step?.expression,
-                webSiteId: evaluator.sessionId
+                sessionId: evaluator.sessionId
             });
         }).catch((error: Error) => {
-            logger.error(`getEvaluator error for websiteId ${webSiteId}: ${error}`);
+            logger.error(`getEvaluator error for websiteId ${sessionId}: ${error}`);
             return res.status(ERROR_STATUS).send(error);
         });
     });
 
     app.post("/evaluator/create", (req, res) => {
-        const { webSiteId, description, expression } = req.body;
-        logger.info(`create evaluator (webSiteId:${webSiteId}, description: ${description}, expression: ${expression})`);
-        if (webSiteId === undefined) {
+        const { sessionId, description, expression } = req.body;
+        logger.info(`create evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
+        if (sessionId === undefined) {
             logger.warn("WebSiteId is required")
             return res.status(STATUS_WRONG_PARAMETERS).send("WebSiteId is required");
         }
-        if (typeof expression !== "string") {
-            logger.warn(`expression must be a string`);
-            return res.status(STATUS_WRONG_PARAMETERS).send("expression must be a string");
+        if (typeof expression === undefined) {
+            logger.warn(`expression is required`);
+            return res.status(STATUS_WRONG_PARAMETERS).send("expression is required");
+        }
+        if (typeof description === undefined) {
+            logger.warn(`description is required`);
+            return res.status(STATUS_WRONG_PARAMETERS).send("description is required");
         }
 
         if (expression.length === 0) {
             logger.warn(`expression must not be empty`);
             return res.status(STATUS_WRONG_PARAMETERS).send("expression must not be empty");
         }
-        evaluatorService.createSequenceEvaluator(webSiteId, description, expression).then(() => {
+        evaluatorService.createSequenceEvaluator(sessionId, description, expression).then(() => {
             logger.debug("evaluator is created")
             return res.sendStatus(SUCCESS_STATUS);
         }).catch((error) => {
@@ -67,13 +72,13 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
     });
 
     app.post("/evaluator/update", (req, res) => {
-        const { webSiteId, description, expression } = req.body;
-        logger.info(`update evaluator (webSiteId:${webSiteId}, description: ${description}, expression: ${expression})`);
-        if (webSiteId === undefined) {
-            logger.warn("WebSiteId is required")
-            return res.status(STATUS_WRONG_PARAMETERS).send("WebSiteId is required");
+        const { sessionId, description, expression } = req.body;
+        logger.info(`update evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
+        if (sessionId === undefined) {
+            logger.warn("sessionId is required")
+            return res.status(STATUS_WRONG_PARAMETERS).send("sessionId is required");
         }
-        evaluatorService.updateSequenceEvaluator(webSiteId, description, expression).then(() => {
+        evaluatorService.updateSequenceEvaluator(sessionId, description, expression).then(() => {
             logger.debug("evaluator is updated")
             return res.sendStatus(SUCCESS_STATUS);
         }).catch((error) => {
@@ -83,37 +88,19 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
     });
 
 
-    app.post("/evaluator/evaluateSequence", (req, res) => {
-        const { webSiteId, interactionList } = req.body;
-        logger.info(`evaluate sequence (webSiteId : ${webSiteId}, interactionList : ${interactionList})`);
-        if (webSiteId === undefined) {
+    app.post("/evaluator/evaluate", (req, res) => {
+        const { sessionId, actionList } = req.body;
+        logger.info(`evaluate sequence (sessionId : ${sessionId}, actionList : ${actionList})`);
+        if (sessionId === undefined) {
             logger.warn("WebSiteId is required")
             return res.status(STATUS_WRONG_PARAMETERS).send("WebSiteId is required");
         }
-        if (!Array.isArray(interactionList)) {
-            logger.warn("interactionList must be an array")
+        if (!Array.isArray(actionList)) {
+            logger.warn("actionList must be an array")
             return res.status(STATUS_WRONG_PARAMETERS).send("WebSiteId is required");
         }
-        evaluatorService.evaluateSequence(webSiteId, interactionList).then((evaluation) => {
+        evaluatorService.evaluateSequence(sessionId, actionList).then((evaluation: Evaluation) => {
             return res.status(SUCCESS_STATUS).send({evaluation});
-        }).catch((error) => {
-            logger.error(error);
-            return res.status(ERROR_STATUS).send(error);
-        });
-    });
-
-    app.post("/evaluator/evaluateFromExpression", (req, res) => {
-        const { expression, interactionList } = req.body;
-        logger.info(`evaluate from expression (expression : ${expression}, interactionList : ${interactionList})`);
-        if (expression === undefined) {
-            logger.warn("invalid parameter expression", expression)
-            return res.status(ERROR_STATUS).send("Invalid parameters");
-        } if (!Array.isArray(interactionList)) {
-            logger.warn("invalid parameter interactionList", interactionList)
-            return res.status(ERROR_STATUS).send("Invalid parameters");
-        }
-        evaluatorService.evaluateFromExpression(expression, interactionList).then((isValid) => {
-            return res.status(SUCCESS_STATUS).send({isValid});
         }).catch((error) => {
             logger.error(error);
             return res.status(ERROR_STATUS).send(error);
