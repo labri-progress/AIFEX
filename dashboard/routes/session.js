@@ -10,14 +10,14 @@ const DEFAULT_DEPTH = 8;
 
 module.exports = function attachRoutes(app, config) {
 
-    app.get('/dashboard/session/start', (req, res) => {
+    app.get('/dashboard/session/create', (req, res) => {
         let webSiteName = req.query.webSiteName;
         logger.info(`GET start session page for webSiteName (id = ${webSiteName})`);
         
         requestWebSiteFromToken(req.session.jwt)
             .then(webSiteList => {
                 if (webSiteList.length > 0) {
-                    res.render('session/start.ejs', {
+                    res.render('session/create.ejs', {
                         account:req.session, 
                         defaultWebSiteName: webSiteName, 
                         webSiteList: JSON.stringify(webSiteList),
@@ -35,10 +35,10 @@ module.exports = function attachRoutes(app, config) {
             })
     });
 
-    app.post('/dashboard/session/start', (req, res) => {
+    app.post('/dashboard/session/create', (req, res) => {
         let { webSiteId, name, baseURL, interpolationfactor, depth, overlayType } = req.body;
                         
-        logger.info(`POST start session for WebSite (id = ${webSiteId})`);
+        logger.info(`POST create session for WebSite (id = ${webSiteId})`);
         
         let connectionCode;
         if (interpolationfactor === undefined) {

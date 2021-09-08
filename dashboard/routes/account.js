@@ -95,9 +95,10 @@ module.exports = function attachRoutes(app, config) {
         console.log('sign', username, password);
         signin(username, password)
             .then(token => {
-                console.log("token ok:", token);
                 req.session.jwt = token.jwt;
                 req.session.username = username;
+                console.log("token ok:", req.session);
+
                 logger.debug(`sign ok`);
                 res.redirect('/');
             })

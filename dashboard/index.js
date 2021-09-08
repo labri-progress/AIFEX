@@ -22,8 +22,9 @@ const sessionMiddleware = session({
     secret: 'AIFEX super secret',
     cookie: {
         secure: process.env.PROTOCOL === 'https',
-        httpOnly: true,
+        httpOnly: false,
         maxAge: ONE_HOUR,
+        path: "/"
     },
     proxy: (process.env.NODE_ENV === 'production'),
     saveUninitialized: true
@@ -39,6 +40,7 @@ app.locals.markdown = (filename) => {
     const data = require('fs').readFileSync(path, 'utf8').toString();
     return markdown.render(data);
 }
+
                     
 // Configure the EJS template engine
 // Add support for markdown file rendering
@@ -56,6 +58,7 @@ require("./routes/account.js")(app, config);
 require("./routes/statics.js")(app, config);
 require("./routes/session.js")(app, config);
 require("./routes/sessionInvitation.js")(app, config);
+
 require("./routes/website.js")(app, config);
 require("./routes/evaluation.js")(app, config);
 
