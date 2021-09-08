@@ -9,7 +9,6 @@ export NODE_ENV="development"
 export ELASTIC_PASSWORD="el@st!c"
 export TOKEN_SECRET="changeme"
 
-
 npm run development
 cd dist/firefox
 zip -r ../../firefoxExtension .
@@ -35,4 +34,16 @@ docker-compose -f docker-compose.yml -f docker-compose.development.yml down -v -
 
 echo ========================== CONTAINER BUILDING ==================================
 
-docker-compose -f docker-compose.yml -f docker-compose.development.yml up --build 
+cmd="docker-compose -f docker-compose.yml -f docker-compose.development.yml up"
+
+
+if [ $# -eq 0 ]
+  then
+    echo "Up containers"
+elif [ $1 == "build" ]
+    then
+        echo "Build containers"
+        cmd=${cmd}" --build"
+fi
+
+$cmd

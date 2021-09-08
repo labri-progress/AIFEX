@@ -280,7 +280,7 @@ export default class AifexServiceHTTP implements AifexService {
 			}),
 			headers: { "Content-Type": "application/json" },
 		};
-		return fetch(`${this.getEvaluatorURL(serverURL)}/evaluator/evaluateSequence`, option)
+		return fetch(`${this.getEvaluatorURL(serverURL)}/evaluator//evaluator/evaluate`, option)
 		.then((response) => {
 			if (response.status === OK_STATUS) {
 				return response.json();

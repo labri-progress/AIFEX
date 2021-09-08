@@ -10,11 +10,13 @@ servers:
         
 paths:
   /ping:
+    summary: Checks if the server is alive
+    description: Checks if the server is alive
     get:
       responses:
         '200':
           description: Returns Alive
-
+          
   /evaluator/{sessionId}:
     summary: Returns an evaluator
     description: This resource represent the evaluation configuration for the evaluator associated to a session
@@ -26,8 +28,6 @@ paths:
           required: true
           schema:
             type: string
-
-
       responses:
         '200':
           description: The current configuration of the evaluator
@@ -94,35 +94,27 @@ paths:
       requestBody:
         content:
           application/json:
-
-
             schema:
               properties:
                 sessionId:
                   type: string
                 actionList:
                   $ref: '#components/schemas/actionList'
-
-
       responses:
           '200':
             description: Evaluator created updated      
 
 components:
   schemas:
-
     actionList:
-      properties:
-        items:
-          type: array
-          items:
-            type: object
-            properties:   
-              prefix:
-                type: string
-              suffix: 
-                type: string
-
+      type: array
+      items:
+        type: object
+        properties:   
+          prefix:
+            type: string
+          suffix: 
+            type: string
     evaluation:
       properties:
         isAccepted: 

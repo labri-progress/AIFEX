@@ -11,7 +11,7 @@ const ERROR_STATUS = 500;
 
 export default function attachRoutes(app: Express, evaluatorService: ObjectiveService): void {
 
-    app.get("/evaluator/ping", (req, res) => {
+    app.get("/ping", (req, res) => {
         logger.info("ping");
         res.send("alive");
     });
