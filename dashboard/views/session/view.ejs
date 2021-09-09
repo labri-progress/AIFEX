@@ -36,7 +36,7 @@
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <% if (evaluator) { %>
                             <a type="button" href="/dashboard/evaluator/<%=session.id %>" class="btn btn-secondary">Update</a>
-                            <a type="button" href="/dashboard/evaluator/remove/<%=session.id %>" class="btn btn-danger">Remove</a>
+                            <a type="button" href="/dashboard/evaluator/remove/<%=session.id %>"  onclick="return confirm('Do you want to remove the Evaluator of this session?')" class="btn btn-danger">Remove</a>
                         <% } else { %>
                             <a type="button" href="/dashboard/evaluator/<%=session.id %>" class="btn btn-secondary">Create</a
                         <% } %>

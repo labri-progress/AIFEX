@@ -75,8 +75,9 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
         });
     });
 
-    app.post("/evaluator/update", (req, res) => {
-        const { sessionId, description, expression } = req.body;
+    app.post("/evaluator/update/:sessionId", (req, res) => {
+        const { sessionId } = req.params
+        const { description, expression } = req.body;
         logger.info(`update evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
         if (sessionId === undefined) {
             logger.warn("sessionId is required")

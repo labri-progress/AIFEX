@@ -116,8 +116,6 @@ module.exports = function attachRoutes(app, config) {
         return fetch(URL, {
             method: 'POST',
         }).then((response) => {
-            console.log(response, response.ok, response.status)
-
             if (response.ok) {
                 res.redirect(req.get('referer'));
             } else {
@@ -134,7 +132,7 @@ module.exports = function attachRoutes(app, config) {
     app.post('/dashboard/evaluation/update', (req, res) => {
         const {sessionId, evaluatorExpression, description} = req.body;
         logger.info(`POST update evaluation for session (id = ${sessionId})`);
-        const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/update'
+        const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/update/'+ sessionId
 
         if (evaluatorExpression.length === 0) {
             res.render('error.ejs', {message: "Evaluator cannot be empty", account: req.session, error: new Error("Evaluator cannot be empty")});
@@ -143,7 +141,6 @@ module.exports = function attachRoutes(app, config) {
         return fetch(URL, {
             method: 'POST',
             body: JSON.stringify({
-                sessionId,
                 description,
                 expression: evaluatorExpression,
             }),

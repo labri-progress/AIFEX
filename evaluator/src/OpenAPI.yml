@@ -66,18 +66,22 @@ paths:
         '200':
           description: Evaluator created successfully        
   
-  /evaluator/update:
+  /evaluator/update/{sessionId}:
     summary: Update the evaluator of the session
     post:
+      parameters:
+        - name: sessionId
+          in: path
+          description: session associated to the requested evaluator
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:        
-                sessionId:
-                  description: session associated to the requested evaluator
-                  type: string
                 description: 
                   description: The description for the behaviour evaluated
                   type: string
