@@ -1,21 +1,27 @@
 const fetch = require('node-fetch');
-const requestWebSiteFromToken = require('../tokenUtilities').requestWebSiteFromToken;
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
 
 
-    app.get('/dashboard/evaluation/create/:webSiteId', (req, res) => {
-        let webSite;
+    app.get('/dashboard/evaluator/:sessionId', (req, res) => {
         let errorMessage;
         let renderOptions
-        const webSiteId = req.params.webSiteId;
+        const sessionId = req.params.sessionId;
+        let webSiteId;
+        logger.info(`GET evaluation for website (sessionId : ${sessionId})`);
+        
+        const URLsession = 'http://' + config.session.host + ':' + config.session.port + '/session/' + req.params.sessionId;
 
-        logger.info(`GET evaluation for website (webSiteId : ${webSiteId})`);
-
-        requestWebSiteFromToken(req.session.jwt)
-            .then(webSiteList => {
-                webSite = webSiteList.find((webSite) => webSite.id === webSiteId);
+        fetch(URLsession)
+            .then(sessionResponse => sessionResponse.json())
+            .then(session => {
+                webSiteId = session.webSite.id
+                const URLwebSite = 'http://' + config.website.host + ':' + config.website.port + '/website/'+ webSiteId;
+                return fetch(URLwebSite)
+            })
+            .then(webSiteResponse => webSiteResponse.json())
+            .then(webSite => {
                 const actionList = webSite.mappingList.map(mapping => {
                     if (mapping.output.suffix) {
                         return `${mapping.output.prefix}$${mapping.output.suffix}` 
@@ -26,6 +32,7 @@ module.exports = function attachRoutes(app, config) {
                 renderOptions = {
                     webSite,
                     actionList, 
+                    sessionId,
                     description: "",
                     account: req.session, 
                     errorMessage,
@@ -33,7 +40,7 @@ module.exports = function attachRoutes(app, config) {
                     evaluatorExpression: undefined
                 }
                 if (webSite) {
-                    const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/getEvaluator/' + webSiteId;
+                    const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/' + sessionId;
                     return fetch(URL, {
                         method: 'GET',
                         headers: {
@@ -73,13 +80,18 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.post('/dashboard/evaluation/create', (req, res) => {
-        const {webSiteId, evaluatorExpression, description} = req.body;
-        logger.info(`POST create evaluation for WebSite (id = ${webSiteId})`);
+        const {sessionId, evaluatorExpression, description} = req.body;
+        if (evaluatorExpression.length === 0) {
+            res.render('error.ejs', {message: "Evaluator cannot be empty", account: req.session, error:e});
+            return;
+        } 
+        
+        logger.info(`POST create evaluation for session (id = ${sessionId})`);
         const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/create'
         return fetch(URL, {
             method: 'POST',
             body: JSON.stringify({
-                webSiteId,
+                sessionId,
                 description,
                 expression: evaluatorExpression,
             }),
@@ -97,15 +109,41 @@ module.exports = function attachRoutes(app, config) {
         })
     })
 
+    app.get('/dashboard/evaluator/remove/:sessionId', (req,res) => {
+        const sessionId = req.params.sessionId;
+        logger.info(`GET remove evaluation for session (id = ${sessionId})`);
+        const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/remove/' + sessionId;
+        return fetch(URL, {
+            method: 'POST',
+        }).then((response) => {
+            console.log(response, response.ok, response.status)
+
+            if (response.ok) {
+                res.redirect(req.get('referer'));
+            } else {
+                logger.error(`${response.message})`);
+                throw new Error(response.message);
+            }
+        }).catch( e => {
+            let message = 'Failed to remove evaluator';
+            logger.error(`${e}`);
+            res.render('error.ejs', {message, account: req.session, error:e});
+        })
+    })
+
     app.post('/dashboard/evaluation/update', (req, res) => {
-        const {webSiteId, evaluatorExpression, description} = req.body;
-        logger.info(`POST update evaluation for WebSite (id = ${webSiteId})`);
+        const {sessionId, evaluatorExpression, description} = req.body;
+        logger.info(`POST update evaluation for session (id = ${sessionId})`);
         const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/update'
 
+        if (evaluatorExpression.length === 0) {
+            res.render('error.ejs', {message: "Evaluator cannot be empty", account: req.session, error: new Error("Evaluator cannot be empty")});
+            return;
+        } 
         return fetch(URL, {
             method: 'POST',
             body: JSON.stringify({
-                webSiteId,
+                sessionId,
                 description,
                 expression: evaluatorExpression,
             }),
@@ -114,11 +152,11 @@ module.exports = function attachRoutes(app, config) {
             if (response.ok) {
                 return res.redirect("/account/account");
             } else {
-                logger.error(`${reponse.message})`);
+                logger.error(`${response.message})`);
                 throw new Error(response.message);
             }
         }).catch( e => {
-            let message = 'Failed to create evaluator';
+            let message = 'Failed to update evaluator';
             logger.error(`${e}`);
             res.render('error.ejs', {message, account: req.session, error:e});
         })

@@ -10,7 +10,6 @@ module.exports = function attachRoutes(app, config) {
 
     app.use((req, res, next) => {
         logger.info('use account');
-        console.log("req session", req.session)
         if (req.session.jwt) {
             logger.debug('token');
             if (verify(req.session.jwt)) {

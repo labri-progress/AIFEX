@@ -128,30 +128,56 @@ module.exports = function attachRoutes(app, config) {
         const modelURL = 'http://' + config.model.host + ':' + config.model.port + '/model/'+modelId;
         const screenshotURL = 'http://' + config.session.host + ':' + config.session.port + '/session/'+sessionId + '/screenshotlist';
         const videoURL = 'http://' + config.session.host + ':' + config.session.port + '/session/'+sessionId + '/videolist';
-        
+        const evaluatorURL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/'+sessionId;
+
         const sessionPromise = fetch(sessionURL, {});
         const modelPromise = fetch(modelURL, {});
         const screenshotPromise = fetch(screenshotURL);
         const videoPromise = fetch(videoURL);
+        const evaluatorPromise = fetch(evaluatorURL);
 
-        Promise.all([sessionPromise, modelPromise,screenshotPromise, videoPromise])
-            .then(([responseSession, responseModel, responseScreenshot, responseVideo]) => {
-                if (responseSession.ok && responseModel.ok && responseScreenshot.ok && responseVideo.ok) {
-                    return Promise.all([responseSession.json(), responseModel.json(), responseScreenshot.json(), responseVideo.json()]);
+
+        Promise.all([sessionPromise, modelPromise, evaluatorPromise, screenshotPromise, videoPromise])
+            .then(([responseSession, responseModel, responseEvaluator, responseScreenshot, responseVideo]) => {
+                let evaluatorResultPromise;
+                let sessionResultPromise;
+                let modelResultPromise;
+                let screenshotResultPromise;
+                let videoResultPromise;
+
+                if (responseEvaluator.ok) {
+                    if (responseEvaluator.status === 204) {
+                        evaluatorResultPromise = Promise.resolve(null)
+                    } else {
+                        evaluatorResultPromise = responseEvaluator.json()
+                     }
                 } else {
-                    let msg = `session:${responseSession.statusText}, model:${responseModel.statusText}`
-                    throw new Error(msg);
+                    evaluatorResultPromise = Promise.reject(response.error)
                 }
+                if (responseSession.ok) {
+                    sessionResultPromise = responseSession.json();
+                }
+                if (responseModel.ok) {
+                    modelResultPromise = responseModel.json()
+                }
+                if (responseScreenshot.ok) {
+                    screenshotResultPromise = responseScreenshot.json()
+                }
+                if (responseVideo.ok) {
+                    videoResultPromise = responseVideo.json()
+                }
+                return Promise.all([sessionResultPromise, modelResultPromise, evaluatorResultPromise, screenshotResultPromise,videoResultPromise]);
             })
-            .then(([session, model,screenshot, video]) => {
+            .then(([session, model, evaluator, screenshot, video]) => {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))                
                 session.participants = participants;
-
+                console.log(evaluator)
                 res.render('session/view.ejs', {
                     account: req.session,
                     serverURL: buildInvitation(model.id, session.id),
                     session,
                     model,
+                    evaluator,
                     connectionCode,
                     screenshot,
                     video
