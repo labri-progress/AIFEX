@@ -18,7 +18,7 @@
             <% if (successMessage) { %>
                 <div class="alert alert-success" role="alert">
                     <h4>Success</h4>
-                    <p><%= successMessage %> : <a role="button" class="btn btn-success" href="/dashboard/session/start?webSiteId=<%=webSite.id%>&webSiteName=<%=webSite.name%>">Start Session</a></p>
+                    <p><%= successMessage %> : <a role="button" class="btn btn-success" href="/dashboard/session/create?webSiteId=<%=webSite.id%>&webSiteName=<%=webSite.name%>">Start Session</a></p>
                     <hr>
                     Or go back to : <a role="button" class="btn btn-primary" href="/"> Home</a>
                     <a role="button" class="btn btn-primary" href="/account/account">Dashboard</a>

@@ -16,7 +16,7 @@ export default class ActionProbabilityView {
     constructor() {
         this._lastElementWithAIFEXStyle = new Set();
         
-        const DEBUG_MODE = process.env.NODE_ENV === 'development';
+        const DEBUG_MODE = process.env.NODE_ENV === 'debug';
         if (DEBUG_MODE) {
             console.log(`DEBUG_MODE, add mouseover listener`);
             document.addEventListener("mouseover", (ev: MouseEvent) => {

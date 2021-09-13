@@ -53,7 +53,10 @@ export default class EventListener {
             const rule = this._ruleService.getMatchingRule(event);
             logger.info(`rule:${rule}`);
             if (rule) {
+                console.log("rules", rule)
                 const action = rule.makeAction(event);
+                console.log("action", action)
+
                 if (action) {
                     logger.info(`action : ${action.toString()}`);
                     this._backgroundService.sendAction(action)

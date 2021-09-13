@@ -23,6 +23,9 @@
                     },
                     "key": {
                         "type": "string"
+                    },
+                    "attributeName": {
+                        "type": "string"
                     }
                 },
                 "additionalProperties": false,
@@ -36,7 +39,7 @@
                     },
                     "suffix": {
                         "type": "string",
-                        "enum": ["value", "index", "innerText", "cssSelector"]
+                        "enum": ["value", "index", "innerText", "cssSelector", "attributeValue"]
                     }
                 },
                 "additionalProperties": false,
