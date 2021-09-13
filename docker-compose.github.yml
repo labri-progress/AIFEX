@@ -41,15 +41,6 @@ services:
       - 5002:80
     restart: always
 
-  evaluator:
-    build:
-      context: evaluator/
-      dockerfile: ./Dockerfile.dev
-    volumes:
-      - ./model/src/:/app/src
-    ports:
-      - 5003:80
-  
   account:
     build:
       context: account/

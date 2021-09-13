@@ -36,17 +36,6 @@ services:
       - "session"
     restart: always
 
-  evaluator:
-    build:
-      context: evaluator/
-      dockerfile: ./Dockerfile.prod
-    environment:
-      - NODE_ENV=${NODE_ENV}
-    depends_on:
-      - "mongo"
-      - "session"
-    restart: always
-
   account:
     build:
       context: account/
@@ -56,17 +45,6 @@ services:
       - TOKEN_SECRET=${TOKEN_SECRET}
     depends_on:
       - "mongo"
-    restart: always
-
-  printer:
-    build:
-      context: printer/
-      dockerfile: ./Dockerfile.prod
-    environment:
-      - NODE_ENV=${NODE_ENV}
-    depends_on:
-      - "website"
-      - "session"
     restart: always
 
   api:

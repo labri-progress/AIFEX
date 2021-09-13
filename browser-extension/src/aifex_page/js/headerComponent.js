@@ -1,6 +1,6 @@
 function renderHeader() {
     let component = document.querySelector('header');
-    component.style.display = 'block';
+    component.style.display = 'flex';
 }
 
 document.getElementById("detach-button").addEventListener("click", (e) => {

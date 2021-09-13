@@ -1,7 +1,7 @@
 function renderHome() {
     let component = document.getElementById('homeComponent');
     if (state.pageKind === 'Home') {
-        component.style.display = 'block';
+        component.style.display = 'flex';
     } else {
         component.style.display = 'none';
     }
