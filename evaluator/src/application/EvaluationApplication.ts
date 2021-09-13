@@ -18,29 +18,33 @@ export default class EvaluationApplication {
         this.stepFactory = new DFAStepFactory(stepParser);
     }
 
-    public createSequenceEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
+    public createEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
 
         return this.sequenceEvaluatorRepository.createSequenceEvaluator(sessionId, description, this.stepFactory, expression)
             .then((_sequenceEvaluator) => {return; });
     }
 
-    public updateSequenceEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
+    public updateEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
         return this.sequenceEvaluatorRepository.updateSequenceEvaluator(sessionId, description, expression)
         .then(() => {return; });
     }
 
-    public removeSequenceEvaluator(sessionId: string): Promise<void> {
+    public removeEvaluator(sessionId: string): Promise<void> {
         return this.sequenceEvaluatorRepository.removeSequenceEvaluator(sessionId)
     }
 
-    public getSequenceEvaluator(sessionId: string): Promise<Evaluator | undefined> {
-        if (sessionId === undefined || sessionId === null) {
-            return Promise.resolve(undefined);
-        }
+    public getEvaluator(sessionId: string): Promise<Evaluator | "noEvaluatorForSession"> {
         return this.sequenceEvaluatorRepository.getSequenceEvaluatorByWebSiteId(sessionId, this.stepFactory)
             .then((evaluator) => {
                 return evaluator;
-            });
+            })
+            .catch(e => {
+                if (e.message === "noEvaluatorForSession") {
+                    return "noEvaluatorForSession"
+                } else {
+                    throw e;
+                }
+            })
     }
 
     public evaluateSequence(sessionId: string, sequence: string[]): Promise<Evaluation> {

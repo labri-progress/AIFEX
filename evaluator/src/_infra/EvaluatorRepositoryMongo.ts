@@ -21,7 +21,7 @@ export default class SequenceEvaluatorRepositoryMongo implements EvaluatorReposi
                                 return evaluator;
                              })
                 } else {
-                    throw new Error(`Evaluator not found for website ${sessionId}`);
+                    throw new Error(`noEvaluatorForSession`);
                 }
             })
     }
@@ -54,6 +54,6 @@ export default class SequenceEvaluatorRepositoryMongo implements EvaluatorReposi
     }
 
     public removeSequenceEvaluator(sessionId: string): Promise<void> {
-        return sequenceEvaluatorModel.remove({sessionId}).then(() => {return})
+        return sequenceEvaluatorModel.deleteOne({sessionId}).then(() => {return})
     }
 }

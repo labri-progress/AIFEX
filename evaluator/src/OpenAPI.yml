@@ -66,18 +66,22 @@ paths:
         '200':
           description: Evaluator created successfully        
   
-  /evaluator/update:
+  /evaluator/update/{sessionId}:
     summary: Update the evaluator of the session
     post:
+      parameters:
+        - name: sessionId
+          in: path
+          description: session associated to the requested evaluator
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:        
-                sessionId:
-                  description: session associated to the requested evaluator
-                  type: string
                 description: 
                   description: The description for the behaviour evaluated
                   type: string
@@ -88,6 +92,21 @@ paths:
           '200':
             description: Evaluator updated successfully       
   
+  /evaluator/remove/{sessionId}:
+    summary: Remove the evaluator associated with the session
+    description: Remove the evaluator associated with the session
+    post:
+      parameters:
+        - name: sessionId
+          in: path
+          description: session associated to the requested evaluator
+          required: true
+          schema:
+            type: string
+      responses:
+          '200':
+            description: Evaluator removed successfully       
+
   /evaluator/evaluate:
     summary: Evaluate a list of action using the session Evaluator
     post:
