@@ -24,7 +24,6 @@ export default class AttributeValueRule extends SimpleRule {
     makeAction(event : Event): Action | undefined {
         const element = this.findActionMappedTarget(event);
 
-        console.log("build action with AttributeValueRule")
         if (element !== undefined) {
             let attributeValue = element.getAttribute(this.attributeName)
             if (attributeValue) {
@@ -34,14 +33,23 @@ export default class AttributeValueRule extends SimpleRule {
         return new Action(this.prefix);
     }
 
+
     actionToElements(action: Action): HTMLElement[] {
         if (action.prefix !== this.prefix) {
             return [];
         }
         if (action.suffix === undefined) {
             return super.actionToElements(action);
+        } else {
+            let suffix = action.suffix;
+            const elements = this.findMatchedElements();
+            return elements.filter(domElement => {
+                if (domElement instanceof HTMLElement) {
+                    return domElement.getAttribute(this.attributeName) === suffix;
+                } else {
+                    return false;
+                }
+            });
         }
-        const elements = this.findMatchedElements();
-        return elements;
     }
 }

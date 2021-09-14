@@ -1,5 +1,4 @@
 import Action from "../domain/Action";
-import Question from "../domain/Question";
 import BackgroundService from "./BackgroundService";
 import Comment from "./Comment";
 import EventListener from "./EventListener";
@@ -157,10 +156,6 @@ export default class TabScript {
 
     setUserViewPosition(newPosition : {x : number, y: number}) :void{
         this._backgroundService.setUserViewPosition(newPosition);
-    }
-
-    pushAnswer(question: Question, value: boolean) :void{
-        this._backgroundService.sendAnswer(question, value);
     }
 
     private onMutation() :void{

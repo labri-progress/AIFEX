@@ -3,7 +3,6 @@ import Comment from "../domain/Comment";
 import Action from "../domain/Action";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import BackgroundService from "../domain/BackgroundService";
-import Question from "../domain/Question";
 
 
 export default class FirefoxBackgroundMessageService  implements BackgroundService{
@@ -104,15 +103,6 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
                 }
             });
     }
-
-    sendAnswer(question: Question, value: boolean): Promise<void> {
-        return browser.runtime.sendMessage({
-                question,
-                value,
-                kind: 'pushAnswer'
-            });
-    }
-
 
 }
 

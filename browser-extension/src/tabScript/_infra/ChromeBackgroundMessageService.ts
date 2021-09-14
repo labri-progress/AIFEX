@@ -3,8 +3,6 @@ import Comment from "../domain/Comment";
 import Action from "../domain/Action";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import BackgroundService from "../domain/BackgroundService";
-import Question from "../domain/Question";
-import { Step } from "../domain/Step";
 
 
 export default class ChromeBackgroundMessageService  implements BackgroundService{
@@ -144,24 +142,6 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
             })
         })
     }
-
-    sendAnswer(question: Question, value: boolean): Promise<void>{
-        return new Promise((resolve, reject) => {
-            chrome.runtime.sendMessage({
-                question,
-                value,
-                kind: 'pushAnswer'
-            }, {}, () => {
-                const error = chrome.runtime.lastError;
-                if (error) {
-                    return reject(error);
-                } else {
-                    return resolve();
-                }
-            })
-        })   
-    }
-
 
 }
 
