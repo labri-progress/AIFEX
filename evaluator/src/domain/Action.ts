@@ -10,10 +10,7 @@ export default class Action {
     }
 
     get label(): ActionLabel {
-        if (!this.suffix) {
-            return this.prefix;
-        }
-        return `${this.prefix}$${this.suffix}`;    
+        return `${this.prefix}`;    
     }
 
     public static labelToAction(value: string): Action {
@@ -23,7 +20,6 @@ export default class Action {
         } else {
             return new Action(value);
         }
-
     }
 
     public toString(): string {

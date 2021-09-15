@@ -24,9 +24,7 @@ export default class StateForPopup {
     public commentUpList: Comment[]
     public evaluation: {
         validated: boolean
-        enteringInteractionList: Action[]
-        continuingActionList: Action[]
-        finishingInteractionList: Action[]
+        nextActionList: Action[]
     } | undefined;
 
     constructor() {
@@ -50,9 +48,7 @@ export default class StateForPopup {
         }
         this.evaluation = {
             validated: evaluation.isAccepted,
-            continuingActionList: evaluation.continuingActionList.map(action => this.createPopupAction(action, webSite)),
-            enteringInteractionList: evaluation.enteringInteractionList.map(action => this.createPopupAction(action, webSite)),
-            finishingInteractionList: evaluation.finishingInteractionList.map(action => this.createPopupAction(action, webSite))
+            nextActionList: evaluation.nextActionList.map(action => this.createPopupAction(action, webSite))
         };
     }
 

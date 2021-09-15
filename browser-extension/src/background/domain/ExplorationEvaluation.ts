@@ -2,15 +2,12 @@ import Action from "./Action";
 
 export default class ExplorationEvaluation {
     public isAccepted: boolean;
-    public enteringInteractionList: Action[];
-    public continuingActionList: Action[];
-    public finishingInteractionList: Action[];
+    public nextActionList: Action[];
 
-    constructor(isAccepted: boolean, stepEnteringInteractionList: Action[]= [], stepUpdatingActionList: Action[]= [], stepFinishingInteractionList: Action[]= []) {
+    constructor(isAccepted: boolean, nextActionList: Action[]) {
         this.isAccepted = isAccepted;
-        this.enteringInteractionList = stepEnteringInteractionList;
-        this.continuingActionList = stepUpdatingActionList;
-        this.finishingInteractionList = stepFinishingInteractionList;
+        this.nextActionList = nextActionList;
+       
     }
 
 }

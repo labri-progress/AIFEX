@@ -35,9 +35,9 @@ export default interface AifexService {
 
 	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> ;
 
-	evaluateSequence(serverURL: string, webSite: WebSite, exploration: Exploration): Promise<ExplorationEvaluation>;
+	evaluateSequence(serverURL: string, evaluator: Evaluator, exploration: Exploration): Promise<ExplorationEvaluation>;
 
-	getEvaluator(serverURL: string, webSiteId : string) : Promise<Evaluator | undefined>;
+	getEvaluator(serverURL: string, sessionId : string) : Promise<Evaluator | undefined>;
 
 	getNumberOfExplorationForTesterName(serverURL: string, sessionId: string, testerName: string): Promise<number>;
 }

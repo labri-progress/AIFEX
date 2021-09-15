@@ -18,7 +18,8 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
                 isRecording: boolean,
                 popupCommentPosition: {x: string, y: string},
                 webSite: any,
-                overlayType: OverlayType
+                overlayType: OverlayType,
+                exploration: any
             }) => {
                 const error = chrome.runtime.lastError;
                 if (error) {
@@ -35,7 +36,8 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
                         isActive,
                         data.webSite,
                         data.popupCommentPosition,
-                        data.overlayType);
+                        data.overlayType,
+                        data.exploration);
                     return resolve(state)
                 }
             });
@@ -73,9 +75,7 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
                 kind: 'getEvaluation'
             }, {}, (data: {
                 isAccepted: boolean,
-                enteringInteractionList: string[];
-                continuingActionList: string[];
-                finishingInteractionList: string[];
+                nextActionList: string[];
             }) => {
                 const error = chrome.runtime.lastError;
                 if (error) {
@@ -86,9 +86,7 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
                 }
                 resolve(new ExplorationEvaluation(
                     data.isAccepted,
-                    data.enteringInteractionList.map(action => Action.parseAction(action)),
-                    data.continuingActionList.map(action => Action.parseAction(action)),
-                    data.finishingInteractionList.map(action => Action.parseAction(action)),
+                    data.nextActionList.map(action => Action.parseAction(action)),
                 ));
             })
         })

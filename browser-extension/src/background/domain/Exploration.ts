@@ -1,12 +1,11 @@
 import Comment from "./Comment";
 import Action from "./Action";
-import Answer from "./Answer";
 
 export default class Exploration {
 
     private _startDate : Date;
     private _stopDate : Date | undefined;
-    private _actions: (Action | Comment | Answer)[];
+    private _actions: (Action | Comment )[];
 
     constructor() {
         this._actions = [];
@@ -25,8 +24,8 @@ export default class Exploration {
         return this._actions.filter(interaction => interaction instanceof Action) as Action[];
     }
 
-    get evaluableInteractions(): (Action | Answer)[] {
-        return this._actions.filter(interaction => interaction instanceof Action || interaction instanceof Answer) as (Action | Answer)[];
+    get evaluableInteractions(): (Action)[] {
+        return this._actions.filter(interaction => interaction instanceof Action) as (Action)[];
 
     }
 
@@ -46,10 +45,6 @@ export default class Exploration {
         if (this.actions.length > 1) {
             this.actions.pop()
         }
-    }
-
-    addAnswer(text: string, value: string): void {
-        this._actions.push(new Answer(text, value, this._actions.length))
     }
 
     addComment(comment: Comment): void{

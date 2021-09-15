@@ -6,7 +6,6 @@ import CommentDistribution from "../domain/CommentDistribution";
 import CompatibilityCheck from "../domain/CompatibilityCheck";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import PopupService from "../domain/PopupService";
-import Question from "../domain/Question";
 import StateForPopup from "../domain/StateForPopup";
 import StateForTabScript from "../domain/StateForTabScript";
 import TabScriptService from "../domain/TabScriptService";
@@ -112,10 +111,6 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 
 	processNewAction(kind: string, value: string): Promise<void> {
 		return this._background.processNewAction(kind, value);
-	}
-
-	addAnswerToExploration(question: Question, value: boolean): void{
-		this._background.addAnswerToExploration(question, value);
 	}
 
 	upComment(kind: string, value: string): void {

@@ -9,21 +9,9 @@ export default class EvaluationActionsBorderView {
         if (!evaluation) {
             return;
         }
-        for (const action of evaluation.enteringInteractionList) {
+        for (const action of evaluation.nextActionList) {
             for (const element of action.htmlElementList) {
-                element.setAttribute("aifex_step_action", "entering")
-            }
-        }
-
-        for (const action of evaluation.continuingActionList) {
-            for (const element of action.htmlElementList) {
-                element.setAttribute("aifex_step_action", "continuing")
-            }
-        }
-
-        for (const action of evaluation.finishingInteractionList) {
-            for (const element of action.htmlElementList) {
-                element.setAttribute("aifex_step_action", "finishing")
+                element.setAttribute("aifex_step_action", '')
             }
         }
     }

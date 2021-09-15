@@ -1,3 +1,5 @@
+import Action from "./Action";
+import Exploration from "./Exploration";
 import { OverlayType } from "./Session";
 import WebSite from "./Website";
 
@@ -8,6 +10,7 @@ export default class StateForTabScript {
     popupCommentPosition : {x:string, y:string} | undefined;
     commentsUp: string[] | undefined;
     overlayType: OverlayType;
+    exploration: Exploration | undefined;
 
     constructor() {
         this.isRecording = false;

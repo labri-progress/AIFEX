@@ -26,7 +26,6 @@ export default class Evaluator {
     get expresionEvaluated(): string {
         return this.step.expression;
     }
-
     public evaluate(sequence: Action[]): Promise<Evaluation> {
         return new Promise((resolve) => {
             const sequenceEvaluation = new Evaluation();

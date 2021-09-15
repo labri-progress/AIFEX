@@ -17,7 +17,9 @@ export default class TabScript {
     private _viewManager : ViewManagerService | undefined;
     private _pageMutationHandler : PageMutationHandler;
     private _actionsAndElements : ActionsAndElements | undefined;
-
+    
+    // REMOVE THIS LINE
+    private _has_shown_hit_code: boolean;
 
     constructor(backgroundService : BackgroundService) {
         this._backgroundService = backgroundService;
@@ -28,9 +30,8 @@ export default class TabScript {
 
         this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
         this._pageMutationHandler.init();
+        this._has_shown_hit_code = false;
     }
-
-
 
     setViewManager(viewManager : ViewManagerService) {
         this._viewManager = viewManager;
@@ -53,7 +54,6 @@ export default class TabScript {
             let viewManager = this._viewManager;
             return this._backgroundService.getState()
             .then((state: State) => {
-                logger.debug(`tabscript get a new state`);
                 if (!state.isActive || state.overlayType === "shadow") {
                     return viewManager.hide();
                 }
@@ -62,6 +62,25 @@ export default class TabScript {
                     this.getExplorationEvaluation()
                 ]).then(([actionsAndElements, evaluation]) => {
                     logger.debug(`tabscript will refresh`)
+
+                    //REMOVE THIS
+                    console.log(state.exploration)
+                    if (evaluation?.isAccepted && (state.exploration as any)._actions.length < 15 && !this._has_shown_hit_code) {
+                        alert(`
+                        Please make a few more actions to finish the HIT. You will be notified when you have made enough actions. 
+                        `);
+                        this._has_shown_hit_code = true;
+                    }
+                    if (evaluation?.isAccepted && (state.exploration as any)._actions.length >= 15 && !this._has_shown_hit_code) {
+                        alert(`
+                        Thank you for participating in our study. \n
+                        The secret sentence is: Barnabas had slept well. \n
+                        Since you already have everything set up, \n 
+                        it is easier to start a new HIT with us on another website. \n
+                        \n
+                        `);
+                        this._has_shown_hit_code = true;
+                    }
                     this._actionsAndElements = actionsAndElements;
                     return viewManager.refresh(this._ruleService.elementListMatchedByRule, this._ruleService.elementRules, actionsAndElements, evaluation);
                 })
@@ -114,10 +133,7 @@ export default class TabScript {
         return this._backgroundService.getExplorationEvaluation()
         .then((evaluation) => {
             if (evaluation) {    
-                for (const action of
-                    [ ...evaluation.enteringInteractionList,
-                    ...evaluation.continuingActionList,
-                    ...evaluation.finishingInteractionList ]) {
+                for (const action of evaluation.nextActionList) {
                     action.ruleList = this._ruleService.getRuleListByAction(action)
                     action.htmlElementList = this._ruleService.getHTMLElementsMatchedByAction(action);
                 }
