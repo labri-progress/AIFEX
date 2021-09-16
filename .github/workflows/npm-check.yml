@@ -21,5 +21,5 @@ jobs:
       id: outdated
     - name: Outdated NPM packages
       if: steps.outdated.outputs.has_npm_update
-      run: echo ${{ steps.outdated.outputs.npm_update_text }} && exit 1
+      run: echo "${{ steps.outdated.outputs.npm_update_text }}" && exit 1
 
