@@ -5,7 +5,7 @@ on:
 
 jobs:
   
-  npm-package-version-check:
+  model-npm-package-version-check:
     name: NPM version check
     runs-on: ubuntu-latest
     steps:
@@ -25,3 +25,82 @@ jobs:
         NPM_UPDATE_TEXT: ${{ steps.outdated.outputs.npm_update_text }}
       run: echo "$NPM_UPDATE_TEXT" && exit 1
 
+  session-package-version-check:
+    name: NPM version check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - name: install-typescript
+      run: npm install -g typescript
+    - name: model-npm-check
+      working-directory: ./session
+      run: |
+        npm install
+    - uses: MeilCli/npm-update-check-action@v4
+      id: outdated
+    - name: Outdated NPM packages
+      if: steps.outdated.outputs.has_npm_update != 'false'
+      env: 
+        NPM_UPDATE_TEXT: ${{ steps.outdated.outputs.npm_update_text }}
+      run: echo "$NPM_UPDATE_TEXT" && exit 1
+
+  website-package-version-check:
+    name: NPM version check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - name: install-typescript
+      run: npm install -g typescript
+    - name: model-npm-check
+      working-directory: ./website
+      run: |
+        npm install
+    - uses: MeilCli/npm-update-check-action@v4
+      id: outdated
+    - name: Outdated NPM packages
+      if: steps.outdated.outputs.has_npm_update != 'false'
+      env: 
+        NPM_UPDATE_TEXT: ${{ steps.outdated.outputs.npm_update_text }}
+      run: echo "$NPM_UPDATE_TEXT" && exit 1
+
+  evaluator-package-version-check:
+    name: NPM version check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - name: install-typescript
+      run: npm install -g typescript
+    - name: model-npm-check
+      working-directory: ./evaluator
+      run: |
+        npm install
+    - uses: MeilCli/npm-update-check-action@v4
+      id: outdated
+    - name: Outdated NPM packages
+      if: steps.outdated.outputs.has_npm_update != 'false'
+      env: 
+        NPM_UPDATE_TEXT: ${{ steps.outdated.outputs.npm_update_text }}
+      run: echo "$NPM_UPDATE_TEXT" && exit 1
+
+  dashboard-package-version-check:
+    name: NPM version check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - name: install-typescript
+      run: npm install -g typescript
+    - name: model-npm-check
+      working-directory: ./evaluator
+      run: |
+        npm install
+    - uses: MeilCli/npm-update-check-action@v4
+      id: outdated
+    - name: Outdated NPM packages
+      if: steps.outdated.outputs.has_npm_update != 'false'
+      env: 
+        NPM_UPDATE_TEXT: ${{ steps.outdated.outputs.npm_update_text }}
+      run: echo "$NPM_UPDATE_TEXT" && exit 1
