@@ -20,6 +20,8 @@ jobs:
     - uses: MeilCli/npm-update-check-action@v4
       id: outdated
     - name: Outdated NPM packages
-      if: steps.outdated.outputs.has_npm_update
-      run: echo "${{ steps.outdated.outputs.npm_update_text }}" && exit 1
+      if: steps.outdated.outputs.has_npm_update != 'false'
+      env: 
+        NPM_UPDATE_TEXT: ${{ steps.outdated.outputs.npm_update_text }}
+      run: echo "$NPM_UPDATE_TEXT" && exit 1
 
