@@ -3,6 +3,7 @@ on:
   pull_request:
 
 jobs:
+
   typescript-validity:
     name: Typescript Validity
     runs-on: ubuntu-latest
@@ -26,7 +27,8 @@ jobs:
       run: |
         npm install
         tsc
-        
+      
+
   session-unit-test:
     name: Session Unit Tests
     runs-on: ubuntu-latest
@@ -129,3 +131,5 @@ jobs:
       - name: test Account
         working-directory: ./test
         run: npm run testAccount
+
+  

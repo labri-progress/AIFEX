@@ -1,0 +1,25 @@
+on:
+  schedule:
+    - cron: '0 8 * * 1-5' 
+  push:
+
+jobs:
+  
+  npm-package-version-check:
+    name: NPM version check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - name: install-typescript
+      run: npm install -g typescript
+    - name: model-npm-check
+      working-directory: ./model
+      run: |
+        npm install
+    - uses: MeilCli/npm-update-check-action@v4
+      id: outdated
+    - name: Outdated NPM packages
+      if: steps.outdated.outputs.has_npm_update
+      run: echo ${{ steps.outdated.outputs.npm_update_text }} && exit 1
+
