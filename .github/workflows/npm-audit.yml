@@ -5,7 +5,7 @@ on:
 
 jobs:
   
-  model-npm-package-version-check:
+  model-npm-audit:
     name: Model NPM version check
     runs-on: ubuntu-latest
     steps:
@@ -15,12 +15,12 @@ jobs:
       working-directory: ./model
       run: |
         npm install 
-    - name: model-npm-outdated
+    - name: model-npm-audit
       working-directory: ./model
       run: |
-        npm outdated
+        npm audit fix
 
-  session-npm-package-version-check:
+  session-npm-audit:
     name: Session NPM version check
     runs-on: ubuntu-latest
     steps:
@@ -30,12 +30,12 @@ jobs:
       working-directory: ./session
       run: |
         npm install 
-    - name: session-npm-outdated
+    - name: session-npm-audit
       working-directory: ./session
       run: |
-        npm outdated
+        npm audit fix
 
-  website-npm-package-version-check:
+  website-npm-audit:
     name: Website NPM version check
     runs-on: ubuntu-latest
     steps:
@@ -45,12 +45,12 @@ jobs:
       working-directory: ./website
       run: |
         npm install 
-    - name: website-npm-outdated
+    - name: website-npm-audit
       working-directory: ./website
       run: |
-        npm outdated
+        npm audit fix
 
-  evaluator-npm-package-version-check:
+  evaluator-npm-audit:
     name: Evaluator NPM version check
     runs-on: ubuntu-latest
     steps:
@@ -60,12 +60,12 @@ jobs:
       working-directory: ./evaluator
       run: |
         npm install 
-    - name: evaluator-npm-outdated
+    - name: evaluator-npm-audit
       working-directory: ./evaluator
       run: |
-        npm outdated
+        npm audit fix
 
-  dashboard-npm-package-version-check:
+  dashboard-npm-audit:
     name: Dashboard NPM version check
     runs-on: ubuntu-latest
     steps:
@@ -75,12 +75,12 @@ jobs:
       working-directory: ./dashboard
       run: |
         npm install 
-    - name: dashboard-npm-outdated
+    - name: dashboard-npm-audit
       working-directory: ./dashboard
       run: |
-        npm outdated
+        npm audit fix
 
-  printer-npm-package-version-check:
+  printer-npm-audit:
     name: Printer NPM version check
     runs-on: ubuntu-latest
     steps:
@@ -90,7 +90,7 @@ jobs:
       working-directory: ./printer
       run: |
         npm install 
-    - name: printer-npm-outdated
+    - name: printer-npm-audit
       working-directory: ./printer
       run: |
-        npm outdated
+        npm audit fix
