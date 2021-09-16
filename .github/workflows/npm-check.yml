@@ -6,7 +6,7 @@ on:
 jobs:
   
   model-npm-package-version-check:
-    name: NPM version check
+    name: Model NPM version check
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -17,7 +17,7 @@ jobs:
         npm outdated
 
   session-npm-package-version-check:
-    name: NPM version check
+    name: Session NPM version check
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -28,7 +28,7 @@ jobs:
         npm outdated
 
   website-npm-package-version-check:
-    name: NPM version check
+    name: Website NPM version check
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -39,12 +39,34 @@ jobs:
         npm outdated
 
   evaluator-npm-package-version-check:
-    name: NPM version check
+    name: Evaluator NPM version check
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
     - name: model-npm-check
       working-directory: ./website
+      run: |
+        npm outdated
+
+  dashboard-npm-package-version-check:
+    name: Evaluator NPM version check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - name: model-npm-check
+      working-directory: ./dashboard
+      run: |
+        npm outdated
+
+  printer-npm-package-version-check:
+    name: Evaluator NPM version check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - name: model-npm-check
+      working-directory: ./printer
       run: |
         npm outdated
