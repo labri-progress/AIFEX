@@ -45,12 +45,12 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
     - name: model-npm-check
-      working-directory: ./website
+      working-directory: ./evaluator
       run: |
         npm outdated
 
   dashboard-npm-package-version-check:
-    name: Evaluator NPM version check
+    name: Dashboard NPM version check
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -61,7 +61,7 @@ jobs:
         npm outdated
 
   printer-npm-package-version-check:
-    name: Evaluator NPM version check
+    name: Printer NPM version check
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
