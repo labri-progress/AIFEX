@@ -50,7 +50,7 @@ jobs:
     - name: evaluator-npm-check
       working-directory: ./evaluator
       run: |
-         npm install &&
+        npm install &&
         npm outdated
 
   dashboard-npm-package-version-check:
@@ -63,7 +63,7 @@ jobs:
       working-directory: ./dashboard
       run: |
          npm install &&
-        npm outdated
+         npm outdated
 
   printer-npm-package-version-check:
     name: Printer NPM version check
@@ -74,5 +74,5 @@ jobs:
     - name: printer-npm-check
       working-directory: ./printer
       run: |
-         npm install &&
+        npm install &&
         npm outdated
