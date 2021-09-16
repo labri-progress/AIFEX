@@ -18,7 +18,7 @@ jobs:
     - name: model-npm-audit
       working-directory: ./model
       run: |
-        npm audit fix
+        npm audit
 
   session-npm-audit:
     name: Session NPM version check
@@ -33,7 +33,7 @@ jobs:
     - name: session-npm-audit
       working-directory: ./session
       run: |
-        npm audit fix
+        npm audit
 
   website-npm-audit:
     name: Website NPM version check
@@ -48,7 +48,7 @@ jobs:
     - name: website-npm-audit
       working-directory: ./website
       run: |
-        npm audit fix
+        npm audit
 
   evaluator-npm-audit:
     name: Evaluator NPM version check
@@ -63,7 +63,7 @@ jobs:
     - name: evaluator-npm-audit
       working-directory: ./evaluator
       run: |
-        npm audit fix
+        npm audit
 
   dashboard-npm-audit:
     name: Dashboard NPM version check
@@ -78,7 +78,7 @@ jobs:
     - name: dashboard-npm-audit
       working-directory: ./dashboard
       run: |
-        npm audit fix
+        npm audit
 
   printer-npm-audit:
     name: Printer NPM version check
@@ -93,4 +93,4 @@ jobs:
     - name: printer-npm-audit
       working-directory: ./printer
       run: |
-        npm audit fix
+        npm audit
