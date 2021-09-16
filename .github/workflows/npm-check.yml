@@ -11,10 +11,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
-    - name: model-npm-check
+    - name: model-npm-install
       working-directory: ./model
       run: |
-        npm install |
+        npm install 
+    - name: model-npm-outdated
+      working-directory: ./model
+      run: |
         npm outdated
 
   session-npm-package-version-check:
@@ -23,10 +26,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
-    - name: session-npm-check
+    - name: model-npm-install
       working-directory: ./session
       run: |
-        npm install &&
+        npm install 
+    - name: session-npm-outdated
+      working-directory: ./session
+      run: |
         npm outdated
 
   website-npm-package-version-check:
@@ -35,10 +41,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
-    - name: website-npm-check
+    - name: website-npm-install
       working-directory: ./website
       run: |
-        npm install &&
+        npm install 
+    - name: website-npm-outdated
+      working-directory: ./website
+      run: |
         npm outdated
 
   evaluator-npm-package-version-check:
@@ -47,10 +56,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
-    - name: evaluator-npm-check
+    - name: evaluator-npm-install
       working-directory: ./evaluator
       run: |
-         npm install &&
+        npm install 
+    - name: evaluator-npm-outdated
+      working-directory: ./evaluator
+      run: |
         npm outdated
 
   dashboard-npm-package-version-check:
@@ -59,10 +71,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
-    - name: dashboard-npm-check
+    - name: dashboard-npm-install
       working-directory: ./dashboard
       run: |
-         npm install &&
+        npm install 
+    - name: dashboard-npm-outdated
+      working-directory: ./dashboard
+      run: |
         npm outdated
 
   printer-npm-package-version-check:
@@ -71,8 +86,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
-    - name: printer-npm-check
+    - name: printer-npm-install
       working-directory: ./printer
       run: |
-         npm install &&
+        npm install 
+    - name: printer-npm-outdated
+      working-directory: ./printer
+      run: |
         npm outdated
