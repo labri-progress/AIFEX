@@ -3,7 +3,6 @@ import Comment from "../domain/Comment";
 import Action from "../domain/Action";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import BackgroundService from "../domain/BackgroundService";
-import Question from "../domain/Question";
 
 
 export default class FirefoxBackgroundMessageService  implements BackgroundService{
@@ -19,7 +18,8 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
                 isRecording: boolean,
                 popupCommentPosition: {x: string, y: string},
                 webSite: any,
-                overlayType: OverlayType
+                overlayType: OverlayType,
+                exploration: any
             }) => {
                 const isActive = data.isRecording ? true : false;
                 let commentsUp : Comment[] = []
@@ -32,7 +32,8 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
                     isActive,
                     data.webSite,
                     data.popupCommentPosition,
-                    data.overlayType
+                    data.overlayType,
+                    data.exploration
                 );
                 return state;
             });
@@ -63,18 +64,14 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
             })
             .then((data: {
                 isAccepted: boolean,
-                enteringInteractionList: string[];
-                continuingActionList: string[];
-                finishingInteractionList: string[];
+                nextActionList: string[]
             }) => {
                 if (!data) {
                     return;
                 }
                 return new ExplorationEvaluation(
                     data.isAccepted,
-                    data.enteringInteractionList.map(action => Action.parseAction(action)),
-                    data.continuingActionList.map(action => Action.parseAction(action)),
-                    data.finishingInteractionList.map(action => Action.parseAction(action)),
+                    data.nextActionList.map(action => Action.parseAction(action)),
                 );
             })
     }
@@ -104,15 +101,6 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
                 }
             });
     }
-
-    sendAnswer(question: Question, value: boolean): Promise<void> {
-        return browser.runtime.sendMessage({
-                question,
-                value,
-                kind: 'pushAnswer'
-            });
-    }
-
 
 }
 

@@ -47,13 +47,11 @@ export default class EvaluationApplication {
             })
     }
 
-    public evaluateSequence(sessionId: string, sequence: string[]): Promise<Evaluation> {
-        const actionList: Action[] = sequence.map((actionLabelList) => Action.labelToAction(actionLabelList));
-        return this.sequenceEvaluatorRepository.getSequenceEvaluatorByWebSiteId(sessionId, this.stepFactory)
+    public evaluateSequence(sessionId: string, actionList: Action[]): Promise<Evaluation> {
+         return this.sequenceEvaluatorRepository.getSequenceEvaluatorByWebSiteId(sessionId, this.stepFactory)
         .then((evaluator) => {
             return evaluator.evaluate(actionList);
         })
-
     }
 
     public evaluateFromExpression(expression: string, actionLabelList: string[]) : Promise<boolean | void> {
@@ -67,6 +65,7 @@ export default class EvaluationApplication {
             const actionSequence = actionLabelList.map(action => {
                 return Action.labelToAction(action)
             })
+
             return evaluator.evaluate(actionSequence)
         }).then((evaluation) => {
             return evaluation.isAccepted;

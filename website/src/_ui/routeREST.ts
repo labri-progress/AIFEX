@@ -82,15 +82,16 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             },
             description?: string
         }[] = req.body.mappingList;
-        const mappingList: Mapping[] = [];
-        try {
-            mappingListData.forEach((mappingData) => {
-                mappingList.push(new Mapping(mappingData.match, mappingData.output, mappingData.context, mappingData.description));
-            });
-        } catch (e) {
-            logger.error(`mapping list error`, e);
-            return res.status(INVALID_PARAMETERS_STATUS).send({message: e.message});
+        let mappingList: Mapping[];
+        if (Array.isArray(mappingListData)) {
+            mappingList = mappingListData.map((mappingData) => 
+                new Mapping(mappingData.match, mappingData.output, mappingData.context, mappingData.description))
+        } else {
+            let error = new Error("Mapping list must be an array");
+            logger.error(`mapping list error`, error);
+            return res.status(INVALID_PARAMETERS_STATUS).send({message: error.message});
         }
+
         const webSite = new WebSite(idGeneratorService, name, url);
         webSite.addMappingList(mappingList);
         webSiteService.createWebSite(webSite)
@@ -151,7 +152,6 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             logger.error(`update name ${name}, error with mappingList : ${e}`);
             return res.status(INVALID_PARAMETERS_STATUS).send({message: "Invalid mapping file"});
         }
-        try {
             const webSite = new WebSite(idGeneratorService, name, url, id);
             webSite.addMappingList(mappingList);
             // console.log('website update:', webSite);
@@ -159,10 +159,9 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             .then((webSiteId) => {
                 logger.debug(`webSite name ${name} is updated`);
                 res.json(webSiteId);
-            });
-        } catch (e) {
-            logger.error(`update name ${name}, error `,e);
-            res.status(INTERNAL_SERVER_ERROR_STATUS).send({message: e.message});
-        }
+            }).catch ((e: any) => {
+                logger.error(`update name ${name}, error `,e);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send({message: e.message});
+            })
     });
 }

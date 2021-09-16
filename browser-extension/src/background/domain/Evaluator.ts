@@ -1,7 +1,11 @@
 export default class Evaluator {
-    public scenario: string;
+    public expression: string;
+    public description: string;
+    public sessionId: string;
 
-    constructor(scenario: string) {
-        this.scenario = scenario;
+    constructor(description: string, expression: string, sessionId: string) {
+        this.expression = expression;
+        this.description = description;
+        this.sessionId = sessionId;        
     }
 }

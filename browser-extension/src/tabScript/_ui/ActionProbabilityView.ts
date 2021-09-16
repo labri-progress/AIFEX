@@ -1,8 +1,9 @@
 import { querySelectorAllDeep } from 'query-selector-shadow-dom';
-import cssStyle from "./cssStyle";
+import {makeCSS} from "./cssStyle";
 import ActionsAndElements from '../domain/ActionsAndElements';
 import {logger} from "../framework/Logger";
 import Rule from '../domain/Rule';
+import highlighterConfig from "./highlighterConfig.json";
 
 const WARM_COLOR_THRESHOLD = 0.6;
 const MEDIUM_COLOL_THRESHOLD = 0.3;
@@ -16,7 +17,7 @@ export default class ActionProbabilityView {
     constructor() {
         this._lastElementWithAIFEXStyle = new Set();
         
-        const DEBUG_MODE = process.env.NODE_ENV === 'development';
+        const DEBUG_MODE = process.env.NODE_ENV === 'debug';
         if (DEBUG_MODE) {
             console.log(`DEBUG_MODE, add mouseover listener`);
             document.addEventListener("mouseover", (ev: MouseEvent) => {
@@ -107,7 +108,7 @@ export default class ActionProbabilityView {
             this.stylesheetElement.setAttribute("type", "text/css");
             this.stylesheetElement.setAttribute("aifex_stylesheet", "true");
 
-            const cssNode = document.createTextNode(cssStyle);
+            const cssNode = document.createTextNode(makeCSS(highlighterConfig));
             this.stylesheetElement.appendChild(cssNode);
             parentNode.appendChild(this.stylesheetElement);
         }

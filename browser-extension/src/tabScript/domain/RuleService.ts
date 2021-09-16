@@ -6,6 +6,7 @@ import InnerTextRule from "./InnerTextRule";
 import ValueRule from "./ValueRule";
 import SimpleRule from "./SimpleRule";
 import CSSSelectorRule from "./CSSSelectorRule";
+import AttributeValueRule from "./AttributeValueRule";
 
 export default class RuleService {
     elementRules: Map<HTMLElement, Rule[]>;
@@ -69,6 +70,7 @@ export default class RuleService {
             xpath? : string,
             code? : string,
             key? : string,
+            attributeName?: string
         },
         context? : {
             url? : string,
@@ -86,6 +88,15 @@ export default class RuleService {
                 return new ValueRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
             case "cssSelector":
                 return new CSSSelectorRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
+            case "attributeValue":
+                if (data.match.attributeName === undefined) {
+                    console.log("fail create rule attribute")
+                    console.error("attributeName is required when suffix is attributeValue")
+                    return new SimpleRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
+                } else {
+                    console.log("create rule attribute")
+                    return new AttributeValueRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description, data.match.attributeName);
+                }
             default:
                 return new SimpleRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
         }

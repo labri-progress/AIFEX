@@ -269,17 +269,19 @@ export default class AifexServiceHTTP implements AifexService {
 		})
 	}
 
-	evaluateSequence(serverURL: string, webSite: WebSite, exploration: Exploration): Promise<ExplorationEvaluation> {
-		const interactionList = exploration.evaluableInteractions.map(action => action.toString());
+	evaluateSequence(serverURL: string, evaluator: Evaluator, exploration: Exploration): Promise<ExplorationEvaluation> {
 		const option = {
 			method: "POST",
 			body: JSON.stringify({
-				webSiteId: webSite.id,
-				interactionList
+				sessionId: evaluator.sessionId,
+				actionList: exploration.evaluableInteractions.map(action => ({
+					prefix: action.kind,
+					suffix: action.value
+				}))
 			}),
 			headers: { "Content-Type": "application/json" },
 		};
-		return fetch(`${this.getEvaluatorURL(serverURL)}/evaluator//evaluator/evaluate`, option)
+		return fetch(`${this.getEvaluatorURL(serverURL)}/evaluator/evaluate`, option)
 		.then((response) => {
 			if (response.status === OK_STATUS) {
 				return response.json();
@@ -289,9 +291,7 @@ export default class AifexServiceHTTP implements AifexService {
 		})
 		.then((evaluationData : {
 			evaluation: {
-				continuingActionList: {prefix: string, suffix?: string}[],
-				enteringInteractionList: {prefix: string, suffix?: string}[],
-				finishingInteractionList: {prefix: string, suffix?: string}[],
+				nextActionList: {prefix: string, suffix?: string}[],
 				isAccepted: boolean,
 			}}) => {
 			const evaluation = evaluationData.evaluation;
@@ -300,21 +300,19 @@ export default class AifexServiceHTTP implements AifexService {
 			} else {
 				return new ExplorationEvaluation(
 					evaluation.isAccepted,
-					evaluation.enteringInteractionList.map(interaction => new Action(interaction.prefix, interaction.suffix)),
-					evaluation.continuingActionList.map(interaction => new Action(interaction.prefix, interaction.suffix)),
-					evaluation.finishingInteractionList.map(interaction => new Action(interaction.prefix, interaction.suffix)),
+					evaluation.nextActionList.map(interaction => new Action(interaction.prefix, interaction.suffix))
 				);
 			}
 		})
 		
 	}
 
-	getEvaluator(serverURL: string, webSiteId : string) : Promise<Evaluator | undefined> {
+	getEvaluator(serverURL: string, sessionId : string) : Promise<Evaluator | undefined> {
 		const option = {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 		};
-		return fetch(`${this.getEvaluatorURL(serverURL)}/evaluator/getEvaluator/${webSiteId}`, option)
+		return fetch(`${this.getEvaluatorURL(serverURL)}/evaluator/${sessionId}`, option)
 		.then((response) => {
 			if (response.status === OK_STATUS) {
 				return response.json();
@@ -330,13 +328,13 @@ export default class AifexServiceHTTP implements AifexService {
 			}
 		})
 		.then((evaluatorJSON: {
-			webSiteId: string,
+			sessionId: string,
 			description: string,
-			expression: String,
+			expression: string,
 			id: string,
 		}) => {
 			if (evaluatorJSON){
-				return new Evaluator(evaluatorJSON.description);
+				return new Evaluator(evaluatorJSON.description, evaluatorJSON.expression, evaluatorJSON.sessionId);
 			} else {
 				return;
 			}

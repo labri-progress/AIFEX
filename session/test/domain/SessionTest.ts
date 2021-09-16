@@ -23,7 +23,7 @@ describe("Domain - Session", () => {
             let session : Session;
 
             it("should build a Session", () => {
-                session = new Session(webSite, BASE_URL, undefined, "MySession", false );
+                session = new Session(webSite, BASE_URL, undefined, "MySession" );
                 expect(session.webSite.name).to.equal("cdiscount");
             });
             it("should start an exploration", () => {
@@ -37,7 +37,7 @@ describe("Domain - Session", () => {
             });
         });
         describe("Adding actions in an exploration", () => {
-            const session = new Session(webSite, BASE_URL, undefined, "MySession", false);
+            const session = new Session(webSite, BASE_URL, undefined, "MySession");
             const action = new Action("clickButton");
 
             let explorationNumber;
@@ -77,7 +77,7 @@ describe("Domain - Session", () => {
         });
 
         describe("Adding comment in an exploration", () => {
-            const session = new Session(webSite, BASE_URL, undefined, "MySession", false);
+            const session = new Session(webSite, BASE_URL, undefined, "MySession");
             const action1 = new Action("action1");
             const action2 = new Action("action2");
             const comment1 = new Comment("bug", "first");

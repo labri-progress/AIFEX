@@ -1,3 +1,4 @@
+import Exploration from "../../background/domain/Exploration";
 import Action from "./Action";
 import Comment from "./Comment";
 
@@ -15,7 +16,10 @@ export default class State {
     webSite: any;
     overlayType: OverlayType;
 
-    constructor(confirmedComments : Comment[] = [], displayUserView: boolean, isActive: boolean= false, webSite : any, userTabPosition : {x: string, y: string}, overlayType: OverlayType) {
+    //REMOVE THIS LINE
+    exploration: Exploration;
+
+    constructor(confirmedComments : Comment[] = [], displayUserView: boolean, isActive: boolean= false, webSite : any, userTabPosition : {x: string, y: string}, overlayType: OverlayType, exploration: Exploration) {
         this.isActive = isActive;
         this.displayUserView = displayUserView;
         this.nextActions = [];
@@ -25,5 +29,6 @@ export default class State {
         this.overlayType = overlayType;
         this.userTabPosition = userTabPosition;
         this.elementActionListMap = new Map();
+        this.exploration = exploration
     }
 }

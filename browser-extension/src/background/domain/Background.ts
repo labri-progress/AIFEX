@@ -9,7 +9,6 @@ import StateForTabScript from "./StateForTabScript";
 import TabScriptService from "./TabScriptService";
 import MediaRecorderManager from "./MediaRecorderManager";
 import ExplorationEvaluation from "./ExplorationEvaluation";
-import Question from "./Question";
 import AifexPopup from "./AifexPopup";
 import PopupService from "./PopupService";
 import Evaluator from "./Evaluator";
@@ -40,7 +39,6 @@ export default class Background {
     private _evaluator: Evaluator | undefined;
     private _explorationEvaluation: ExplorationEvaluation | undefined;
     private _rejectIncorrectExplorations: boolean;
-
 
     private _probabilityMap: Map<string, number>;
     private _commentDistributions: CommentDistribution[] | undefined;
@@ -87,7 +85,7 @@ export default class Background {
         this._exploration = new Exploration();
         this._explorationEvaluation = undefined;
         this._isRecording = false;
-        this._rejectIncorrectExplorations = true;
+        this._rejectIncorrectExplorations = false;
     }
 
     private initialize(): void {
@@ -142,20 +140,13 @@ export default class Background {
                 this._sessionId = sessionId;
                 this._modelId = modelId;
                 this._serverURL = serverURL;
-              /*  if (this._useTestScenario) {
-                    return this._aifexService.getEvaluator(serverURL, webSite.id)
-                        .then((evaluator: Evaluator | undefined) => {
-                            if (evaluator === undefined) {
-                                this._useTestScenario = false;
-                            } else {
-                                this._useTestScenario = true;
-                                this._evaluator = evaluator;
-                            }
-                        }) 
-                }*/
+                return this._aifexService.getEvaluator(serverURL, sessionId)
             } else {
                 return Promise.reject(`webSite is undefined`);
             }
+        })
+        .then((evaluator: Evaluator | undefined) => {
+            this._evaluator = evaluator;
         })
         .then (() => {
             if (this._shouldCreateNewWindowsOnConnect) {
@@ -171,6 +162,7 @@ export default class Background {
         this._sessionId = undefined;
         this._modelId = undefined;
         this._serverURL = undefined;
+        this._evaluator = undefined;
         this._sessionBaseURL = undefined;
         this._webSite = undefined;
         this._isRecording = false;
@@ -190,6 +182,7 @@ export default class Background {
         this._serverURL = undefined;
         this._sessionBaseURL = undefined;
         this._webSite = undefined;
+        this._evaluator = undefined;
     }
 
     isConnected() : boolean {
@@ -244,9 +237,9 @@ export default class Background {
                 })
             })
             .then(() => {
-               /* if (this._useTestScenario) {
+                if (this._evaluator) {
                     this.evaluateExploration();
-                }*/
+                }
             })
         } else {
             return Promise.resolve();
@@ -269,16 +262,16 @@ export default class Background {
         }
     }
 
-   /* evaluateExploration(): Promise<void> {
-        if (this._webSite && this._exploration && this._serverURL && this._useTestScenario) {
-            return this._aifexService.evaluateSequence(this._serverURL, this._webSite, this._exploration)
+    evaluateExploration(): Promise<void> {
+        if (this._webSite && this._evaluator && this._exploration && this._serverURL) {
+            return this._aifexService.evaluateSequence(this._serverURL, this._evaluator, this._exploration)
             .then((evaluation) => {
                 this._explorationEvaluation = evaluation;
             })
         } else {
             return Promise.resolve();
         }
-    }*/
+    }
 
     getExplorationEvaluation(): ExplorationEvaluation | undefined {
         return this._explorationEvaluation;
@@ -351,11 +344,11 @@ export default class Background {
             this._commentsUp = [];
 
             let evaluatePromise;
-           /* if (this._useTestScenario) {
+            if (this._evaluator) {
                 evaluatePromise = this.evaluateExploration();
-            } else {*/
+            } else {
                 evaluatePromise = Promise.resolve();
-            /*}*/
+            }
 
             const promises = [
                 this.fetchComments(),
@@ -371,18 +364,6 @@ export default class Background {
             return Promise.resolve();
         }
     }
-
-    addAnswerToExploration(question: Question, value: boolean) : Promise<void> {
-		if (this._isRecording && this._exploration) {
-            this._exploration.addAnswer(question.text, value.toString());
-
-            //return this.evaluateExploration()
-           // .then(() => 
-            return this.refreshPopup()//)
-        } else {
-            return Promise.resolve();
-        }
-	}
 
     addCommentToExploration(comment: Comment): void {
         if (this._isRecording && this._exploration) {
@@ -408,14 +389,14 @@ export default class Background {
         if (this._isRecording && this._exploration) {
             this._isRecording = false;
             let exploration : Exploration = this._exploration;
-          /*  return this.evaluateExploration()
+            return this.evaluateExploration()
                 .then(() => {
-                    /*if (this._useTestScenario && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
+                    if (this._evaluator && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
                         this.displayInvalidExploration();
                         this._isRecording = true;
                         return false;
                     }
-                    else {*/
+                    else {
                         exploration.stop();
                         return this._mediaRecordManager.stopRecording()
                         .then(() => {
@@ -438,8 +419,8 @@ export default class Background {
                             return true;
                         })
 
-               // }
-           // })
+               }
+           })
         } else {
             return Promise.resolve(true);
         }
@@ -551,7 +532,7 @@ export default class Background {
         state.commentDistributionList = this._commentDistributions || [];
 
         if (this._evaluator) {
-            state.evaluatorScenario = this._evaluator.scenario;
+            state.evaluatorScenario = this._evaluator.description;
         }
         if (this._explorationEvaluation && this._webSite) {
             state.readEvaluation(this._explorationEvaluation, this._webSite);
@@ -566,6 +547,7 @@ export default class Background {
         state.webSite = this._webSite;
         state.popupCommentPosition = this._popupCommentPosition;
         state.overlayType = this._overlayType;
+        state.exploration = this._exploration;
         return state;
     }
 

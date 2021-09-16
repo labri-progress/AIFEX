@@ -7,7 +7,6 @@ import State from "../domain/State";
 import RuleService from "../domain/RuleService";
 import Interface4ViewManager from "./Interface4UserView";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
-import Question from "../domain/Question";
 import Action from "../domain/Action";
 import {logger} from "../framework/Logger";
 import ViewManagerService from "../domain/ViewManagerService";
@@ -76,11 +75,6 @@ export default class TabScriptService implements Interface4Background, Interface
     setUserViewPosition(newPosition : {x : number, y: number}) :void{
         logger.info(`setUserViewPosition`);
         this._tabScript.setUserViewPosition(newPosition);
-    }
-
-    pushAnswer(question: Question, value: boolean) :void{
-        logger.info(`pushAnswer`);
-        this._tabScript.pushAnswer(question, value);
     }
 
 }

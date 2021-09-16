@@ -3,6 +3,7 @@ import {Express} from "express";
 import Evaluator from "../domain/Evaluator";
 import {logger} from "../logger";
 import Evaluation from "../domain/Evaluation";
+import Action from "../domain/Action";
 
 const SUCCESS_STATUS = 200;
 const STATUS_REPONSE_IS_NULL = 204;
@@ -95,7 +96,7 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
 
     app.post("/evaluator/evaluate", (req, res) => {
         const { sessionId, actionList } = req.body;
-        logger.info(`evaluate sequence (sessionId : ${sessionId}, actionList : ${actionList})`);
+        logger.info(`evaluate sequence (sessionId : ${sessionId}, actionList : ${JSON.stringify(actionList)})`);
         if (sessionId === undefined) {
             logger.warn("sessionId is required")
             return res.status(STATUS_WRONG_PARAMETERS).send("sessionId is required");
@@ -104,10 +105,14 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
             logger.warn("actionList must be an array")
             return res.status(STATUS_WRONG_PARAMETERS).send("sessionId is required");
         }
-        evaluatorService.evaluateSequence(sessionId, actionList).then((evaluation: Evaluation) => {
+        
+        evaluatorService.evaluateSequence(
+            sessionId, 
+            actionList.map(actionData => new Action(actionData.prefix, actionData.suffix))
+            ).then((evaluation: Evaluation) => {
             return res.status(SUCCESS_STATUS).send({evaluation});
         }).catch((error) => {
-            logger.error(error);
+            logger.error(error);actionList
             return res.status(ERROR_STATUS).send(error);
         });
     });

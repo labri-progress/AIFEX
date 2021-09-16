@@ -1,5 +1,4 @@
 import Interface4TabScript from "../application/Interface4TabScript";
-import Question from "../domain/Question";
 import ExtensionCommunicationService from "./ExtensionCommunicationService";
 import {logger} from "../Logger";
 
@@ -51,9 +50,7 @@ export default class HandlerOfMessageSentByTabScript {
                 if (explorationEvaluation) {
                     sendResponse({
                         isAccepted: explorationEvaluation.isAccepted,
-                        enteringInteractionList: explorationEvaluation.enteringInteractionList.map(action => action.toString()),
-                        continuingActionList: explorationEvaluation.continuingActionList.map(action => action.toString()),
-                        finishingInteractionList: explorationEvaluation.finishingInteractionList.map(action => action.toString()),
+                        nextActionList: explorationEvaluation.nextActionList.map(action => action.toString()),
                     });
                     return true;
                 } else {
@@ -72,14 +69,6 @@ export default class HandlerOfMessageSentByTabScript {
 
             case "setPopupCommentPosition": {
                 this._application.setPopupCommentPosition(msg.popupCommentPosition);
-                sendResponse("ok");
-                return true;
-            }
-
-            case "pushAnswer": {
-                const question = new Question(msg.question.text);
-                // logger.info(msg.value, msg.value === true)
-                this._application.addAnswerToExploration(question, msg.value);
                 sendResponse("ok");
                 return true;
             }
