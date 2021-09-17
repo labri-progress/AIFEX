@@ -5,7 +5,6 @@ document.getElementById("trash").addEventListener("click", handleTrash);
 document.getElementById("mediaRecording").addEventListener("change", handleMediaRecord);
 
 
-
 function handlePlay() {
     console.log('start exploration');
     sendMessage({
@@ -32,6 +31,14 @@ function handleStop() {
         if (response.error) {
             console.error('stop exploration error', response.error);
         } else {
+            ////REMOVE THIS LINE
+            if (state.interactionList.length >= 5) {
+                alert(`
+                Thank you for participating ! \n
+                The secret sentence to validate the HIT is: \n
+                Barnabas had slept well. \n
+                ` )
+            }
             render(response)
         }
     })

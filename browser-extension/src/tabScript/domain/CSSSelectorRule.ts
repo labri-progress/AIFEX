@@ -17,7 +17,7 @@ export default class CSSSelectorRule extends Rule {
             try {
                 suffix = getCssSelector(event.target, {selectors: ['id', 'class', 'tag']});
             } catch (e) {
-                logger.error(`exception`,e);
+                logger.error(`exception`, e);
             }
             return new Action(this.prefix, suffix);
         }

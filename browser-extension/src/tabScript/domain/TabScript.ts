@@ -9,6 +9,9 @@ import State from "./State";
 import ActionsAndElements from "./ActionsAndElements";
 import ViewManagerService from "./ViewManagerService";
 import {logger} from "../framework/Logger";
+
+let alertAlreadyShown = false;
+
 export default class TabScript {
 
     private _backgroundService : BackgroundService;
@@ -62,24 +65,23 @@ export default class TabScript {
                     this.getExplorationEvaluation()
                 ]).then(([actionsAndElements, evaluation]) => {
                     logger.debug(`tabscript will refresh`)
-
+                    console.log(state)
                     //REMOVE THIS
-                    console.log(state.exploration)
-                    if (evaluation?.isAccepted && (state.exploration as any)._actions.length < 15 && !this._has_shown_hit_code) {
-                        alert(`
-                        Please make a few more actions to finish the HIT. You will be notified when you have made enough actions. 
-                        `);
-                        this._has_shown_hit_code = true;
-                    }
-                    if (evaluation?.isAccepted && (state.exploration as any)._actions.length >= 15 && !this._has_shown_hit_code) {
-                        alert(`
-                        Thank you for participating in our study. \n
-                        The secret sentence is: Barnabas had slept well. \n
-                        Since you already have everything set up, \n 
-                        it is easier to start a new HIT with us on another website. \n
-                        \n
-                        `);
-                        this._has_shown_hit_code = true;
+                    if (!alertAlreadyShown && evaluation && (state.exploration as any)._actions) {
+                        const lastAction = (state.exploration as any)._actions[(state.exploration as any)._actions.length-1].kind;
+                        let lastActionAmazon = ["ProceedToCheckout", "sideButtonCheckout"]
+                        let finalActions = [...lastActionAmazon];
+                        let hasMadeLastAction = finalActions.some(action => action === lastAction)
+                        if (hasMadeLastAction) {
+                            alertAlreadyShown = true
+                            alert(`
+                            You have almost finished ! \n
+                            Open the plugin, and click on the stop button to get the secret sentence
+                        
+                            \n
+                            `);
+                            this._has_shown_hit_code = true;
+                        }
                     }
                     this._actionsAndElements = actionsAndElements;
                     return viewManager.refresh(this._ruleService.elementListMatchedByRule, this._ruleService.elementRules, actionsAndElements, evaluation);
