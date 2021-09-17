@@ -37,9 +37,15 @@ module.exports = function attachRoutes(app, config) {
 
     app.post('/dashboard/session/create', (req, res) => {
         let { webSiteId, name, baseURL, interpolationfactor, depth, overlayType } = req.body;
-                        
-        logger.info(`POST create session for WebSite (id = ${webSiteId})`);
+
+        if (overlayType === "shadowMode") {
+            overlayType = "shadow"
+        }
+        else {
+            overlayType = "rainbow"
+        }
         
+        logger.info(`POST create session for WebSite (id = ${webSiteId})`);
         let connectionCode;
         if (interpolationfactor === undefined) {
             interpolationfactor = DEFAULT_INTERPOLATION_FACTOR;

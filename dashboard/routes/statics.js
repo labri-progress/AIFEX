@@ -6,22 +6,6 @@ module.exports = function attachRoutes(app, config) {
 
     // Experimental documentation using markdown
     // Hack for processing md files. Should modify ejs module 
-    app.get('/study/with', (req, res) => {
-        res.render('evaluation/instructions-with-evaluator.ejs', { account: req.session});
-    })
-
-    app.get('/study/without', (req, res) => {
-        res.render('evaluation/instructions-without-evaluator.ejs', { account: req.session});
-    })
-
-    app.get('/study/without-proba', (req, res) => {
-        res.render('evaluation/instructions-without-probabilities.ejs', { account: req.session});
-    })
-
-    app.get('/study/evaluator-without-proba', (req, res) => {
-        res.render('evaluation/instructions-evaluator-without-proba.ejs', { account: req.session });
-    })
-
 
     app.get('/documentation', (req, res) => {
         res.render('documentation/doc.ejs', { account: req.session});

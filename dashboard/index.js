@@ -61,6 +61,7 @@ require("./routes/sessionInvitation.js")(app, config);
 
 require("./routes/website.js")(app, config);
 require("./routes/evaluation.js")(app, config);
+require("./routes/study.js")(app, config);
 
 
 app.listen(PORT, function () {
