@@ -57,6 +57,29 @@ export default class TabScript {
             let viewManager = this._viewManager;
             return this._backgroundService.getState()
             .then((state: State) => {
+            //REMOVE THIS
+            if (!alertAlreadyShown && (state.exploration as any)._actions) {
+                const lastAction = (state.exploration as any)._actions[(state.exploration as any)._actions.length-1].kind;
+                let lastActionAmazon = ["ProceedToCheckout", "sideButtonCheckout"]
+                let finalActions = [...lastActionAmazon];
+                console.log("tcheck lastabscript will refresh")
+
+                let hasMadeLastAction = finalActions.some(action => action === lastAction)
+                if (hasMadeLastAction) {
+                    console.log("alert")
+
+                    alertAlreadyShown = true
+                    alert(`
+                    You have almost finished ! \n
+                    Open the plugin, and click on the stop button to get the secret word
+                
+                    \n
+                    `);
+                    this._has_shown_hit_code = true;
+                }
+            }
+
+
                 if (!state.isActive || state.overlayType === "shadow") {
                     return viewManager.hide();
                 }
@@ -65,24 +88,8 @@ export default class TabScript {
                     this.getExplorationEvaluation()
                 ]).then(([actionsAndElements, evaluation]) => {
                     logger.debug(`tabscript will refresh`)
-                    console.log(state)
-                    //REMOVE THIS
-                    if (!alertAlreadyShown && evaluation && (state.exploration as any)._actions) {
-                        const lastAction = (state.exploration as any)._actions[(state.exploration as any)._actions.length-1].kind;
-                        let lastActionAmazon = ["ProceedToCheckout", "sideButtonCheckout"]
-                        let finalActions = [...lastActionAmazon];
-                        let hasMadeLastAction = finalActions.some(action => action === lastAction)
-                        if (hasMadeLastAction) {
-                            alertAlreadyShown = true
-                            alert(`
-                            You have almost finished ! \n
-                            Open the plugin, and click on the stop button to get the secret sentence
-                        
-                            \n
-                            `);
-                            this._has_shown_hit_code = true;
-                        }
-                    }
+                    console.log("tabscript will refresh", state)
+                    
                     this._actionsAndElements = actionsAndElements;
                     return viewManager.refresh(this._ruleService.elementListMatchedByRule, this._ruleService.elementRules, actionsAndElements, evaluation);
                 })

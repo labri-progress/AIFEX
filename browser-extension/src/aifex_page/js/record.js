@@ -31,12 +31,13 @@ function handleStop() {
         if (response.error) {
             console.error('stop exploration error', response.error);
         } else {
+            console.log(state.interactionList)
             ////REMOVE THIS LINE
             if (state.interactionList.length >= 5) {
                 alert(`
                 Thank you for participating ! \n
-                The secret sentence to validate the HIT is: \n
-                Barnabas had slept well. \n
+                The secret word to validate the HIT is: \n
+                Barnabas \n
                 ` )
             }
             render(response)

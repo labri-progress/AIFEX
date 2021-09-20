@@ -15,7 +15,7 @@ You must have installed <a href="https://www.google.com/chrome/fast-and-secure/"
 6. Click Load unpacked.
 7. Choose the folder "chrome" that you have unziped.
 
-<h3>Step 2</h3>
+<h2>Step 2</h2>
 
 1. On the Chrome window, click on the extensions button on the top right, then on AIFEX
 2. On the page that opens, enter the code-url: and press enter
@@ -39,11 +39,11 @@ You must have installed <a href="https://www.google.com/chrome/fast-and-secure/"
 5. Enter a nickname in the Tester text field
 6. Click on the start button. It should turn green
  
-<h3>Step 3</h3>
+<h2>Step 3</h2>
 Go back to the Amazon page. You should see colored borders on some amazon page elements.
 The elements with pink borders guide you. 
 
-* Follow the pink borders in order.
+* Interact with the elements with pink borders.
 
 <figure>
 <img src="/static/images/guide.png"
@@ -63,13 +63,13 @@ The elements with pink borders guide you.
 </figure>
 
 
-You have to make an order that contains the following instructions. You are encouraged to make some other actions between these steps.
+Your goal is to make an order by completing the following steps. You are encouraged to make some other actions between these steps, such as changing the quantities, add multiple product in the basket, removing products from the basket ...
 1. Make a research for an iphone
 2. Add a filter
 4. Add one or more product to your basket
 5. Click on the proceed to checkout button
 
-<h3>Step 4</h3>
+<h2>Step 4</h2>
 
 1. When you finish the command, a warning message will ask you to open the plugin (extensions button on the top right, then AIFEX)
 2. Click on the Stop button
