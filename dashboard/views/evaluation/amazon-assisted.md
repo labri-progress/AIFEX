@@ -22,7 +22,7 @@ You must have installed <a href="https://www.google.com/chrome/fast-and-secure/"
 <h2>Step 2</h2>
 
 1. On the Chrome window, click on the extensions button on the top right, then on AIFEX
-2. On the page that opens, enter the code-url and press enter: https://researchexperimentation.fr/join?sessionId=9AUBTtgum&modelId=7sgwY9qbV
+2. On the page that opens, enter the code-url and press enter: https://researchexperimentation.fr/join?sessionId=tYry3-Mel&modelId=kBR8eREoh
 
 <img src="/static/images/connect.png"
     width="600"
