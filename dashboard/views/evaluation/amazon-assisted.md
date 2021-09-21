@@ -2,6 +2,10 @@
 
 To validate the HIT, you must complete the following steps. You will then get a code that will allow you to validate the task.
 
+You are participating to a crowdtesting session ! Your goal is to explore the purchase funnel of amazon. To that extend you have to follow a list of step, but also make your test a bit unique.
+
+First you will have to install our Google Chrome plugin, that will record your actions on amazon, then you will your own unique test, and finally you will receive a password to enter in the MTurk dashboard.
+
 <h2>Prerequisite</h2>
 You must have installed <a href="https://www.google.com/chrome/fast-and-secure/">Google Chrome</a> 
 
@@ -41,7 +45,16 @@ You must have installed <a href="https://www.google.com/chrome/fast-and-secure/"
  
 <h2>Step 3</h2>
 Go back to the Amazon page. You should see colored borders on some amazon page elements.
-The elements with pink borders guide you. 
+
+
+Your goal is to make an order by completing the following steps. You are encouraged to make some other actions between these steps, such as changing the quantities, add multiple product in the basket, removing products from the basket ...
+1. Make a research for an iphone
+2. Add a filter
+4. Add one or more product to your basket
+5. Click on the proceed to checkout button
+
+
+The elements with pink borders indicate the steps of the scenario. Please don't just follow them, you must also include some other actions in your scenario. 
 
 * Interact with the elements with pink borders.
 
@@ -52,8 +65,9 @@ The elements with pink borders guide you.
     <figcaption>Pink Border : Click on one of the iphone</figcaption>
 </figure>
 
-* Do some actions that do not have pink borders, as changing product quantity, making more filters ...
-* Avoid clicking on the red or orange borders, when possible.
+The elements with colored border (red, orange, green) indicate what the other testers have done. 
+Your goal is to avoid the red and orange borders, as it means that a lot of testers have done this action.
+If you don't have the choice, but to click on a red element, it is ok.
 
 <figure>
 <img src="/static/images/red_color.png"
@@ -62,12 +76,9 @@ The elements with pink borders guide you.
 
 </figure>
 
+* Do some actions that do not have pink borders, as changing product quantity, making more filters ...
+* Avoid clicking on the red or orange borders, when possible.
 
-Your goal is to make an order by completing the following steps. You are encouraged to make some other actions between these steps, such as changing the quantities, add multiple product in the basket, removing products from the basket ...
-1. Make a research for an iphone
-2. Add a filter
-4. Add one or more product to your basket
-5. Click on the proceed to checkout button
 
 <h2>Step 4</h2>
 

@@ -83,7 +83,9 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             description?: string
         }[] = req.body.mappingList;
         let mappingList: Mapping[];
+
         if (Array.isArray(mappingListData)) {
+
             mappingList = mappingListData.map((mappingData) => 
                 new Mapping(mappingData.match, mappingData.output, mappingData.context, mappingData.description))
         } else {

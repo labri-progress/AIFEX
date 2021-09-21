@@ -9,6 +9,11 @@ const DUPLICATE_KEY_ERROR_CODE_BIS = 11000;
 export default class WebSiteRepositoryMongo implements WebSiteRepository {
 
     public add(webSite: WebSite): Promise<string> {
+        webSite.mappingList.forEach(mapping => {
+            if (!mapping.output.prefix) {
+                console.log(mapping)
+            }
+        })
         return WebSiteSchema.create({
             _id: webSite.id,
             name: webSite.name,
