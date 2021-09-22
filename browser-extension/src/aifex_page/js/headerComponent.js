@@ -20,6 +20,18 @@ document.getElementById("detach-button").addEventListener("click", (e) => {
     });
 })
 
+document.getElementById("configure-button").addEventListener("click", (e) => {
+    e.preventDefault();
+    sendMessage({
+        kind: "changePopupPageKind",
+        popupPageKind: "Configure",
+    })
+    .then(() => {
+        getStateAndRender();
+    });
+})
+
+
 addComponentToPopup(renderHeader);
 
 console.log('Header Component has been launched');
