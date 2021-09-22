@@ -31,11 +31,6 @@ export default class HandlerOfMessageSentByBackground  {
                 sendResponse("ok");
                 return true;
 
-            case "toggleUserView":
-                this._tabScriptService.toggleUserView(msg.visible)
-                sendResponse("ok");
-                return true;
-
             case "checkRunning":
                 sendResponse("ok");
                 return true;

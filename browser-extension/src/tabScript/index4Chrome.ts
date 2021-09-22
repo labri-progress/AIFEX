@@ -4,13 +4,13 @@ import ChromeExtensionCommunicationService from "./_infra/ChromeExtensionCommuni
 import HandlerOfMessageSentByBackground from "./_ui/HandlerOfMessageSentByBackground";
 
 import {logger} from "./framework/Logger";
-import ViewManager from "./_ui/ViewManager";
+import Highlighter from "./_infra/Highlighter";
 
 logger.info("AIFEX script is running.")
 
 const backgroundService = new ChromeBackgroundMessageService();
 const tabScriptService = new TabScriptService(backgroundService);
-tabScriptService.setViewManager(new ViewManager());
+tabScriptService.setViewManager(new Highlighter());
 
 const communicationService = new ChromeExtensionCommunicationService();
 

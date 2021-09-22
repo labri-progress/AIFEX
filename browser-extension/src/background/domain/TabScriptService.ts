@@ -8,6 +8,5 @@ export default interface TabScriptService {
 
     stopExploration(tabId : number, state : StateForTabScript) : Promise<void>;
 
-    toggleUserView(tabId : number, visible: boolean): Promise<void>;
 
 }

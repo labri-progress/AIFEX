@@ -2,34 +2,27 @@
 import Interface4Background from "./Interface4Background";
 import BackgroundService from "../domain/BackgroundService";
 import TabScript from "../domain/TabScript";
-import Comment from "../domain/Comment";
 import State from "../domain/State";
 import RuleService from "../domain/RuleService";
-import Interface4ViewManager from "./Interface4UserView";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import Action from "../domain/Action";
 import {logger} from "../framework/Logger";
-import ViewManagerService from "../domain/ViewManagerService";
+import HighlighterService from "../domain/ViewManagerService";
 
-export default class TabScriptService implements Interface4Background, Interface4ViewManager {
+export default class TabScriptService implements Interface4Background {
     private _tabScript : TabScript;
 
     constructor(backgroundService : BackgroundService) {
         this._tabScript = new TabScript(backgroundService);
     }
 
-    setViewManager(viewManager : ViewManagerService) {
+    setViewManager(viewManager : HighlighterService) {
         this._tabScript.setViewManager(viewManager);
     }
 
     synchronizeWithBackground() : Promise<void> {
         logger.info(`tabscript will synchronize with Background`);
         return this._tabScript.synchronizeWithBackground();
-    }
-
-    getRuleService() : RuleService {
-        logger.info(`getRuleService`);
-        return this._tabScript.getRuleService();
     }
 
     explorationStarted() :void{
@@ -47,11 +40,6 @@ export default class TabScriptService implements Interface4Background, Interface
         this._tabScript.reload();
     }
 
-    toggleUserView(visible: boolean) :void{
-        logger.info(`toggleUserView`);
-        this._tabScript.toggleUserView(visible);
-    }
-
     getState(): Promise<State> {
         logger.info(`getState`);
         return this._tabScript.getState();
@@ -65,16 +53,6 @@ export default class TabScriptService implements Interface4Background, Interface
     getExplorationEvaluation(): Promise<ExplorationEvaluation | undefined> {
         logger.info(`getExplorationEvaluation`);
         return this._tabScript.getExplorationEvaluation();
-    }
-
-    commentConfirmed(comment: Comment): Promise<void> {
-        logger.info(`comment is confirmed`);
-        return this._tabScript.commentConfirmed(comment);
-    }
-
-    setUserViewPosition(newPosition : {x : number, y: number}) :void{
-        logger.info(`setUserViewPosition`);
-        this._tabScript.setUserViewPosition(newPosition);
     }
 
 }

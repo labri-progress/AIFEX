@@ -6,6 +6,4 @@ export default interface Interface4Background {
 
   reload():void;
 
-  toggleUserView(visible: boolean):void;
-
 }

@@ -2,11 +2,6 @@
 
 To validate the HIT, you must complete the following steps. You will then get a code that will allow you to validate the task.
 
-You are participating to a crowdtesting session ! Your goal is to explore the purchase funnel of amazon. To that extend you have to follow a list of step, but also make your test a bit unique.
-
-First you will have to install our Google Chrome plugin, that will record your actions on amazon, then you will your own unique test, and finally you will receive a password to enter in the MTurk dashboard.
-
-
 <h2>Prerequisite</h2>
 You must have installed <a href="https://www.google.com/chrome/fast-and-secure/">Google Chrome</a> 
 

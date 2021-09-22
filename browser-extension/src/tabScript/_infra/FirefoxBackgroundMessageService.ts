@@ -76,21 +76,6 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
             })
     }
 
-    setUserViewPosition(newPosition: {x: number, y:number}): Promise<void> {
-        return browser.runtime.sendMessage({
-                kind: 'setPopupCommentPosition',
-                popupCommentPosition: newPosition
-              });
-    }
-
-    upComment(comment: Comment): Promise<void> {
-        return browser.runtime.sendMessage({
-                kind: 'upComment',
-                type: comment.type,
-                value: comment.note
-            });
-    }
-
     sendAction(action: Action): Promise<void> {
         return browser.runtime.sendMessage({
                 action,

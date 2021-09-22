@@ -4,37 +4,27 @@ import ActionsAndElements from '../domain/ActionsAndElements';
 import {logger} from "../framework/Logger";
 import Rule from '../domain/Rule';
 import highlighterConfig from "./highlighterConfig.json";
+import HighlighterCanvas from './HighlighterCanvas';
 
 const WARM_COLOR_THRESHOLD = 0.6;
 const MEDIUM_COLOL_THRESHOLD = 0.3;
 const COLD_COLOR_THRESHOLD = 0.01;
 
+let oftenColor = highlighterConfig.oftenColor;
+let sometimesColor = highlighterConfig.sometimesColor;
+let rarelyColor = highlighterConfig.rarelyColor;
+let neverColor = highlighterConfig.neverColor;
+let mappedColor = highlighterConfig.mappedColor;
+
 export default class ActionProbabilityView {
 
     stylesheetElement: HTMLElement | undefined;
     private _lastElementWithAIFEXStyle : Set<HTMLElement>;
+    private _highlighterCanvas: HighlighterCanvas;
 
-    constructor() {
+    constructor(highlighterCanvas: HighlighterCanvas) {
         this._lastElementWithAIFEXStyle = new Set();
-        
-        const DEBUG_MODE = process.env.NODE_ENV === 'debug';
-        if (DEBUG_MODE) {
-            console.log(`DEBUG_MODE, add mouseover listener`);
-            document.addEventListener("mouseover", (ev: MouseEvent) => {
-                const composedPath = ev.composedPath();
-                composedPath.forEach((target, index) => {
-                    if (target instanceof HTMLElement) {
-                        const rulesPrefix = target.getAttribute("aifex_rules")
-                        if (rulesPrefix) {
-                            console.log(`The ${index} parent matches the following rule(s) :  ${rulesPrefix}`);
-                            console.log(target);
-                        } else {
-                            console.log(`The ${index} parent has no rule`);
-                        }
-                    } 
-                })
-            })
-        } 
+        this._highlighterCanvas = highlighterCanvas;       
     }
 
     show(actionAndElements: ActionsAndElements, elementListMatchedByRule: HTMLElement[], elementRules: Map<HTMLElement, Rule[]>,): void {
@@ -47,6 +37,8 @@ export default class ActionProbabilityView {
 
         for (const domElement of elementListMatchedByRule) {
             domElement.setAttribute("aifex_style", "true");
+            this._highlighterCanvas.highlightElement(domElement, mappedColor)
+
             const rules = elementRules.get(domElement);
             if (rules) {
                 domElement.setAttribute("aifex_rules", rules.map(rule => rule.prefix).join(','));
@@ -64,23 +56,25 @@ export default class ActionProbabilityView {
                 for (const rule of action.ruleList) {
                     htmlElement.setAttribute(`aifex_${rule.prefix}`, "true");
                 }
-
-
                 this._lastElementWithAIFEXStyle.add(htmlElement);
                 
-
-                htmlElement.setAttribute("aifex_style", "true");
                 if (action.probability > WARM_COLOR_THRESHOLD) {
                     htmlElement.setAttribute("aifex_frequency", "often")
+                    this._highlighterCanvas.highlightElement(htmlElement, oftenColor)
                 } else if (action.probability > MEDIUM_COLOL_THRESHOLD && htmlElement.getAttribute("aifex_frequency") !== "often") {
                     htmlElement.setAttribute("aifex_frequency", "sometimes")
+                    this._highlighterCanvas.highlightElement(htmlElement, sometimesColor)
+
                 } else if (action.probability > COLD_COLOR_THRESHOLD && 
                             htmlElement.getAttribute("aifex_frequency") !== "often" && 
                             htmlElement.getAttribute("aifex_frequency") !== "sometimes") {
                     htmlElement.setAttribute("aifex_frequency", "rarely")
+                    this._highlighterCanvas.highlightElement(htmlElement, rarelyColor)
+
                 } else {
                     if (!htmlElement.hasAttribute("aifex_frequency")) {
                         htmlElement.setAttribute("aifex_frequency", "never")
+                        this._highlighterCanvas.highlightElement(htmlElement, neverColor)
                     }
                 }
             }
@@ -108,7 +102,7 @@ export default class ActionProbabilityView {
             this.stylesheetElement.setAttribute("type", "text/css");
             this.stylesheetElement.setAttribute("aifex_stylesheet", "true");
 
-            const cssNode = document.createTextNode(makeCSS(highlighterConfig));
+            const cssNode = document.createTextNode(makeCSS());
             this.stylesheetElement.appendChild(cssNode);
             parentNode.appendChild(this.stylesheetElement);
         }

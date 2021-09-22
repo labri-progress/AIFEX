@@ -71,7 +71,7 @@ export default class EventListener {
         }
     }
 
-    public addActionPushedToBackgroundListener(callback : (action : Action) => void): void {
+    public onNewUserAction(callback : (action : Action) => void): void {
         if (typeof callback === "function") {
             this._newActionCallbacks.push(callback)
         }

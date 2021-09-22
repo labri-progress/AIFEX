@@ -5,7 +5,7 @@ import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import BackgroundService from "../domain/BackgroundService";
 
 
-export default class ChromeBackgroundMessageService  implements BackgroundService{
+export default class ChromeBackgroundMessageService  implements BackgroundService {
 
     getState(): Promise<State> {
         return new Promise((resolve, reject) => {
@@ -89,39 +89,6 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
                     data.nextActionList.map(action => Action.parseAction(action)),
                 ));
             })
-        })
-    }
-
-    setUserViewPosition(newPosition: {x: number, y:number}): Promise<void> {
-        return new Promise((resolve, reject) => {
-            chrome.runtime.sendMessage({
-                kind: 'setPopupCommentPosition',
-                popupCommentPosition: newPosition
-              }, {}, () => {
-                const error = chrome.runtime.lastError;
-                if (error) {
-                    return reject(error);
-                } else {
-                    return resolve();
-                }
-            });
-        })
-    }
-
-    upComment(comment: Comment): Promise<void> {
-        return new Promise((resolve, reject) => {
-            chrome.runtime.sendMessage({
-                kind: 'upComment',
-                type: comment.type,
-                value: comment.note
-            }, {}, () => {
-                const error = chrome.runtime.lastError;
-                if (error) {
-                    return reject(error);
-                } else {
-                    return resolve();
-                }
-            });
         })
     }
 

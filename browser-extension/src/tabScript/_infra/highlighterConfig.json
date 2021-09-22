@@ -1,0 +1,9 @@
+{
+    "displayNeverUsedAction": true,
+    "actionBorderSize": 5,
+    "oftenColor": "#ff0000",
+    "sometimesColor": "#FFA500",
+    "rarelyColor": "#9ACD32",
+    "neverColor": "#2196F3",
+    "mappedColor": "#2196F3"
+}

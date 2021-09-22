@@ -1,13 +1,12 @@
 import Action from "../domain/Action";
 import BackgroundService from "./BackgroundService";
-import Comment from "./Comment";
 import EventListener from "./EventListener";
 import ExplorationEvaluation from "./ExplorationEvaluation";
 import PageMutationHandler from "./PageMutationHandler";
 import RuleService from "./RuleService";
 import State from "./State";
 import ActionsAndElements from "./ActionsAndElements";
-import ViewManagerService from "./ViewManagerService";
+import HighlighterService from "./ViewManagerService";
 import {logger} from "../framework/Logger";
 
 let alertAlreadyShown = false;
@@ -17,26 +16,22 @@ export default class TabScript {
     private _backgroundService : BackgroundService;
     private _ruleService : RuleService;
     private _eventListener : EventListener;
-    private _viewManager : ViewManagerService | undefined;
+    private _viewManager : HighlighterService | undefined;
     private _pageMutationHandler : PageMutationHandler;
     private _actionsAndElements : ActionsAndElements | undefined;
     
-    // REMOVE THIS LINE
-    private _has_shown_hit_code: boolean;
-
     constructor(backgroundService : BackgroundService) {
         this._backgroundService = backgroundService;
         this._ruleService = new RuleService();
 
         this._eventListener = new EventListener(this._ruleService, this._backgroundService);
-        this._eventListener.addActionPushedToBackgroundListener(this.onActionPushedToBackground.bind(this));
+        this._eventListener.onNewUserAction(this.onNewUserAction.bind(this));
 
         this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
         this._pageMutationHandler.init();
-        this._has_shown_hit_code = false;
     }
 
-    setViewManager(viewManager : ViewManagerService) {
+    setViewManager(viewManager : HighlighterService) {
         this._viewManager = viewManager;
     }
 
@@ -58,15 +53,14 @@ export default class TabScript {
             return this._backgroundService.getState()
             .then((state: State) => {
             //REMOVE THIS
-            if (!alertAlreadyShown && (state.exploration as any)._actions) {
+            if (!alertAlreadyShown && state && state.exploration && (state.exploration as any)._actions && (state.exploration as any)._actions.length > 0) {
+            
                 const lastAction = (state.exploration as any)._actions[(state.exploration as any)._actions.length-1].kind;
                 let lastActionAmazon = ["ProceedToCheckout", "sideButtonCheckout"]
                 let finalActions = [...lastActionAmazon];
-                console.log("tcheck lastabscript will refresh")
 
                 let hasMadeLastAction = finalActions.some(action => action === lastAction)
                 if (hasMadeLastAction) {
-                    console.log("alert")
 
                     alertAlreadyShown = true
                     alert(`
@@ -75,7 +69,6 @@ export default class TabScript {
                 
                     \n
                     `);
-                    this._has_shown_hit_code = true;
                 }
             }
 
@@ -134,10 +127,6 @@ export default class TabScript {
         }
     }
 
-    getRuleService() : RuleService {
-        return this._ruleService;
-    }
-
     getExplorationEvaluation(): Promise<ExplorationEvaluation | undefined> {
         return this._backgroundService.getExplorationEvaluation()
         .then((evaluation) => {
@@ -171,25 +160,13 @@ export default class TabScript {
             })
     }
 
-    toggleUserView(visible: boolean) :void {
-        this.refresh();
-    }
-
-    commentConfirmed(comment: Comment): Promise<void> {
-        return this._backgroundService.upComment(comment);
-    }
-
-    setUserViewPosition(newPosition : {x : number, y: number}) :void{
-        this._backgroundService.setUserViewPosition(newPosition);
-    }
-
     private onMutation() :void{
         logger.debug(`a mutation occured`);
         this._ruleService.mapRulesToElements();
         this.refresh();
     }
 
-    private onActionPushedToBackground() :void{
+    private onNewUserAction() :void{
         this.refresh();
     }
 

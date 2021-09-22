@@ -20,8 +20,4 @@ export default class ChromeTabScriptService implements TabScriptService {
         return sendMessageToTab(state, MESSAGE_KIND, tabId);
     }
 
-    toggleUserView(tabId : number, visible: boolean): Promise<void> {
-        const MESSAGE_KIND = "toggleUserView";
-        return sendMessageToTab({visible}, MESSAGE_KIND, tabId);
-    }
 }
