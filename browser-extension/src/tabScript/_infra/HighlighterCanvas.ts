@@ -2,33 +2,27 @@ import highlighterConfig from "./highlighterConfig.json";
 
 export default class HighlighterCanvas {
 
-    private _canvas: HTMLCanvasElement;
+    private _canvasMap: Map<number, HTMLCanvasElement>;
     private actionBorderSize = highlighterConfig.actionBorderSize;    
-    private elementsToHighlight: Map<Element, string>;
+    private elementsToHighlight: Map<HTMLElement, string>;
     
     constructor() {
-        this._canvas = this.buildCanvas()
+        this._canvasMap = new Map();
+        this._canvasMap.set(0, this.buildCanvas(0))
         this.elementsToHighlight = new Map();
         window.requestAnimationFrame(this.draw.bind(this));
     }
 
-    private buildCanvas(): HTMLCanvasElement {
-        let canvas: HTMLCanvasElement = document.getElementById("aifex_canvas") as HTMLCanvasElement;
-        if (canvas) {
-            return canvas as HTMLCanvasElement;
-        } else {
-            canvas = document.createElement("canvas") as HTMLCanvasElement;
-            canvas.id = "aifex_canvas"; 
-            canvas.width = document.documentElement.scrollWidth
-            canvas.height = document.documentElement.scrollHeight
-            document.body.appendChild(canvas);
-
-            return canvas;
-        }
+    private buildCanvas(index: number): HTMLCanvasElement {
+        let canvas = document.createElement("canvas") as HTMLCanvasElement;
+        canvas.id = "aifex_canvas_" + index; 
+        canvas.width = document.documentElement.scrollWidth;
+        canvas.height = document.documentElement.scrollHeight;
+        document.body.appendChild(canvas);
+        return canvas;
     }
 
-    public highlightElement(element: Element, color: string) {
-        console.log(element)
+    public highlightElement(element: HTMLElement, color: string) {
         this.elementsToHighlight.set(element, color);
     }
 
@@ -38,14 +32,19 @@ export default class HighlighterCanvas {
 
     private draw() {
         this.clear();
-        this._canvas = this.buildCanvas();
         let scrollX = window.scrollX;
         let scrollY = window.scrollY;
         for (const [element, color] of this.elementsToHighlight) {
+            const zIndex = this.getZIndex(element);
+            let canvas = this._canvasMap.get(zIndex);
+            if (canvas === undefined) {
+                canvas = this.buildCanvas(zIndex);
+                this._canvasMap.set(zIndex, canvas);
+            }
             const boundedBox = element.getBoundingClientRect();
-            const ctx: CanvasRenderingContext2D | null = this._canvas.getContext('2d');
+            const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
             if (ctx === null) {
-                return;
+                continue;
             }
             ctx.fillStyle = color;
             ctx.fillRect(scrollX + boundedBox.x- this.actionBorderSize, 
@@ -57,12 +56,35 @@ export default class HighlighterCanvas {
         window.requestAnimationFrame(this.draw.bind(this));
     }
 
-    private clear() {
-        const context = this._canvas.getContext('2d');
-        if (context === null) {
-            return
+    private getZIndex(element: HTMLElement): number {
+        let elementIt = element
+        while (elementIt !== document.body) {
+            let index = window.getComputedStyle(elementIt).zIndex
+            console.log(Number.isInteger(index), Number.parseInt(index))
+
+            if (Number.isInteger(index)) {
+                return Number.parseInt(index)
+            } else {
+                if (!element.parentElement) {
+                    return 0;
+                } else {
+                elementIt = element.parentElement
+                }
+            }
+        
         }
-        context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        return 0
+    }
+
+    private clear() {
+        for (const canvas of this._canvasMap.values()) {
+            const context = canvas.getContext('2d');
+            if (context === null) {
+                return
+            }
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
     }
 
 }
