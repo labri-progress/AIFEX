@@ -49,7 +49,11 @@ describe("Domain - Session", () => {
                     session.addActionToExploration(99, action);
                     expect.fail("should have failed");
                 } catch (e) {
-                    expect(e.message).to.eql("cannot add action to exploration, wrong explorationNumber.");
+                    if (e instanceof Error) {
+                        expect(e.message).to.eql("cannot add action to exploration, wrong explorationNumber.");
+                    } else {
+                        expect.fail("incorrect error");
+                    }
                 }
             });
 
