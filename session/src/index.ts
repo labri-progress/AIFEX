@@ -21,7 +21,7 @@ const videoRepository = new VideoRepositoryMongoAndFile();
 const sessionService = new SessionService(sessionRespository, webSiteRepository, eventStore, screenshotRepository, videoRepository);
 
 function connectWithRetry(): Promise<void> {
-    return mongoose.connect(config.database, { useUnifiedTopology: true, useNewUrlParser: true })
+    return mongoose.connect(config.database)
         .then(() => {
             logger.info("Connecting to database : " + config.database );
         })

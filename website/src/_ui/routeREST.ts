@@ -87,9 +87,9 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             mappingListData.forEach((mappingData) => {
                 mappingList.push(new Mapping(mappingData.match, mappingData.output, mappingData.context, mappingData.description));
             });
-        } catch (e) {
-            logger.error(`mapping list error`, e);
-            return res.status(INVALID_PARAMETERS_STATUS).send({message: e.message});
+        } catch (_) {
+            logger.error(`mapping list error`);
+            return res.status(INVALID_PARAMETERS_STATUS).send({message: `mapping list error`});
         }
         const webSite = new WebSite(idGeneratorService, name, url);
         webSite.addMappingList(mappingList);
@@ -162,7 +162,7 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             });
         } catch (e) {
             logger.error(`update name ${name}, error `,e);
-            res.status(INTERNAL_SERVER_ERROR_STATUS).send({message: e.message});
+            res.status(INTERNAL_SERVER_ERROR_STATUS).send({message: `update name ${name}, error `});
         }
     });
 }

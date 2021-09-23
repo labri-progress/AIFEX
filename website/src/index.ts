@@ -14,7 +14,7 @@ const webSiteRepository: WebSiteRepository = new WebSiteRepositoryMongo();
 const webSiteService = new WebSiteService(webSiteRepository);
 
 function connectWithRetry(): Promise<void> {
-    return mongoose.connect(config.database, { useUnifiedTopology: true, useNewUrlParser: true })
+    return mongoose.connect(config.database)
         .then(() => {
             logger.info("Connecting to database : " + config.database );
         })
