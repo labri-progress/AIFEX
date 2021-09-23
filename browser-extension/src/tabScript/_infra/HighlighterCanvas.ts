@@ -19,7 +19,7 @@ export default class HighlighterCanvas {
         this.elementsToHighlightAnimated = new Set<HTMLElement>();
         this.animationLoop = 0;
         this.isStopped = false;
-
+        this.lastTime = 0;
         window.addEventListener("resize", this.resizeCanvas.bind(this))
         window.addEventListener("scroll", this.moveCanvas.bind(this))
 
@@ -180,20 +180,21 @@ export default class HighlighterCanvas {
         if (index !== undefined) {
             return index;
         } else {
+            let maxIndex: number = 0;
             while (elementIt !== null && elementIt !== undefined) {
                 let index = window.getComputedStyle(elementIt).zIndex;
                 if (index !== "auto") {
                     let indexInt = Number.parseInt(index)
-                    if (indexInt !== NaN && indexInt !== undefined) {
+                    if (indexInt !== NaN && indexInt !== undefined && indexInt > maxIndex) {
                         this.elementToZindex.set(element, indexInt)
-                        return indexInt
+                        maxIndex = indexInt;
                     }
                 }
                 elementIt = elementIt.parentElement
             }
+            this.elementToZindex.set(element, maxIndex)
+            return maxIndex
         }
-        this.elementToZindex.set(element, 1)
-        return 1
     }
 
     private clear() {
