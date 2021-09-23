@@ -23,7 +23,7 @@ export default class Highlighter implements HighlighterService {
         this._highlighterCanvas = new HighlighterCanvas();
         this._actionPopupView = new ActionsPopupView();
         this._actionProbabilityView = new ActionProbabilityView(this._highlighterCanvas);
-        this._evaluationActionsBorderView = new EvaluationActionsBorderView();
+        this._evaluationActionsBorderView = new EvaluationActionsBorderView(this._highlighterCanvas);
         this.elementListMatchedByRule = [];
         this.elementRules = undefined;
         this.actionsAndElements = undefined;
@@ -36,8 +36,7 @@ export default class Highlighter implements HighlighterService {
         this.elementRules = elementRules;
         this.actionsAndElements = actionsAndElements;
         this.evaluation = evaluation;
-        
-        this._highlighterCanvas.clearHighlight()
+        this._highlighterCanvas.reset()
         this.display();
     }
 
@@ -49,12 +48,14 @@ export default class Highlighter implements HighlighterService {
         if (this.evaluation) {
             this._evaluationActionsBorderView.show(this.evaluation);
         }
+        this._highlighterCanvas.show();
     }
 
     hide(): Promise<void> {
         this._actionPopupView.hide();
         this._actionProbabilityView.hide();
         this._evaluationActionsBorderView.hide();
+        this._highlighterCanvas.hide()
         return Promise.resolve();
     }
 

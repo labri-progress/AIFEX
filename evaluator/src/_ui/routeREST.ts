@@ -105,13 +105,36 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
             logger.warn("actionList must be an array")
             return res.status(STATUS_WRONG_PARAMETERS).send("sessionId is required");
         }
-        
+
         evaluatorService.evaluateSequence(
             sessionId, 
             actionList.map(actionData => new Action(actionData.prefix, actionData.suffix))
             ).then((evaluation: Evaluation) => {
             return res.status(SUCCESS_STATUS).send({evaluation});
         }).catch((error) => {
+            logger.error(error);actionList
+            return res.status(ERROR_STATUS).send(error);
+        });
+    });
+
+    app.post("/evaluator/evaluate-expression", (req, res) => {
+        const { expression, actionList } = req.body;
+        logger.info(`evaluate sequence (expression : ${expression}, actionList : ${JSON.stringify(actionList)})`);
+        if (expression === undefined) {
+            logger.warn("expression is required")
+            return res.status(STATUS_WRONG_PARAMETERS).send("expression is required");
+        }
+        if (!Array.isArray(actionList)) {
+            logger.warn("actionList must be an array")
+            return res.status(STATUS_WRONG_PARAMETERS).send("actionList muse be an array");
+        }
+
+        evaluatorService.evaluateSequenceByExpression (
+            expression, 
+            actionList.map(actionData => new Action(actionData.prefix, actionData.suffix))
+            ).then((evaluation: Evaluation) => {
+            return res.status(SUCCESS_STATUS).send({evaluation});
+        }).catch((error: Error) => {
             logger.error(error);actionList
             return res.status(ERROR_STATUS).send(error);
         });

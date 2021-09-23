@@ -4,10 +4,6 @@ export function makeCSS() {
 .aifex_canvas {
   pointer-events: none;
   position: absolute;
-  top:0;
-  left:0;
-  right: 0;
-  bottom: 0;
 }
 
 #AIFEX_probabilityPopup {
@@ -64,11 +60,6 @@ export function makeCSS() {
   color: red;
   padding-right: 5px;
   display: block;
-}
-
-[aifex_style=true][aifex_step_action] {
-  outline: 6px rgba(255,0,255,0.5) solid !important;
-  outline-offset: -12px;
 }
 
 `;

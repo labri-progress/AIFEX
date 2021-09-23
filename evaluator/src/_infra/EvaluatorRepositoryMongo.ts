@@ -26,19 +26,12 @@ export default class SequenceEvaluatorRepositoryMongo implements EvaluatorReposi
             })
     }
 
-    public createSequenceEvaluator(sessionId: string, description: string, stepFactory: StepFactory, expression: string): Promise<Evaluator> {
-        let evaluator: Evaluator;
+    public createSequenceEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
         return sequenceEvaluatorModel.create({
             sessionId: sessionId,
             expression,
             description,
-        } as EvaluatorDocument)
-        .then((evaluatorCreated: EvaluatorDocument) => {
-            return stepFactory.createStep(expression).then((step: Step) => {
-                evaluator = new Evaluator(evaluatorCreated.sessionId, step, evaluatorCreated._id, evaluatorCreated.description);
-                return evaluator;
-            });
-        });
+        }).then(() => {return;})
     }
 
     public updateSequenceEvaluator(sessionId: string, description: string, expression: string): Promise <void> {

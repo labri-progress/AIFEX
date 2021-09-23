@@ -19,9 +19,13 @@ export default class EvaluationApplication {
     }
 
     public createEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
-
-        return this.sequenceEvaluatorRepository.createSequenceEvaluator(sessionId, description, this.stepFactory, expression)
+        return this.stepFactory.checkExpressionValidity(expression).then((isValid: boolean) => {
+            if (! isValid) {
+                throw new Error("Expression is invalid");
+            }
+            return this.sequenceEvaluatorRepository.createSequenceEvaluator(sessionId, description, expression)
             .then((_sequenceEvaluator) => {return; });
+        })
     }
 
     public updateEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
@@ -45,6 +49,7 @@ export default class EvaluationApplication {
                     throw e;
                 }
             })
+
     }
 
     public evaluateSequence(sessionId: string, actionList: Action[]): Promise<Evaluation> {
@@ -53,6 +58,20 @@ export default class EvaluationApplication {
             return evaluator.evaluate(actionList);
         })
     }
+
+    public evaluateSequenceByExpression(expression: string, actionList: Action[]): Promise<Evaluation> {
+        return this.stepFactory.checkExpressionValidity(expression).then(isValid => {
+            if (! isValid) {
+                throw new Error("expression is invalid");
+            }
+            return this.stepFactory.createStep(expression).then(step => {
+                const evaluator: Evaluator = new Evaluator("session", step, "id", "desc" )
+                return evaluator.evaluate(actionList);
+            }) 
+        })
+        
+    }
+
 
     public evaluateFromExpression(expression: string, actionLabelList: string[]) : Promise<boolean | void> {
 

@@ -122,7 +122,6 @@ export default class StepDFA implements Step {
         if (! this.evaluatorNFA) {
             return null;
         }
-        console.log("Label", action.label)
         if (this.evaluatorNFA.transitions.has(state)) {
             const transition = this.evaluatorNFA.transitions.get(state);
             if (!transition) {

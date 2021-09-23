@@ -28,7 +28,6 @@ export default class ActionProbabilityView {
     }
 
     show(actionAndElements: ActionsAndElements, elementListMatchedByRule: HTMLElement[], elementRules: Map<HTMLElement, Rule[]>,): void {
-        logger.debug(`ActionProbabilityView show (elements : ${elementListMatchedByRule.length})`);
         this._lastElementWithAIFEXStyle.forEach(element => {
             element.removeAttribute("aifex_frequency");
             element.removeAttribute("aifex_style");
