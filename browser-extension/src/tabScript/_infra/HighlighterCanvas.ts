@@ -5,20 +5,25 @@ export default class HighlighterCanvas {
     private _canvasMap: Map<number, HTMLCanvasElement>;
     private actionBorderSize = highlighterConfig.actionBorderSize;    
     private elementsToHighlight: Map<HTMLElement, string>;
+    private elementToZindex: Map<HTMLElement, number>;
     
     constructor() {
         this._canvasMap = new Map();
-        this._canvasMap.set(0, this.buildCanvas(0))
+        this._canvasMap.set(1, this.buildCanvas(1))
         this.elementsToHighlight = new Map();
+        this.elementToZindex = new Map();
         window.requestAnimationFrame(this.draw.bind(this));
     }
 
     private buildCanvas(index: number): HTMLCanvasElement {
         let canvas = document.createElement("canvas") as HTMLCanvasElement;
         canvas.id = "aifex_canvas_" + index; 
+        canvas.classList.add("aifex_canvas")
+        canvas.style.zIndex = index.toString();
         canvas.width = document.documentElement.scrollWidth;
         canvas.height = document.documentElement.scrollHeight;
         document.body.appendChild(canvas);
+        this._canvasMap.set(index, canvas);
         return canvas;
     }
 
@@ -39,7 +44,6 @@ export default class HighlighterCanvas {
             let canvas = this._canvasMap.get(zIndex);
             if (canvas === undefined) {
                 canvas = this.buildCanvas(zIndex);
-                this._canvasMap.set(zIndex, canvas);
             }
             const boundedBox = element.getBoundingClientRect();
             const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
@@ -57,23 +61,25 @@ export default class HighlighterCanvas {
     }
 
     private getZIndex(element: HTMLElement): number {
-        let elementIt = element
-        while (elementIt !== document.body) {
-            let index = window.getComputedStyle(elementIt).zIndex
-            console.log(Number.isInteger(index), Number.parseInt(index))
-
-            if (Number.isInteger(index)) {
-                return Number.parseInt(index)
-            } else {
-                if (!element.parentElement) {
-                    return 0;
-                } else {
-                elementIt = element.parentElement
+        let elementIt: HTMLElement | null = element;
+        let index = this.elementToZindex.get(element);
+        if (index !== undefined) {
+            return index;
+        } else {
+            while (elementIt !== null && elementIt !== undefined) {
+                let index = window.getComputedStyle(elementIt).zIndex;
+                if (index !== "auto") {
+                    let indexInt = Number.parseInt(index)
+                    if (indexInt !== NaN && indexInt !== undefined) {
+                        this.elementToZindex.set(element, indexInt)
+                        return indexInt
+                    }
                 }
+                elementIt = elementIt.parentElement
             }
-        
         }
-        return 0
+        this.elementToZindex.set(element, 1)
+        return 1
     }
 
     private clear() {

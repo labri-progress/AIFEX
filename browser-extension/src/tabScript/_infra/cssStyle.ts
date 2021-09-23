@@ -1,14 +1,13 @@
 export function makeCSS() {
   return `
 
-#aifex_canvas {
+.aifex_canvas {
   pointer-events: none;
   position: absolute;
   top:0;
   left:0;
   right: 0;
   bottom: 0;
-  z-index: 9998;
 }
 
 #AIFEX_probabilityPopup {
