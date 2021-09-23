@@ -20,7 +20,7 @@ const cryptoService = new CryptoServiceImpl();
 const accountService = new AccountService(accountRepository, publicAuthorizationRepository, tokenService, cryptoService);
 
 function connectWithRetry(): Promise<void> {
-    return mongoose.connect(config.database, { useUnifiedTopology: true, useNewUrlParser: true })
+    return mongoose.connect(config.database)
         .then(() => {
             logger.info("Connecting to database : " + config.database );
         })
