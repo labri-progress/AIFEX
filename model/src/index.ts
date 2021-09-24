@@ -18,7 +18,7 @@ const eventDelegate = new RabbitEventDelegate();
 eventDelegate.subscribe(modelService);
 
 function connectWithRetry(): Promise<void> {
-    return mongoose.connect(config.database)
+    return mongoose.connect(config.database, { useUnifiedTopology: true, useNewUrlParser: true })
         .then(() => {
             logger.info("Connecting to database : " + config.database );
         });
