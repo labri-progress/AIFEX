@@ -15,7 +15,7 @@ export default class SessionRepositoryREST implements SessionRepository {
             .then( (response) => {
                 return response.json();
             })
-            .then( (session) => {
+            .then( (session: any) => {
                 return session.explorationList.map((exploration : any, explorationNumber : any) => {
                     const seq = new Sequence();
 

@@ -1,6 +1,6 @@
 import CSPModel from "../domain/CSPModel";
 import ModelRepository from "../domain/ModelRepository";
-import ModelSchema, { ModelDocument } from "./ModelSchema";
+import ModelSchema from "./ModelSchema";
 
 export default class ModelRepositoryMongo implements ModelRepository {
 

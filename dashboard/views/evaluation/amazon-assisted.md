@@ -44,19 +44,18 @@ You must have installed <a href="https://www.google.com/chrome/fast-and-secure/"
 6. Click on the start button. It should turn green
  
 <h2>Step 3</h2>
-Go back to the Amazon page. You should see colored borders on some amazon page elements.
+Go back to the Amazon page. You should see colored borders on some amazon page elements, and an animation running around the search bar.
 
-
-Your goal is to make an order by completing the following steps. You are encouraged to make some other actions between these steps, such as changing the quantities, add multiple product in the basket, removing products from the basket ...
+Your goal is to make an order by completing the following steps. You are encouraged to make some other actions between these steps, such as changing the quantities, add multiple product in the basket, removing products from the basket ... But include all the 4 following steps in your path.
 1. Make a research for an iphone
 2. Add a filter
 4. Add one or more product to your basket
 5. Click on the proceed to checkout button
 
 
-The elements with pink borders indicate the steps of the scenario. Please don't just follow them, you must also include some other actions in your scenario. 
+The elements with an animated pink circle indicate the steps of the scenario. Please include them in you path, in addition of some other actions. 
 
-* Interact with the elements with pink borders.
+* Interact with the elements with the animated pink circle.
 
 <figure>
 <img src="/static/images/guide.png"
@@ -72,11 +71,11 @@ If you don't have the choice, but to click on a red element, it is ok.
 <figure>
 <img src="/static/images/red_color.png"
     width="600"   />
-    <figcaption>Pink + Red or Orange : Prefer clicking on the other iphone (chose the red one if no other option)</figcaption>
+    <figcaption>Pink + Red or Orange : Prefer clicking on the third iphone, with the blue borders (chose the red or orange one if there are no other option)</figcaption>
 
 </figure>
 
-* Do some actions that do not have pink borders, as changing product quantity, making more filters ...
+* Do some actions that do not have the pink circle, as changing product quantity, making more filters ...
 * Avoid clicking on the red or orange borders, when possible.
 
 
