@@ -1,4 +1,4 @@
-FROM node:slim
+FROM node
 
 # install python (needed by npm-gyp)
 RUN apt-get update && apt-get install python make gcc g++ -y

@@ -1,4 +1,4 @@
-FROM node:slim as builder
+FROM node as builder
 
 # install python (needed by npm-gyp)
 RUN apt-get update && apt-get install python make gcc g++ -y
@@ -21,7 +21,7 @@ RUN tsc
 
 
 
-FROM node:slim
+FROM node
 
 # Set the working directory to /app
 WORKDIR /app
