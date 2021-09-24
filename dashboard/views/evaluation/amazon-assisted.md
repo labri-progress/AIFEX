@@ -46,7 +46,10 @@ You must have installed <a href="https://www.google.com/chrome/fast-and-secure/"
 <h2>Step 3</h2>
 Go back to the Amazon page. You should see colored borders on some amazon page elements, and an animation running around the search bar.
 
+===> **WAIT A FEW SECONDS BEFORE EACH CLICK** <===
+
 ===> **FOLLOW THE PINK BALL** <===
+
 ===> **AVOID THE RED BORDERS IF POSSIBLE** <===
 
 Your goal is to make an order by completing the following steps indicated by an animated pink ball. You are encouraged to make some other actions between these steps, such as changing the quantities, add multiple product in the basket, removing products from the basket ... But you **MUST** make all the 4 following steps in order indicated by the pink ball.
