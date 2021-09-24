@@ -2,9 +2,9 @@
 
 To validate the HIT, you must complete the following steps. You will then get a code that will allow you to validate the task.
 
-You are participating to a crowdtesting session ! Your goal is to explore the purchase funnel of amazon. To that extend you have to follow a list of step, but also make your test a bit unique.
+You are participating to a crowdtesting session ! Your goal is to explore the purchase funnel of amazon. You are guided by a pink ball that shows you the way. You have to follow a list of step, but also make your test a bit unique.
 
-First you will have to install our Google Chrome plugin, that will record your actions on amazon, then you will your own unique test, and finally you will receive a password to enter in the MTurk dashboard.
+First you will have to install our Google Chrome plugin, that records your actions on amazon, then you will make your own unique test, and finally you will receive a password to enter in the MTurk dashboard.
 
 <h2>Prerequisite</h2>
 You must have installed <a href="https://www.google.com/chrome/fast-and-secure/">Google Chrome</a> 
@@ -22,7 +22,7 @@ You must have installed <a href="https://www.google.com/chrome/fast-and-secure/"
 <h2>Step 2</h2>
 
 1. On the Chrome window, click on the extensions button on the top right, then on AIFEX
-2. On the page that opens, enter the code-url and press enter: https://researchexperimentation.fr/join?sessionId=SSE2GwyDu&modelId=UhIXSPKBk
+2. On the page that opens, enter the code-url and press enter: https://researchexperimentation.fr/join?sessionId=OXD54K4Rj&modelId=0zTU0npom
 
 <img src="/static/images/connect.png"
     width="600"
@@ -46,16 +46,14 @@ You must have installed <a href="https://www.google.com/chrome/fast-and-secure/"
 <h2>Step 3</h2>
 Go back to the Amazon page. You should see colored borders on some amazon page elements, and an animation running around the search bar.
 
-Your goal is to make an order by completing the following steps. You are encouraged to make some other actions between these steps, such as changing the quantities, add multiple product in the basket, removing products from the basket ... But include all the 4 following steps in your path.
+===> **FOLLOW THE PINK BALL** <===
+===> **AVOID THE RED BORDERS IF POSSIBLE** <===
+
+Your goal is to make an order by completing the following steps indicated by an animated pink ball. You are encouraged to make some other actions between these steps, such as changing the quantities, add multiple product in the basket, removing products from the basket ... But you **MUST** make all the 4 following steps in order indicated by the pink ball.
 1. Make a research for an iphone
 2. Add a filter
 4. Add one or more product to your basket
 5. Click on the proceed to checkout button
-
-
-The elements with an animated pink circle indicate the steps of the scenario. Please include them in you path, in addition of some other actions. 
-
-* Interact with the elements with the animated pink circle.
 
 <figure>
 <img src="/static/images/guide.png"
@@ -74,10 +72,6 @@ If you don't have the choice, but to click on a red element, it is ok.
     <figcaption>Pink + Red or Orange : Prefer clicking on the third iphone, with the blue borders (chose the red or orange one if there are no other option)</figcaption>
 
 </figure>
-
-* Do some actions that do not have the pink circle, as changing product quantity, making more filters ...
-* Avoid clicking on the red or orange borders, when possible.
-
 
 <h2>Step 4</h2>
 
