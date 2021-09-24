@@ -14,6 +14,10 @@ function handlePlay() {
         if (newState.error) {
             getState();
         } else {
+            alert(`
+            You must follow the elements circled by the pink ball and complete every step of the scenario ! \n
+            Wait at least 2 seconds after each click, so the indications are refreshed
+            ` )
             render(newState);
         }
     })
