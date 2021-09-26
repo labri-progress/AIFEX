@@ -20,15 +20,9 @@
     <script src="./js/headerComponent.js" defer></script>
     <script src="./js/homeComponent.js" defer></script>
     <script src="./js/configureComponent.js" defer></script>
-    <script src="./js/linkToServerComponent.js" defer></script>
-    <script src="./js/signinComponent.js" defer></script>
     <script src="./js/connectToSessionComponent.js" defer></script>
     <script src="./js/makeExplorationsComponent.js" defer></script>
-    <!--<script src="./js/record.js" defer></script>
-    <script src="./js/comment.js" defer></script>
-    <script src="./js/identity.js" defer></script>
-    <script src="./js/evaluation.js" defer></script>
-    <script src="./js/backgroundHandlers.js" defer></script> -->
+
 
 </head>
 
@@ -37,6 +31,7 @@
         <h2>AIFEX</h2>
         <button id="detach-button" class="logo" type="button"><img src="img/externalWindow.svg"/></button>
         <button id="configure-button" class="logo" type="button">configure</button>
+        <button id="home-button" class="logo" type="button">home</button>
     </header>
 
     <div class="trait"></div>
@@ -49,7 +44,7 @@
                 <button id="goToCreateSession" class="button create btn_marg"> Create </button>
             </div>
 
-            <div id="linkToServerComponent">
+            <div id="configureComponent">
                 <p>Changing the AIFEX server</p>
                 <form id="linkToServerForm">
                     <div class="form-group ">
@@ -62,9 +57,6 @@
                         </div>
                     </div>
                 </form>
-            </div>
-
-            <div id="configureComponent">
                 <p>Sign In</p>
                 <form id="signinForm">
                     <div class="form-group ">

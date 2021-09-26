@@ -1,13 +1,16 @@
-function renderConfigure() {
+(() => {
     let component = document.getElementById('configureComponent');
-    if (state.pageKind === 'configure') {
-        component.style.display = 'flex';
-    } else {
-        component.style.display = 'none';
+
+    function render() {
+        if (state.pageKind === 'Configure') {
+            component.style.display = 'flex';
+        } else {
+            component.style.display = 'none';
+        }
     }
-}
 
+    addComponentToPopup(render);
 
-addComponentToPopup(renderHeader);
+    console.log('Configure Component has been launched');
 
-console.log('Configure Component has been launched');
+})();
