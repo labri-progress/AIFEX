@@ -29,11 +29,6 @@ module.exports = {
 			{ from: "./src/images/aifex_icon_rec.png", to: "images/aifex_icon_rec.png" },
 			{ from: "./src/images/aifex_icon_notif.png", to: "images/aifex_icon_notif.png" },
 			{ from: "./src/images/aifex_icon_rec_notif.png", to: "images/aifex_icon_rec_notif.png" },
-			{ from: "./src/images/plugin_icon_record.png", to: "images/plugin_icon_record.png" },
-			{
-				from: "./src/images/plugin_icon_blue.png",
-				to: "images/plugin_icon_blue.png",
-			},
 			{ from: "./src/aifex_page/", to: "aifex_page" },
 			{ from: "./node_modules/bootstrap/dist/css/bootstrap.min.css", to: "aifex_page/css/bootstrap.min.css" },
 			{ from: "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js", to: "aifex_page/js/bootstrap.bundle.min.js" },

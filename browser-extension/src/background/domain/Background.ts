@@ -290,7 +290,11 @@ export default class Background {
                     }
                 })
                 .then(() => {
-                    this._browserService.setExtensionIconToRecording();
+                    if (this._commentDistributions && this._commentDistributions.length > 0) {
+                        this._browserService.setExtensionIconToReceivedNotification();
+                    } else {
+                        this._browserService.setExtensionIconToRecording();
+                    }
                 })
         } else {
             return Promise.resolve();
@@ -361,7 +365,7 @@ export default class Background {
                 return this._aifexService.getCommentDistributions(this._serverURL, this._modelId, this._exploration, this._token)
                     .then((commentDistributionList) => {
                         if (commentDistributionList === undefined) {
-                            this._commentDistributions = []
+                            this._commentDistributions = [];
                         } else {
                             this._commentDistributions = commentDistributionList;
                         }
@@ -409,7 +413,17 @@ export default class Background {
                 promises.push(this.fetchProbabilityMap())
             }
             return Promise.all(promises)
-                .then(() => this.refreshPopup())
+                .then(() => {
+                    console.log("comments",JSON.stringify(this._commentDistributions));
+                    if (this._commentDistributions && this._commentDistributions.length > 0) {
+                        console.log("with notif");
+                        this._browserService.setExtensionIconToReceivedNotification();
+                    } else {
+                        console.log("without notif");
+                        this._browserService.setExtensionIconToRecording();
+                    }
+                    this.refreshPopup();
+                })
                 .catch((error) => console.error("Failed to process new action : ", prefix, error))
         } else {
             return Promise.resolve();

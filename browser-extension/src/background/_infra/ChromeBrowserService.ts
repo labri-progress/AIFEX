@@ -89,6 +89,7 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
     setExtensionIconToRecording(): void {
+        console.log('setExtensionIconToRecording');
         if (this.lastInterval) {
             clearInterval(this.lastInterval);
         }
@@ -102,11 +103,12 @@ export default class ChromeBrowserService implements BrowserService {
                     chrome.browserAction.setIcon({ path: "/images/aifex_icon_rec.png" });
                     flipFlop = true;
                 }
-            } catch (_) { }
+            } catch (e) {console.log(e) }
         }, 1000)
     }
 
     setExtensionIconToReceivedNotification(): void {
+        console.log('setExtensionIconToReceivedNotification');
         if (this.lastInterval) {
             clearInterval(this.lastInterval);
         }
@@ -120,7 +122,7 @@ export default class ChromeBrowserService implements BrowserService {
                     chrome.browserAction.setIcon({ path: "/images/aifex_icon_rec_notif.png" });
                     flipFlop = true;
                 }
-            } catch (_) { }
+            } catch (e) { console.log(e) }
         }, 1000)
     }
 
