@@ -15,6 +15,12 @@ export default interface BrowserService {
 
     drawAttentionToWindow(windowId: number):Promise<void>;
 
+    setExtensionIconToDefault(): void;
+
+    setExtensionIconToRecording(): void;
+
+    setExtensionIconToReceivedNotification(): void;
+
     closeWindow(windowId: number):Promise<void>;
 
     closeTab(tabId: number): Promise<void>;

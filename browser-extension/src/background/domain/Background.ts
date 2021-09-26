@@ -289,6 +289,9 @@ export default class Background {
                         this.evaluateExploration();
                     }
                 })
+                .then(() => {
+                    this._browserService.setExtensionIconToRecording();
+                })
         } else {
             return Promise.resolve();
         }
@@ -475,6 +478,7 @@ export default class Background {
                                 return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
                             })
                             .then((_: void[]) => {
+                                this._browserService.setExtensionIconToDefault();
                                 return true;
                             })
 

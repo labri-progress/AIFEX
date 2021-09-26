@@ -10,7 +10,7 @@
     "desktopCapture"
   ],
   "icons": {
-    "128": "images/plugin_icon_blue.png"
+    "128": "images/aifex_icon.png"
   },
   "browser_action": {
     "default_title": "AIFEX",
