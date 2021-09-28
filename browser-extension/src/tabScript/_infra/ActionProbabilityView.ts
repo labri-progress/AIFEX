@@ -1,9 +1,8 @@
 import { querySelectorAllDeep } from 'query-selector-shadow-dom';
 import {makeCSS} from "./cssStyle";
 import ActionsAndElements from '../domain/ActionsAndElements';
-import {logger} from "../framework/Logger";
 import Rule from '../domain/Rule';
-import highlighterConfig from "./highlighterConfig.json";
+import highlighterConfig from "../../../configuration.json";
 import HighlighterCanvas from './HighlighterCanvas';
 
 const WARM_COLOR_THRESHOLD = 0.6;

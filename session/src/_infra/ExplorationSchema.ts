@@ -10,6 +10,7 @@ const INTERACTION_SCHEMA: Schema = new Schema({
 
 const EXPLORATION_SCHEMA: Schema = new Schema({
     sessionId : String,
+    submissionAttempt: Number,
     explorationNumber : Number,
     testerName : String,
     isStopped : Boolean,

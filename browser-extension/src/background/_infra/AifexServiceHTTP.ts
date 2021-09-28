@@ -127,13 +127,15 @@ export default class AifexServiceHTTP implements AifexService {
 		serverURL: string,
 		sessionId: string,
 		testerName: string,
-		exploration: Exploration
+		exploration: Exploration,
+		submissionAttempt: number
 	): Promise<number> {
 		const body = {
 			testerName,
 			interactionList: exploration.interactionsToJSON(),
 			startDate: exploration.startDate,
-			stopDate: exploration.stopDate
+			stopDate: exploration.stopDate,
+			submissionAttempt,
 		};
 		const option = {
 			method: "POST",

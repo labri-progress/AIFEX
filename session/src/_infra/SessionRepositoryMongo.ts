@@ -32,14 +32,15 @@ export default class SessionRepositoryMongo implements SessionRepository {
         });
     }
 
-    public addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date): Promise<number> {
+    public addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date, submissionAttempt: number = 1): Promise<number> {
         return ExplorationSchema.create({
             sessionId,
             explorationNumber,
             testerName: tester.name,
             isStopped: false,
             interactionList : [],
-            startDate
+            startDate,
+            submissionAttempt
         }).
         then( () => {
             return explorationNumber;

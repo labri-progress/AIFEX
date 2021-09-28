@@ -24,6 +24,7 @@ module.exports = {
 		new CopyPlugin({
 			patterns: [
 			{ from: "./src/images/plugin_icon.png", to: "images/plugin_icon.png" },
+			{ from: "./configuration.json", to: "configuration.json" },
 			{
 				from: "./src/images/plugin_icon_blue.png",
 				to: "images/plugin_icon_blue.png",

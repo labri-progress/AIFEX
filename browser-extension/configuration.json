@@ -1,4 +1,5 @@
 {
+    "rejectIncorrectExplorations": true,
     "displayNeverUsedAction": true,
     "actionBorderSize": 5,
     "oftenColor": "#ff0000",

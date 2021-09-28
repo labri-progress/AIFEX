@@ -24,7 +24,8 @@ export default interface AifexService {
 		serverURL: string, 
 		sessionId: string,
 		testerName: string,
-		exploration: Exploration
+		exploration: Exploration,
+		submissionAttempt: number
 	): Promise<number> ;
 
 	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration): Promise<CommentDistribution[] | undefined> ;

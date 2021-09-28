@@ -5,7 +5,7 @@ export default interface ISessionRepository {
 
     addSession(session: Session): Promise<string>;
 
-    addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date): Promise<number>;
+    addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date, submissionAttempt: number): Promise<number>;
 
     updateInteractionListOfExploration(sessionId: string, explorationNumber: number, updatedInteractionList: Interaction[]): Promise<void>;
 

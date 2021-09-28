@@ -1,4 +1,4 @@
-import highlighterConfig from "./highlighterConfig.json";
+import highlighterConfig from "../../../configuration.json";
 
 export default class HighlighterCanvas {
 

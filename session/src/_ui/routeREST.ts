@@ -189,7 +189,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
 
     app.post("/session/:sessionId/exploration/add",  (req, res) => {
         const {sessionId} = req.params;
-        const {testerName, interactionList, startDate, stopDate} = req.body;
+        const {testerName, interactionList, startDate, stopDate, submissionAttempt} = req.body;
         logger.info(`add exploration to session ${sessionId}`);
         if (sessionId === undefined) {
             logger.warn(`sessionId must not be undefined`);
@@ -201,7 +201,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
             res.status(INVALID_PARAMETERS_STATUS).send("interactionList is undefined");
             return;
         }
-        sessionService.addExploration(sessionId, testerName, interactionList, startDate, stopDate)
+        sessionService.addExploration(sessionId, testerName, interactionList, submissionAttempt, startDate, stopDate)
         .then((explorationNumber) => {
             logger.debug(`exploration/add exploration ${explorationNumber} added`);
             res.json(explorationNumber);

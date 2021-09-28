@@ -79,10 +79,7 @@ export default class TabScript {
                 return Promise.all([
                     this.fetchActionsAndElements(),
                     this.getExplorationEvaluation()
-                ]).then(([actionsAndElements, evaluation]) => {
-                    logger.debug(`tabscript will refresh`)
-                    console.log("tabscript will refresh", state)
-                    
+                ]).then(([actionsAndElements, evaluation]) => {                    
                     this._actionsAndElements = actionsAndElements;
                     return viewManager.refresh(this._ruleService.elementListMatchedByRule, this._ruleService.elementRules, actionsAndElements, evaluation);
                 })

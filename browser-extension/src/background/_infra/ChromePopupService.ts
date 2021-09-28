@@ -1,3 +1,5 @@
+import Evaluator from "../domain/Evaluator";
+import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import PopupService from "../domain/PopupService";
 import StateForPopup from "../domain/StateForPopup";
 import {sendMessageToPopup} from "./ChromePromise"
@@ -5,9 +7,12 @@ import {sendMessageToPopup} from "./ChromePromise"
 
 export default class ChromePopupService implements PopupService {
     
-    displayInvalidExploration(): Promise<void> {
+    displayInvalidExploration(evaluation: ExplorationEvaluation, evaluator: Evaluator): Promise<void> {
         const MESSAGE_KIND = "displayInvalidExploration";
-        return sendMessageToPopup({}, MESSAGE_KIND);
+        return sendMessageToPopup({
+            evaluation,
+            evaluator
+        }, MESSAGE_KIND);
     }
 
     refresh(state: StateForPopup): Promise<void> {

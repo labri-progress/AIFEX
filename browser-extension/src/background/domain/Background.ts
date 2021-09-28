@@ -16,6 +16,7 @@ import Screenshot from "./Screenshot";
 import Comment from "./Comment"
 import CommentDistribution from "./CommentDistribution";
 import { OverlayType } from "./Session";
+import configuration from "../../../configuration.json";
 
 export default class Background {
 
@@ -55,6 +56,9 @@ export default class Background {
 
     private _aifexPopup: AifexPopup;
     private _overlayType: OverlayType;
+    
+    private _submissionAttempt: number;
+    private _isExplorationUpdatedSinceLastStop: boolean;
 
     constructor(aifexService : AifexService, popupService: PopupService, browserService : BrowserService, tabScriptService : TabScriptService) {
         this._aifexService = aifexService;
@@ -74,6 +78,8 @@ export default class Background {
         this._isRecording = false;
         this._testerName = "anonymous";
         this._numberOfExplorationsMadeByTester = 0;
+        this._isExplorationUpdatedSinceLastStop = false;
+        this._submissionAttempt = 0;
 
         this._overlayType = "rainbow";
 
@@ -85,7 +91,7 @@ export default class Background {
         this._exploration = new Exploration();
         this._explorationEvaluation = undefined;
         this._isRecording = false;
-        this._rejectIncorrectExplorations = false;
+        this._rejectIncorrectExplorations = configuration.rejectIncorrectExplorations;
     }
 
     private initialize(): void {
@@ -108,7 +114,7 @@ export default class Background {
         return this._aifexService.getPluginInfo(serverURL)
             .then((pluginInfo) => {
                 return new CompatibilityCheck(this._browserService.getExtensionVesion(), pluginInfo.version, pluginInfo.url);
-            })
+            });
     }
 
     connect(serverURL: string, sessionId: string, modelId: string) : Promise<void>{
@@ -218,6 +224,7 @@ export default class Background {
         if (!this._isRecording) {
             this._exploration = new Exploration();
             this._isRecording = true;
+            this._submissionAttempt = 0;
             return this.processNewAction("start")
             .then(() => {
                 const state = this.getStateForTabScript();
@@ -296,7 +303,6 @@ export default class Background {
         } else {
             return Promise.resolve();
         }
-        
     }
 
     private fetchComments(): Promise<void> {
@@ -341,6 +347,7 @@ export default class Background {
     processNewAction(prefix : string, suffix? : string): Promise<void> {
         if (this._isRecording && this._exploration) {
             this._exploration.addAction(prefix, suffix);
+            this._isExplorationUpdatedSinceLastStop = true;
             this._commentsUp = [];
 
             let evaluatePromise;
@@ -388,6 +395,10 @@ export default class Background {
     private stopRecordingExploration(): Promise<boolean> {
         if (this._isRecording && this._exploration) {
             this._isRecording = false;
+            if (this._isExplorationUpdatedSinceLastStop) {
+                this._submissionAttempt++;
+            }
+            this._isExplorationUpdatedSinceLastStop = false;
             let exploration : Exploration = this._exploration;
             return this.evaluateExploration()
                 .then(() => {
@@ -451,7 +462,8 @@ export default class Background {
                 this._serverURL,
                 this._sessionId,
                 this._testerName,
-                this._exploration
+                this._exploration,
+                this._submissionAttempt
             )
             .then((explorationNumber) => {
                 if (this._serverURL && this._sessionId && this._screenshotList.length > 0) {
@@ -481,7 +493,7 @@ export default class Background {
     }
 
     displayInvalidExploration(): Promise<void> {
-        return this._popupService.displayInvalidExploration();
+        return this._popupService.displayInvalidExploration(this._explorationEvaluation, this._evaluator);
     }
 
     changeTesterName(name:string): void {
