@@ -9,14 +9,15 @@
     <!--<link rel="stylesheet" href="./css/bootstrap.min.css">-->
     <link rel="stylesheet" href="./css/popup.css">
     <link rel="stylesheet" href="./css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="./css/aifex_page.css">
+    <!--<link rel="stylesheet" type="text/css" href="./css/aifex_page.css">-->
 
-    <script src="./js/jquery.min.js"></script>
-    <script src="./js/bootstrap.bundle.min.js"></script>
+    <!--<script src="./js/jquery.min.js"></script>-->
+    <!--<script src="./js/bootstrap.bundle.min.js"></script>-->
     <script src="./js/browserAPI.js" defer></script>
-    <script src="./js/popup.js" defer></script>
+
 
     <!-- Components Render Function-->
+    <script src="./js/popup.js" defer></script>
     <script src="./js/headerComponent.js" defer></script>
     <script src="./js/homeComponent.js" defer></script>
     <script src="./js/configureComponent.js" defer></script>
@@ -27,126 +28,119 @@
 </head>
 
 <body>
-    <header class="UserAndlogo">
+    <header>
         <h2>AIFEX</h2>
-        <button id="detach-button" class="logo" type="button"><img src="img/externalWindow.svg"/></button>
-        <button id="configure-button" class="logo" type="button">configure</button>
-        <button id="home-button" class="logo" type="button">home</button>
+        <img id="detach-button" src="img/externalWindow.svg" />
+        <button id="configure-button" type="button">configure</button>
+        <button id="home-button" type="button">home</button>
     </header>
 
-    <div class="trait"></div>
+    <div class="container">
+        <div id="homeComponent">
+            <h3>Join a session or create a new one ?</h3>
+            <button id="goToJoinSession" class="button btn_marg"> Join </button>
+            <button id="goToCreateSession" class="button create btn_marg"> Create </button>
+        </div>
 
-    <div class="container-fluid">
-        <div id="main-content" class="createOrlink">
-            <div id="homeComponent">
-                <p>Join a session or create a new one ?</p>
-                <button id="goToJoinSession" class="button btn_marg"> Join </button>
-                <button id="goToCreateSession" class="button create btn_marg"> Create </button>
-            </div>
-
-            <div id="configureComponent">
-                <p>Changing the AIFEX server</p>
-                <form id="linkToServerForm">
-                    <div class="form-group ">
-                        <label id="linkToServerMessage"> You are not connected.</label>
-                        <div class="input-group ">
-                            <input id="serverURLInput" class="form-control" type="text"
-                                placeholder="https://www.aifex.fr" required />
-                            <a id="linkToServerButton" class="btn btn-default input-group-addon"><i
-                                    class="fa fa-sign-in"></i></a>
-                        </div>
-                    </div>
-                </form>
-                <p>Sign In</p>
-                <form id="signinForm">
-                    <div class="form-group ">
-                        <label id="signinMessage"> You are not logged.</label>
-                        <div class="input-group">
-                            <label htmlFor="username">Username</label>
-                            <input id="username" class="form-control" type="text" required />
-                        </div>
-                        <div class="input-group">
-                            <label htmlFor="username">Password</label>
-                            <input id="password" class="form-control" type="password" required />
-                        </div>
-                        <a id="signinButton" class="btn btn-default input-group-addon"><i
-                            class="fa fa-sign-in"></i></a>
-                    </div>
-                </form>
-            </div>
-
-
-            <div id="connectToSessionComponent">
-                <h3>Connect to a session</h3>
-                <form id="connectionForm">
-                    <div class="form-group ">
-                        <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
-                        <div class="input-group ">
-                            <input id="connexionURLInput" class="form-control" type="text" placeholder="Connection URL"
-                                required />
-                            <a id="connexionButton" class="btn btn-default input-group-addon"><i
-                                    class="fa fa-sign-in"></i></a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div id="makeExplorationComponent">
-                <h3>Make Some Explorations</h3>
-                <div class="form-group">
-                    <div class="btn-group">
-                        <a id="play-button" class="btn btn-default">
-                            <i class="fa fa-play" title="Play"></i>
-                        </a>
-                        <a id="stop-button" class="btn btn-default">
-                            <i class="fa fa-stop" title="Stop"></i>
-                        </a>
-                        <a id="trash-button" class="btn btn-default">
-                            <i class="fa fa-trash" title="Trash"></i>
-                        </a>
-                        <a id="comment-button" class="btn btn-default">
-                            <i class="fa fa-comment" title="Add a Comment"></i>
-                        </a>
-                        <a id="read-comment-button" class="btn btn-default">
-                            <i class="fa fa-comment" title="Read Comment"></i>
-                        </a>
+        <div id="configureComponent">
+            <p>Changing the AIFEX server</p>
+            <form id="linkToServerForm">
+                <div class="form-group ">
+                    <label id="linkToServerMessage"> You are not connected.</label>
+                    <div class="input-group ">
+                        <input id="serverURLInput" class="form-control" type="text" placeholder="https://www.aifex.fr"
+                            required />
+                        <a id="linkToServerButton" class="btn btn-default input-group-addon"><i
+                                class="fa fa-sign-in"></i></a>
                     </div>
                 </div>
-                <div id="comment-sub-component">
-                    <h3>Comment on an exploration</h3>
-                    <form id="commentForm">
-                        <div id="commentSuccessul" class="alert-success" role="alert">
-                            Comment registered
-                        </div>
-                        <div class="form-group">
-                            <label htmlFor="commentType">Type</label>
-                            <select class="custom-select" id="commentType">
-                                <option value="Question">Question</option>
-                                <option value="Follow up">Follow up</option>
-                                <option value="Assumption">Assumption</option>
-                                <option value="Assumption">Bug</option>
-                                <option value="Idea">Idea</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label htmlFor="commentDescription">Description</label>
-                            <textarea class="form-control" rows="4" placeholder="Comment's description"
-                                id="commentDescription"></textarea>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="commentScreenshot"
-                                name="commentScreenshot">
-                            <label htmlFor="commentScreenshot" class="form-check-label">Attach Screenshot</label>
-                        </div>
-                        <div class="form-group">
-                            <div class="btn-group">
-                                <button type="submit" id="submit-comment" class="btn btn-primary">Submit</button>
-                                <button id="clearComment" class="btn btn-secondary"> Clear</button>
-                            </div>
-                        </div>
-                    </form>
+            </form>
+            <p>Sign In</p>
+            <form id="signinForm">
+                <div class="form-group ">
+                    <label id="signinMessage"> You are not logged.</label>
+                    <div class="input-group">
+                        <label htmlFor="username">Username</label>
+                        <input id="username" class="form-control" type="text" required />
+                    </div>
+                    <div class="input-group">
+                        <label htmlFor="username">Password</label>
+                        <input id="password" class="form-control" type="password" required />
+                    </div>
+                    <a id="signinButton" class="btn btn-default input-group-addon"><i class="fa fa-sign-in"></i></a>
                 </div>
-    
+            </form>
+        </div>
+
+
+        <div id="connectToSessionComponent">
+            <h3>Connect to a session</h3>
+            <form id="connectionForm">
+                <div class="form-group ">
+                    <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
+                    <div class="input-group ">
+                        <input id="connexionURLInput" class="form-control" type="text" placeholder="Connection URL"
+                            required />
+                        <a id="connexionButton" class="btn btn-default input-group-addon"><i
+                                class="fa fa-sign-in"></i></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="makeExplorationComponent">
+            <h3>Make Some Explorations</h3>
+            <div class="form-group">
+                <div class="btn-group">
+                    <a id="play-button" class="btn btn-default">
+                        <i class="fa fa-play" title="Play"></i>
+                    </a>
+                    <a id="stop-button" class="btn btn-default">
+                        <i class="fa fa-stop" title="Stop"></i>
+                    </a>
+                    <a id="trash-button" class="btn btn-default">
+                        <i class="fa fa-trash" title="Trash"></i>
+                    </a>
+                    <a id="comment-button" class="btn btn-default">
+                        <i class="fa fa-comment" title="Add a Comment"></i>
+                    </a>
+                    <a id="read-comment-button" class="btn btn-default">
+                        <i class="fa fa-comment" title="Read Comment"></i>
+                    </a>
+                </div>
+            </div>
+            <div id="comment-sub-component">
+                <h3>Comment on an exploration</h3>
+                <form id="commentForm">
+                    <div id="commentSuccessul" class="alert-success" role="alert">
+                        Comment registered
+                    </div>
+                    <div class="form-group">
+                        <label htmlFor="commentType">Type</label>
+                        <select class="custom-select" id="commentType">
+                            <option value="Question">Question</option>
+                            <option value="Follow up">Follow up</option>
+                            <option value="Assumption">Assumption</option>
+                            <option value="Assumption">Bug</option>
+                            <option value="Idea">Idea</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label htmlFor="commentDescription">Description</label>
+                        <textarea class="form-control" rows="4" placeholder="Comment's description"
+                            id="commentDescription"></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="commentScreenshot" name="commentScreenshot">
+                        <label htmlFor="commentScreenshot" class="form-check-label">Attach Screenshot</label>
+                    </div>
+                    <div class="form-group">
+                        <div class="btn-group">
+                            <button type="submit" id="submit-comment" class="btn btn-primary">Submit</button>
+                            <button id="clearComment" class="btn btn-secondary"> Clear</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

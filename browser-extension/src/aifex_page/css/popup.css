@@ -1,119 +1,29 @@
 
 
 body {
-min-width: 450px;
+    width: 500px;
+    height: 300px;
 }
 
-.plugin-label {
-    margin: 10px;
+header {
+    justify-content: space-between;
+    border-bottom: 2px solid black;
 }
 
-#displayUICheckbox {
-    width: 15px;
-    height: 15px;
+header img {
+    opacity: 0.8;
 }
 
-.playerbar{
-    width: 100px;
+header img:hover {
+    opacity: 1;
+}
+
+.container  {
+    margin: 1em;
     display: flex;
-    flex-direction: row ;
-    justify-content: space-evenly;
+    flex-direction: column;
 }
 
-.playericone {
-    cursor: pointer;
-}
-
-#color-picker {
-    width: 40px;
-    height: 30px;
-}
-
-#color-picker>:hover {
-    outline: none
-}
-
-.red {
-    background: #FF0000
-}
-
-.green {
-    background: #008000
-}
-
-.blue {
-    background: #0000FF
-}
-
-.yellow {
-    background: #FFFF00
-}
-
-.purple {
-    background: #800080
-}
-
-.orange {
-    background: #FFA500
-}
-
-#playerbar{
-    width: 100px;
-    display: flex;
-    flex-direction: row ;
-    justify-content: space-evenly;
-    padding: 5px;
-}
-
-#current-session-model-name {
-    font-weight: bold;
-}
-
-.invalid-feedback {
-    width: 100%;
-    margin-top: .25rem;
-    font-size: 80%;
-    color: #dc3545;
-}
-
-.valid-feedback {
-    width: 100%;
-    margin-top: .25rem;
-    font-size: 80%;
-}
-
-#commentSuccessul {
-    display: none;
-}
-
-.objective-not-validated {
-    color: rgba(255, 0, 0, 0.8);
-}
-
-.objective-validated {
-    color: #5cb85c
-}
-
-.scrollable-menu {
-    height: auto;
-    max-height: 200px;
-    overflow-x: hidden;
-  }
-
-.popup_attach {
-    position: absolute;
-    top: 5%;
-    right: 5%;
-}
-
-[upComment] {
-    cursor: pointer;
-}
-
-[upComment].upped {
-    color: green;
-}
-
-.commentConfirmed {
-    font-size: smaller;
+#homeComponent {
+    flex-direction: column;
 }

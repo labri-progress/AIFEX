@@ -6,13 +6,8 @@
 
     function render() {
         component.style.display = 'flex';
-        if (state.pageKind === "Configure") {
-            configureButton.style.display = 'none';
-            homeButton.style.display = 'flex';
-        } else {
-            configureButton.style.display = 'flex';
-            homeButton.style.display = 'none';
-        }
+        configureButton.style.display = 'none';
+        homeButton.style.display = 'none';
     }
 
     detachButton.addEventListener("click", (e) => {
