@@ -57,8 +57,8 @@ export default class Background {
     private _aifexPopup: AifexPopup;
     private _overlayType: OverlayType;
     
-    private _submissionAttempt: number;
     private _isExplorationUpdatedSinceLastStop: boolean;
+    private _recordActionByAction: boolean;
 
     constructor(aifexService : AifexService, popupService: PopupService, browserService : BrowserService, tabScriptService : TabScriptService) {
         this._aifexService = aifexService;
@@ -79,7 +79,6 @@ export default class Background {
         this._testerName = "anonymous";
         this._numberOfExplorationsMadeByTester = 0;
         this._isExplorationUpdatedSinceLastStop = false;
-        this._submissionAttempt = 0;
 
         this._overlayType = "rainbow";
 
@@ -88,10 +87,10 @@ export default class Background {
         this._commentsUp = [];
         this._popupCommentPosition = { x:"75%", y:"75%"};
         this._screenshotList = [];
-        this._exploration = new Exploration();
         this._explorationEvaluation = undefined;
         this._isRecording = false;
         this._rejectIncorrectExplorations = configuration.rejectIncorrectExplorations;
+        this._recordActionByAction = configuration.recordActionByAction;
     }
 
     private initialize(): void {
@@ -105,7 +104,6 @@ export default class Background {
         this._commentsUp = [];
         this._popupCommentPosition = { x:"75%", y:"75%"};
         this._screenshotList = [];
-        this._exploration = new Exploration();
         this._explorationEvaluation = undefined;
         this._isRecording = false;
     }
@@ -172,7 +170,7 @@ export default class Background {
         this._sessionBaseURL = undefined;
         this._webSite = undefined;
         this._isRecording = false;
-        this._exploration = new Exploration();
+        this._exploration = undefined;
         this._screenshotList = [];
         this._commentsUp = [];
         if (this._shouldCloseWindowOnDisconnect) {
@@ -220,12 +218,30 @@ export default class Background {
 		}
 	}
 
+    createExploration(): Promise<void> {
+        if (this._serverURL === undefined || this._sessionId === undefined) {
+            throw new Error("Not connected to a session")
+        }
+        if (this._recordActionByAction) {
+            return this._aifexService.createEmptyExploration(this._serverURL, this._sessionId, this._testerName).then(explorationNumber => {
+                this._exploration = new Exploration(explorationNumber);
+            })
+        } else {
+            return new Promise((resolve) => {
+                this._exploration = new Exploration(NaN); 
+                resolve();
+            });
+        }
+    }
+
     startExploration() : Promise<void> {
         if (!this._isRecording) {
-            this._exploration = new Exploration();
             this._isRecording = true;
-            this._submissionAttempt = 0;
-            return this.processNewAction("start")
+
+            return this.createExploration()
+            .then(() => {
+                return this.processNewAction("start");
+            })
             .then(() => {
                 const state = this.getStateForTabScript();
                 const tabIds = this._windowManager.getConnectedTabIds();
@@ -270,7 +286,7 @@ export default class Background {
     }
 
     evaluateExploration(): Promise<void> {
-        if (this._webSite && this._evaluator && this._exploration && this._serverURL) {
+        if (this._evaluator && this._exploration && this._serverURL) {
             return this._aifexService.evaluateSequence(this._serverURL, this._evaluator, this._exploration)
             .then((evaluation) => {
                 this._explorationEvaluation = evaluation;
@@ -289,7 +305,6 @@ export default class Background {
             if (this._exploration.actions.length === 0) {
                 return Promise.resolve();
             }
-
             if (!this._serverURL) {
                 return Promise.reject("Not connected to a server");
             }
@@ -347,23 +362,34 @@ export default class Background {
     processNewAction(prefix : string, suffix? : string): Promise<void> {
         if (this._isRecording && this._exploration) {
             this._exploration.addAction(prefix, suffix);
-            this._isExplorationUpdatedSinceLastStop = true;
             this._commentsUp = [];
-
-            let evaluatePromise;
-            if (this._evaluator) {
-                evaluatePromise = this.evaluateExploration();
-            } else {
-                evaluatePromise = Promise.resolve();
-            }
 
             const promises = [
                 this.fetchComments(),
-                evaluatePromise
-            ]
+                this.evaluateExploration()
+            ];
+
+            if (this._recordActionByAction) {
+                if (!this._serverURL ||  !this._sessionId) {
+                    throw new Error("Not connected to a session")
+                }
+                if (!this._exploration.explorationNumber) {
+                    throw new Error("The exploration has not been correctly started")
+                }
+                const actionList = this._exploration.actions;
+                const lastAction = actionList[actionList.length-1];
+                const pushActionListPromise = this._aifexService.pushActionList(
+                    this._serverURL, 
+                    this._sessionId, 
+                    this._exploration.explorationNumber, 
+                    [lastAction])
+
+                promises.push(pushActionListPromise);
+            }
             if (this._overlayType === "rainbow") {
                 promises.push(this.fetchProbabilityMap())
             }
+
             return Promise.all(promises)
             .then(() => this.refreshPopup())
             .catch((error) => console.error("Failed to process new action : ", prefix, error))
@@ -395,10 +421,9 @@ export default class Background {
     private stopRecordingExploration(): Promise<boolean> {
         if (this._isRecording && this._exploration) {
             this._isRecording = false;
-            if (this._isExplorationUpdatedSinceLastStop) {
-                this._submissionAttempt++;
+            if (this._exploration.hasBeenUpdated && this._serverURL && this._sessionId && this._recordActionByAction) {
+                this._aifexService.notifySubmissionAttempt(this._serverURL, this._sessionId, this._exploration.explorationNumber);
             }
-            this._isExplorationUpdatedSinceLastStop = false;
             let exploration : Exploration = this._exploration;
             return this.evaluateExploration()
                 .then(() => {
@@ -408,8 +433,24 @@ export default class Background {
                         return false;
                     }
                     else {
+                        this.processNewAction("end");
                         exploration.stop();
-                        return this._mediaRecordManager.stopRecording()
+                        let getExplorationNumberPromise;
+                        if (!this._recordActionByAction) {
+                            if (!(this._serverURL && this._sessionId)) {
+                                throw new Error("Not connected to a session")
+                            }
+                            if (!this._exploration) {
+                                throw new Error("Exploration is required")
+                            }
+                            getExplorationNumberPromise = 
+                            this._aifexService.createFullExploration(this._serverURL, this._sessionId, this._testerName, this._exploration)
+                        } else {
+                            getExplorationNumberPromise = Promise.resolve(this._exploration?.explorationNumber);
+                        }
+                        return getExplorationNumberPromise.then(() => {
+                            return this._mediaRecordManager.stopRecording()
+                        })
                         .then(() => {
                             const MIN_NUMBER_OF_ACTIONS = 2;
                             const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
@@ -419,7 +460,7 @@ export default class Background {
                             }
                         })
                         .then(() => {
-                            this._exploration = new Exploration();
+                            this._exploration = undefined;
                             this._screenshotList = [];
                             this._commentsUp = [];
                             const state = this.getStateForTabScript();
@@ -429,7 +470,6 @@ export default class Background {
                         .then((_ : void[]) => {
                             return true;
                         })
-
                }
            })
         } else {
@@ -457,15 +497,19 @@ export default class Background {
             if (EXPLORATION_CONTAINS_START_ONLY) {
                 return Promise.resolve();
             }
-
-            return this._aifexService.addExploration(
-                this._serverURL,
-                this._sessionId,
-                this._testerName,
-                this._exploration,
-                this._submissionAttempt
-            )
-            .then((explorationNumber) => {
+            let createExplorationPromise;
+            if (this._recordActionByAction) {
+                createExplorationPromise = Promise.resolve(this._exploration.explorationNumber);
+            } else {
+                createExplorationPromise = this._aifexService.createFullExploration(
+                    this._serverURL,
+                    this._sessionId,
+                    this._testerName,
+                    this._exploration
+                )
+            }
+            return createExplorationPromise
+            .then((explorationNumber: number) => {
                 if (this._serverURL && this._sessionId && this._screenshotList.length > 0) {
                     this._aifexService.addScreenshotList(
                         this._serverURL,

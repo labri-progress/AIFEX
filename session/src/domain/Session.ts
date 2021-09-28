@@ -12,6 +12,7 @@ export type SessionOverlayType = "shadow" | "bluesky" | "rainbow";
 
 
 export default class Session {
+
     private _id: string;
     private _webSite: WebSite;
     private _baseURL: string;
@@ -85,7 +86,7 @@ export default class Session {
 
     public startExploration(tester: Tester, startDate?:Date): number {
         const explorationNumber = this._explorationList.length;
-        const exploration: Exploration = new Exploration(tester, explorationNumber, startDate);
+        const exploration: Exploration = new Exploration(tester, explorationNumber, 0, startDate);
         this._explorationList.push(exploration);
         return explorationNumber;
     }
@@ -126,6 +127,13 @@ export default class Session {
             throw new Error("cannot add return InteractionList to exploration, wrong explorationNumber.");
         }
         return this._explorationList[explorationNumber].interactionList;
+    }
+
+    public setSubmissionAttempt(explorationNumber: number, submissionAttempt: number): void {
+        if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
+            throw new Error("cannot add return InteractionList to exploration, wrong explorationNumber.");
+        }
+        this._explorationList[explorationNumber].submissionAttempt = submissionAttempt
     }
 
 }

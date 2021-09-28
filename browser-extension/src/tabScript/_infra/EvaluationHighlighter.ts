@@ -3,7 +3,7 @@ import ExplorationEvaluation from '../domain/ExplorationEvaluation';
 import HighlighterCanvas from './HighlighterCanvas';
 
 
-export default class EvaluationActionsBorderView {
+export default class EvaluationHighlighter {
 
     private _highlighterCanvas: HighlighterCanvas;
 

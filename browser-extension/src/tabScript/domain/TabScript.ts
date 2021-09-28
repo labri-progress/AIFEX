@@ -6,8 +6,9 @@ import PageMutationHandler from "./PageMutationHandler";
 import RuleService from "./RuleService";
 import State from "./State";
 import ActionsAndElements from "./ActionsAndElements";
-import HighlighterService from "./ViewManagerService";
 import {logger} from "../framework/Logger";
+import Highlighter from "./Highlighter";
+import HighlighterCanvas from "../_infra/HighlighterCanvas";
 
 let alertAlreadyShown = false;
 
@@ -16,11 +17,11 @@ export default class TabScript {
     private _backgroundService : BackgroundService;
     private _ruleService : RuleService;
     private _eventListener : EventListener;
-    private _viewManager : HighlighterService | undefined;
+    private _highlighter : Highlighter;
     private _pageMutationHandler : PageMutationHandler;
     private _actionsAndElements : ActionsAndElements | undefined;
     
-    constructor(backgroundService : BackgroundService) {
+    constructor(backgroundService : BackgroundService, highlighter: Highlighter) {
         this._backgroundService = backgroundService;
         this._ruleService = new RuleService();
 
@@ -29,10 +30,7 @@ export default class TabScript {
 
         this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
         this._pageMutationHandler.init();
-    }
-
-    setViewManager(viewManager : HighlighterService) {
-        this._viewManager = viewManager;
+        this._highlighter = highlighter;
     }
 
     synchronizeWithBackground() : Promise<void> {
@@ -48,40 +46,38 @@ export default class TabScript {
     }
 
     refresh(): Promise<void> {
-        if (this._viewManager) {
-            let viewManager = this._viewManager;
+        if (this._highlighter !== undefined) {
             return this._backgroundService.getState()
             .then((state: State) => {
-            //REMOVE THIS
-            if (!alertAlreadyShown && state && state.exploration && (state.exploration as any)._actions && (state.exploration as any)._actions.length > 0) {
-            
-                const lastAction = (state.exploration as any)._actions[(state.exploration as any)._actions.length-1].kind;
-                let lastActionAmazon = ["ProceedToCheckout", "sideButtonCheckout"]
-                let finalActions = [...lastActionAmazon];
-
-                let hasMadeLastAction = finalActions.some(action => action === lastAction)
-                if (hasMadeLastAction) {
-
-                    alertAlreadyShown = true
-                    alert(`
-                    You have almost finished ! \n
-                    Open the plugin, and click on the stop button to get the secret word
+                //REMOVE THIS
+                if (!alertAlreadyShown && state && state.exploration && (state.exploration as any)._actions && 
+                    (state.exploration as any)._actions.length > 0) {
                 
-                    \n
-                    `);
+                    const lastAction = (state.exploration as any)._actions[(state.exploration as any)._actions.length-1].kind;
+                    let lastActionAmazon = ["ProceedToCheckout", "sideButtonCheckout"]
+                    let finalActions = [...lastActionAmazon];
+
+                    let hasMadeLastAction = finalActions.some(action => action === lastAction)
+                    if (hasMadeLastAction) {
+
+                        alertAlreadyShown = true
+                        alert(`
+                        You have complete all the step of the test task! \n
+                        Open the plugin, and click on the stop button to get the completion code
+                        \n
+                        `);
+                    }
                 }
-            }
 
-
-                if (!state.isActive || state.overlayType === "shadow") {
-                    return viewManager.hide();
+                if ((!state.isActive || state.overlayType === "shadow") && this._highlighter !== undefined ) {
+                    return this._highlighter.hide();
                 }
                 return Promise.all([
                     this.fetchActionsAndElements(),
                     this.getExplorationEvaluation()
                 ]).then(([actionsAndElements, evaluation]) => {                    
                     this._actionsAndElements = actionsAndElements;
-                    return viewManager.refresh(this._ruleService.elementListMatchedByRule, this._ruleService.elementRules, actionsAndElements, evaluation);
+                    return this._highlighter.refresh(this._ruleService.elementListMatchedByRule, this._ruleService.elementRules, actionsAndElements, evaluation);
                 })
             });
         } else {

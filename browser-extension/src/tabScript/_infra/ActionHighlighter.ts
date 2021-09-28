@@ -15,7 +15,7 @@ let rarelyColor = highlighterConfig.rarelyColor;
 let neverColor = highlighterConfig.neverColor;
 let mappedColor = highlighterConfig.mappedColor;
 
-export default class ActionProbabilityView {
+export default class ActionHighlighter {
 
     stylesheetElement: HTMLElement | undefined;
     private _lastElementWithAIFEXStyle : Set<HTMLElement>;

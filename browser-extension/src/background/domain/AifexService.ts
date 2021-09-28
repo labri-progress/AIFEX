@@ -6,6 +6,7 @@ import ExplorationEvaluation from "./ExplorationEvaluation";
 import Evaluator from "./Evaluator";
 import Screenshot from "./Screenshot";
 import CommentDistribution from "./CommentDistribution";
+import Action from "./Action";
 
 export default interface AifexService {
 	getSession(serverURL : string, webSiteId: string): Promise<Session | undefined> ;
@@ -20,13 +21,18 @@ export default interface AifexService {
 		exploration: Exploration
 	): Promise<Map<string, number>> ;
 
-	addExploration(
+	createFullExploration(
 		serverURL: string, 
 		sessionId: string,
 		testerName: string,
-		exploration: Exploration,
-		submissionAttempt: number
+		exploration: Exploration
 	): Promise<number> ;
+
+	createEmptyExploration(serverURL: string, sessionId: string, testerName :string): Promise<number>;
+
+	pushActionList(serverURL: string, sessionId: string, explorationNumber: number, actionList: Action[]): Promise<void>;
+
+	notifySubmissionAttempt(serverURL: string, sessionId: string, explorationNumber: number): Promise<void>;
 
 	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration): Promise<CommentDistribution[] | undefined> ;
 

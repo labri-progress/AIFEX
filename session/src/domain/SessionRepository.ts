@@ -13,4 +13,6 @@ export default interface ISessionRepository {
 
     findSessionById(sessionId: string): Promise<Session | undefined>;
 
+    setSubmissionAttempt(sessionId: string, explorationNumber: number, submissionAttempt: number): Promise<void>;
+
 }

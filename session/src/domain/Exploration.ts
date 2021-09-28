@@ -12,8 +12,9 @@ export default class Exploration {
     private _interactionList: Interaction[];
     private _startDate : Date;
     private _stopDate : Date | undefined;
+    private _submissionAttempt : number;
 
-    constructor(tester: Tester, explorationNumber: number, startDate?:Date) {
+    constructor(tester: Tester, explorationNumber: number, submissionAttempt: number = 0, startDate?:Date) {
         this._tester = tester;
         if (startDate) {
             this._startDate = startDate;
@@ -25,9 +26,9 @@ export default class Exploration {
             throw new Error("cannot create exploration, explorationNumber is null or undefined");
         }
         this._explorationNumber = explorationNumber;
-
         this._isStopped = false;
         this._interactionList = [];
+        this._submissionAttempt = submissionAttempt
     }
 
     public stop(stopDate?:Date): void {
@@ -38,6 +39,14 @@ export default class Exploration {
             this._stopDate = new Date();
         }
         
+    }
+
+    get submissionAttempt(): number {
+        return this._submissionAttempt;
+    }
+
+    set submissionAttempt(nbAttempt) {
+        this._submissionAttempt = nbAttempt;
     }
 
     get isStopped(): boolean {
@@ -76,7 +85,7 @@ export default class Exploration {
 
     public addInteractionList(interactionList: Interaction[]): void {
         if (this.isStopped) {
-            throw new Error("cannot add comment to exploration, exploration is stopped");
+            throw new Error("cannot add interaction to exploration, exploration is stopped");
         }
         this._interactionList.push(...interactionList);
     }

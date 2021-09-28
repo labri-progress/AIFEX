@@ -123,19 +123,10 @@ export default class AifexServiceHTTP implements AifexService {
 		})
 	}
 
-	addExploration(
-		serverURL: string,
-		sessionId: string,
-		testerName: string,
-		exploration: Exploration,
-		submissionAttempt: number
-	): Promise<number> {
+	createEmptyExploration(serverURL: string, sessionId: string, testerName :string): Promise<number> {
 		const body = {
 			testerName,
-			interactionList: exploration.interactionsToJSON(),
-			startDate: exploration.startDate,
-			stopDate: exploration.stopDate,
-			submissionAttempt,
+			interactionList: [],
 		};
 		const option = {
 			method: "POST",
@@ -159,6 +150,99 @@ export default class AifexServiceHTTP implements AifexService {
 				return Promise.reject(new Error(`server error`));
 			}
 		});
+	}
+
+	createFullExploration(
+		serverURL: string,
+		sessionId: string,
+		testerName: string,
+		exploration: Exploration,
+	): Promise<number> {
+		const body = {
+			testerName,
+			interactionList: exploration.interactionsToJSON(),
+			startDate: exploration.startDate,
+			stopDate: exploration.stopDate,
+			submissionAttempt: exploration.submissionAttempt,
+		};
+		const option = {
+			method: "POST",
+			body: JSON.stringify(body),
+			headers: { "Content-Type": "application/json" },
+		};
+		return fetch(
+			`${this.getSessionURL(serverURL)}/session/${sessionId}/exploration/add`,
+			option)
+		.then((response) => {
+			if (response.status === OK_STATUS) {
+				return response.json();
+			}
+			if (response.status === NOT_FOUND_STATUS) {
+				return Promise.reject(new Error(`sessionId not found`));
+			}
+			if (response.status === INVALID_PARAMETERS_STATUS) {
+				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
+			}
+			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+				return Promise.reject(new Error(`server error`));
+			}
+		});
+	}
+
+	notifySubmissionAttempt(serverURL: string, sessionId: string, explorationNumber: number) {		
+		const option = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+		};
+		return fetch(
+			`${this.getSessionURL(serverURL)}/session/${sessionId}/exploration/${explorationNumber}/notifySubmision`,
+			option)
+		.then((response) => {
+			if (response.status === OK_STATUS) {
+				return;
+			}
+			if (response.status === NOT_FOUND_STATUS) {
+				return Promise.reject(new Error(`sessionId not found`));
+			}
+			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+				return Promise.reject(new Error(`server error`));
+			}
+		});	
+	}
+
+	pushActionList(serverURL: string, sessionId: string, explorationNumber: number, actionList: Action[]): Promise<void> {
+		const body = {
+			interactionList: actionList.map((action: Action) => ({
+				index: action.index,
+				concreteType: action.getConcreteType(),
+				kind: action.kind,
+				value: action.value,
+				date: action.date
+			}))
+		}
+		
+		const option = {
+			method: "POST",
+			body: JSON.stringify(body),
+			headers: { "Content-Type": "application/json" },
+		};
+		return fetch(
+			`${this.getSessionURL(serverURL)}/session/${sessionId}/exploration/${explorationNumber}/pushActionList`,
+			option)
+		.then((response) => {
+			if (response.status === OK_STATUS) {
+				return;
+			}
+			if (response.status === NOT_FOUND_STATUS) {
+				return Promise.reject(new Error(`sessionId not found`));
+			}
+			if (response.status === INVALID_PARAMETERS_STATUS) {
+				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
+			}
+			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+				return Promise.reject(new Error(`server error`));
+			}
+		});	
 	}
 
 	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration): Promise<CommentDistribution[] | undefined> {

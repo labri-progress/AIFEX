@@ -8,7 +8,7 @@ import Session, { SessionOverlayType } from "../domain/Session";
 import SessionRepository from "../domain/SessionRepository";
 import Tester from "../domain/Tester";
 import WebSiteRepository from "../domain/WebSiteRepository";
-import ExplorationSchema from "./ExplorationSchema";
+import ExplorationSchema, { ExplorationDocument } from "./ExplorationSchema";
 import SessionSchema, { SessionDocument } from "./SessionSchema";
 
 export default class SessionRepositoryMongo implements SessionRepository {
@@ -32,7 +32,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
         });
     }
 
-    public addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date, submissionAttempt: number = 1): Promise<number> {
+    public addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date, submissionAttempt: number = 0): Promise<number> {
         return ExplorationSchema.create({
             sessionId,
             explorationNumber,
@@ -110,6 +110,16 @@ export default class SessionRepositoryMongo implements SessionRepository {
             .exec().then(() => {});
     }
 
+    public setSubmissionAttempt(sessionId: string, explorationNumber: number, submissionAttempt: number): Promise<void> {
+        return ExplorationSchema.updateOne({sessionId, explorationNumber},
+            {
+                $set : {
+                    submissionAttempt
+                },
+            })
+            .exec().then(() => {});
+    }
+
     public findSessionById(sessionId: string): Promise<Session | undefined> {
         let id: string;
         let baseURL: string;
@@ -125,7 +135,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
                 id = sessionData._id;
                 baseURL = sessionData.baseURL;
                 name = sessionData.name;
-
+                
                 overlayType = sessionData.overlayType as SessionOverlayType;
                 createdAt = sessionData.createdAt;
                 updatedAt = sessionData.updatedAt;
@@ -138,10 +148,11 @@ export default class SessionRepositoryMongo implements SessionRepository {
                         .then((explorationDataList) => {
                             explorationDataList
                             .sort( (explA, explB) => explA.explorationNumber - explB.explorationNumber)
-                            .forEach((explorationData) => {
+                            .forEach((explorationData: ExplorationDocument) => {
                                 const tester: Tester = new Tester(explorationData.testerName);
                                 const explorationNumber: number = session.startExploration(tester);
                                 const interactionList : Interaction[] = [];
+                                const submissionAttempt: number = explorationData.submissionAttempt
                                 explorationData.interactionList
                                 .filter((inter) => inter !== null && inter !== undefined)
                                 .sort( (interA, interB) => interA.index - interB.index)
@@ -160,6 +171,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
                                     }
                                 });
                                 session.addInteractionListToExploration(explorationNumber, interactionList);
+                                session.setSubmissionAttempt(explorationNumber, submissionAttempt);
                             });
                             return session;
                         });

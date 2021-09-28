@@ -22,4 +22,6 @@ describe("Domain - Exploration", () => {
         expect(exploration.tester.name).to.equal("anonymous");
     });
 
+
+
 });

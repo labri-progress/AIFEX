@@ -3,21 +3,16 @@ import Interface4Background from "./Interface4Background";
 import BackgroundService from "../domain/BackgroundService";
 import TabScript from "../domain/TabScript";
 import State from "../domain/State";
-import RuleService from "../domain/RuleService";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import Action from "../domain/Action";
 import {logger} from "../framework/Logger";
-import HighlighterService from "../domain/ViewManagerService";
+import Highlighter from "../domain/Highlighter";
 
 export default class TabScriptService implements Interface4Background {
     private _tabScript : TabScript;
 
-    constructor(backgroundService : BackgroundService) {
-        this._tabScript = new TabScript(backgroundService);
-    }
-
-    setViewManager(viewManager : HighlighterService) {
-        this._tabScript.setViewManager(viewManager);
+    constructor(backgroundService : BackgroundService, highlighter: Highlighter) {
+        this._tabScript = new TabScript(backgroundService, highlighter);
     }
 
     synchronizeWithBackground() : Promise<void> {

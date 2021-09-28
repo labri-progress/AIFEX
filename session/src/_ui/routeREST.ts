@@ -187,7 +187,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
         }
     });
 
-    app.post("/session/:sessionId/exploration/add",  (req, res) => {
+    app.post("/session/:sessionId/exploration/add", (req, res) => {
         const {sessionId} = req.params;
         const {testerName, interactionList, startDate, stopDate, submissionAttempt} = req.body;
         logger.info(`add exploration to session ${sessionId}`);
@@ -212,6 +212,70 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
                 res.status(NOT_FOUND_STATUS).send("wrong sessionId");
             } else {
                 logger.error(`exploration/add error ${e}`);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send("error");
+            }
+        });
+    });
+
+    app.post("/session/:sessionId/exploration/:number/pushActionList", (req, res) => {
+        let {sessionId, number} = req.params;
+        const {interactionList} = req.body;
+        logger.info(`update action list of exploration ${number} for session ${sessionId}`);
+        if (interactionList === undefined) {
+            logger.warn(`interactionList must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("interactionList is undefined");
+            return;
+        }
+        if (!(interactionList.every((interaction: any) => {
+            return "concreteType" in interaction && "kind" in interaction;
+        }))) {
+            logger.warn("interactionList is malformed :" + JSON.stringify(interactionList))
+            res.status(INVALID_PARAMETERS_STATUS).send("interactionList is malformed");
+        }
+        let explorationNumber: number = Number.parseInt(number)
+        if (!Number.isInteger(explorationNumber)) {
+            res.status(INVALID_PARAMETERS_STATUS).send("number must be an integer");
+            return;
+        }
+        sessionService.pushActionList(sessionId, explorationNumber, interactionList)
+        .then(() => {
+            logger.debug(`exploration ${number} updated`);
+            res.sendStatus(SUCCESS_STATUS);
+        })
+        .catch( (e: Error) => {
+            if (e.message === 'wrong sessionId') {
+                logger.error('wrong sessionId');
+                res.status(NOT_FOUND_STATUS).send("wrong sessionId");
+            } else {
+                logger.error(`exploration/pushAction error ${e}`);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send("error");
+            }
+        });
+    });
+
+
+    /// REMOVE THIS
+    app.post("/session/:sessionId/exploration/:number/notifySubmision", (req, res) => {
+        let {sessionId, number} = req.params;
+        logger.info(`notify submision ${number} of session ${sessionId}`);
+
+        let explorationNumber: number = Number.parseInt(number)
+        if (!Number.isInteger(explorationNumber)) {
+            res.status(INVALID_PARAMETERS_STATUS).send("number must be an integer");
+            return;
+        }
+        console.log("call ing increment service")
+        sessionService.incrementSubmissionAttempt(sessionId, explorationNumber)
+        .then(() => {
+            logger.debug(`exploration ${number} submission attempt updated`);
+            res.sendStatus(SUCCESS_STATUS);
+        })
+        .catch( (e: Error) => {
+            if (e.message === 'wrong sessionId') {
+                logger.error('wrong sessionId');
+                res.status(NOT_FOUND_STATUS).send("wrong sessionId");
+            } else {
+                logger.error(`exploration/pushAction error ${e}`);
                 res.status(INTERNAL_SERVER_ERROR_STATUS).send("error");
             }
         });

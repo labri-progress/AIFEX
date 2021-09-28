@@ -19,6 +19,9 @@ import EventStore from "./EventStore";
 const CACHE_SIZE: number = 5;
 
 export default class SessionService {
+
+
+
     private readonly sessionRepository: SessionRepository;
     private readonly webSiteRepository: WebSiteRepository;
     private readonly eventStore: EventStore;
@@ -171,9 +174,6 @@ export default class SessionService {
                             });
                         session.addInteractionListToExploration(explorationNumber, interactionList);
                     }
-
-                    session.stopExploration(explorationNumber, stopDate);
-
                     if (this.eventStore) {
                         this.eventStore.notifySessionExploration(sessionId, session.explorationList[explorationNumber]);
                     }                    
@@ -192,6 +192,70 @@ export default class SessionService {
                 } else {
                     throw new Error('wrong session id');
                 }                
+            })
+    }
+
+    pushActionList(sessionId: string, explorationNumber: number, interactionListData: Array<{
+            index: number, 
+            concreteType: string, 
+            kind: string, 
+            value: string, 
+            date?: Date}>,
+        ) {
+        let session : Session;
+        return this.mountSession(sessionId)
+            .then((mountSession) => {
+                if (mountSession) {
+                    session = mountSession;
+                    if (interactionListData) {
+                        const interactionList : Interaction[] =interactionListData
+                            .sort((interA, interB) => interA.index - interB.index)
+                            .map((interaction) => {
+                                if (interaction.concreteType === "Action") {
+                                    return new ActionInteraction(interaction.index, new Action(interaction.kind, interaction.value), interaction.date);
+                                }
+                                if (interaction.concreteType === "Comment") {
+                                    return new CommentInteraction(interaction.index, new Comment(interaction.kind, interaction.value), interaction.date);
+                                }
+                                if (interaction.concreteType === "Answer") {
+                                    return new AnswerInteraction(interaction.index, new Answer(interaction.kind, interaction.value), interaction.date);                                
+                                }
+                                else {
+                                    throw new Error(`Invalid Type of interaction ${interaction.concreteType}`)
+                                }
+                            });
+                        session.addInteractionListToExploration(explorationNumber, interactionList);
+
+                        return this.sessionRepository.updateInteractionListOfExploration(sessionId, explorationNumber, interactionList)
+                        .then( () => {
+                            const interactionList = session.explorationList[explorationNumber].interactionList;
+                            return this.sessionRepository.updateInteractionListOfExploration(sessionId, explorationNumber, interactionList);
+                        })
+                    }
+                } else {
+                    throw new Error('wrong session id');
+                }                
+            })       
+    }
+
+    // REMOVE THIS
+    incrementSubmissionAttempt(sessionId: string, explorationNumber: number): Promise<void> {
+        let session: Session;
+        return this.mountSession(sessionId)
+            .then((mountSession) => {
+                if (mountSession) {
+                    session = mountSession;
+                    
+                    if (explorationNumber <= session.explorationList.length) {
+                        const exploration: Exploration = session.explorationList[explorationNumber];
+                        exploration.submissionAttempt++; 
+                        return this.sessionRepository.setSubmissionAttempt(sessionId, explorationNumber, exploration.submissionAttempt);
+                    } else {
+                        throw new Error(`wrong exploration number ${explorationNumber} / ${session.explorationList.length}`);
+                    } 
+                } else {
+                    throw new Error('wrong session id');
+                }    
             })
     }
 

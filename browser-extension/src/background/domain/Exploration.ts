@@ -6,10 +6,15 @@ export default class Exploration {
     private _startDate : Date;
     private _stopDate : Date | undefined;
     private _actions: (Action | Comment )[];
+    private _explorationNumber: number;
+    private _hasBeenUpdated: boolean;
 
-    constructor() {
+
+    constructor(_explorationNumber: number) {
         this._actions = [];
         this._startDate = new Date();
+        this._explorationNumber = _explorationNumber
+        this._hasBeenUpdated = false;
     }
 
     get startDate(): Date {
@@ -33,12 +38,26 @@ export default class Exploration {
         return this._actions.length;
     }
 
+    get hasBeenUpdated(): boolean {
+        return this._hasBeenUpdated;
+    }
+
+    get submissionAttempt(): number {
+        this._hasBeenUpdated = false;
+        return this.submissionAttempt;
+    }
+
+    get explorationNumber(): number {
+        return this._explorationNumber;
+    }
+
     isEmpty(): boolean {
         return this._actions.length <= 1;
     }
 
     addAction(kind: string, value?: string): void {
         this._actions.push(new Action(kind, value, this._actions.length));
+        this._hasBeenUpdated = true;
     }
 
     removeLastAction() {
@@ -53,24 +72,21 @@ export default class Exploration {
     }
 
     stop(): void {
-        if (this._actions.some(action => action.value === "end")) {
-            throw new Error("Exploration is already stopped");
-        } else  {
-            this.addAction("end");
-            this._stopDate = new Date();
-        }
+        this._stopDate = new Date();
     }
 
     interactionsToJSON(): {
+                            index: number,
                             concreteType: string;
                             kind: string;
                             value: string | undefined;
                             date: Date;
                         }[] {
-        return this._actions.map(interaction => {
+        return this._actions.map((interaction, index) => {
 
             return (
                 {
+                    index: index,
                     concreteType: interaction.getConcreteType(),
                     kind: interaction.kind,
                     value: interaction.value,

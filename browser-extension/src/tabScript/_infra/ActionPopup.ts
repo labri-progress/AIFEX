@@ -5,7 +5,7 @@ import ActionState from '../domain/ActionsAndElements';
 const PROBABILITY_POPUP = "AIFEX_probabilityPopup";
 const MAX_DISPLAYED_LINES = 9;
 
-export default class ActionsPopupView {
+export default class ActionsPopup {
     hoveredElement: HTMLElement | undefined;
     private checkHoverElementsExistsInterval: NodeJS.Timeout | undefined;
     private probabilityPopup: HTMLElement | undefined;
