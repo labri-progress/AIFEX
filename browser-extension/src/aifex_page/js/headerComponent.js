@@ -8,6 +8,14 @@
         component.style.display = 'flex';
         configureButton.style.display = 'none';
         homeButton.style.display = 'none';
+        if (!state.popupIsDetached) {
+            getCurrentWindow()
+                .then( currentWindow => {
+                    if (currentWindow.id !== state.managedWindowId) {
+                        detachButton.style.display = 'none';
+                    }
+                });
+        }
     }
 
     detachButton.addEventListener("click", (e) => {

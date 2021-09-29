@@ -414,12 +414,12 @@ export default class Background {
             }
             return Promise.all(promises)
                 .then(() => {
-                    console.log("comments",JSON.stringify(this._commentDistributions));
+                    //console.log("comments",JSON.stringify(this._commentDistributions));
                     if (this._commentDistributions && this._commentDistributions.length > 0) {
-                        console.log("with notif");
+                        //console.log("with notif");
                         this._browserService.setExtensionIconToReceivedNotification();
                     } else {
-                        console.log("without notif");
+                        //console.log("without notif");
                         this._browserService.setExtensionIconToRecording();
                     }
                     this.refreshPopup();
@@ -479,7 +479,7 @@ export default class Background {
                                 const MIN_NUMBER_OF_ACTIONS = 2;
                                 const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
                                 if (HAS_MORE_THAN_START_END_ACTIONS) {
-                                    console.log("Sending exploration")
+                                    //console.log("Sending exploration")
                                     return this.sendExploration();
                                 }
                             })

@@ -3,18 +3,11 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
-
     <title>AIFEX</title>
-    <!--<link rel="stylesheet" href="./css/bootstrap.min.css">-->
     <link rel="stylesheet" href="./css/popup.css">
     <link rel="stylesheet" href="./css/font-awesome.min.css">
-    <!--<link rel="stylesheet" type="text/css" href="./css/aifex_page.css">-->
-
-    <!--<script src="./js/jquery.min.js"></script>-->
-    <!--<script src="./js/bootstrap.bundle.min.js"></script>-->
+    
     <script src="./js/browserAPI.js" defer></script>
-
 
     <!-- Components Render Function-->
     <script src="./js/popup.js" defer></script>
@@ -35,7 +28,7 @@
         <button id="home-button" type="button">home</button>
     </header>
 
-    <div class="container">
+    <div id="container">
         <div id="homeComponent">
             <h3>Join a session or create a new one ?</h3>
             <button id="goToJoinSession" class="button btn_marg"> Join </button>
@@ -74,44 +67,37 @@
 
 
         <div id="connectToSessionComponent">
-            <h3>Connect to a session</h3>
-            <form id="connectionForm">
-                <div class="form-group ">
-                    <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
-                    <div class="input-group ">
-                        <input id="connexionURLInput" class="form-control" type="text" placeholder="Connection URL"
-                            required />
-                        <a id="connexionButton" class="btn btn-default input-group-addon"><i
-                                class="fa fa-sign-in"></i></a>
-                    </div>
-                </div>
-            </form>
+            <h3>Join a session</h3>
+            <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
+            <input id="connexionURLInput" type="text" placeholder="Connection URL" />
+            <button id="connexionButton">Join</button>
         </div>
 
         <div id="makeExplorationComponent">
-            <h3>Make Some Explorations</h3>
-            <div class="form-group">
-                <div class="btn-group">
-                    <a id="play-button" class="btn btn-default">
-                        <i class="fa fa-play" title="Play"></i>
-                    </a>
-                    <a id="stop-button" class="btn btn-default">
-                        <i class="fa fa-stop" title="Stop"></i>
-                    </a>
-                    <a id="trash-button" class="btn btn-default">
-                        <i class="fa fa-trash" title="Trash"></i>
-                    </a>
-                    <a id="comment-button" class="btn btn-default">
-                        <i class="fa fa-comment" title="Add a Comment"></i>
-                    </a>
-                    <a id="read-comment-button" class="btn btn-default">
-                        <i class="fa fa-comment" title="Read Comment"></i>
-                    </a>
-                </div>
-            </div>
-            <div id="comment-sub-component">
-                <h3>Comment on an exploration</h3>
-                <form id="commentForm">
+            <h3 id="makeExplorationTitle">Make Some Explorations</h3>
+
+            <a id="play-button">
+                Start <i class="fa fa-play" title="Play"></i>
+            </a>
+            <a id="stop-button">
+                Stop/Save <i class="fa fa-stop" title="Stop"></i>
+            </a>
+            <a id="trash-button">
+                Trash <i class="fa fa-trash" title="Trash"></i>
+            </a>
+
+
+            <div id="commentSubComponent">
+                <h3>Comments in your exploration</h3>
+                <a id="read-comment-button">
+                    There are some existing comments, read them ! <i class="fa fa-commenting" title="Read Comment"></i>
+                </a>
+                <div id="comment-list"></div>
+
+                <a id="comment-button">
+                    Do you want to add a new comment ? <i class="fa fa-comment" title="Add a Comment"></i>
+                </a>
+                <div id="commentForm">
                     <div id="commentSuccessul" class="alert-success" role="alert">
                         Comment registered
                     </div>
@@ -140,7 +126,7 @@
                             <button id="clearComment" class="btn btn-secondary"> Clear</button>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

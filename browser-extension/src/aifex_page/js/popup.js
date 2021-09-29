@@ -9,7 +9,7 @@ function getStateAndRender() {
     sendMessage({ kind: "getStateForPopup" })
         .then(newState => {
             if (newState !== undefined) {
-                state = newState
+                state = newState;
                 renderFunctionOfComponents.forEach(renderFunction => renderFunction());
             }
         });

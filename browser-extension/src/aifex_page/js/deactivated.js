@@ -14,3 +14,5 @@ document.getElementById("attach-button").addEventListener("click", (e) => {
         }
     });
 })
+
+document.querySelector('header').style.display = 'flex';

@@ -1,31 +1,52 @@
 (() => {
     let component = document.getElementById('makeExplorationComponent');
+    let makeExplorationTitle = document.getElementById('makeExplorationTitle');
     let playButton = document.getElementById('play-button');
     let stopButton = document.getElementById('stop-button');
     let trashButton = document.getElementById('trash-button');
     let commentButton = document.getElementById('comment-button');
-    let commentSubComponent = document.getElementById('comment-sub-component');
+    let commentSubComponent = document.getElementById('commentSubComponent');
     let submitCommentButton = document.getElementById('submit-comment');
+    let commentForm = document.getElementById('commentForm');
+    let readCommentButton = document.getElementById('read-comment-button');
+    let commentList = document.getElementById('comment-list');
+
+    let readCommentIsVisible = false;
+    let addCommentIsVisible = false;
 
     function render() {
         if (state.pageKind === 'Explore') {
-            component.style.display = 'block';
+            component.style.display = 'flex';
+            if (!state.popupIsDetached) {
+                getCurrentWindow()
+                    .then( currentWindow => {
+                        if (currentWindow.id !== state.managedWindowId) {
+                            component.innerHTML = 'AIFEX runs in another window';
+                        }
+                    });
+                }
         } else {
             component.style.display = 'none';
         }
         if (state.isRecording) {
+            makeExplorationTitle.innerHTML = 'Stop/Save your exploration or Trash it';
             playButton.style.display = 'none';
             stopButton.style.display = 'block';
             trashButton.style.display = 'block';
-            commentButton.style.display = 'block';
-            commentSubComponent.style.display = 'none';
+            commentSubComponent.style.display = 'flex';
+            commentForm.style.display = 'none';
+            if (state.commentDistributionList && state.commentDistributionList.length > 0) {
+                readCommentButton.style.display = 'block';
+            } else {
+                readCommentButton.style.display = 'none';
+            }
+
         } else {
+            makeExplorationTitle.innerHTML = 'Start a new exploration';
             playButton.style.display = 'block';
             stopButton.style.display = 'none';
             trashButton.style.display = 'none';
-            commentButton.style.display = 'none';
             commentSubComponent.style.display = 'none';
-
         }
     }
 
@@ -93,8 +114,13 @@
     }
 
     function openCommentView() {
-        console.log('open comment view');
-        commentSubComponent.style.display = 'block';
+        if (!addCommentIsVisible) {
+            commentForm.style.display = 'flex';
+            addCommentIsVisible = true;
+        } else {
+            commentForm.style.display = 'none';
+            addCommentIsVisible = false;
+        }
     }
 
     function submitComment(e) {
@@ -124,11 +150,44 @@
             });
     }
 
+    function readComments() {
+        if (!readCommentIsVisible) {
+            if (state.commentDistributionList && state.commentDistributionList.length > 0) {
+                commentList.style.display = 'flex';
+                commentList.style.flexDirection = 'column';
+                if (commentList.children.length === 0) {
+                    state.commentDistributionList.forEach((commentDistribution, i) => {
+                        if (commentDistribution._comment) {
+                            let [kind, description] = commentDistribution._comment.split('$');
+                            let commentId = document.createElement('div');
+                            commentId.innerHTML = `Comment ${i + 1}`;
+                            commentId.className = 'comment-id';
+                            let commentKind = document.createElement('div');
+                            commentKind.className = 'comment-kind';
+                            commentKind.innerHTML = "kind:" + kind;
+                            let commentDescription = document.createElement('div');
+                            commentDescription.className = 'comment-description';
+                            commentDescription.innerHTML = "description:" + description;
+                            commentList.appendChild(commentId);
+                            commentList.appendChild(commentKind);
+                            commentList.appendChild(commentDescription);
+                        }
+                    });
+                }
+                readCommentIsVisible = true;
+            }
+        } else {
+            commentList.style.display = 'none';
+            readCommentIsVisible = false;
+        }
+    }
+
     playButton.addEventListener('click', startExploration);
     stopButton.addEventListener('click', stopExploration);
     trashButton.addEventListener('click', trashExploration);
     commentButton.addEventListener('click', openCommentView);
     submitCommentButton.addEventListener('click', submitComment);
+    readCommentButton.addEventListener('click', readComments);
 
     addComponentToPopup(render);
 
