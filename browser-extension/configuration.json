@@ -2,7 +2,7 @@
     "recordActionByAction": true,
     "rejectIncorrectExplorations": true,
     "displayEvaluatorGuide": false,
-    "displayNeverUsedAction": true,
+    "displayNeverUsedAction": false,
     "actionBorderSize": 5,
     "oftenColor": "#ff0000",
     "sometimesColor": "#FFA500",

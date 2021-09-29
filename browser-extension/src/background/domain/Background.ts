@@ -239,7 +239,7 @@ export default class Background {
             this._isRecording = true;
 
             return this.createExploration()
-            .then(() => {
+            .then((explorationNumber) => {
                 return this.processNewAction("start");
             })
             .then(() => {
@@ -373,7 +373,7 @@ export default class Background {
                 if (!this._serverURL ||  !this._sessionId) {
                     throw new Error("Not connected to a session")
                 }
-                if (!this._exploration.explorationNumber) {
+                if (this._exploration.explorationNumber === undefined) {
                     throw new Error("The exploration has not been correctly started")
                 }
                 const actionList = this._exploration.actions;

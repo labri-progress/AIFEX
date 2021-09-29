@@ -130,7 +130,6 @@ export default function attachRoutes(app: Express , modelService: ModelService):
         }
 
         const seq = new Sequence();
-
         interactionList.forEach((interaction) => {
             let value = interaction.kind;
             if (interaction.value !== undefined) {

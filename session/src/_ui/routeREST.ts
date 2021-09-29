@@ -253,8 +253,6 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
         });
     });
 
-
-    /// REMOVE THIS
     app.post("/session/:sessionId/exploration/:number/notifySubmision", (req, res) => {
         let {sessionId, number} = req.params;
         logger.info(`notify submision ${number} of session ${sessionId}`);
@@ -264,7 +262,6 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
             res.status(INVALID_PARAMETERS_STATUS).send("number must be an integer");
             return;
         }
-        console.log("call ing increment service")
         sessionService.incrementSubmissionAttempt(sessionId, explorationNumber)
         .then(() => {
             logger.debug(`exploration ${number} submission attempt updated`);
