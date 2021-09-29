@@ -15,8 +15,9 @@ function handlePlay() {
             getState();
         } else {
             alert(`
-            You must follow the elements circled by the pink ball and complete every step of the scenario ! \n
-            Wait at least 2 seconds after each click, so the indications are refreshed
+            To get the reward bonus, you must complete every step of the scenario! \n
+            The participation code for the HIT is :  \n
+            Negotiation
             ` )
             render(newState);
         }
@@ -27,7 +28,6 @@ function handlePlay() {
 }
 
 function handleStop() {
-    console.log('handle stop');
     sendMessage({
         kind: 'stopExploration'
     })
@@ -35,13 +35,13 @@ function handleStop() {
         if (response.error) {
             console.error('stop exploration error', response.error);
         } else {
-            console.log(state.interactionList)
+            console.log(response)
             ////REMOVE THIS LINE
-            if (state.interactionList.length >= 5) {
+            if (state.evaluation && state.evaluation.validated) {
                 alert(`
                 Thank you for participating ! \n
-                The secret word to validate the HIT is: \n
-                Barnabas \n
+                The completion code to get the bonus reward is: \n
+                Tropical \n
                 ` )
             }
             render(response)
@@ -70,7 +70,6 @@ function handleRestart() {
 }
 
 function handleTrash() {
-    console.log('handle trash');
     sendMessage({
         kind: 'removeExploration'
     })

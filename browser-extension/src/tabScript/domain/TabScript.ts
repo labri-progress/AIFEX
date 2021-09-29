@@ -49,25 +49,7 @@ export default class TabScript {
         if (this._highlighter !== undefined) {
             return this._backgroundService.getState()
             .then((state: State) => {
-                //REMOVE THIS
-                if (!alertAlreadyShown && state && state.exploration && (state.exploration as any)._actions && 
-                    (state.exploration as any)._actions.length > 0) {
-                
-                    const lastAction = (state.exploration as any)._actions[(state.exploration as any)._actions.length-1].kind;
-                    let lastActionAmazon = ["ProceedToCheckout", "sideButtonCheckout"]
-                    let finalActions = [...lastActionAmazon];
 
-                    let hasMadeLastAction = finalActions.some(action => action === lastAction)
-                    if (hasMadeLastAction) {
-
-                        alertAlreadyShown = true
-                        alert(`
-                        You have complete all the step of the test task! \n
-                        Open the plugin, and click on the stop button to get the completion code
-                        \n
-                        `);
-                    }
-                }
 
                 if ((!state.isActive || state.overlayType === "shadow") && this._highlighter !== undefined ) {
                     return this._highlighter.hide();
@@ -75,7 +57,19 @@ export default class TabScript {
                 return Promise.all([
                     this.fetchActionsAndElements(),
                     this.getExplorationEvaluation()
-                ]).then(([actionsAndElements, evaluation]) => {                    
+                ]).then(([actionsAndElements, evaluation]) => {    
+                    if (!alertAlreadyShown && state && state.exploration && (state.exploration as any)._actions && 
+                    (state.exploration as any)._actions.length > 0) {
+
+                    if (evaluation && evaluation.isAccepted) {
+                        alertAlreadyShown = true
+                        alert(`
+                        You have complete all the step of the test task! \n
+                        Open the plugin, and click on the stop button to get the completion code
+                        \n
+                        `);
+                    }
+                }                
                     this._actionsAndElements = actionsAndElements;
                     return this._highlighter.refresh(this._ruleService.elementListMatchedByRule, this._ruleService.elementRules, actionsAndElements, evaluation);
                 })

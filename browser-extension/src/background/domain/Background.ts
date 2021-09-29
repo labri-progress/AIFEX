@@ -423,6 +423,8 @@ export default class Background {
             this._isRecording = false;
             if (this._exploration.hasBeenUpdated && this._serverURL && this._sessionId && this._recordActionByAction) {
                 this._aifexService.notifySubmissionAttempt(this._serverURL, this._sessionId, this._exploration.explorationNumber);
+            } else {
+                this._exploration.incSubmissionAttempt()
             }
             let exploration : Exploration = this._exploration;
             return this.evaluateExploration()
@@ -469,6 +471,10 @@ export default class Background {
                         })
                         .then((_ : void[]) => {
                             return true;
+                        })
+                        .catch((error) => {
+                            console.error(error.message);
+                            return false;
                         })
                }
            })

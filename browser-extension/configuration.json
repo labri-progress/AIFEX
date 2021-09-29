@@ -1,7 +1,7 @@
 {
-    "recordActionByAction": false,
+    "recordActionByAction": true,
     "rejectIncorrectExplorations": true,
-    "displayEvaluatorGuide": true,
+    "displayEvaluatorGuide": false,
     "displayNeverUsedAction": true,
     "actionBorderSize": 5,
     "oftenColor": "#ff0000",

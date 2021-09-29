@@ -90,11 +90,9 @@ export default class RuleService {
                 return new CSSSelectorRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
             case "attributeValue":
                 if (data.match.attributeName === undefined) {
-                    console.log("fail create rule attribute")
-                    console.error("attributeName is required when suffix is attributeValue")
+                    console.log("attributeName is required when suffix is attributeValue")
                     return new SimpleRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
                 } else {
-                    console.log("create rule attribute")
                     return new AttributeValueRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description, data.match.attributeName);
                 }
             default:

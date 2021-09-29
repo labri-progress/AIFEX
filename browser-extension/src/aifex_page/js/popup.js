@@ -145,9 +145,10 @@ function toggleDetachPopup() {
 }
 
 function displayInvalidExploration() {
+    console.log("displayInvalidExploration", state)
     alert(` \n
     Your test does not contain all the actions of the scenario and cannot be submitted. \n
-    Follow the steps indicated with the magenta outline. \n
-    If you want to cancel your exploration, click on the trash button. \n
+    You must follow all the steps in order. \n
+    You can add the missing actions or restart with the trash button. \n
     `);
 }

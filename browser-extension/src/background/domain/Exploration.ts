@@ -8,13 +8,14 @@ export default class Exploration {
     private _actions: (Action | Comment )[];
     private _explorationNumber: number;
     private _hasBeenUpdated: boolean;
-
+    private _submissionAttempt: number;
 
     constructor(_explorationNumber: number) {
         this._actions = [];
         this._startDate = new Date();
         this._explorationNumber = _explorationNumber
         this._hasBeenUpdated = false;
+        this._submissionAttempt = 0
     }
 
     get startDate(): Date {
@@ -43,12 +44,15 @@ export default class Exploration {
     }
 
     get submissionAttempt(): number {
-        this._hasBeenUpdated = false;
-        return this.submissionAttempt;
+        return this._submissionAttempt;
     }
 
     get explorationNumber(): number {
         return this._explorationNumber;
+    }
+
+    incSubmissionAttempt(): void {
+        this._submissionAttempt++;
     }
 
     isEmpty(): boolean {
