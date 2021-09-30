@@ -74,12 +74,14 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
                     createdAt: session.createdAt,
                     updatedAt: session.updatedAt,
                     overlayType: session.overlayType,
+
                     explorationList: session.explorationList.map((exploration) => {
                         return {
                             testerName: exploration.tester.name,
                             startDate: exploration.startDate,
                             stopDate: exploration.stopDate,
                             explorationNumber: exploration.explorationNumber,
+                            submissionAttempt: exploration.submissionAttempt,
                             interactionList: exploration.interactionList.map((interaction) => {
                                 if (interaction instanceof ActionInteraction) {
                                     return {
