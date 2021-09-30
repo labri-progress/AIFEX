@@ -21,6 +21,7 @@ Then you can get a bonus reward by getting the completion code for following all
 9. Unhide one of your page.
 
 <h2>Prerequisite</h2>
+Make sure to use the English version of Reddit, otherwise the tool won't work and you will not be able to finish
 You must have installed <a href="https://www.google.com/chrome/fast-and-secure/">Google Chrome</a> 
 You need to be logged in on reddit, you can use a google account. 
 
