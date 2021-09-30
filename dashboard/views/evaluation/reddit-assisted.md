@@ -38,7 +38,7 @@ You need to be logged in on reddit, you can use a google account.
 <h2>Step 2</h2>
 
 1. On the Chrome window, click on the extensions button on the top right, then on AIFEX
-2. On the page that opens, enter the code-url and press enter: https://researchexperimentation.fr/join?sessionId=yjF5lqqdc&modelId=CFkcSIBKK
+2. On the page that opens, enter the code-url and press enter: https://researchexperimentation.fr/join?sessionId=AB0EKKU8T&modelId=1690Zmqop
 
 <img src="/static/images/connect.png"
     width="600"
