@@ -26,7 +26,7 @@ You need to be logged in on reddit, you can use a google account.
 
 <h2>Step 1</h2>
 
-1. Click <a href="/static/chrome-assisted.zip" download="chromeExtension">here</a> to download the zip file of our Chrome plugin.
+1. Click <a href="/static/chrome-not-assisted.zip" download="chromeExtension">here</a> to download the zip file of our Chrome plugin.
 2. Unzip it somewhere you can find it.
 3. Open Google Chrome.
 4. Go to the URL chrome://extensions/ or options => More Tools => Extensions 

@@ -1,8 +1,10 @@
 {
     "recordActionByAction": true,
     "rejectIncorrectExplorations": true,
-    "displayEvaluatorGuide": false,
-    "displayNeverUsedAction": false,
+    "displayEvaluatorGuide": true,
+    "displayNeverUsedAction": true,
+    "displayProbabilityPopup": true,
+    "displayCanvas": true,
     "actionBorderSize": 5,
     "oftenColor": "#ff0000",
     "sometimesColor": "#FFA500",

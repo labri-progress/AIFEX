@@ -5,11 +5,12 @@ import ActionsAndElements from "./ActionsAndElements";
 import ExplorationEvaluation from "./ExplorationEvaluation";
 import Rule from "./Rule";
 import HighlighterCanvas from "../_infra/HighlighterCanvas";
+import configuration from "../../../configuration.json";
 
 
 export default class Highlighter {
-    private _actionProbabilityView : ActionHighlighter;
-    private _actionPopupView : ActionsPopup;
+    private _actionHighlighter : ActionHighlighter;
+    private _actionPopup : ActionsPopup;
     private _evaluationActionsBorderView: EvaluationHighlighter;
     private _highlighterCanvas : HighlighterCanvas;
 
@@ -20,14 +21,13 @@ export default class Highlighter {
 
     constructor(highlighterCanvas: HighlighterCanvas, actionPopup:ActionsPopup, actionHighlighter: ActionHighlighter, evaluationHighlighter: EvaluationHighlighter) {
         this._highlighterCanvas = highlighterCanvas;
-        this._actionPopupView = actionPopup;
-        this._actionProbabilityView = actionHighlighter;
+        this._actionPopup = actionPopup;
+        this._actionHighlighter = actionHighlighter;
         this._evaluationActionsBorderView = evaluationHighlighter;
         this.elementListMatchedByRule = [];
         this.elementRules = undefined;
         this.actionsAndElements = undefined;
         this.evaluation = undefined;
-       
     }
 
     refresh(elementListMatchedByRule: HTMLElement[], elementRules: Map<HTMLElement, Rule[]>, actionsAndElements: ActionsAndElements, evaluation: ExplorationEvaluation | undefined): Promise<void> {
@@ -36,7 +36,9 @@ export default class Highlighter {
             this.elementRules = elementRules;
             this.actionsAndElements = actionsAndElements;
             this.evaluation = evaluation;
-            this._highlighterCanvas.reset()
+            if (configuration.displayCanvas) {
+                this._highlighterCanvas.reset()
+            }
             this.display();
             resolve();
         })
@@ -44,20 +46,24 @@ export default class Highlighter {
 
     private display() {
         if (this.actionsAndElements !== undefined && this.elementRules !== undefined) {
-            this._actionProbabilityView.show(this.actionsAndElements, this.elementListMatchedByRule, this.elementRules);
-            this._actionPopupView.show(this.actionsAndElements);
+            this._actionHighlighter.show(this.actionsAndElements, this.elementListMatchedByRule, this.elementRules);
+            this._actionPopup.show(this.actionsAndElements);
         }
         if (this.evaluation) {
             this._evaluationActionsBorderView.show(this.evaluation);
         }
-        this._highlighterCanvas.show();
+        if (configuration.displayCanvas) {
+            this._highlighterCanvas.show();
+        }
     }
 
     hide(): Promise<void> {
-        this._actionPopupView.hide();
-        this._actionProbabilityView.hide();
+        this._actionPopup.hide();
+        this._actionHighlighter.hide();
         this._evaluationActionsBorderView.hide();
-        this._highlighterCanvas.hide()
+        if (configuration.displayCanvas) {
+            this._highlighterCanvas.hide();
+        }
         return Promise.resolve();
     }
 

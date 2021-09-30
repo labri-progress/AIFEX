@@ -8,7 +8,6 @@ import State from "./State";
 import ActionsAndElements from "./ActionsAndElements";
 import {logger} from "../framework/Logger";
 import Highlighter from "./Highlighter";
-import HighlighterCanvas from "../_infra/HighlighterCanvas";
 
 let alertAlreadyShown = false;
 
@@ -41,6 +40,8 @@ export default class TabScript {
             this._ruleService.mapRulesToElements();
             if (state.isActive) {
                 this.explorationStarted();
+            } else {
+                this._highlighter.hide();
             }
         })
     }
@@ -49,11 +50,6 @@ export default class TabScript {
         if (this._highlighter !== undefined) {
             return this._backgroundService.getState()
             .then((state: State) => {
-
-
-                if ((!state.isActive || state.overlayType === "shadow") && this._highlighter !== undefined ) {
-                    return this._highlighter.hide();
-                }
                 return Promise.all([
                     this.fetchActionsAndElements(),
                     this.getExplorationEvaluation()
@@ -71,7 +67,9 @@ export default class TabScript {
                     }
                 }                
                     this._actionsAndElements = actionsAndElements;
-                    return this._highlighter.refresh(this._ruleService.elementListMatchedByRule, this._ruleService.elementRules, actionsAndElements, evaluation);
+                    if (state.isActive) {
+                        return this._highlighter.refresh(this._ruleService.elementListMatchedByRule, this._ruleService.elementRules, actionsAndElements, evaluation);
+                    }
                 })
             });
         } else {

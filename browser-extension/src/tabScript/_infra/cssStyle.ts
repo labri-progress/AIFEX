@@ -1,11 +1,5 @@
 export function makeCSS() {
   return `
-
-.aifex_canvas {
-  pointer-events: none;
-  position: absolute;
-}
-
 #AIFEX_probabilityPopup {
   background: rgba(30, 32, 44, .95);
   max-width: 400px;

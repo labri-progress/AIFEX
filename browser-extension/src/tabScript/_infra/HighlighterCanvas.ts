@@ -1,9 +1,9 @@
-import highlighterConfig from "../../../configuration.json";
+import configuration from "../../../configuration.json";
 
 export default class HighlighterCanvas {
 
     private _canvasMap: Map<number, HTMLCanvasElement>;
-    private actionBorderSize = highlighterConfig.actionBorderSize;    
+    private actionBorderSize = configuration.actionBorderSize; 
     private elementsToHighlight: Map<HTMLElement, string>;
     private elementsToHighlightAnimated: Set<HTMLElement>;
     private elementToZindex: Map<HTMLElement, number>;
@@ -22,8 +22,9 @@ export default class HighlighterCanvas {
         this.lastTime = 0;
         window.addEventListener("resize", this.resizeCanvas.bind(this))
         window.addEventListener("scroll", this.moveCanvas.bind(this))
-
-        window.requestAnimationFrame(this.draw.bind(this));
+        if (configuration.displayCanvas) {
+            window.requestAnimationFrame(this.draw.bind(this));
+        }
     }
 
     private resizeCanvas() {
@@ -43,10 +44,11 @@ export default class HighlighterCanvas {
     private buildCanvas(index: number): HTMLCanvasElement {
         let canvas = document.createElement("canvas") as HTMLCanvasElement;
         canvas.id = "aifex_canvas_" + index; 
-        canvas.classList.add("aifex_canvas")
         canvas.style.zIndex = index.toString();
         canvas.style.top = window.scrollY.toString() + "px";
         canvas.style.left = window.scrollX.toString()+ "px"
+        canvas.style.pointerEvents = "none";
+        canvas.style.position = "absolute"
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         document.body.appendChild(canvas);
@@ -75,7 +77,9 @@ export default class HighlighterCanvas {
 
     public show() {
         this.isStopped = false;
-        window.requestAnimationFrame(this.draw.bind(this));
+        if (configuration.displayCanvas) {
+            window.requestAnimationFrame(this.draw.bind(this));
+        }
     }
 
     public hide() {

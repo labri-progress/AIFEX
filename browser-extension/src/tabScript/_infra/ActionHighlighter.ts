@@ -4,6 +4,8 @@ import ActionsAndElements from '../domain/ActionsAndElements';
 import Rule from '../domain/Rule';
 import highlighterConfig from "../../../configuration.json";
 import HighlighterCanvas from './HighlighterCanvas';
+import { CategoryConfiguration } from 'typescript-logging';
+import configuration from "../../../configuration.json";
 
 const WARM_COLOR_THRESHOLD = 0.6;
 const MEDIUM_COLOL_THRESHOLD = 0.3;
@@ -72,7 +74,9 @@ export default class ActionHighlighter {
                 } else {
                     if (!htmlElement.hasAttribute("aifex_frequency")) {
                         htmlElement.setAttribute("aifex_frequency", "never")
-                        this._highlighterCanvas.highlightElement(htmlElement, neverColor)
+                        if (configuration.displayNeverUsedAction) {
+                            this._highlighterCanvas.highlightElement(htmlElement, neverColor)
+                        }
                     }
                 }
             }

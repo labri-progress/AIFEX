@@ -366,7 +366,8 @@ export default class Background {
 
             const promises = [
                 this.fetchComments(),
-                this.evaluateExploration()
+                this.evaluateExploration(),
+                this.fetchProbabilityMap()
             ];
 
             if (this._recordActionByAction) {
@@ -386,10 +387,6 @@ export default class Background {
 
                 promises.push(pushActionListPromise);
             }
-            if (this._overlayType === "rainbow") {
-                promises.push(this.fetchProbabilityMap())
-            }
-
             return Promise.all(promises)
             .then(() => this.refreshPopup())
             .catch((error) => console.error("Failed to process new action : ", prefix, error))

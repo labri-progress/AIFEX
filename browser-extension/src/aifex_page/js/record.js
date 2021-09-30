@@ -17,7 +17,7 @@ function handlePlay() {
             alert(`
             To get the reward bonus, you must complete every step of the scenario! \n
             The participation code for the HIT is :  \n
-            Negotiation
+            Gelatine
             ` )
             render(newState);
         }
@@ -41,7 +41,7 @@ function handleStop() {
                 alert(`
                 Thank you for participating ! \n
                 The completion code to get the bonus reward is: \n
-                Tropical \n
+                Marvellous \n
                 ` )
             }
             render(response)
