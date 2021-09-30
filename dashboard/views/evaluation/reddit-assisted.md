@@ -102,9 +102,3 @@ If you don't have the choice, but to click on a red element, it is ok.
 2. Click on the Stop button
 3. Receive the completion code to complete the survey.
 4. Uninstall the plugin 
-
-<figure>
-<img src="/static/images/reddit-color.png"
-    width="600"   />
-    <figcaption>Pink + Red or Orange : If one element has a pink ball, prioritize it, else chose the one with the cooler color. (blue > green > orange > red)</figcaption>
-</figure>

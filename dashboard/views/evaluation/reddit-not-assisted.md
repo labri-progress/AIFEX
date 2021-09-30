@@ -62,7 +62,6 @@ You need to be logged in on reddit, you can use a google account.
 Go back to the Reddit page. You should see colored borders on some Reddit page elements, and an animation running around the search bar.
 
 ===> **WAIT A FEW SECONDS BEFORE EACH CLICK** <===
-===> **FOLLOW THE PINK BALL** <===
 
 Your goal is to make an order by completing the following steps indicated by an animated pink ball. The ball follows your progression, so if you don't see it, maybe you missed a step. You are encouraged to make some other actions between these steps, such as picking another comminuty, using the search bar, opening a post ... But you **MUST** make all the 9 following steps in order indicated by the pink ball.
 
@@ -101,9 +100,3 @@ If you don't have the choice, but to click on a red element, it is ok.
 2. Click on the Stop button
 3. Receive the completion code to complete the survey.
 4. Uninstall the plugin 
-
-<figure>
-<img src="/static/images/reddit-color.png"
-    width="600"   />
-    <figcaption>Pink + Red or Orange : If one element has a pink ball, prioritize it, else chose the one with the cooler color. (blue > green > orange > red)</figcaption>
-</figure>
