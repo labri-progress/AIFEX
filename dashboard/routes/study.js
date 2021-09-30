@@ -8,4 +8,12 @@ module.exports = function attachRoutes(app, config) {
         res.render('evaluation/amazon-not-assisted.ejs', {account:req.session});
     });
 
+    app.get('/study/reddit-assisted', (req, res) => {
+        res.render('evaluation/reddit-assisted.ejs', {account:req.session});
+    });
+
+    app.get('/study/reddit-not-assisted', (req, res) => {
+        res.render('evaluation/reddit-not-assisted.ejs', {account:req.session});
+    });
+
 }

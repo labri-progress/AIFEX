@@ -109,16 +109,20 @@ export default class HighlighterCanvas {
             if (canvas === undefined) {
                 canvas = this.buildCanvas(zIndex);
             }
+            element.setAttribute("aifex_canvas_used", zIndex.toString());
             const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
             if (ctx === null) {
                 continue;
             }
-            ctx.fillStyle = color;
-            ctx.fillRect(boundedBox.x- this.actionBorderSize, 
-                        boundedBox.y-this.actionBorderSize, 
-                        boundedBox.width+2*this.actionBorderSize, 
-                        boundedBox.height+2*this.actionBorderSize)
-            ctx.clearRect(boundedBox.x, boundedBox.y, boundedBox.width, boundedBox.height)
+
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = this.actionBorderSize;
+            ctx.rect(boundedBox.x- this.actionBorderSize/2, 
+                boundedBox.y - this.actionBorderSize/2, 
+                boundedBox.width + this.actionBorderSize/2,
+                boundedBox.height + this.actionBorderSize/2);
+            ctx.stroke();
         }
     }
 
@@ -186,13 +190,13 @@ export default class HighlighterCanvas {
                 if (index !== "auto") {
                     let indexInt = Number.parseInt(index)
                     if (indexInt !== NaN && indexInt !== undefined && indexInt > maxIndex) {
-                        this.elementToZindex.set(element, indexInt)
+                        this.elementToZindex.set(element, indexInt+1)
                         maxIndex = indexInt;
                     }
                 }
                 elementIt = elementIt.parentElement
             }
-            this.elementToZindex.set(element, maxIndex)
+            this.elementToZindex.set(element, maxIndex+1)
             return maxIndex
         }
     }
@@ -208,11 +212,14 @@ export default class HighlighterCanvas {
     }
 
     private isInViewport(rect: DOMRect) {
+        if (rect.width === 0 || rect.height === 0) {
+            return false;
+        }
         return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            rect.bottom >= 0 &&
+            rect.right >= 0 &&
+            rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.left <= (window.innerWidth || document.documentElement.clientWidth)
         );
     }
 
