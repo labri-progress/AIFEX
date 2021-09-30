@@ -77,23 +77,6 @@ Your goal is to make an order by completing the following steps indicated by an 
 8. Open the HIDDEN page.
 9. Unhide one of your page.
 
-<figure>
-<img src="/static/images/guide-reddit.png"
-    width="600"
-    />
-    <figcaption>Pink Border : Click on one of the communities</figcaption>
-</figure>
-
-The elements with colored border (red, orange, green) indicate what the other testers have done. 
-Your goal is to avoid the red and orange borders, as it means that a lot of testers have done this action.
-If you don't have the choice, but to click on a red element, it is ok.
-
-<figure>
-<img src="/static/images/reddit-color.png"
-    width="600"   />
-    <figcaption>Pink + Red or Orange : If one element has a pink ball, prioritize it, else chose the one with the cooler color. (blue > green > orange > red)</figcaption>
-</figure>
-
 <h2>Step 4</h2>
 
 1. When you finish the scenario, a warning message will ask you to open the plugin (extensions button on the top right, then AIFEX).
