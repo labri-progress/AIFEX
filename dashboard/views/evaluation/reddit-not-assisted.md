@@ -3,6 +3,8 @@ To validate the HIT, you must complete the following steps. You will then get a 
 You are participating to a crowdtesting session ! Your goal is to explore a scenario on the reddit website. You have to follow a list of step, but also make your test a bit unique.
 
 First you will have to install our Google Chrome plugin, that records your actions on reddit.
+**If you have already an AIFEX plugin installed, uninstall it, or you won't be able to fini the HIT**
+
 After that you receive the participation code for the HIT.
 
 Then you can get a bonus reward by getting the completion code for following all the steps of our scenario, and get the bonus reward.
@@ -27,6 +29,7 @@ You need to be logged in on reddit, you can use a google account.
 
 <h2>Step 1</h2>
 
+0. **If you have already an AIFEX plugin installed, uninstall it, or you won't be able to fini the HIT**
 1. Click <a href="/static/chrome-not-assisted.zip" download="chromeExtension">here</a> to download the zip file of our Chrome plugin.
 2. Unzip it somewhere you can find it.
 3. Open Google Chrome.
