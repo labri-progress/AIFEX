@@ -24,26 +24,26 @@
                             component.innerHTML = 'AIFEX runs in another window';
                         }
                     });
-                }
+            }
         } else {
             component.style.display = 'none';
         }
         if (state.isRecording) {
             makeExplorationTitle.innerHTML = 'Stop/Save your exploration or Trash it';
             playButton.style.display = 'none';
-            stopButton.style.display = 'block';
-            trashButton.style.display = 'block';
+            stopButton.style.display = 'flex';
+            trashButton.style.display = 'flex';
             commentSubComponent.style.display = 'flex';
             commentForm.style.display = 'none';
             if (state.commentDistributionList && state.commentDistributionList.length > 0) {
-                readCommentButton.style.display = 'block';
+                readCommentButton.style.display = 'flex';
             } else {
                 readCommentButton.style.display = 'none';
             }
 
         } else {
             makeExplorationTitle.innerHTML = 'Start a new exploration';
-            playButton.style.display = 'block';
+            playButton.style.display = 'flex';
             stopButton.style.display = 'none';
             trashButton.style.display = 'none';
             commentSubComponent.style.display = 'none';
@@ -115,7 +115,7 @@
 
     function openCommentView() {
         if (!addCommentIsVisible) {
-            commentForm.style.display = 'flex';
+            commentForm.style.display = 'block';
             addCommentIsVisible = true;
         } else {
             commentForm.style.display = 'none';

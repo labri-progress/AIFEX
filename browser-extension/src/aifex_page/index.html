@@ -76,27 +76,25 @@
         <div id="makeExplorationComponent">
             <h3 id="makeExplorationTitle">Make Some Explorations</h3>
 
-            <a id="play-button">
-                Start <i class="fa fa-play" title="Play"></i>
-            </a>
-            <a id="stop-button">
-                Stop/Save <i class="fa fa-stop" title="Stop"></i>
-            </a>
-            <a id="trash-button">
-                Trash <i class="fa fa-trash" title="Trash"></i>
-            </a>
+            <button id="play-button">
+                <i class="fa fa-play" title="Play"></i> <span>Start</span>
+            </button>
+            <button id="stop-button">
+                <i class="fa fa-stop" title="Stop"></i> <span>Stop/Save</span>
+            </button>
+            <button id="trash-button">
+                <i class="fa fa-trash" title="Trash"></i> <span>Trash</span>
+            </button>
 
 
             <div id="commentSubComponent">
-                <h3>Comments in your exploration</h3>
-                <a id="read-comment-button">
-                    There are some existing comments, read them ! <i class="fa fa-commenting" title="Read Comment"></i>
-                </a>
+                <h3>Comments in your exploration <span id="read-comment-button"><i class="fa fa-commenting" title="Read Comment"></i> Read existing comments !</span></h3>
+                
                 <div id="comment-list"></div>
 
-                <a id="comment-button">
-                    Do you want to add a new comment ? <i class="fa fa-comment" title="Add a Comment"></i>
-                </a>
+                <button id="comment-button">
+                    <i class="fa fa-comment" title="Add a Comment"></i> <span>Add a new comment to your exploration</span>
+                </button>
                 <div id="commentForm">
                     <div id="commentSuccessul" class="alert-success" role="alert">
                         Comment registered

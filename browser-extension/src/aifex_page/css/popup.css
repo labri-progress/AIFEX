@@ -16,6 +16,12 @@ header img:hover {
     opacity: 1;
 }
 
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #container  {
     margin: 1em;
     display: flex;
@@ -24,25 +30,38 @@ header img:hover {
 
 #homeComponent {
     flex-direction: column;
+    justify-content: center;
 }
 
 #connectToSessionComponent {
     flex-direction: column;
+    justify-content: center;
 }
 
 #makeExplorationComponent {
     flex-direction: column;
+    justify-content: center;
+}
+
+#commentSubComponent h3 {
+    display: flex;
+}
+
+#read-comment-button {  
+    font-size: 75%;
+}
+
+#comment-list {
+    margin-bottom: 1em;
 }
 
 #commentSubComponent {
     flex-direction: column;
+    justify-content: center;
     margin-top: 2em;
     margin-bottom: 0.5em;
 }
 
-#makeExplorationComponent i {
-    font-size: 250%;
-}
 
 #read-comment-button {
     animation: blinker 1s linear infinite;
