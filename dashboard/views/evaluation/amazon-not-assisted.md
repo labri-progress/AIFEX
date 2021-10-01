@@ -23,6 +23,7 @@ You must have installed <a href="https://www.google.com/chrome/fast-and-secure/"
 
 <h2>Step 1</h2>
 
+0. If you already have participated to one of my previous HIT, **remove the old chrome plugin**, it will give you the wrong password! Install the new one.
 1. Click <a href="/static/chrome-not-assisted.zip" download="chromeExtension">here</a> to download the zip file of our Chrome plugin.
 2. Unzip it somewhere you can find it.
 3. Open Google Chrome.
