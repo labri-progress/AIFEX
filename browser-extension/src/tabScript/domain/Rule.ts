@@ -55,23 +55,23 @@ export default abstract class Rule {
 
     abstract makeAction(event : Event): Action | undefined;
 
-    abstract actionToElements(action: Action): HTMLElement[] ;
+    abstract actionToElements(action: Action): (HTMLElement | SVGElement)[] ;
 
-    findActionMappedTarget(event: Event): HTMLElement | undefined {
+    findActionMappedTarget(event: Event): HTMLElement | SVGElement | undefined {
         const target = event.composedPath()[0];
-        if (target instanceof HTMLElement) {
+        if (target instanceof HTMLElement || target instanceof SVGElement) {
             if (target.hasAttribute("aifex_style")) {
                 return target;
             } else {
                 let closest = target.closest("[aifex_style]");
-                if (closest && closest instanceof HTMLElement) {
+                if (closest && (closest instanceof HTMLElement || closest instanceof SVGElement)) {
                     return closest;
                 }
             }
         }
     }
 
-    findMatchedElements() : HTMLElement[]{
+    findMatchedElements() : (HTMLElement|SVGElement)[]{
         let context;
 
         if (this.contextXPath) {
@@ -117,7 +117,7 @@ export default abstract class Rule {
                 elements = querySelectorAllDeep(this.css)
             }
         }
-        return elements.filter((element : Node): element is HTMLElement => element instanceof HTMLElement );
+        return elements.filter((element : Node): element is HTMLElement | SVGElement => element instanceof HTMLElement || element instanceof SVGElement);
     }
 
 }

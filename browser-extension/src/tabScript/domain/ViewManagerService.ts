@@ -5,7 +5,7 @@ import Rule from "./Rule";
 
 export default interface ViewManagerService {
 
-    refresh(elementListMatchedByRule: HTMLElement[], elementRule: Map<HTMLElement, Rule[]>,  actionAndElements: ActionsAndElements, evaluation: ExplorationEvaluation | undefined): void;
+    refresh(elementListMatchedByRule: (HTMLElement|SVGElement)[], elementRule: Map<HTMLElement|SVGElement, Rule[]>,  actionAndElements: ActionsAndElements, evaluation: ExplorationEvaluation | undefined): void;
 
     hide(): Promise<void>;
     

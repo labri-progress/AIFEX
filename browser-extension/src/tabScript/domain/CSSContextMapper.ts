@@ -7,7 +7,7 @@ export default class CSSContextMapper extends ContextMapper {
         super(context);
     }
 
-    buildElementToRuleMap() : Map<HTMLElement, Rule[]> {
+    buildElementToRuleMap() : Map<HTMLElement|SVGElement, Rule[]> {
         if (this._context) {
             const cssQueryResult = document.querySelector(this._context);
             if (cssQueryResult && cssQueryResult instanceof HTMLElement) {

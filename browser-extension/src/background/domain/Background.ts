@@ -19,6 +19,7 @@ import CommentDistribution from "./CommentDistribution";
 import { OverlayType } from "./Session";
 import Token from "./Token";
 import { PopupPageKind } from "./PopupPageKind";
+import {logger} from "../Logger";
 
 export default class Background {
 
@@ -333,7 +334,9 @@ export default class Background {
     }
 
     private fetchProbabilityMap(): Promise<void> {
+        logger.info("Fetching probability map");
         if (this._exploration) {
+            logger.debug("exploration:"+JSON.stringify(this._exploration));
             if (this._exploration.actions.length === 0) {
                 return Promise.resolve();
             }
@@ -346,6 +349,7 @@ export default class Background {
                 return Promise.reject("Not connected to a model");
             }
             return this._aifexService.getProbabilityMap(this._serverURL, this._modelId, this._exploration, this._token).then((probabilityMap) => {
+                logger.debug("probabilityMap:"+JSON.stringify(Array.from(probabilityMap)));
                 this._probabilityMap = probabilityMap
             })
         } else {
@@ -379,8 +383,10 @@ export default class Background {
 
     getProbabilityMap(): Map<string, number> {
         if (this._isRecording && this._exploration !== undefined && this._exploration.actions.length !== 0) {
+            logger.debug("getProbabilityMap:"+JSON.stringify(Array.from(this._probabilityMap)));
             return this._probabilityMap;
         } else {
+            logger.debug("getProbabilityMap: empty");
             return new Map();
         }
     }
@@ -394,6 +400,7 @@ export default class Background {
     }
 
     processNewAction(prefix: string, suffix?: string): Promise<void> {
+        logger.info("Processing new action: " + prefix + " " + suffix);
         if (this._isRecording && this._exploration) {
             this._exploration.addAction(prefix, suffix);
             this._commentsUp = [];
@@ -422,9 +429,10 @@ export default class Background {
                         //console.log("without notif");
                         this._browserService.setExtensionIconToRecording();
                     }
+                    logger.debug(JSON.stringify(this._exploration));
                     this.refreshPopup();
                 })
-                .catch((error) => console.error("Failed to process new action : ", prefix, error))
+                .catch((error) => logger.error("Failed to process new action : " + prefix, error))
         } else {
             return Promise.resolve();
         }
@@ -465,6 +473,7 @@ export default class Background {
         if (this._isRecording && this._exploration) {
             this._isRecording = false;
             let exploration: Exploration = this._exploration;
+            console.log(JSON.stringify(this._exploration));                                                             
             return this.evaluateExploration()
                 .then(() => {
                     if (this._useTestScenario && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {

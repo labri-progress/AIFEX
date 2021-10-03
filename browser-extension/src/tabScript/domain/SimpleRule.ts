@@ -11,7 +11,7 @@ export default class SimpleRule extends Rule {
         return new Action(this.prefix);
     }
 
-    actionToElements(action: Action): HTMLElement[] {
+    actionToElements(action: Action): (HTMLElement | SVGElement)[] {
         if (action.prefix !== this.prefix) {
             return [];
         }

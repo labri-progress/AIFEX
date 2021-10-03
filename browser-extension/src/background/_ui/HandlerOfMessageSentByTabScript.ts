@@ -16,15 +16,16 @@ export default class HandlerOfMessageSentByTabScript {
 
 
     private handleMessage(msg : any, sender : any, sendResponse : Function): boolean {
-        logger.info(`TabScript asks for ${msg.kind}`);
         switch (msg.kind) {
 			case "getStateForTabScript": {
+                logger.info(`TabScript asks for ${msg.kind}`);
                 let state = this._application.getStateForTabScript();
 				sendResponse(state);
 				return true;
             }
 
             case "getProbabilityMap": {
+                logger.info(`TabScript asks for ${msg.kind}`);
                 let probabiliytMap = this._application.getProbabilityMap();
                 sendResponse({
                     probabilityMap: JSON.parse(JSON.stringify(Array.from(probabiliytMap)))
@@ -33,6 +34,7 @@ export default class HandlerOfMessageSentByTabScript {
             }
 
             case "getCommentDistributions": {
+                logger.info(`TabScript asks for ${msg.kind}`);
                 let distributions = this._application.getCommentDistributions();
                 let commentDistributionList = distributions.map(dist => {
                     return {
@@ -47,6 +49,7 @@ export default class HandlerOfMessageSentByTabScript {
             }
 
             case "getEvaluation":
+                logger.info(`TabScript asks for ${msg.kind}`);
                 let explorationEvaluation = this._application.getExplorationEvaluation();
                 if (explorationEvaluation) {
                     sendResponse({
@@ -62,6 +65,7 @@ export default class HandlerOfMessageSentByTabScript {
                 }
                 
             case "pushAction": {
+                logger.info(`TabScript asks for ${msg.kind}`);
                 const action = msg.action;
                 this._application.processNewAction(action.prefix, action.suffix)
                 .then(() => {
@@ -71,12 +75,14 @@ export default class HandlerOfMessageSentByTabScript {
             }
 
             case "setPopupCommentPosition": {
+                logger.info(`TabScript asks for ${msg.kind}`);
                 this._application.setPopupCommentPosition(msg.popupCommentPosition);
                 sendResponse("ok");
                 return true;
             }
 
             case "pushAnswer": {
+                logger.info(`TabScript asks for ${msg.kind}`);
                 const question = new Question(msg.question.text);
                 // logger.info(msg.value, msg.value === true)
                 this._application.addAnswerToExploration(question, msg.value);
@@ -85,7 +91,7 @@ export default class HandlerOfMessageSentByTabScript {
             }
 
             default : {
-                logger.debug(`${msg.kind} is not considered to come from tabscript`);
+                //logger.debug(`${msg.kind} is not considered to come from tabscript`);
                 return true;
             }
 

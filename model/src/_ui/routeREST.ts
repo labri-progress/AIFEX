@@ -117,7 +117,7 @@ export default function attachRoutes(app: Express, modelService: ModelService): 
     app.post("/model/:modelId/getprobabilitymap", (req, res) => {
         const { interactionList } = req.body;
         const { modelId } = req.params;
-        logger.info(`getprobabilitymap for modelId:${modelId} with interactionList : ${interactionList}`);
+        logger.info(`getprobabilitymap for modelId:${modelId} with interactionList : ${JSON.stringify(interactionList)}`);
 
         if (modelId === undefined) {
             logger.warn(`modelId must not be undefined`);
@@ -145,8 +145,9 @@ export default function attachRoutes(app: Express, modelService: ModelService): 
         });
         modelService.getStimulusProbabilityMap(modelId, seq)
             .then((probabilityMap) => {
-                logger.debug(`return probability`);
-                return res.json(Array.from(probabilityMap));
+                let resultAsArray = Array.from(probabilityMap);
+                logger.debug(`return probability:`+JSON.stringify(resultAsArray));
+                return res.json(resultAsArray);
             })
             .catch((e) => {
                 logger.error(`getprobabilitymap error ${e}`);

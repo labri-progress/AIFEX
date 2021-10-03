@@ -89,7 +89,6 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
     setExtensionIconToRecording(): void {
-        console.log('setExtensionIconToRecording');
         if (this.lastInterval) {
             clearInterval(this.lastInterval);
         }
@@ -108,7 +107,6 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
     setExtensionIconToReceivedNotification(): void {
-        console.log('setExtensionIconToReceivedNotification');
         if (this.lastInterval) {
             clearInterval(this.lastInterval);
         }
@@ -132,7 +130,7 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
     closeWindow(windowId: number): Promise<void> {
-        logger.debug('managaedWindow will be closed');
+        logger.debug('managedWindow will be closed');
         return removeWindowById(windowId);
     }
 

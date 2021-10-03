@@ -45,7 +45,15 @@ export default class APIApplication {
     }
 
     signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
-        return this._accountService.signup(username, email, password);
+        return this._accountService.signup(username, email, password).then((result) => {
+            if (result === "UserNameAlreadyTaken") {
+                return "UserNameAlreadyTaken";
+            } else {
+                return this.accountInitialization(username).then(() => {
+                    return "AccountCreated";
+                });
+            }
+        });
     }
 
     signin(username: string, password: string): Promise<Token | "Unauthorized"> {
@@ -503,6 +511,18 @@ export default class APIApplication {
 
     isAuthorizationPublic(kind: Kind, key: string) : Promise<boolean> {
         return this._accountService.isAuthorizationPublic(kind, key);
+    }
+
+
+    accountInitialization(username: string) : Promise<"WebSiteAdded" | "IncorrectUsername"> {
+        let mappings : Mapping[] = [];
+        mappings.push(new Mapping({event:"click",css:"body"},{prefix:"ClickOn",suffix:"cssSelector"}));
+        mappings.push(new Mapping({event:"keydown",key:"Enter",css:"body"},{prefix:"EnterKeyOn",suffix:"cssSelector"}));
+        mappings.push(new Mapping({event:"keydown",key:"Tab",css:"body"},{prefix:"TabKeyOn",suffix:"cssSelector"}));
+        return this._webSiteService.createWebSite("RecordClicksAndEnterTabKeys",mappings)
+        .then((webSiteId) => {
+            return this._accountService.addWebSite(username,webSiteId)
+        })
     }
 
 }

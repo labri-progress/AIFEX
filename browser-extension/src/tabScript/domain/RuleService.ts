@@ -8,7 +8,7 @@ import SimpleRule from "./SimpleRule";
 import CSSSelectorRule from "./CSSSelectorRule";
 
 export default class RuleService {
-    elementRules: Map<HTMLElement, Rule[]>;
+    elementRules: Map<HTMLElement|SVGElement, Rule[]>;
     private _ruleMapper : RuleMapper;
 
     constructor() {
@@ -16,7 +16,7 @@ export default class RuleService {
         this._ruleMapper = new RuleMapper([]);
     }
 
-    get elementListMatchedByRule(): HTMLElement[] {
+    get elementListMatchedByRule(): (HTMLElement|SVGElement)[] {
         return Array.from(this.elementRules.keys())
     }
 
@@ -33,7 +33,7 @@ export default class RuleService {
     }
 
     getMatchingRule(event : Event ): Rule | undefined {
-        let elements = event.composedPath().filter((target): target is HTMLElement => target instanceof HTMLElement);
+        let elements = event.composedPath().filter((target): target is HTMLElement | SVGElement => target instanceof HTMLElement || target instanceof SVGElement);
         for (const element of elements) {
             const rules = this.elementRules.get(element);
             if (rules !== undefined) {
@@ -49,8 +49,8 @@ export default class RuleService {
         return this._ruleMapper.getRuleListByPrefix(action.prefix);
     }
 
-    getHTMLElementsMatchedByAction(action: Action): HTMLElement[] {
-        const elements : Set<HTMLElement> = new Set();
+    getHTMLElementsMatchedByAction(action: Action): (HTMLElement|SVGElement)[] {
+        const elements : Set<HTMLElement|SVGElement> = new Set();
         action.ruleList.forEach(rule => {
             const elementListForRule = rule.actionToElements(action);
             elementListForRule.forEach(element => elements.add(element));

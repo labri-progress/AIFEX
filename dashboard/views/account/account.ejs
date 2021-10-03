@@ -20,37 +20,7 @@
         
         <h2>Welcome <%= account.username%> !</h2>
         
-        <h3>Your WebSite(s)</h3>
-        <table id="web-list" class="table table-striped table-bordered">
-          <thead class="thead-dark">
-            <tr>
-                <th scope="col" align="center">Name</th>
-                <th scope="col" align="center">Update</th>
-                <th scope="col" align="center">Download (Mapping)</th>
-                <th scope="col" align="center">Scenario</th>
-                <th scope="col" align="center">Remove</th>
-            </tr>
-          </thead>
         
-          <tbody>
-            <% webSiteList.forEach((webSite,i) => { %>
-              <tr>
-                <td><%= webSite.name %> </td>
-                <td><a href="/dashboard/website/update/<%=webSite.id %>"><i class="fas fa-wrench"></i></a></td>
-                <td class="mapping-rule" name="<%= webSite.name %>"><a href="/" ><i class="fas fa-download"></i></a><span hidden><%= JSON.stringify(webSite.mappingList)%></span></td>
-                <% if (webSite.evaluator) { %>
-                  <td><a href="/dashboard/evaluation/update/<%=webSite.id %>"><i class="fas fa-tasks"></i></a></td>
-                <%} else {%>
-                  <td><a href="/dashboard/evaluation/create/<%=webSite.id %>"><i class="fas fa-tasks"></i></a></td>
-                <% } %>
-                <td><a href="/dashboard/website/remove/<%=webSite.id %>" onclick="return confirm('Are you sure you want to remove this WebSite?');"><i class="fas fa-trash-alt"></i></a></td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
-        <a role="button" class="btn btn-primary" href="/dashboard/website/create">Create New WebSite</a>
-        <br/>
-        <hr class="my-4"></hr>
 
         <h3>Your Session(s)</h3>
         <table id="session-list" class="table table-striped table-bordered">
@@ -61,7 +31,6 @@
                 <th scope="col" align="center"># Exploration</th>
                 <th scope="col" align="center">WebSite</th>
                 <th scope="col" align="center">Overlay</th>
-                <th scope="col" align="center">Scenario</th>
                 <th scope="col" align="center">Download</th>
                 <th scope="col" align="center">Remove</th>
             </tr>
@@ -79,7 +48,6 @@
                 <td><%= sessionList[i].explorationList.length %></td>
                 <td><%= sessionList[i].webSite.name %></td>
                 <td><%= sessionList[i].overlayType %></td>
-                <td><%= sessionList[i].useTestScenario?'Yes':'No' %></td>
                 <td class="download-session" sessionId="<%= connectionCode %>"><a href="/" ><i class="fas fa-download"></i></a></td>
                 <td><a href="/dashboard/session/remove/<%=connectionCode %>" ><i class="fas fa-trash-alt"></i></a></td>
               </tr>
@@ -91,6 +59,32 @@
         <% } else { %>
             <button class="btn btn-secondary" href="/dashboard/session/start" disabled>Start New Session</button>
         <% } %>
+        <hr class="my-4"></hr>
+
+        <h3>Your WebSite(s)</h3>
+        <table id="web-list" class="table table-striped table-bordered">
+          <thead class="thead-dark">
+            <tr>
+                <th scope="col" align="center">Name</th>
+                <th scope="col" align="center">Update</th>
+                <th scope="col" align="center">Download (Mapping)</th>
+                <th scope="col" align="center">Remove</th>
+            </tr>
+          </thead>
+        
+          <tbody>
+            <% webSiteList.forEach((webSite,i) => { %>
+              <tr>
+                <td><%= webSite.name %> </td>
+                <td><a href="/dashboard/website/update/<%=webSite.id %>"><i class="fas fa-wrench"></i></a></td>
+                <td class="mapping-rule" name="<%= webSite.name %>"><a href="/" ><i class="fas fa-download"></i></a><span hidden><%= JSON.stringify(webSite.mappingList)%></span></td>
+                <td><a href="/dashboard/website/remove/<%=webSite.id %>" onclick="return confirm('Are you sure you want to remove this WebSite?');"><i class="fas fa-trash-alt"></i></a></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+        <a role="button" class="btn btn-primary" href="/dashboard/website/create">Create New WebSite</a>
+        <br/>
         <hr class="my-4"></hr>
       </div>
     </div>

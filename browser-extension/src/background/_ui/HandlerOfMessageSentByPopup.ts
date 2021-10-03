@@ -14,9 +14,9 @@ export default class HandlerOfMessageSentByPopup {
     }
 
     private handleMessage(msg : any, sender : any, sendResponse : Function): boolean {
-        logger.info(`Popup asks for ${msg.kind}`);
         switch (msg.kind) {
             case "changePopupPageKind": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 if (!msg.popupPageKind) {
                     logger.debug(`no page`);
                     sendResponse({error: "page is missing"});
@@ -28,6 +28,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "checkDeprecated": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 if (!msg.url) {
                     logger.debug(`cannot check plugin version`);
                     sendResponse({error: "URL is missing"});
@@ -45,7 +46,7 @@ export default class HandlerOfMessageSentByPopup {
                             sendResponse({error});
                         });
                     } catch (error) {
-                        logger.error("wrong URL",error);
+                        logger.error("wrong URL",new Error("url"));
                         sendResponse({error});
                     }
                     return true;
@@ -53,6 +54,7 @@ export default class HandlerOfMessageSentByPopup {
 			}
 
 			case "getStateForPopup": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 let state = this._application.getStateForPopup();
                 logger.debug(`state is returned`);
 				sendResponse(state);
@@ -60,6 +62,7 @@ export default class HandlerOfMessageSentByPopup {
 			}
 
             case "linkServer": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.linkServer(msg.url)
                     .then((result) => {
                         logger.debug(`linkServer: ${result}`);
@@ -72,6 +75,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "signin": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.signin(msg.username, msg.password)
                     .then((result) => {
                         if (result === "SignedIn") {                            
@@ -84,6 +88,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "connect": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 if (!msg.url) {
                     logger.debug(`connection refused`);
                     sendResponse({error: "URL is missing"});
@@ -111,7 +116,7 @@ export default class HandlerOfMessageSentByPopup {
                                 sendResponse({error})
                         });
                     } catch(error) {
-                        logger.error("Invalid URL", new Error(error))
+                        logger.error("Invalid URL", new Error("url"))
                         sendResponse({error})
                     }
                 }
@@ -119,6 +124,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "disconnect": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .disconnect()
                     .then(() => {
@@ -132,6 +138,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "reloadWebSite": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .reloadWebsite()
                     .then(() => {
@@ -145,6 +152,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "startExploration": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .startExploration()
                     .then(() => {
@@ -159,6 +167,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "stopExploration": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .stopExploration()
                     .then(() => {
@@ -173,6 +182,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "removeExploration": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .removeExploration()
                     .then(() => {
@@ -185,6 +195,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "changeTesterName": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.changeTesterName(msg.testerName)
                 .then(() => {
                     sendResponse(this._application.getStateForPopup());
@@ -196,18 +207,21 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "setCreateNewWindowOnConnect": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.setShouldCreateNewWindowsOnConnect(msg.shouldCreateNewWindowOnConnect);
                 sendResponse(this._application.getStateForPopup());
                 return true;
             }
 
             case "setCloseWindowOnConnect": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.setShouldCloseWindowOnDisconnect(msg.shouldCloseWindowOnDisconnect);
                 sendResponse(this._application.getStateForPopup());
                 return true;
             }
 
             case "restartExploration": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                 .restartExploration()
                 .then(() => {
@@ -221,6 +235,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "pushComment": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 const { type, value } = msg;
                 this._application.addCommentToExploration(type, value);
                 sendResponse("ok");
@@ -228,24 +243,28 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "upComment": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.upComment(msg.type, msg.value);
                 sendResponse("ok");
                 return true;
             }
                 
             case "takeScreenshot": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.takeScreenShot();
                 sendResponse("ok");
                 return true;
             }
 
             case "drawAttention": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.drawAttention();
                 sendResponse("ok");
                 return true;
             }
 
             case "setRecordMediaStatus" : {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.setRecordMedia(msg.recordMediaStatus)
                 .then(() => {
                     sendResponse("ok");
@@ -258,6 +277,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "toggleDetachPopup": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.toggleDetachPopup()
                 .then(() => {
                     sendResponse("ok");
@@ -270,7 +290,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             default : {
-                logger.debug(`${msg.kind} is not considered to come from popup`);
+                //logger.debug(`${msg.kind} is not considered to come from popup`);
                 return true;
             }
 

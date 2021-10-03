@@ -10,7 +10,7 @@ export default class State {
     userTabPosition: {x: string, y: string};
     displayUserView: boolean;
 
-    elementActionListMap: Map<HTMLElement, Action[]>;
+    elementActionListMap: Map<HTMLElement|SVGElement, Action[]>;
     commentList: Comment[];
     webSite: any;
     overlayType: OverlayType;

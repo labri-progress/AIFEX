@@ -6,7 +6,7 @@ const PROBABILITY_POPUP = "AIFEX_probabilityPopup";
 const MAX_DISPLAYED_LINES = 9;
 
 export default class ActionsPopupView {
-    hoveredElement: HTMLElement | undefined;
+    hoveredElement: HTMLElement | SVGElement | undefined;
     private checkHoverElementsExistsInterval: NodeJS.Timeout | undefined;
     private probabilityPopup: HTMLElement | undefined;
 
@@ -74,11 +74,11 @@ export default class ActionsPopupView {
         }
     }
 
-    private attachMouseEnterHandlers(elementActionListMap: Map<HTMLElement, Action[]>): void {
+    private attachMouseEnterHandlers(elementActionListMap: Map<HTMLElement|SVGElement, Action[]>): void {
         for (const element of elementActionListMap.keys()) {
 
             const showHandler = (event : Event) => {
-                if (this.probabilityPopup && event.target instanceof HTMLElement) {
+                if (this.probabilityPopup && (event.target instanceof HTMLElement || event.target instanceof SVGElement)) {
                     this.hoveredElement = event.target;
                     if (elementActionListMap.has(this.hoveredElement)) {
                         this.probabilityPopup.style.visibility = "visible";

@@ -10,8 +10,8 @@ const COLD_COLOR_THRESHOLD = 0.01;
 
 export default class ActionProbabilityView {
 
-    stylesheetElement: HTMLElement | undefined;
-    private _lastElementWithAIFEXStyle : Set<HTMLElement>;
+    stylesheetElement: HTMLElement | SVGElement | undefined;
+    private _lastElementWithAIFEXStyle : Set<HTMLElement | SVGElement>;
 
     constructor() {
         this._lastElementWithAIFEXStyle = new Set();
@@ -36,7 +36,7 @@ export default class ActionProbabilityView {
         } 
     }
 
-    show(actionAndElements: ActionsAndElements, elementListMatchedByRule: HTMLElement[], elementRules: Map<HTMLElement, Rule[]>,): void {
+    show(actionAndElements: ActionsAndElements, elementListMatchedByRule: (HTMLElement|SVGElement)[], elementRules: Map<HTMLElement|SVGElement, Rule[]>,): void {
         logger.debug(`ActionProbabilityView show (elements : ${elementListMatchedByRule.length})`);
         this._lastElementWithAIFEXStyle.forEach(element => {
             element.removeAttribute("aifex_frequency");
@@ -55,7 +55,7 @@ export default class ActionProbabilityView {
         for (const action of actionAndElements.actionList) {
             for (const htmlElement of action.htmlElementList) {
                 const rootNode = htmlElement.getRootNode();
-                if (rootNode instanceof HTMLElement) {
+                if (rootNode instanceof HTMLElement || rootNode instanceof SVGElement) {
                     this.attachStyleSheet(rootNode);
                 }
                 this._lastElementWithAIFEXStyle.add(htmlElement);
@@ -95,7 +95,7 @@ export default class ActionProbabilityView {
         }
     }
 
-    private attachStyleSheet(parentNode : HTMLElement): void {
+    private attachStyleSheet(parentNode : HTMLElement | SVGElement): void {
         const nodeChilds: Element[] = Array.from(parentNode.children);
         if (nodeChilds.some(node => node.hasAttribute("aifex_stylesheet"))) {
             return;

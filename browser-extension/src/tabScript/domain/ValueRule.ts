@@ -9,12 +9,16 @@ export default class ValueRule extends SimpleRule {
 
     makeAction(event : Event): Action | undefined {
         let target = event.target;
-        if (target && target instanceof HTMLInputElement) {
-            return new Action(this.prefix, target.value);
+        if (target) {
+            if (target instanceof HTMLInputElement) {
+                return new Action(this.prefix, target.value);
+            } else if (target instanceof HTMLSelectElement) {
+                return new Action(this.prefix, "svg");
+            }
         }
     }
 
-    actionToElements(action: Action): HTMLElement[] {
+    actionToElements(action: Action): (HTMLElement|SVGElement)[] {
         if (action.prefix !== this.prefix) {
             return [];
         }
