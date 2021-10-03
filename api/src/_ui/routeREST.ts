@@ -192,7 +192,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.patch("/websites/:webSiteId", (req, res) => {
         const webSiteId = req.params.webSiteId;
-        const { name, url, mappingList } = req.body;
+        const { name, mappingList } = req.body;
         logger.info(`Patch webSites by Id`);
         if (req.token === undefined) {
             logger.warn(`no token`);
@@ -202,7 +202,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 logger.warn(`webSiteId`);
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"No webSiteId"});
             } else {
-                api.updateWebSite(webSiteId, name, url, mappingList, req.token)
+                api.updateWebSite(webSiteId, name, mappingList, req.token)
                     .then(webSiteResult => {
                         if (webSiteResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
@@ -249,17 +249,17 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.post("/websites", (req, res) => {
         logger.info(`create websites`);
-        const { name, url, mappingList } = req.body;
+        const { name, mappingList } = req.body;
         logger.debug(`${mappingList}`);
         if (req.token === undefined) {
             logger.warn(`no token`);
             res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
             const token: Token = req.token;
-            if (name === undefined || url === undefined || mappingList === undefined) {
+            if (name === undefined || mappingList === undefined) {
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
             } else {
-                api.createWebSite(name, url, mappingList, req.token)
+                api.createWebSite(name, mappingList, req.token)
                     .then(creationResult => {
                         if (creationResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:creationResult});

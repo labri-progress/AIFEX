@@ -12,7 +12,6 @@ export default class WebSiteRepositoryMongo implements WebSiteRepository {
         return WebSiteSchema.create({
             _id: webSite.id,
             name: webSite.name,
-            url: webSite.url,
             mappingList: webSite.mappingList
         })
             .then(() => {
@@ -28,9 +27,8 @@ export default class WebSiteRepositoryMongo implements WebSiteRepository {
 
     public update(webSite: WebSite): Promise<string> {
         const name = webSite.name;
-        const url = webSite.url;
         const mappingList = webSite.mappingList;
-        return WebSiteSchema.replaceOne({_id: webSite.id}, {name, url, mappingList})
+        return WebSiteSchema.replaceOne({_id: webSite.id}, {name, mappingList})
             .exec()
             .then( () => {
                 return webSite.id;
@@ -46,7 +44,7 @@ export default class WebSiteRepositoryMongo implements WebSiteRepository {
                     return undefined;
                 }
                 const idGeneratorService = new IdGeneratorServiceWithShortId();
-                const webSite = new WebSite(idGeneratorService, webSiteData.name, webSiteData.url, id);
+                const webSite = new WebSite(idGeneratorService, webSiteData.name, id);
                 webSiteData.mappingList.forEach((mapping: Mapping) => {
                     webSite.addMapping(mapping);
                 });

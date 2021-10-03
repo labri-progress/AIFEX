@@ -928,8 +928,6 @@ components:
       properties:
         name:
           type: string
-        url:
-          type: string
         mappingList:
           type: array
           items:

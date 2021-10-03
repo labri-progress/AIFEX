@@ -114,7 +114,7 @@ module.exports = function attachRoutes(app, config) {
                     logger.debug("token ok:", result);
                     req.session.jwt = result;
                     req.session.username = username;
-                    res.redirect('/');
+                    res.redirect('/account/account');
                 }
             })
             .catch(reason => {

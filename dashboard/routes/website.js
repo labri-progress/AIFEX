@@ -18,15 +18,14 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.post('/dashboard/website/create', (req, res) => {
-        let { name, url, mappingList } = req.body;
-        logger.info(`Create WebSite (name : ${name}, url : ${url})`)
+        let { name, mappingList } = req.body;
+        logger.info(`Create WebSite (name : ${name})`)
 
         let renderOption = {
             account: req.session,
             webSite: {
                 id: undefined,
                 name: name,
-                url,
                 mappingList: mappingList
             },
             successMessage: undefined,
@@ -48,7 +47,7 @@ module.exports = function attachRoutes(app, config) {
             return;
         }
 
-        createWebSite(req.session.jwt, name, url, mappingList)
+        createWebSite(req.session.jwt, name, mappingList)
             .then(result => {
                 renderOption.webSite.id = result;
                 renderOption.successMessage = "WebSite has been created";
@@ -63,15 +62,14 @@ module.exports = function attachRoutes(app, config) {
     })
 
     app.post('/dashboard/website/update', (req, res) => {
-        let { id, name, url, mappingList } = req.body;
-        logger.info(`Update WebSite (id: ${id}, name : ${name}, url : ${url})`)
+        let { id, name, mappingList } = req.body;
+        logger.info(`Update WebSite (id: ${id}, name : ${name})`)
         logger.debug(`mapping rules : ${JSON.stringify(mappingList)}`)
         let renderOption = {
             account: req.session,
             webSite: {
                 id,
                 name,
-                url,
                 mappingList
             },
             successMessage: undefined,
@@ -93,7 +91,7 @@ module.exports = function attachRoutes(app, config) {
             return;
         }
 
-        updateWebSite(req.session.jwt, id, name, url, mappingList)
+        updateWebSite(req.session.jwt, id, name, mappingList)
             .then(() => {
                 renderOption.successMessage = 'WebSite has been saved';
                 logger.info(`WebSite updated`);
@@ -119,7 +117,6 @@ module.exports = function attachRoutes(app, config) {
                 if (webSiteData) {
                     webSite = {
                         id: webSiteData.id,
-                        url: webSiteData.url,
                         name: webSiteData.name,
                         mappingList: webSiteData.mappingList
                     }

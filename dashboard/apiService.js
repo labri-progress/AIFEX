@@ -74,11 +74,10 @@ module.exports.getWebSiteById = function (token, webSiteId) {
         })
 }
 
-module.exports.updateWebSite = function (token, webSiteId, name, url, mappingList) {
+module.exports.updateWebSite = function (token, webSiteId, name, mappingList) {
     const apiUpdateWebSiteURL = 'http://' + config.api.host + ':' + config.api.port + '/websites/' + webSiteId;
     let bodyUpdateWebSite = {
         name,
-        url,
         mappingList,
     }
     let optionUpdateWebSite = {
@@ -112,11 +111,10 @@ module.exports.removeWebSite = function (token, webSiteId) {
         })
 }
 
-module.exports.createWebSite = function (token, name, url, mappingList) {
+module.exports.createWebSite = function (token, name, mappingList) {
     const apiCreateWebSiteURL = 'http://' + config.api.host + ':' + config.api.port + '/websites';
     let bodyCreateWebSite = {
         name,
-        url,
         mappingList,
     }
     let optionCreateWebSite = {

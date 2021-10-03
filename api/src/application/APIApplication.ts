@@ -94,21 +94,21 @@ export default class APIApplication {
             });
     }    
 
-    createWebSite(name: string, url: string, mappingList: Mapping[], token: Token): Promise<WebSite | "Unauthorized"> {
+    createWebSite(name: string, mappingList: Mapping[], token: Token): Promise<WebSite | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
                     return "Unauthorized";
                 } else {
                     const account: Account = result;
-                    return this._webSiteService.createWebSite(name, url, mappingList)
+                    return this._webSiteService.createWebSite(name, mappingList)
                         .then((webSiteId) => {
                             return this._accountService.addWebSite(result.username, webSiteId)
                                 .then((addResult) => {
                                     if (addResult === "IncorrectUsername") {
                                         return "Unauthorized";
                                     } else {
-                                        return new WebSite(webSiteId, name, url, mappingList);
+                                        return new WebSite(webSiteId, name, mappingList);
                                     }
                                 });
                         });
@@ -116,7 +116,7 @@ export default class APIApplication {
             });
     }
 
-    updateWebSite(webSiteId: string, name: string, url: string, mappingList: Mapping[], token: Token): Promise<"Unauthorized" | "WebSiteUpdated"> {
+    updateWebSite(webSiteId: string, name: string, mappingList: Mapping[], token: Token): Promise<"Unauthorized" | "WebSiteUpdated"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -127,7 +127,7 @@ export default class APIApplication {
                     if (!authorized) {
                         return "Unauthorized";
                     } else {
-                        return this._webSiteService.updateWebSite(webSiteId, name, url, mappingList)
+                        return this._webSiteService.updateWebSite(webSiteId, name, mappingList)
                             .then((result) => result);
                     }
                 }

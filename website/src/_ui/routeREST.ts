@@ -36,7 +36,6 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
                     res.json({
                         id: webSite.id,
                         name: webSite.name,
-                        url: webSite.url,
                         mappingList: webSite.mappingList
                     });
                 }
@@ -50,16 +49,11 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
     });
 
     app.post("/website/create",  (req: Request, res: Response) => {
-        const {name, url} = req.body;
-        logger.info(`create name ${name}, url ${url}`);
+        const {name} = req.body;
+        logger.info(`create name ${name}`);
         if (name === undefined) {
             logger.warn(`name must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("iname is undefined");
-            return;
-        }
-        if (url === undefined) {
-            logger.warn(`url must not be undefined`);
-            res.status(INVALID_PARAMETERS_STATUS).send("url is undefined");
             return;
         }
 
@@ -91,7 +85,7 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             logger.error(`mapping list error`);
             return res.status(INVALID_PARAMETERS_STATUS).send({message: `mapping list error`});
         }
-        const webSite = new WebSite(idGeneratorService, name, url);
+        const webSite = new WebSite(idGeneratorService, name);
         webSite.addMappingList(mappingList);
         webSiteService.createWebSite(webSite)
         .then(webSiteId => {
@@ -105,8 +99,8 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
      });
 
     app.post("/website/update",  (req: Request, res: Response) => {
-        const {id, name, url} = req.body;
-        logger.info(`update website (id: ${id}, name: ${name}, url: ${url})`);
+        const {id, name} = req.body;
+        logger.info(`update website (id: ${id}, name: ${name})`);
 
         if (id === undefined) {
             logger.warn(`id must not be undefined`);
@@ -116,11 +110,6 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
         if (name === undefined) {
             logger.warn(`name must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("iname is undefined");
-            return;
-        }
-        if (url === undefined) {
-            logger.warn(`url must not be undefined`);
-            res.status(INVALID_PARAMETERS_STATUS).send("url is undefined");
             return;
         }
         const mappingListData : {
@@ -152,7 +141,7 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             return res.status(INVALID_PARAMETERS_STATUS).send({message: "Invalid mapping file"});
         }
         try {
-            const webSite = new WebSite(idGeneratorService, name, url, id);
+            const webSite = new WebSite(idGeneratorService, name, id);
             webSite.addMappingList(mappingList);
             // console.log('website update:', webSite);
             webSiteService.updateWebSite(webSite)

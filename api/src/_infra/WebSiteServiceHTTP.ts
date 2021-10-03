@@ -13,7 +13,7 @@ export default class WebSiteServiceHTTP implements WebSiteService {
         return fetch(webSiteGetURL).then(response => {
             if (response.ok) {
                 return response.json().then(webSiteData => {
-                    return new WebSite(webSiteData.id, webSiteData.name, webSiteData.url, webSiteData.mappingList);
+                    return new WebSite(webSiteData.id, webSiteData.name, webSiteData.mappingList);
                 })
             } else {
                 return undefined;
@@ -21,10 +21,9 @@ export default class WebSiteServiceHTTP implements WebSiteService {
         });
     }
 
-    createWebSite(name: string, url: string, mappingList: Mapping[]): Promise<string> {
+    createWebSite(name: string, mappingList: Mapping[]): Promise<string> {
         let webSite = {
             name,
-            url,
             mappingList
         }
         const webSiteCreateURL = 'http://' + config.website.host + ':' + config.website.port + '/website/create';
@@ -43,11 +42,10 @@ export default class WebSiteServiceHTTP implements WebSiteService {
             })   
     }
 
-    updateWebSite(id : string, name : string, url : string, mappingList : Mapping[]) : Promise<"WebSiteUpdated"> {
+    updateWebSite(id : string, name : string, mappingList : Mapping[]) : Promise<"WebSiteUpdated"> {
         let webSite = {
             id,
             name,
-            url,
             mappingList
         }
         const webSiteUpdateURL = 'http://' + config.website.host + ':' + config.website.port + '/website/update';
