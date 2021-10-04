@@ -25,7 +25,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
             webSiteId: session.webSite.id,
             baseURL: session.baseURL,
             name: session.name,
-            useTestScenario: session.useTestScenario,
+            description: session.description,
             overlayType: session.overlayType
         })
         .then( () => {

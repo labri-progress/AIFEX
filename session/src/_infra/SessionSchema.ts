@@ -4,9 +4,10 @@ const SESSION_SCHEMA: Schema = new Schema({
     _id: {type: String, required: true},
     webSiteId: {type: String, required: true},
     baseURL: String,
-    useTestScenario: Boolean,
+    description: String,
     name: String,
     overlayType: { type: 'String', enum: ["shadow", "bluesky", "rainbow"], default: 'rainbow' },
+    createdAt: {type: Date, default: Date.now},
 },
 {
     timestamps: true,
@@ -16,11 +17,10 @@ export interface SessionDocument extends Document {
     _id: string;
     webSiteId: string;
     name: string;
-    useTestScenario: boolean;
+    description: string;
     overlayType: string;
     baseURL: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date;
 }
 
 
