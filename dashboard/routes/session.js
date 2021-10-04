@@ -33,9 +33,7 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.post('/dashboard/session/start', (req, res) => {
-        let { webSiteId, name, baseURL, interpolationfactor, depth, overlayType, useTestScenario } = req.body;
-
-        useTestScenario = useTestScenario === "yes"
+        let { webSiteId, name, baseURL, interpolationfactor, depth, overlayType, description } = req.body;
 
         logger.info(`Start session for WebSite (id = ${webSiteId})`);
 
@@ -50,21 +48,22 @@ module.exports = function attachRoutes(app, config) {
         let sessionId;
         let modelId;
 
-        let createSessionPromise = createSession(req.session.jwt, webSiteId, name, baseURL, overlayType)
+        let createSessionPromise = createSession(req.session.jwt, webSiteId, name, baseURL, description, overlayType)
         let createModelPromise = createModel(req.session.jwt, depth, interpolationfactor, "CSP")
         return Promise.all([createSessionPromise, createModelPromise])
             .then(([createdSessionId, createdModelId]) => {
                 sessionId = createdSessionId;
                 modelId = createdModelId;
+                logger.debug(`Session created (id = ${sessionId}), Model created (id = ${modelId})`);
                 return linkModelToSession(req.session.jwt, modelId, sessionId)
             })
             .then(() => {
                 connectionCode = `${sessionId}$${modelId}`;
-                logger.debug('session and model are creating, a the link between them has been setted');
+                logger.debug('session and model are created, a the link between them has been setted');
                 res.redirect(`/dashboard/session/view/${connectionCode}`);
             })
             .catch(e => {
-                logger.error('Error while creating session, model and settig a link between them: '+e);
+                logger.error('Error while creating session, model and setting a link between them: '+e);
                 let message = 'Cannot create the session';
                 res.render('error.ejs', { message, account: req.session, error: e });
             })

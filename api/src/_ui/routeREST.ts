@@ -345,7 +345,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                         if (creationResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:creationResult});
                         } else {
-                            logger.info("session is created and added");
+                            logger.info("session is created and added:", creationResult.id);
                             res.json({sessionId:creationResult.id});
                         }
                     })
