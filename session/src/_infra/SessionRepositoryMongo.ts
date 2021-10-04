@@ -26,6 +26,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
             baseURL: session.baseURL,
             name: session.name,
             description: session.description,
+            createdAt: session.createdAt,
             overlayType: session.overlayType
         })
         .then( () => {
@@ -114,31 +115,26 @@ export default class SessionRepositoryMongo implements SessionRepository {
         let id: string;
         let baseURL: string;
         let name: string;
+        let description: string;
         let overlayType: SessionOverlayType;
         let session: Session;
-        let createdAt: Date | undefined;
-        let updatedAt: Date | undefined;
-
+        let createdAt: Date;
+        
         return SessionSchema.findOne({_id: sessionId}).exec()
         .then((sessionData: SessionDocument | null) => {
             if (sessionData !== null) {    
                 id = sessionData._id;
                 baseURL = sessionData.baseURL;
                 name = sessionData.name;
+                description = sessionData.description;
 
                 overlayType = sessionData.overlayType as SessionOverlayType;
                 createdAt = sessionData.createdAt;
-                updatedAt = sessionData.updatedAt;
-                let useTestScenario: boolean;
-                if (sessionData.useTestScenario === undefined) {
-                    useTestScenario = true;
-                } else {
-                    useTestScenario = sessionData.useTestScenario;
-                }
+                
                 return this._webSiteRepository.findWebSiteById(sessionData.webSiteId)
                 .then((webSite) => {
                     if (webSite !== undefined) {
-                        session = new Session(webSite, baseURL, id, name, useTestScenario, createdAt, updatedAt, overlayType);
+                        session = new Session(id, webSite, baseURL, name, description, createdAt);
                         return ExplorationSchema.find({sessionId: session.id})
                         .then((explorationDataList) => {
                             explorationDataList

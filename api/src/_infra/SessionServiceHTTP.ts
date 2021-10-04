@@ -15,7 +15,7 @@ export default class SessionServiceHTTP implements SessionService {
         return fetch(sessionGetURL).then(response => {
             if (response.ok) {
                 return response.json().then(sesRes => {
-                    return new Session(sesRes.id, sesRes.name, sesRes.baseURL, sesRes.webSite, sesRes.createdAt, sesRes.updatedAt, sesRes.useTestScenario, sesRes.overlayType, sesRes.explorationList);
+                    return new Session(sesRes.id, sesRes.baseURL, sesRes.webSite, sesRes.name, sesRes.desription,  sesRes.createdAt, sesRes.overlayType, sesRes.explorationList);
                 })
             } else {
                 return undefined;
@@ -24,13 +24,13 @@ export default class SessionServiceHTTP implements SessionService {
     
     }
 
-    createSession(webSiteId : string, baseURL: string, name: string, overlayType: SessionOverlayType): Promise<string> {
+    createSession(webSiteId : string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType): Promise<string> {
         let session = {
             webSiteId,
             baseURL,
             name,
-            overlayType : overlayType.toString(),
-            useTestScenario : false
+            description,
+            overlayType : overlayType.toString()
         }
         const SessionCreateURL = 'http://' + config.session.host + ':' + config.session.port + '/session/create';
         let optionSessionCreate = {

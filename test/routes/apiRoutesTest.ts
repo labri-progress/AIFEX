@@ -236,6 +236,7 @@ describe("API", () => {
                 webSiteId: webSiteId,
                 baseURL: "http://mywebsite.com",
                 name: "MySession",
+                description: "MySessionDescription",
                 overlayType: "shadow"
             })})
             .then(res => {

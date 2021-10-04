@@ -8,34 +8,31 @@ export type SessionOverlayType = "shadow" | "bluesky" | "rainbow";
 
 export default class Session {
     readonly id: string;
-    readonly name: string;
-    readonly baseURL: string;
     readonly webSite: WebSite;
-    readonly createdAt: Date | undefined;
-    readonly updatedAt: Date | undefined;
+    readonly baseURL: string;
+    readonly name: string;
+    readonly description: string;
+    readonly createdAt: Date;
     readonly overlayType: SessionOverlayType;
-    readonly useTestScenario: boolean;
     readonly explorationList: Exploration[];
 
     constructor(id: string,
-        name: string,
         baseURL: string,
         webSite: WebSite,
+        name: string,
+        description: string,
         createdAt: Date,
-        updatedAt: Date,
-        useTestScenario: boolean,
         overlayType: SessionOverlayType,
         explorationList: Exploration[] )
     {
         this.id = id;
         this.webSite = webSite;
         this.baseURL = baseURL;
+        this.name = name;
+        this.description = description;
         this.explorationList = [];
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.name = name;
         this.overlayType = overlayType;
-        this.useTestScenario = useTestScenario;
         this.explorationList = explorationList;
     }
 

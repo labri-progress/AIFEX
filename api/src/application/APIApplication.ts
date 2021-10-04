@@ -184,7 +184,7 @@ export default class APIApplication {
             });
     }
 
-    createSession(webSiteId: string, baseURL: string, name: string, overlayType: SessionOverlayType, token: Token): Promise<Session | "Unauthorized"> {
+    createSession(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, token: Token): Promise<Session | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -197,14 +197,14 @@ export default class APIApplication {
                                 return "Unauthorized";
                             } else {
                                 const webSite: WebSite = findResult;
-                                return this._sessionService.createSession(webSiteId, baseURL, name, overlayType)
+                                return this._sessionService.createSession(webSiteId, baseURL, name, description, overlayType)
                                     .then((sessionId) => {
                                         return this._accountService.addSession(account.username, sessionId)
                                             .then((addSessionResult) => {
                                                 if (addSessionResult === "IncorrectUsername") {
                                                     return "Unauthorized";
                                                 } else {
-                                                    return new Session(sessionId, name, baseURL, webSite, new Date(), new Date(), false, overlayType, []);
+                                                    return new Session(sessionId, baseURL, webSite, name, description, new Date(), overlayType, []);
                                                 }
                                             })
                                     });

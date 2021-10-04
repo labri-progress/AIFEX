@@ -973,6 +973,8 @@ components:
           type: string
         name:
           type: string
+        description:
+          type: string
         overlayType:
           type: string
           enum: [shadow, bluesky, rainbow]
