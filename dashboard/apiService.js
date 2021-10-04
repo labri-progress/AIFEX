@@ -191,12 +191,13 @@ module.exports.removeSession = function (token, sessionId) {
         })
 }
 
-module.exports.createSession = function (token, webSiteId, name, baseURL, overlayType) {
+module.exports.createSession = function (token, webSiteId, name, baseURL, description, overlayType) {
     const apiCreateSessionURL = 'http://' + config.api.host + ':' + config.api.port + '/sessions';
     let bodyCreateSession = {
         name,
         webSiteId,
         baseURL,
+        description,
         overlayType
     };
     let optionCreateSession = {

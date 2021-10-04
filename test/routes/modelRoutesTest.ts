@@ -42,6 +42,9 @@ describe("Model", () => {
         const body = {
             webSiteId,
             baseURL: "http://www.test.com/index.html",
+            name:"testsession",
+            description: "test",
+            overlayType: "shadow"
         };
         const option = {
             method: "POST",
