@@ -20,8 +20,8 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
     });
 
     app.post("/session/create", (req, res) => {
-        const { webSiteId, baseURL, name, overlayType, useTestScenario } = req.body;
-        logger.info(`create session webSiteId ${webSiteId}, baseURL ${baseURL}, name ${name}, overlayType ${overlayType}, useTestScenario ${useTestScenario}`);
+        const { webSiteId, baseURL, name, description, overlayType } = req.body;
+        logger.info(`create session webSiteId ${webSiteId}, baseURL ${baseURL}, name ${name}, description ${description}, overlayType ${overlayType}`);
         if (webSiteId === undefined) {
             logger.warn(`webSiteId must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("webSiteId is undefined");
@@ -32,6 +32,18 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
             res.status(INVALID_PARAMETERS_STATUS).send("baseURL is undefined");
             return;
         }
+
+        if (name === undefined) {
+            logger.warn(`name must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("name is undefined");
+            return;
+        }
+
+        if (description === undefined) {
+            logger.warn(`description must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("description is undefined");
+            return;
+        }
         
         if (!(overlayType === undefined || Session.getOverlayTypes().includes(overlayType))) {
             res.status(INVALID_PARAMETERS_STATUS).send("Invalid overlayType");
@@ -39,7 +51,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
 
         const overlayTypeValue: SessionOverlayType = overlayType as SessionOverlayType;
 
-        sessionService.createNewSessionForWebSiteId(webSiteId, baseURL, name, useTestScenario, overlayTypeValue)
+        sessionService.createNewSessionForWebSiteId(webSiteId, baseURL, name, description, overlayTypeValue)
         .then((sessionId) => {
             if (sessionId) {
                 logger.debug(`session created : ${sessionId}`);
@@ -72,8 +84,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
                     baseURL: session.baseURL,
                     webSite: session.webSite,
                     createdAt: session.createdAt,
-                    updatedAt: session.updatedAt,
-                    useTestScenario: session.useTestScenario,
+                    description: session.description,
                     overlayType: session.overlayType,
                     explorationList: session.explorationList.map((exploration) => {
                         return {

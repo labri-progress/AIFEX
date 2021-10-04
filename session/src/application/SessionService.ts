@@ -41,12 +41,11 @@ export default class SessionService {
         this.mountedSessionList = [];
     }
 
-    public createNewSessionForWebSiteId(webSiteId: string, baseURL: string, name: string, useTestScenario: boolean, overlayType: SessionOverlayType): Promise<string | undefined> {
-
+    public createNewSessionForWebSiteId(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType): Promise<string | undefined> {
         return this.webSiteRepository.findWebSiteById(webSiteId)
             .then((webSite) => {
                 if (webSite !== undefined) {
-                    const session: Session = new Session(webSite, baseURL, undefined, name, useTestScenario, undefined, undefined, overlayType);
+                    const session: Session = new Session(undefined, webSite, baseURL, name, description, undefined, overlayType);
                     this.addSessionInCache(session);
                     return this.sessionRepository.addSession(session)
                         .then((newSessionId) => {
