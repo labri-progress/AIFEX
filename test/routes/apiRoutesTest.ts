@@ -129,7 +129,7 @@ describe("API", () => {
             })
             .then((account) => {
                 expect(account.username).eql("testAPI");
-                expect(account.authorizationSet.length).eql(0);
+                expect(account.authorizationSet.length).eql(1);
             });
     });
 
@@ -183,9 +183,9 @@ describe("API", () => {
                 return res.json();
             })
             .then((account) => {
-                expect(account.authorizationSet.length).eql(1);
-                expect(account.authorizationSet[0].kind).to.be.eql("WebSite");
-                expect(account.authorizationSet[0].key).to.be.eql(webSiteId);
+                expect(account.authorizationSet.length).eql(2);
+                expect(account.authorizationSet[1].kind).to.be.eql("WebSite");
+                expect(account.authorizationSet[1].key).to.be.eql(webSiteId);
             });
     });
 
@@ -264,9 +264,9 @@ describe("API", () => {
                 return res.json();
             })
             .then((account) => {
-                expect(account.authorizationSet.length).eql(2);
-                expect(account.authorizationSet[1].kind).to.be.eql("Session");
-                expect(account.authorizationSet[1].key).to.be.eql(sessionId);
+                expect(account.authorizationSet.length).eql(3);
+                expect(account.authorizationSet[2].kind).to.be.eql("Session");
+                expect(account.authorizationSet[2].key).to.be.eql(sessionId);
             });
     });
 

@@ -1,7 +1,7 @@
 import RuleService from "./RuleService";
 import BackgroundService from "./BackgroundService"
 import Action from "./Action";
-import {logger} from "../framework/Logger";
+import { logger } from "../framework/Logger";
 
 export default class EventListener {
     private _ruleService: RuleService;
@@ -16,7 +16,7 @@ export default class EventListener {
         this._backgroundService = backgroundService;
     }
 
-    explorationStarted(): void{
+    explorationStarted(): void {
         this.listen();
     }
 
@@ -44,31 +44,33 @@ export default class EventListener {
         });
     }
 
-    private exploratoryListener(event : Event): void {
+    private exploratoryListener(event: Event): void {
         logger.info('exploratoryListener');
-        let unsafeEvent : any = event;
-        if (!unsafeEvent.explored) {
-            logger.info('event was unexplored');
-            unsafeEvent.explored = true;
-            const rule = this._ruleService.getMatchingRule(event);
-            logger.info(`rule:${rule}`);
-            if (rule) {
-                const action = rule.makeAction(event);
-                if (action) {
-                    logger.info(`action : ${action.toString()}`);
-                    this._backgroundService.sendAction(action)
-                    .then(() => {
-                         this._newActionCallbacks.forEach(callback => callback(action));
-                    })
-                    .catch((error) => {
-                        logger.error('Error while Listener pushed action ', error);
-                    })
+        let unsafeEvent: any = event;
+        if (unsafeEvent.isTrusted) {
+            if (!unsafeEvent.explored) {
+                logger.info('event was unexplored');
+                unsafeEvent.explored = true;
+                const rule = this._ruleService.getMatchingRule(event);
+                logger.info(`rule:${rule}`);
+                if (rule) {
+                    const action = rule.makeAction(event);
+                    if (action) {
+                        logger.info(`action : ${action.toString()}`);
+                        this._backgroundService.sendAction(action)
+                            .then(() => {
+                                this._newActionCallbacks.forEach(callback => callback(action));
+                            })
+                            .catch((error) => {
+                                logger.error('Error while Listener pushed action ', error);
+                            })
+                    }
                 }
             }
         }
     }
 
-    public addActionPushedToBackgroundListener(callback : (action : Action) => void): void {
+    public addActionPushedToBackgroundListener(callback: (action: Action) => void): void {
         if (typeof callback === "function") {
             this._newActionCallbacks.push(callback)
         }
