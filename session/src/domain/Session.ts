@@ -80,6 +80,14 @@ export default class Session {
         return ["shadow", "bluesky", "rainbow"]
     }
 
+    public changeName(name : string) {
+        this._name = name;
+    }
+
+    public changeDescription(description : string) {
+        this._description = description;
+    }
+
     public startExploration(tester: Tester, startDate?:Date): number {
         const explorationNumber = this._explorationList.length;
         const exploration: Exploration = new Exploration(tester, explorationNumber, startDate);

@@ -79,6 +79,30 @@ export default class SessionService {
         this.mountedSessionList[this.mountedSessionList.length] = session;
     }
 
+    public changeDescription(sessionId: string, description: string): Promise<void> {
+        return this.mountSession(sessionId)
+            .then((mountSession) => {
+                if (mountSession) {
+                    mountSession.changeDescription(description);
+                    return this.sessionRepository.changeDescription(mountSession.id, description);
+                } else {
+                    throw new Error('wrong sessionId');
+                }
+            })
+    }
+
+    public changeName(sessionId: string, name: string): Promise<void> {
+        return this.mountSession(sessionId)
+            .then((mountSession) => {
+                if (mountSession) {
+                    mountSession.changeName(name);
+                    return this.sessionRepository.changeName(mountSession.id, name);
+                } else {
+                    throw new Error('wrong sessionId');
+                }
+            })
+    }
+
     public startExploration(sessionId: string, testerName: string, startDate?: Date): Promise<number> {
         let explorationNumber: number;
         let session: Session;
