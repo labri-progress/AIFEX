@@ -17,23 +17,23 @@ export default class CSSSelectorRule extends Rule {
             try {
                 suffix = getCssSelector(event.target, {selectors: ['id', 'class', 'tag']});
             } catch (e) {
-                logger.error(`exception`, e);
+                logger.error(`exception`,new Error('css exception'));
             }
             return new Action(this.prefix, suffix);
         }
     }
 
-    actionToElements(action: Action): HTMLElement[] {
+    actionToElements(action: Action): (HTMLElement|SVGElement)[] {
         if (action.prefix !== this.prefix) {
             return [];
         }
 
         if (action.suffix) {
-            const elements : HTMLElement[] = [];
+            const elements : (HTMLElement|SVGElement)[] = [];
             const parentElements = this.findMatchedElements();
             document.querySelectorAll(action.suffix).forEach( (element) => {
                 if (parentElements.some((parent) => parent.contains(element))) {
-                    if (element instanceof HTMLElement) {
+                    if (element instanceof HTMLElement || element instanceof SVGElement) {
                         elements.push(element);
                     }
                 }

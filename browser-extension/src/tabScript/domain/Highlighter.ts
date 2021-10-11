@@ -14,8 +14,8 @@ export default class Highlighter {
     private _evaluationActionsBorderView: EvaluationHighlighter;
     private _highlighterCanvas : HighlighterCanvas;
 
-    private elementListMatchedByRule: HTMLElement[];
-    private elementRules: Map<HTMLElement, Rule[]>  | undefined;
+    private elementListMatchedByRule: (HTMLElement|SVGElement)[];
+    private elementRules: Map<HTMLElement|SVGElement, Rule[]>  | undefined;
     private actionsAndElements: ActionsAndElements | undefined;
     private evaluation: ExplorationEvaluation | undefined;
 
@@ -30,7 +30,7 @@ export default class Highlighter {
         this.evaluation = undefined;
     }
 
-    refresh(elementListMatchedByRule: HTMLElement[], elementRules: Map<HTMLElement, Rule[]>, actionsAndElements: ActionsAndElements, evaluation: ExplorationEvaluation | undefined): Promise<void> {
+    refresh(elementListMatchedByRule: (HTMLElement|SVGElement)[], elementRules: Map<HTMLElement|SVGElement, Rule[]>, actionsAndElements: ActionsAndElements, evaluation: ExplorationEvaluation | undefined): Promise<void> {
         return new Promise((resolve) => {
             this.elementListMatchedByRule = elementListMatchedByRule;
             this.elementRules = elementRules;

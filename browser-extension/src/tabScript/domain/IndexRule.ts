@@ -10,14 +10,14 @@ export default class IndexRule extends SimpleRule {
     makeAction(event : Event): Action | undefined {
         const matchingElements = this.findMatchedElements();
         for (let i = 0; i < matchingElements.length; i++) {
-            let targetHTMLElement = event.composedPath().filter((target):target is HTMLElement => target instanceof HTMLElement);
-            if (targetHTMLElement.length > 0 && matchingElements[i].contains(targetHTMLElement[0])) {
+            let targetElements = event.composedPath().filter((target):target is HTMLElement | SVGElement => target instanceof HTMLElement || target instanceof SVGElement);
+            if (targetElements.length > 0 && matchingElements[i].contains(targetElements[0])) {
                 return new Action(this.prefix, i.toString());
             }
         }
     }
 
-    actionToElements(action: Action): HTMLElement[] {
+    actionToElements(action: Action): (HTMLElement | SVGElement)[] {
         if (action.prefix !== this.prefix) {
             return [];
         }

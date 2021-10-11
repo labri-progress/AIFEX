@@ -6,38 +6,14 @@ const config = {
     databaseName: 'DEVdashboardDB',
     elastic: 'http://elasticsearch:9200',
     elasticPassword: process.env.ELASTIC_PASSWORD||"changeme",
-    tokenSecret: process.env.TOKEN_SECRET||"changeme",
     port: 80,
     host: "localhost",
 
-    website: {
-        host: "website",
+    api: {
+        host: "api",
         port: 80,
         
-    },
-    session: {
-        host: "session",
-        port: 80
-    },
-    model: {
-        host: "model",
-        port: 80,
-        socketProtocol: "http",
-        socketHost: "localhost",
-        socketPort: 8080
-    },
-    account: {
-        host: "account",
-        port: 80
-    },
-    printer: {
-        host: "printer",
-        port: 80
-    },
-    evaluator: {
-        host: "evaluator",
-        port: 80
-    },
+    }
 }
 
 module.exports = config

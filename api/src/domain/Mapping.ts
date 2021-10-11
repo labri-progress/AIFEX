@@ -1,7 +1,7 @@
 // tslint:disable-next-line: interface-name
 export default class Mapping {
 
-    public match: {
+    readonly match: {
         event: string,
         css?: string,
         xpath?: string,
@@ -9,18 +9,18 @@ export default class Mapping {
         key?: string,
     };
 
-    public output: {
+    readonly output: {
         prefix: string,
         suffix?: string,
     };
 
-    public context?: {
+    readonly context?: {
         url?: string,
         css?: string,
         xpath?: string
     }
 
-    public description?: string;
+    readonly description?: string;
 
     constructor(match: {
         event: string,

@@ -1,12 +1,22 @@
+import Interaction from "./Interaction";
+import Screenshot from "./Screenshot";
 import Session, { SessionOverlayType } from "./Session";
-import Token from "./Token";
+import Video from "./Video";
 
 export default interface SessionService {
 
-    findSessionIds(token: Token): Promise<string[] | "Unauthorized">;
+    findSessionById(id: string): Promise<Session | undefined>;
 
-    findSessionById(token: Token, id: string): Promise<Session | "Unauthorized">;
+    createSession(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType): Promise<string>;
 
-    createSession(token: Token, webSiteId : string, baseURL : string, name : string, overlayType: SessionOverlayType ): Promise<string> ;
+    addExploration(sessionId: string, testerName: string, interactionList: Interaction[], startDate?: Date, stopDate?: Date): Promise<number>;
+
+    addScreenshots(screenshots: Screenshot[]): Promise<"ScreenshotsAdded">;
+
+    findScreenshotsBySessionId(sessionId: string): Promise<Screenshot[]>;
+
+    addVideo(video: Video): Promise<"VideoAdded">;
+
+    findVideosBySessionId(sessionId: string): Promise<Video[]>;
 
 }

@@ -84,7 +84,7 @@ export default class TabScript {
     public fetchActionsAndElements(): Promise<ActionsAndElements> {
         return this._backgroundService.getActionList()
         .then((actionList) => {
-            const elementToActionMap = new Map<HTMLElement, Action[]>();
+            const elementToActionMap = new Map<HTMLElement|SVGElement, Action[]>();
             for (const action of actionList) {
                 action.ruleList = this._ruleService.getRuleListByAction(action);
                 action.htmlElementList = this._ruleService.getHTMLElementsMatchedByAction(action);

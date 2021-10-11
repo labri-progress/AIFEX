@@ -39,6 +39,9 @@ describe("Infra", () => {
             const body = {
                 webSiteId: webSiteId,
                 baseURL: "http://www.test.com/index.html",
+                name:"testsession",
+                description: "test",
+                overlayType: "shadow",
             };
             const option = {
                 method: "POST",

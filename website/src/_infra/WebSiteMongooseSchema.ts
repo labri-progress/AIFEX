@@ -31,8 +31,7 @@ const WEBSITE_SCHEMA = new Schema({
     name: {
         required: true,
         type: String
-    },
-    url:{type: String}
+    }
 },
 {
     timestamps: true,
@@ -61,8 +60,7 @@ export interface MappingDocument {
 export interface WebSiteDocument extends Document {
     _id? : string
     mappingList: MappingDocument[],
-    name: string,
-    url: string
+    name: string
 }
 
 export default mongoose.model<WebSiteDocument>("WebSite", WEBSITE_SCHEMA);

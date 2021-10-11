@@ -11,24 +11,24 @@ module.exports = {
 		rules: [
 			{
 				test: /\.css$/,
+				exclude: /node_modules/,
 				use: [{ loader: "style-loader" }, { loader: "css-loader" }],
 			},
 			{
 				test: /\.tsx?$/,
-				use: "ts-loader",
 				exclude: /node_modules/,
+				use: "ts-loader"
 			},
+
 		],
 	},
 	plugins: [
 		new CopyPlugin({
 			patterns: [
-			{ from: "./src/images/plugin_icon.png", to: "images/plugin_icon.png" },
-			{ from: "./configuration.json", to: "configuration.json" },
-			{
-				from: "./src/images/plugin_icon_blue.png",
-				to: "images/plugin_icon_blue.png",
-			},
+			{ from: "./src/images/aifex_icon.png", to: "images/aifex_icon.png" },
+			{ from: "./src/images/aifex_icon_rec.png", to: "images/aifex_icon_rec.png" },
+			{ from: "./src/images/aifex_icon_notif.png", to: "images/aifex_icon_notif.png" },
+			{ from: "./src/images/aifex_icon_rec_notif.png", to: "images/aifex_icon_rec_notif.png" },
 			{ from: "./src/aifex_page/", to: "aifex_page" },
 			{ from: "./node_modules/bootstrap/dist/css/bootstrap.min.css", to: "aifex_page/css/bootstrap.min.css" },
 			{ from: "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js", to: "aifex_page/js/bootstrap.bundle.min.js" },
@@ -37,6 +37,6 @@ module.exports = {
 			{ from: "./node_modules/jquery/dist/jquery.min.js", to: "aifex_page/js/jquery.min.js" },
             { from: "./node_modules/font-awesome/css/font-awesome.min.css", to: "aifex_page/css/font-awesome.min.css" },
             { from: "./node_modules/font-awesome/fonts", to: "aifex_page/fonts" },
-		]}),
+		]})
 	],
 };

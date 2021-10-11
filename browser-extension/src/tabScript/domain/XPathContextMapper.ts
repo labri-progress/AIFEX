@@ -6,12 +6,12 @@ export default class XPathContextMapper extends ContextMapper {
         super(context);
     }
 
-    buildElementToRuleMap() : Map<HTMLElement, Rule[]> {
+    buildElementToRuleMap() : Map<HTMLElement|SVGElement, Rule[]> {
         if (this._context) {
 
             const xpathQueryResult = document.evaluate(this._context, document, null, XPathResult.ANY_TYPE, null);
             const context = xpathQueryResult.iterateNext();
-            if (context instanceof HTMLElement) {
+            if (context instanceof HTMLElement || context instanceof SVGElement) {
                 return this.buildElementToRuleMapForSelectors();
             } else {
                 return new Map();

@@ -1,9 +1,15 @@
-document.getElementById("connectionSignIn").addEventListener("click", handleConnection);
-document.getElementById("connectionForm").addEventListener("submit", handleConnection);
-document.getElementById("connectionSignOut").addEventListener("click", handleDisconnection);
-document.getElementById("connectionSync").addEventListener("click", handleSync);
-document.getElementById("openSessionWindow").addEventListener("click", handleDrawAttentionToWindow);
-document.getElementById("toggleShouldTestInNewWindow").addEventListener("change", handleTestOnNewWindow);
+document.getElementById("signinButton").addEventListener("click", handleSignin);
+// document.getElementById("unlinkToServerButton").addEventListener("click", handleServerUnLink);
+// document.getElementById("connectionSignIn").addEventListener("click", handleConnection);
+// document.getElementById("connectionForm").addEventListener("submit", handleConnection);
+// document.getElementById("connectionSignOut").addEventListener("click", handleDisconnection);
+// document.getElementById("connectionSync").addEventListener("click", handleSync);
+// document.getElementById("openSessionWindow").addEventListener("click", handleDrawAttentionToWindow);
+// document.getElementById("toggleShouldTestInNewWindow").addEventListener("change", handleTestOnNewWindow);
+
+
+
+
 
 function handleConnection(e) {
     console.log('connect');
@@ -25,18 +31,18 @@ function handleConnection(e) {
                     kind: "connect",
                     url: INPUT_URL
                 })
-                .then((response) => {
-                    if (!response) {
-                        console.error(`Background does not answer`);
-                    }
-                    else if (response.error) {
-                        console.error(response.error);
-                        document.getElementById('connexionMessage').innerHTML = response.error;
-                        return;
-                    } else {
-                        getState();
-                    }
-                })
+                    .then((response) => {
+                        if (!response) {
+                            console.error(`Background does not answer`);
+                        }
+                        else if (response.error) {
+                            console.error(response.error);
+                            document.getElementById('connexionMessage').innerHTML = response.error;
+                            return;
+                        } else {
+                            getState();
+                        }
+                    })
             }
         })
 }
@@ -47,18 +53,18 @@ function handleDisconnection(e) {
     sendMessage({
         kind: "disconnect",
     })
-    .then(response => {
-        if (!response) {
-            console.error(`Background does not answer`);
-        }
-        else if (response.error) {
-            document.getElementById('connexionMessage').innerHTML = 'Error, cannot disconnect';
-        }
-        else {
-            renderNotConnected();
-            connectionCode = undefined
-        }
-    })
+        .then(response => {
+            if (!response) {
+                console.error(`Background does not answer`);
+            }
+            else if (response.error) {
+                document.getElementById('connexionMessage').innerHTML = 'Error, cannot disconnect';
+            }
+            else {
+                renderNotConnected();
+                connectionCode = undefined
+            }
+        })
 }
 
 function handleSync(e) {
@@ -67,17 +73,17 @@ function handleSync(e) {
     sendMessage({
         kind: "reloadWebSite",
     })
-    .then(response => {
-        if (!response) {
-            console.error(`Background does not answer`);
-        }
-        else if (response.error) {
-            document.getElementById('connexionMessage').innerHTML = 'Error, cannot synchronize';
-        }
-        else {
-            document.getElementById('connexionMessage').innerHTML = 'You are still connected. WebSite is refreshed !'
-        }
-    })
+        .then(response => {
+            if (!response) {
+                console.error(`Background does not answer`);
+            }
+            else if (response.error) {
+                document.getElementById('connexionMessage').innerHTML = 'Error, cannot synchronize';
+            }
+            else {
+                document.getElementById('connexionMessage').innerHTML = 'You are still connected. WebSite is refreshed !'
+            }
+        })
 }
 
 function handleDrawAttentionToWindow(e) {
@@ -86,14 +92,14 @@ function handleDrawAttentionToWindow(e) {
     sendMessage({
         kind: "drawAttention",
     })
-    .then(response => {
-        if (!response) {
-            console.error(`Background does not answer`);
-        }
-        else if (response.error) {
-            console.error(response.error);
-        }
-    })
+        .then(response => {
+            if (!response) {
+                console.error(`Background does not answer`);
+            }
+            else if (response.error) {
+                console.error(response.error);
+            }
+        })
 
 }
 

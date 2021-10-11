@@ -1,51 +1,29 @@
 import fetch from "node-fetch";
 import config from "./config";
-import Token from "../domain/Token";
 import WebSite from "../domain/WebSite";
 import WebSiteService from "../domain/WebSiteService";
-import jsonwebtoken from "jsonwebtoken";
 import Mapping from "../domain/Mapping";
 
 const WEBSITE_URL : string = `http://${config.website.host}:${config.website.port}/website/`;
 
 export default class WebSiteServiceHTTP implements WebSiteService {
-    
-    findWebSiteIds(token: Token): Promise<string[] | "Unauthorized"> {
-        try {
-            jsonwebtoken.verify(token.token, config.tokenSecret);
-            return Promise.resolve(this.token2WebSiteIds(token));
-        } catch (e) {
-            return Promise.resolve("Unauthorized");
-        }
-    }
-    
-    findWebSiteById(token : Token, id: string): Promise<WebSite | "Unauthorized"> {
-        try {
-            jsonwebtoken.verify(token.token, config.tokenSecret);
-            const ids : string[] = this.token2WebSiteIds(token);
-            if (ids.includes(id)) {
-                const webSiteGetURL = WEBSITE_URL + id;
-                return fetch(webSiteGetURL).then(response => {
-                    if (response.ok) {
-                        return response.json().then(webSiteData => {
-                            return new WebSite(webSiteData.id, webSiteData.name, webSiteData.url, webSiteData.mappingList);
-                        })
-                    } else {
-                        throw new Error("Error:"+response.status)
-                    }
-                });
+        
+    findWebSiteById(id: string): Promise<WebSite | undefined> {
+        const webSiteGetURL = WEBSITE_URL + id;
+        return fetch(webSiteGetURL).then(response => {
+            if (response.ok) {
+                return response.json().then(webSiteData => {
+                    return new WebSite(webSiteData.id, webSiteData.name, webSiteData.mappingList);
+                })
             } else {
-                return Promise.resolve("Unauthorized");
+                return undefined;
             }
-        } catch(e) {
-            return Promise.resolve("Unauthorized");
-        }
+        });
     }
 
-    createWebSite(token: Token, name: string, url: string, mappingList: Mapping[]): Promise<string | "Unauthorized" > {
+    createWebSite(name: string, mappingList: Mapping[]): Promise<string> {
         let webSite = {
             name,
-            url,
             mappingList
         }
         const webSiteCreateURL = 'http://' + config.website.host + ':' + config.website.port + '/website/create';
@@ -61,22 +39,29 @@ export default class WebSiteServiceHTTP implements WebSiteService {
                 } else {
                     throw new Error("Error"+response.statusText);
                 }
+            })   
+    }
+
+    updateWebSite(id : string, name : string, mappingList : Mapping[]) : Promise<"WebSiteUpdated"> {
+        let webSite = {
+            id,
+            name,
+            mappingList
+        }
+        const webSiteUpdateURL = 'http://' + config.website.host + ':' + config.website.port + '/website/update';
+        let optionWebSiteUpdate = {
+            method: 'POST',
+            body:    JSON.stringify(webSite),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(webSiteUpdateURL, optionWebSiteUpdate)
+            .then(response => {
+                if (response.ok) {
+                    return "WebSiteUpdated"
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
             })
-            
     }
-
-
-    private token2WebSiteIds(token : Token) : string[]{
-        const payload : {username: string, authorizationSet: Object[]} = jsonwebtoken.verify(token.token, config.tokenSecret) as {username: string, authorizationSet: Object[]};
-        return payload.authorizationSet.reduce<string[]>( (acc, currAuthorizationObject) => {
-            const  authorization : {_kind: number, _key:string} = currAuthorizationObject as {_kind: number, _key:string};
-            const WEBSITE_KIND = 2;
-            if (authorization._kind === WEBSITE_KIND) {
-                acc.push(authorization._key);
-            }
-            return acc;;
-        }, []);
-    }
-    
     
 }

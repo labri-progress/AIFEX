@@ -17,30 +17,26 @@ export default class Session {
     private _webSite: WebSite;
     private _baseURL: string;
     private _name: string;
+    private _description: string;
     private _explorationList: Exploration[];
-    private _createdAt: Date | undefined;
-    private _updatedAt: Date | undefined;
+    private _createdAt: Date;
     private _overlayType: SessionOverlayType;
 
-    constructor(webSite: WebSite,
+    constructor(id: string = generate(),
+        webSite: WebSite,
         baseURL: string,
-        id: string = generate(),
         name: string,
-        createdAt?: Date,
-        updatedAt?: Date,
+        description: string,
+        createdAt: Date = new Date(),
         overlayType: SessionOverlayType = "rainbow")
     {
         this._id = id;
-
-        if (!(webSite instanceof WebSite)) {
-            throw new Error("Cannot create Session with webSite not a WebSite instance");
-        }
         this._webSite = webSite;
         this._baseURL = baseURL;
+        this._name = name;
+        this._description = description;
         this._explorationList = [];
         this._createdAt = createdAt;
-        this._updatedAt = updatedAt;
-        this._name = name;
         this._overlayType = overlayType;
     }
 
@@ -56,6 +52,14 @@ export default class Session {
         return this._baseURL;
     }
 
+    get name(): string {
+        return this._name;
+    }
+
+    get description(): string {
+        return this._description;
+    }
+
     get numberOfExploration(): number {
         return this._explorationList.length;
     }
@@ -68,20 +72,20 @@ export default class Session {
         return this._createdAt;
     }
 
-    get updatedAt(): Date | undefined {
-        return this._updatedAt;
-    }
-
-    get name(): string {
-        return this._name;
-    }
-
     get overlayType(): SessionOverlayType {
         return this._overlayType;
     }
 
     public static getOverlayTypes(): SessionOverlayType[] {
         return ["shadow", "bluesky", "rainbow"]
+    }
+
+    public changeName(name : string) {
+        this._name = name;
+    }
+
+    public changeDescription(description : string) {
+        this._description = description;
     }
 
     public startExploration(tester: Tester, startDate?:Date): number {

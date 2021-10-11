@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const { getSessionById, getModelById } = require('../apiService');
 const buildInvitation = require("../invitations").buildInvitation;
 
 const logger = require('../logger');
@@ -10,21 +10,9 @@ module.exports = function attachRoutes(app, config) {
         const { modelId, sessionId } = req.query;
 
         logger.info(`GET join session (modelId = ${modelId}), (sessionId = ${sessionId})`);
-        const sessionURL = 'http://' + config.session.host + ':' + config.session.port + '/session/'+sessionId;
-        const modelURL = 'http://' + config.model.host + ':' + config.model.port + '/model/'+modelId;
         
-        const sessionPromise = fetch(sessionURL, {});
-        const modelPromise = fetch(modelURL, {});
 
-        Promise.all([sessionPromise, modelPromise])
-            .then(([responseSession, responseModel]) => {
-                if (responseSession.ok && responseModel.ok ) {
-                    return Promise.all([responseSession.json(), responseModel.json()]);
-                } else {
-                    let msg = `session:${responseSession.statusText}, model:${responseModel.statusText}`
-                    throw new Error(msg);
-                }
-            })
+        Promise.all([getSessionById(req.session.jwt, sessionId), getModelById(req.session.jwt, modelId)])
             .then(([session, model]) => {
                 res.render('session/invitation.ejs', {
                     account: req.session,

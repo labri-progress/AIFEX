@@ -4,9 +4,13 @@ import ExplorationEvaluation from "./ExplorationEvaluation";
 import PopupAction from "./PopupAction";
 import WebSite from "./Website";
 import Comment from "./Comment";
+import Token from "./Token";
+import { PopupPageKind } from "./PopupPageKind";
 export default class StateForPopup {
+    public pageKind: PopupPageKind;
     public serverURL: string | undefined;
     public url: string | undefined;
+    public token: Token | undefined;
     public followedConnection : string | undefined;
     public numberOfExplorationsMadeByTester : number;
     public isRecording : boolean;
@@ -28,6 +32,7 @@ export default class StateForPopup {
     } | undefined;
 
     constructor() {
+        this.pageKind = PopupPageKind.Home;
         this.isRecording = false;
         this.isTabScriptDisplayingUserView = false;
         this.hasBaseURL = false;

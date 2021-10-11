@@ -10,7 +10,7 @@ switch(process.env.NODE_ENV) {
         logLevel = LogLevel.Error;
         break;
     case 'development': 
-        logLevel = LogLevel.Info;
+        logLevel = LogLevel.Debug;
         break;
     case 'github':
         logLevel = LogLevel.Error;

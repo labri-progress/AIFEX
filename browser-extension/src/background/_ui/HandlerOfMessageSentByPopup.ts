@@ -14,15 +14,29 @@ export default class HandlerOfMessageSentByPopup {
     }
 
     private handleMessage(msg : any, sender : any, sendResponse : Function): boolean {
-        logger.info(`Popup asks for ${msg.kind}`);
         switch (msg.kind) {
+            case "changePopupPageKind": {
+                logger.info(`Popup asks for ${msg.kind}`);
+                if (!msg.popupPageKind) {
+                    logger.debug(`no page`);
+                    sendResponse({error: "page is missing"});
+                    return true;
+                } else {
+                    this._application.changePopupPageKind(msg.popupPageKind);
+
+                }
+            }
+
             case "checkDeprecated": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 if (!msg.url) {
                     logger.debug(`cannot check plugin version`);
                     sendResponse({error: "URL is missing"});
                     return true;
                 } else {
-                    this._application.makeCompatibilityCheck(msg.url)
+                    try {
+                        const connexionURL = new URL(msg.url);
+                        this._application.makeCompatibilityCheck(connexionURL.origin)
                         .then((compatibilityCheck) => {
                             logger.debug(`compatibilityCheck: ${compatibilityCheck}`);
                             sendResponse(compatibilityCheck);
@@ -31,51 +45,86 @@ export default class HandlerOfMessageSentByPopup {
                             logger.error("popup asks for checkDeprecated", error);
                             sendResponse({error});
                         });
+                    } catch (error) {
+                        logger.error("wrong URL",new Error("url"));
+                        sendResponse({error});
+                    }
                     return true;
                 }
 			}
 
 			case "getStateForPopup": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 let state = this._application.getStateForPopup();
                 logger.debug(`state is returned`);
 				sendResponse(state);
 				return true;
 			}
 
+            case "linkServer": {
+                logger.info(`Popup asks for ${msg.kind}`);
+                this._application.linkServer(msg.url)
+                    .then((result) => {
+                        logger.debug(`linkServer: ${result}`);
+                        sendResponse(result);
+                    })
+                    .catch((error) => {
+                        sendResponse({error});
+                    });
+                return true;
+            }
+
+            case "signin": {
+                logger.info(`Popup asks for ${msg.kind}`);
+                this._application.signin(msg.username, msg.password)
+                    .then((result) => {
+                        if (result === "SignedIn") {                            
+                            sendResponse({message:result});
+                        } else {
+                            sendResponse({error:result});
+                        }
+                    })
+                return true;
+            }
+
             case "connect": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 if (!msg.url) {
                     logger.debug(`connection refused`);
                     sendResponse({error: "URL is missing"});
                     return true;
-                }
-                const CONNECTION_URL = new URL(msg.url);
-                const sessionId = CONNECTION_URL.searchParams.get('sessionId');
-                const modelId = CONNECTION_URL.searchParams.get('modelId');
-                const serverURL = CONNECTION_URL.origin;
-                logger.debug(`sessionId=${sessionId}, modelId=${modelId}, serverURL=${serverURL}`)
-                if (!sessionId || !modelId || ! serverURL) {
-                    logger.debug(`URL is invalid`);
-                    sendResponse({error: "URL is invalid"});
-                    return true;
-                }
-                this._application
-                    .connect(serverURL, sessionId, modelId)
-                    .then(() => {
-                        logger.debug(`connection accepted`);
-                        sendResponse("ok");
-                    })
-                    .catch((error: string) => {
-                        if (error === "session not found" || error === "model not found") {
-                            logger.warn(error);
-                        } else {
-                            logger.error("Connection failed", new Error(error))
+                } else {
+                    try {
+                        const CONNECTION_URL = new URL(msg.url);
+                        const sessionId = CONNECTION_URL.searchParams.get('sessionId');
+                        const modelId = CONNECTION_URL.searchParams.get('modelId');
+                        const serverURL = CONNECTION_URL.origin;
+                        logger.debug(`sessionId=${sessionId}, modelId=${modelId}, serverURL=${serverURL}`)
+                        if (!sessionId || !modelId || ! serverURL) {
+                            logger.debug(`URL is invalid`);
+                            sendResponse({error: "URL is invalid"});
+                            return true;
                         }
-                        sendResponse({error: "Connection failed"})
-                });
+                        this._application
+                            .connect(serverURL, sessionId, modelId)
+                            .then((connexionResult) => {
+                                logger.debug(`connection : ${connexionResult}`);
+                                sendResponse(connexionResult);
+                            })
+                            .catch((error: string) => {
+                                logger.error("Connection failed", new Error(error))
+                                sendResponse({error})
+                        });
+                    } catch(error) {
+                        logger.error("Invalid URL", new Error("url"))
+                        sendResponse({error})
+                    }
+                }
                 return true;
             }
 
             case "disconnect": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .disconnect()
                     .then(() => {
@@ -89,6 +138,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "reloadWebSite": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .reloadWebsite()
                     .then(() => {
@@ -102,6 +152,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "startExploration": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .startExploration()
                     .then(() => {
@@ -116,6 +167,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "stopExploration": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .stopExploration()
                     .then(() => {
@@ -130,6 +182,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "removeExploration": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .removeExploration()
                     .then(() => {
@@ -142,6 +195,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "changeTesterName": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.changeTesterName(msg.testerName)
                 .then(() => {
                     sendResponse(this._application.getStateForPopup());
@@ -153,18 +207,21 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "setCreateNewWindowOnConnect": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.setShouldCreateNewWindowsOnConnect(msg.shouldCreateNewWindowOnConnect);
                 sendResponse(this._application.getStateForPopup());
                 return true;
             }
 
             case "setCloseWindowOnConnect": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.setShouldCloseWindowOnDisconnect(msg.shouldCloseWindowOnDisconnect);
                 sendResponse(this._application.getStateForPopup());
                 return true;
             }
 
             case "restartExploration": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                 .restartExploration()
                 .then(() => {
@@ -178,6 +235,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "pushComment": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 const { type, value } = msg;
                 this._application.addCommentToExploration(type, value);
                 sendResponse("ok");
@@ -185,24 +243,28 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "upComment": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.upComment(msg.type, msg.value);
                 sendResponse("ok");
                 return true;
             }
                 
             case "takeScreenshot": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.takeScreenShot();
                 sendResponse("ok");
                 return true;
             }
 
             case "drawAttention": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.drawAttention();
                 sendResponse("ok");
                 return true;
             }
 
             case "setRecordMediaStatus" : {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.setRecordMedia(msg.recordMediaStatus)
                 .then(() => {
                     sendResponse("ok");
@@ -215,6 +277,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "toggleDetachPopup": {
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application.toggleDetachPopup()
                 .then(() => {
                     sendResponse("ok");
@@ -227,7 +290,7 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             default : {
-                logger.debug(`${msg.kind} is not considered to come from popup`);
+                //logger.debug(`${msg.kind} is not considered to come from popup`);
                 return true;
             }
 

@@ -1,9 +1,4 @@
-const fetch = require('node-fetch');
-const requestWebSiteFromToken = require('../tokenUtilities').requestWebSiteFromToken;
-const verify = require('../tokenUtilities').verify;
-const requestSessionFromToken = require('../tokenUtilities').requestSessionFromToken;
-const token2Session = require('../tokenUtilities').token2Session;
-const buildInvitation = require("../invitations").buildInvitation;
+const {signin, signup, getAccount , getWebSites, getSessions, getModels} = require('../apiService');
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
@@ -11,15 +6,33 @@ module.exports = function attachRoutes(app, config) {
     app.use((req, res, next) => {
         logger.info('use account');
         if (req.session.jwt) {
-            logger.debug('token');
-            if (verify(req.session.jwt)) {
+            logger.debug('token is found');
+            if (req.session.username) {
+                logger.debug('username is found');
                 next();
-                return;
             } else {
-                req.session.jwt = undefined;
-                req.session.username = undefined;
-                res.redirect('/');
-                return;
+                getAccount(req.session.jwt)
+                    .then(account => {
+                        if (account) {
+                            logger.debug(`get username: ${account.username}`);
+                            req.session.username = account.username;
+                            next();
+                            return;
+                        } else {
+                            logger.debug(`cannot get account`);
+                            req.session.jwt = undefined;
+                            req.session.username = undefined;
+                            res.redirect('/');
+                            return;
+                        }
+                    })
+                    .catch(err => {
+                        logger.error('Error cannot get account');
+                        logger.error(err);
+                        req.session.jwt = undefined;
+                        res.redirect('/');
+                        return;
+                    })
             }
         } else {
             logger.debug('no token');
@@ -73,10 +86,11 @@ module.exports = function attachRoutes(app, config) {
                 return;
             }
     
-            if (req.originalUrl.indexOf('/dashboard/session/view/') !== -1 ) {
-                next();
-                return;
-            }
+            // TODO: when the session is public, the page can be accessed
+            // if (req.originalUrl.indexOf('/dashboard/session/view/') !== -1 ) {
+            //     next();
+            //     return;
+            // }
 
             res.redirect('/account/signin');
             return;
@@ -84,43 +98,50 @@ module.exports = function attachRoutes(app, config) {
     })
 
     app.get('/account/signin', (req, res) => {
-        logger.info(`GET signin.ejs`);
+        logger.info(`Get signin.ejs page`);
         res.render('account/signin.ejs', {account:req.session, kind:undefined});
     });
 
     app.post('/account/signin', (req, res) => {
         const { username , password} = req.body;
-        logger.info(`POST sign for ${username}`);
-        console.log('sign', username, password);
+        logger.info(`Signin for ${username}`);
         signin(username, password)
-            .then(token => {
-                req.session.jwt = token.jwt;
-                req.session.username = username;
-                console.log("token ok:", req.session);
-
-                logger.debug(`sign ok`);
-                res.redirect('/');
+            .then(result => {
+                if (result === "IncorrectUsernameOrPassword") {
+                    logger.debug("token nok:", result);
+                    res.render('account/signin.ejs', {account:req.session, kind:'danger', message:"Incorrect username or password."})
+                } else {
+                    logger.debug("token ok:", result);
+                    req.session.jwt = result;
+                    req.session.username = username;
+                    res.redirect('/account/account');
+                }
             })
             .catch(reason => {
                 logger.error(`error ${reason}`);
                 //console.log('error', reason);
-                res.render('account/signin.ejs', {account:req.session, kind:'danger', message:"Incorrect username or password."})
+                res.render('account/signin.ejs', {account:req.session, kind:'danger', message:"Server Error"})
             })
     });
 
     app.get('/account/signup', (req, res) => {
-        logger.info(`GET signin.ejs`);
+        logger.info(`Get signup.ejs page`);
         res.render('account/signup.ejs', {account:req.session, kind:undefined});
     });
 
     app.post('/account/signup', (req, res) => {
         const { username , email, password} = req.body;
-        logger.info(`POST sign for ${username}`);
+        logger.info(`signup for ${username}`);
         //console.log('sign', username, password);
         signup(username, email, password)
-            .then(token => {
-                logger.debug(`sign up ok`);
-                res.render('account/signin.ejs', {account:req.session, kind:undefined});
+            .then((result) => {
+                if (result === "UserNameAlreadyTaken") {
+                    logger.debug(`sign up nok, UserNameAlreadyTaken`);
+                    res.render('account/signup.ejs', {account:req.session, kind:'danger', message:"Cannot create account. Try with another username."})
+                } else {
+                    logger.debug(`sign up ok`);
+                    res.render('account/signin.ejs', {account:req.session, kind:undefined});
+                }
             })
             .catch(reason => {
                 logger.error(`error ${reason}`);
@@ -130,29 +151,25 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.get('/account/signout', (req, res) => {
-        logger.info(`GET signout`);
+        logger.info(`signout`);
         req.session.jwt = undefined;
         req.session.username = undefined;
         res.redirect('/');
     });
 
     app.get('/account/account', (req, res) => {
-        logger.info("/account/account")
-        let webSiteList;
-        let sessionList;
-        logger.info(`GET account.ejs`);
-        requestWebSiteFromToken(req.session.jwt)
-            .then(requestedWebSiteList => {
-                webSiteList = requestedWebSiteList;
-                return requestSessionFromToken(req.session.jwt);
-            })
-            .then(requestedSessionList => {
-                sessionList = requestedSessionList;
-                const connectionCodeList = token2Session(req.session.jwt);
-                const serveurURLList = token2Session(req.session.jwt).map(connectionCode => {
-                    const [sessionId, modelId] = connectionCode.split('$');
-                    return buildInvitation(modelId, sessionId);
-                })
+        logger.info("get account page")
+
+        Promise.all([getWebSites(req.session.jwt),getSessions(req.session.jwt),getModels(req.session.jwt)])
+            .then(([webSiteList, sessionList, modelList]) => {
+                let serveurURLList = [];
+                let connectionCodeList = [];
+                sessionList.forEach(session => {
+                    logger.debug(`session ${JSON.stringify(session.id)}`);
+                    let model4Session = modelList.find(model => model.sessionIdList.includes(session.id));
+                    connectionCodeList.push(`${session.id}$${model4Session.id}`);
+                    serveurURLList.push(`${process.env.PROTOCOL}://${process.env.HOST_ADDR}/join?sessionId=${session.id}&modelId=${model4Session.id}`);
+                });
                 res.render('account/account.ejs', {account:req.session, serveurURLList, connectionCodeList, webSiteList, sessionList});
             })
             .catch(e => {
@@ -161,73 +178,6 @@ module.exports = function attachRoutes(app, config) {
             })
     });
 
-    function signup(username, email, password) {
-        logger.info(`signup`);
-        const accountURL = 'http://' + config.account.host + ':' + config.account.port + '/account/signup';
-        let bodySignup = {
-            username,
-            email,
-            password
-        }
-        let optionSignup = {
-            method: 'POST',
-            body:    JSON.stringify(bodySignup),
-            headers: { 'Content-Type': 'application/json' },
-        }
-        return new Promise( (res, rej) => {
-            fetch(accountURL, optionSignup)
-                .then(responseAccount => {
-                    if (responseAccount.ok) {
-                        responseAccount.json()
-                            .then(createdUsername => {
-                                res(createdUsername);
-                            })
-                            .catch(e => {
-                                rej(e);
-                            })
-                    } else {
-                        rej({isUsernameExist: true});
-                    }
-                })
-                .catch(e => {
-                    rej(e);
-                });
-        });
-    }
-
-    function signin(username, password) {
-        logger.info(`signin`);
-        const accountURL = 'http://' + config.account.host + ':' + config.account.port + '/account/signin';
-        let bodySignin = {
-            username, 
-            password
-        }
-        let optionSignin = {
-            method: 'POST',
-            body:    JSON.stringify(bodySignin),
-            headers: { 'Content-Type': 'application/json' },
-        }
-        return new Promise((res, rej) => {
-            fetch(accountURL, optionSignin)
-                .then(responseAccount => {
-                    if (responseAccount.ok) {
-                        responseAccount.json()
-                            .then(token => {
-                                logger.info(`Logged in with token ${token}`)
-                                res(token);
-                            })
-                            .catch(e => {
-                                rej(e);
-                            })
-                    } else {
-                        rej({isUsernamePasswordWrong:true});
-                    }
-                })
-                .catch(e => {
-                    rej(e);
-                });
-        })
-    }
 
 }
 

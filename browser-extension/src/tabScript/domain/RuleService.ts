@@ -9,7 +9,7 @@ import CSSSelectorRule from "./CSSSelectorRule";
 import AttributeValueRule from "./AttributeValueRule";
 
 export default class RuleService {
-    elementRules: Map<HTMLElement, Rule[]>;
+    elementRules: Map<HTMLElement|SVGElement, Rule[]>;
     private _ruleMapper : RuleMapper;
 
     constructor() {
@@ -17,7 +17,7 @@ export default class RuleService {
         this._ruleMapper = new RuleMapper([]);
     }
 
-    get elementListMatchedByRule(): HTMLElement[] {
+    get elementListMatchedByRule(): (HTMLElement|SVGElement)[] {
         return Array.from(this.elementRules.keys())
     }
 
@@ -34,7 +34,7 @@ export default class RuleService {
     }
 
     getMatchingRule(event : Event ): Rule | undefined {
-        let elements = event.composedPath().filter((target): target is HTMLElement => target instanceof HTMLElement);
+        let elements = event.composedPath().filter((target): target is HTMLElement | SVGElement => target instanceof HTMLElement || target instanceof SVGElement);
         for (const element of elements) {
             const rules = this.elementRules.get(element);
             if (rules !== undefined) {
@@ -50,8 +50,8 @@ export default class RuleService {
         return this._ruleMapper.getRuleListByPrefix(action.prefix);
     }
 
-    getHTMLElementsMatchedByAction(action: Action): HTMLElement[] {
-        const elements : Set<HTMLElement> = new Set();
+    getHTMLElementsMatchedByAction(action: Action): (HTMLElement|SVGElement)[] {
+        const elements : Set<HTMLElement|SVGElement> = new Set();
         action.ruleList.forEach(rule => {
             const elementListForRule = rule.actionToElements(action);
             elementListForRule.forEach(element => elements.add(element));
@@ -90,7 +90,6 @@ export default class RuleService {
                 return new CSSSelectorRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
             case "attributeValue":
                 if (data.match.attributeName === undefined) {
-                    console.log("attributeName is required when suffix is attributeValue")
                     return new SimpleRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
                 } else {
                     return new AttributeValueRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description, data.match.attributeName);

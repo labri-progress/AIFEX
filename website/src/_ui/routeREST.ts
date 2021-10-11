@@ -36,7 +36,6 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
                     res.json({
                         id: webSite.id,
                         name: webSite.name,
-                        url: webSite.url,
                         mappingList: webSite.mappingList
                     });
                 }
@@ -50,16 +49,11 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
     });
 
     app.post("/website/create",  (req: Request, res: Response) => {
-        const {name, url} = req.body;
-        logger.info(`create name ${name}, url ${url}`);
+        const {name} = req.body;
+        logger.info(`create name ${name}`);
         if (name === undefined) {
             logger.warn(`name must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("iname is undefined");
-            return;
-        }
-        if (url === undefined) {
-            logger.warn(`url must not be undefined`);
-            res.status(INVALID_PARAMETERS_STATUS).send("url is undefined");
             return;
         }
 
@@ -82,19 +76,16 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             },
             description?: string
         }[] = req.body.mappingList;
-        let mappingList: Mapping[];
-
-        if (Array.isArray(mappingListData)) {
-
-            mappingList = mappingListData.map((mappingData) => 
-                new Mapping(mappingData.match, mappingData.output, mappingData.context, mappingData.description))
-        } else {
-            let error = new Error("Mapping list must be an array");
-            logger.error(`mapping list error`, error);
-            return res.status(INVALID_PARAMETERS_STATUS).send({message: error.message});
+        const mappingList: Mapping[] = [];
+        try {
+            mappingListData.forEach((mappingData) => {
+                mappingList.push(new Mapping(mappingData.match, mappingData.output, mappingData.context, mappingData.description));
+            });
+        } catch (_) {
+            logger.error(`mapping list error`);
+            return res.status(INVALID_PARAMETERS_STATUS).send({message: `mapping list error`});
         }
-
-        const webSite = new WebSite(idGeneratorService, name, url);
+        const webSite = new WebSite(idGeneratorService, name);
         webSite.addMappingList(mappingList);
         webSiteService.createWebSite(webSite)
         .then(webSiteId => {
@@ -108,8 +99,8 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
      });
 
     app.post("/website/update",  (req: Request, res: Response) => {
-        const {id, name, url} = req.body;
-        logger.info(`update website (id: ${id}, name: ${name}, url: ${url})`);
+        const {id, name} = req.body;
+        logger.info(`update website (id: ${id}, name: ${name})`);
 
         if (id === undefined) {
             logger.warn(`id must not be undefined`);
@@ -119,11 +110,6 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
         if (name === undefined) {
             logger.warn(`name must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("iname is undefined");
-            return;
-        }
-        if (url === undefined) {
-            logger.warn(`url must not be undefined`);
-            res.status(INVALID_PARAMETERS_STATUS).send("url is undefined");
             return;
         }
         const mappingListData : {
@@ -154,16 +140,18 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
             logger.error(`update name ${name}, error with mappingList : ${e}`);
             return res.status(INVALID_PARAMETERS_STATUS).send({message: "Invalid mapping file"});
         }
-            const webSite = new WebSite(idGeneratorService, name, url, id);
+        try {
+            const webSite = new WebSite(idGeneratorService, name, id);
             webSite.addMappingList(mappingList);
             // console.log('website update:', webSite);
             webSiteService.updateWebSite(webSite)
             .then((webSiteId) => {
                 logger.debug(`webSite name ${name} is updated`);
                 res.json(webSiteId);
-            }).catch ((e: any) => {
-                logger.error(`update name ${name}, error `,e);
-                res.status(INTERNAL_SERVER_ERROR_STATUS).send({message: e.message});
-            })
+            });
+        } catch (e) {
+            logger.error(`update name ${name}, error `,e);
+            res.status(INTERNAL_SERVER_ERROR_STATUS).send({message: `update name ${name}, error `});
+        }
     });
 }

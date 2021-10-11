@@ -9,9 +9,57 @@ paths:
     get:
       responses:
         '200':
-          description: Returns Alive
+          description: Check if the server is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /plugin-info:
+    get:
+      responses:
+        '200':
+          description: Return the plugin informations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+  /signup:
+    description: Create a new account
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Account is created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Account cannot be created (forbidden UserName)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
   /signin:
-    description: returns the JWT token
+    description: signin and get a bearer token (JWT)
     post:
       requestBody:
         content:
@@ -26,70 +74,126 @@ paths:
       responses:
         '200':
           description: Returns JWT Token
-  /websites:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bearerToken:
+                    type: string
+        '403':
+          description: Cannot sign (wrong username/password)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /account:
     get:
-      description: returns WebSite ids
       responses:
         '200':
-          description: The WebSite ids
+          description: Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+  /invitations:
     post:
-      description: add a new WebSite
+      description: Create an invitation
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                name:
+                toUsername:
                   type: string
-                url:
+                kind:
                   type: string
-                mappingList:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      match:
-                        type: object
-                        properties:
-                          event:
-                            type: string
-                          css:
-                            type: string
-                          xpath:
-                            type: string
-                          code:
-                            type: string
-                          key:
-                            type: string
-                      output:
-                        type: object
-                        properties:
-                          prefix:
-                            type: string
-                          suffix:
-                            type: string
-                      context:
-                        type: object
-                        properties:
-                          url:
-                            type: string
-                          css:
-                            type: string
-                          xpath:
-                            type: string
-                      description:
-                        type: string
+                  enum: [WebSite, Model, Session]
+                key:
+                  type: string
       responses:
         '200':
-          description: The WebSite ids
+          description: Invitation is created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    delete:
+      description: Delete an invitation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                toUsername:
+                  type: string
+                kind:
+                  type: string
+                  enum: [WebSite, Model, Session]
+                key:
+                  type: string
+      responses:
+        '200':
+          description: Invitation is deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /websites:
+    post:
+      description: add a new WebSite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebSite'
+      responses:
+        '200':
+          description: The WebSite id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webSiteId:
+                    type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
   /websites/{webSiteId}:
     get:
-      description: returns WebSite 
+      description: return WebSite 
       parameters:
         - in: path
           name: webSiteId
@@ -99,37 +203,111 @@ paths:
           description: ID of the WebSite to get
       responses:
         '200':
-          description: Returns WebSite
+          description: The WebSite
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/WebSite'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'      
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    patch:
+      description: update WebSite 
+      parameters:
+        - in: path
+          name: webSiteId
+          schema:
+            type: string
+          required: true
+          description: ID of the WebSite to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebSite'
+      responses:
+        '200':
+          description: The WebSite is updated
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    delete:
+      description: delete WebSite 
+      parameters:
+        - in: path
+          name: webSiteId
+          schema:
+            type: string
+          required: true
+          description: ID of the WebSite to delete
+      responses:
+        '200':
+          description: The WebSite is deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
   /sessions:
-    get:
-      description: returns Session ids
-      responses:
-        '200':
-          description: Returns Session ids
-      security:
-        - bearerAuth: []
     post:
       description: add a new session
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                webSiteId:
-                  type: string
-                baseURL:
-                  type: string
-                name:
-                  type: string
-                overlayType:
-                  type: string
-                  enum: [shadow, bluesky, rainbow]
+              $ref: '#/components/schemas/Session'
       responses:
         '200':
-          description: The WebSite ids
+          description: The Session id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []        
   /sessions/{sessionId}:
@@ -141,15 +319,694 @@ paths:
           schema:
             type: string
           required: true
-          description: ID of the Session to get
+          description: Id of the Session to get
       responses:
         '200':
-          description: Returns Session
+          description: The Session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'      
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    delete:
+      description: delete Session 
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the Session to delete
+      responses:
+        '200':
+          description: The Session is deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /sessions/{sessionId}/explorations:
+    post:
+      description: add a new /explorations
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                testerName:
+                  type: string
+                interactionList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      concreteType:
+                        type: string
+                        enum: [Action, Comment, Answer]
+                      kind:
+                        type: string
+                      value: 
+                        type: string
+                      date:
+                        type: string
+                startDate:
+                  type: string
+                stopDate:
+                  type: string
+      responses:
+        '200':
+          description: The number of exploration in the session
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  explorationNumber:                
+                    type: integer
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /sessions/{sessionId}/screenshots:
+    post:
+      description: add new screenshots
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScreenshotList'
+      responses:
+        '200':
+          description: Screenshot have been added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    get:
+      description: get screenshots of a session
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      responses:
+        '200':
+          description: Screenshot have been added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenshotList'
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /models:
+    post:
+      description: add a new model
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Model'
+      responses:
+        '200':
+          description: The Model id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  modelId:
+                    type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /models/{modelId}/link/{sessionId}:
+    post:
+      description: link the model to a session
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      responses:
+        '200':
+          description: The link is done
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Model'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: ModelNotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /models/{modelId}/probabilities:
+    post:
+      description: get probabilities of the model for a given interaction list
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                interactionList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      concreteType:
+                        type: string
+                        enum: [Action, Comment, Answer]
+                      kind:
+                        type: string
+                      value: 
+                        type: string
+                      date:
+                        type: string
+      responses:
+        '200':
+          description: The computed probabilities
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  probabilities:                  
+                      type: array
+                      items:
+                        type: array
+                        items:
+                          oneOf:
+                            - type: string
+                            - type: integer
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /models/{modelId}/comment-distributions:
+    post:
+      description: get distributions of the comment for a given interaction list
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                interactionList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      concreteType:
+                        type: string
+                        enum: [Action, Comment, Answer]
+                      kind:
+                        type: string
+                      value: 
+                        type: string
+                      date:
+                        type: string
+      responses:
+        '200':
+          description: The comment distributions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  commentDistributions:                  
+                      type: array
+                      items:
+                        type: array
+                        items:
+                          oneOf:
+                            - type: string
+                            - type: object
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /models/{modelId}/ngrams:
+    get:
+      description: get all ngrams 
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model
+      responses:
+        '200':
+          description: The ngrams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ngrams:                  
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                          n:
+                            type: integer
+                          occurence: 
+                            type: integer
+                          nextActions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                key: 
+                                  type: string
+                                occurence:
+                                  type: integer
+                          nextComments:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                key: 
+                                  type: string
+                                occurence:
+                                  type: integer
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /models/{modelId}:
+    get:
+      description: returns Model 
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model to get
+      responses:
+        '200':
+          description: The Model
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Model'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'      
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    delete:
+      description: delete a Model 
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model to delete
+      responses:
+        '200':
+          description: The Model is deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+  /public/authorizations:
+    get:
+      description: check that an authorization is public
+      parameters:
+        - in: query
+          name: kind
+          schema:
+            type: string
+            enum: [WebSite, Model, Session]
+          required: true
+        - in: query
+          name: key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: is public or not
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isPublic:
+                    type: boolean
+    post:
+      description: add an new public authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  enum: [WebSite, Model, Session]
+                key:
+                  type: string
+      responses:
+        '200':
+          description: authorization is public
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+    delete:
+      description: remove a public authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  enum: [WebSite, Model, Session]
+                key:
+                  type: string
+      responses:
+        '200':
+          description: authorization is no more public
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
 components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    Account:
+      type: object
+      properties:
+        username:
+          type: string
+        authorizationSet:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              kind:
+                type: string
+                enum: [WebSite, Model, Session]
+        receivedInvitationSet:
+          type: array
+          items:
+            type: object
+            properties:
+              fromUsername:
+                type: string
+              toUsername:
+                type: string
+              authorization:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  kind:
+                    type: string
+                    enum: [WebSite, Model, Session]
+        sentInvitationSet:
+          type: array
+          items:
+            type: object
+            properties:
+              fromUsername:
+                type: string
+              toUsername:
+                type: string
+              authorization:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  kind:
+                    type: string
+                    enum: [WebSite, Model, Session]
+    WebSite:
+      type: object
+      properties:
+        name:
+          type: string
+        mappingList:
+          type: array
+          items:
+            type: object
+            properties:
+              match:
+                type: object
+                properties:
+                  event:
+                    type: string
+                  css:
+                    type: string
+                  xpath:
+                    type: string
+                  code:
+                    type: string
+                  key:
+                    type: string
+              output:
+                type: object
+                properties:
+                  prefix:
+                    type: string
+                  suffix:
+                    type: string
+              context:
+                type: object
+                properties:
+                  url:
+                    type: string
+                  css:
+                    type: string
+                  xpath:
+                    type: string
+              description:
+                type: string
+    Session:
+      type: object
+      properties:
+        webSiteId:
+          type: string
+        baseURL:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        overlayType:
+          type: string
+          enum: [shadow, bluesky, rainbow]
+    Model:
+      type: object
+      properties:
+        depth:
+          type: integer
+        interpolationfactor:
+          type: integer
+        predictionType:
+          type: string
+          enum: [CSP, SP, FIS]
+    ScreenshotList:
+      type: object
+      properties:
+        screenshotList:
+          type: array
+          items:
+            type: object
+            properties:
+              sessionId:
+                type: string
+              explorationNumber:
+                type: integer
+              interactionIndex:
+                type: integer
+              image:
+                type: string
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT   
+      

@@ -1,119 +1,102 @@
-
-
 body {
-min-width: 450px;
+    width: 500px;
+    height: 300px;
 }
 
-.plugin-label {
-    margin: 10px;
+header {
+    justify-content: space-between;
+    border-bottom: 2px solid black;
 }
 
-#displayUICheckbox {
-    width: 15px;
-    height: 15px;
+header img {
+    opacity: 0.8;
 }
 
-.playerbar{
-    width: 100px;
+header img:hover {
+    opacity: 1;
+}
+
+button {
     display: flex;
-    flex-direction: row ;
-    justify-content: space-evenly;
+    justify-content: center;
+    align-items: center;
 }
 
-.playericone {
-    cursor: pointer;
-}
-
-#color-picker {
-    width: 40px;
-    height: 30px;
-}
-
-#color-picker>:hover {
-    outline: none
-}
-
-.red {
-    background: #FF0000
-}
-
-.green {
-    background: #008000
-}
-
-.blue {
-    background: #0000FF
-}
-
-.yellow {
-    background: #FFFF00
-}
-
-.purple {
-    background: #800080
-}
-
-.orange {
-    background: #FFA500
-}
-
-#playerbar{
-    width: 100px;
+#container  {
+    margin: 1em;
     display: flex;
-    flex-direction: row ;
-    justify-content: space-evenly;
-    padding: 5px;
+    flex-direction: column;
 }
 
-#current-session-model-name {
-    font-weight: bold;
+#homeComponent {
+    flex-direction: column;
+    justify-content: center;
 }
 
-.invalid-feedback {
-    width: 100%;
-    margin-top: .25rem;
-    font-size: 80%;
-    color: #dc3545;
+#connectToSessionComponent {
+    flex-direction: column;
+    justify-content: center;
 }
 
-.valid-feedback {
-    width: 100%;
-    margin-top: .25rem;
-    font-size: 80%;
+#makeExplorationComponent {
+    flex-direction: column;
+    justify-content: center;
 }
 
-#commentSuccessul {
-    display: none;
+#commentSubComponent h3 {
+    display: flex;
 }
 
-.objective-not-validated {
-    color: rgba(255, 0, 0, 0.8);
+#read-comment-button {  
+    font-size: 75%;
 }
 
-.objective-validated {
-    color: #5cb85c
+#comment-list {
+    margin-bottom: 1em;
 }
 
-.scrollable-menu {
-    height: auto;
-    max-height: 200px;
-    overflow-x: hidden;
-  }
-
-.popup_attach {
-    position: absolute;
-    top: 5%;
-    right: 5%;
+#commentSubComponent {
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 2em;
+    margin-bottom: 0.5em;
 }
 
-[upComment] {
-    cursor: pointer;
+
+#read-comment-button {
+    animation: blinker 1s linear infinite;
 }
 
-[upComment].upped {
-    color: green;
+@keyframes blinker {
+    50% {
+      opacity: 0;
+    }
 }
 
-.commentConfirmed {
-    font-size: smaller;
+#commentForm {
+    flex-direction: column;
+}
+
+#commentForm * {
+    margin-left: 1em;
+}
+
+.comment-id {
+    font-size: 100%;
+    margin-left: 1em;
+}
+
+.comment-kind {
+    font-size: 100%;
+    margin-left: 2em;
+}
+
+.comment-description {
+    font-size: 100%;
+    margin-left: 2em;
+}
+
+.form-group {
+    display: flex;
+    align-items: flex-start ;
 }

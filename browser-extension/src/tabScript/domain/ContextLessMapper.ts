@@ -6,7 +6,7 @@ export default class ContextLessMapper extends ContextMapper {
         super(undefined);
     }
 
-    buildElementToRuleMap() : Map<HTMLElement, Rule[]> {
+    buildElementToRuleMap() : Map<HTMLElement|SVGElement, Rule[]> {
         return this.buildElementToRuleMapForSelectors();
     }
 }

@@ -87,8 +87,8 @@ export default class RuleMapper {
         return this._eventInRules;
     }
 
-    buildElementToRuleMap(): Map<HTMLElement, Rule[]> {
-        const result : Map<HTMLElement, Rule[]> = new Map();
+    buildElementToRuleMap(): Map<HTMLElement|SVGElement, Rule[]> {
+        const result : Map<HTMLElement|SVGElement, Rule[]> = new Map();
         for (const mapper of this._urlContext2ContextMapper.values()) {
             for (const [element, rules] of mapper.buildElementToRuleMap()) {
                 let rules4element = result.get(element);

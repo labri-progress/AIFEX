@@ -7,7 +7,6 @@ services:
       dockerfile: ./Dockerfile.prod
     environment:
       - NODE_ENV=${NODE_ENV}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     depends_on:
       - "mongo"
     restart: always
@@ -18,7 +17,6 @@ services:
       dockerfile: ./Dockerfile.prod
     environment:
       - NODE_ENV=${NODE_ENV}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     depends_on:
       - "mongo"
       - "website"
@@ -33,19 +31,6 @@ services:
       dockerfile: ./Dockerfile.prod
     environment:
       - NODE_ENV=${NODE_ENV}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-    depends_on:
-      - "mongo"
-      - "session"
-    restart: always
-
-  evaluator:
-    build:
-      context: evaluator/
-      dockerfile: ./Dockerfile.prod
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     depends_on:
       - "mongo"
       - "session"
@@ -57,24 +42,9 @@ services:
       dockerfile: ./Dockerfile.prod
     environment:
       - NODE_ENV=${NODE_ENV}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - TOKEN_SECRET=${TOKEN_SECRET}
     depends_on:
       - "mongo"
-    ports:
-      - 5008:5008
-    restart: always
-
-  printer:
-    build:
-      context: printer/
-      dockerfile: ./Dockerfile.prod
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-    depends_on:
-      - "website"
-      - "session"
     restart: always
 
   api:
@@ -83,12 +53,13 @@ services:
       dockerfile: ./Dockerfile.prod
     environment:
       - NODE_ENV=${NODE_ENV}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - TOKEN_SECRET=${TOKEN_SECRET}
+      - PLUGIN_INFO=${PLUGIN_INFO}
     depends_on:
       - "account"
       - "website"
       - "session"
+      - "model"
     restart: always
 
   dashboard:
@@ -100,7 +71,6 @@ services:
       - PROTOCOL=${PROTOCOL}
       - HOST_ADDR=${HOST_ADDR}
       - PLUGIN_INFO=${PLUGIN_INFO}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - TOKEN_SECRET=${TOKEN_SECRET}
     restart: always
     volumes:
@@ -118,27 +88,6 @@ services:
     volumes:
       - db-data:/data/db
     command: --quiet --logpath /data/db/mongod.log
-
-  elasticsearch:
-    image: elasticsearch:7.12.1
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=true
-      - cluster.routing.allocation.disk.threshold_enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-
-  kibana:
-    image: kibana:7.12.1
-    environment:
-      - "SERVER_BASEPATH=/kibana"
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
     
 
 volumes:

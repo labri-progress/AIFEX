@@ -6,7 +6,7 @@ export default class Action {
     public suffix: string | undefined;
     public probability: number;
     public ruleList: Rule[];
-    public htmlElementList: HTMLElement[];
+    public htmlElementList: (HTMLElement|SVGElement)[];
 
     constructor(prefix: string, suffix?: string, ruleList: Rule[] = [], htmlElementList: HTMLElement[]= []) {
         this.prefix = prefix;

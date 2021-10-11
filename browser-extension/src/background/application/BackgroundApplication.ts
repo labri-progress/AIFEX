@@ -5,6 +5,7 @@ import Comment from "../domain/Comment";
 import CommentDistribution from "../domain/CommentDistribution";
 import CompatibilityCheck from "../domain/CompatibilityCheck";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
+import { PopupPageKind } from "../domain/PopupPageKind";
 import PopupService from "../domain/PopupService";
 import StateForPopup from "../domain/StateForPopup";
 import StateForTabScript from "../domain/StateForTabScript";
@@ -23,6 +24,18 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 	/* For Popup        */
 	/************************/
 
+	changePopupPageKind(popupPageKind: PopupPageKind): void {
+		return this._background.changePopupPageKind(popupPageKind);
+	}
+
+	linkServer(serverURL: any): Promise<"LinkedToServer"> {
+		return this._background.linkServer(serverURL);
+	}
+
+	unlinkServer(): void {
+		return this._background.unlinkServer();
+	}
+
 	getStateForPopup(): StateForPopup {
 		return this._background.getStateForPopup();
 	}
@@ -31,7 +44,11 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.makeCompatibilityCheck(serverURL);
 	}
 
-	connect(serverURL: string, sessionId: string, modelId: string): Promise<void> {
+	signin(username: string, password: string): Promise<"SignedIn" | "Unauthorized"> {
+		return this._background.signin(username, password);
+	}
+
+	connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
 		return this._background.connect(serverURL, sessionId, modelId);
 	}
 

@@ -8,8 +8,11 @@ let transports: any[] =
   [
     new winston.transports.Console(),
     new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
-    new ElasticsearchTransport({
+    new winston.transports.File({ filename: 'combined.log' })
+  ]
+
+  if (process.env.NODE_ENV === 'production') {
+    transports.push(new ElasticsearchTransport({
       level:'debug',
       clientOpts: {
         node: config.elastic,
@@ -18,9 +21,8 @@ let transports: any[] =
             password: config.elasticPassword
           }
       }
-    })
-  ]
-
+    }));
+  }
 
 switch(process.env.NODE_ENV) {
     case 'production':

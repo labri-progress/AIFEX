@@ -13,6 +13,10 @@ const config = {
         host: "session",
         port: 80
     },
+    model: {
+        host: "model",
+        port: 80
+    },
     account: {
         host: "account",
         port: 80

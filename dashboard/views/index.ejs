@@ -10,55 +10,30 @@
                 <h1 class="display-4">AIFEX </h1>
                 <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
                 <hr class="my-4"></hr>
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <video autoplay loop muted controls>
-                            <source src="static/video/aifex-user-guide-eng.mp4" type="video/mp4">
-                        </video>
-                    </div>
+                <p class="main-text text-center">AIFEX - the platform for Exploratory Testing</p>
+
+                <blockquote class="blockquote text-center">
+                    <p class="mb-0"><em>``So it is with exploratory testing (ET): simultaneous learning, test design and test execution.''</em></p>
+                    <footer class="blockquote-footer">J. Bach</footer>
+                </blockquote>
+                <div class="text-center">
+                <a role="button" class="btn btn-lg btn-primary" href="/account/signin">Try for free</a>
                 </div>
+
                 <hr class="my-4"></hr>
                 
-                <h2>Get Started In Three Steps</h2>
                 <div class="row">
                     <div class="col-md-4">
-                        <% if (account.username) { %>
-                            <a role="button" class="btn btn-lg btn-block btn-success">1 - Sign in</a>
-                            <p>Welcome <b><%= account.username %></b></p>
-                        <% } else { %>
-                            <a role="button" class="btn btn-lg btn-block btn-primary" href="/account/signin">1 - Sign in</a>
-                            <p>Create an account and/or sign in to use AIFEX for your own purpose.</p>
-                        <% } %>
+                        <img src="/static/images/design.jpg" width="100%" />
+                        <p><strong>Design</strong> your session by defining its scope and purpose.</p>
                     </div>
                     <div class="col-md-4">
-                        <% if (!account.username) { %>
-                            <a role="button" class="btn btn-lg btn-block btn-secondary">2 - Create a WebSite</a>
-                            <p>You must create a WebSite before to run AIFEX on your own system.</p>
-                        <% } else { %>
-                            <% if (webSiteList.length == 0) { %>
-                                <a role="button" class="btn btn-lg btn-block btn-primary" href="/dashboard/website/create">2 - Create a WebSite</a>
-                                <p>You must create a WebSite before to run AIFEX on your own system.</p>
-                            <% } else { %>
-                                <a role="button" class="btn btn-lg btn-block btn-success" href="/dashboard/website/create">2 - Create a WebSite</a>
-                                <p>You have created <%=webSiteList.length %> WebSite(s). Create a new one or use the existing one(s) to start a session.</p>
-                            <% } %>
-                        <% } %>
+                        <img src="/static/images/run.jpg" width="100%"/>
+                        <p>Use our browser extension and its AI to <strong>run</strong> your session.</p>
                     </div>
                     <div class="col-md-4">
-                        <% if (!account.username) { %>
-                            <a role="button" class="btn btn-lg btn-block btn-secondary">3 - Start a Session</a>
-                        <% } else { %>
-                            <% if (webSiteList.length == 0) { %>
-                                <a role="button" class="btn btn-lg btn-block btn-secondary" href="/dashboard/session/create">3 - Start a Session</a>
-                            <% } else { %>
-                                <% if (sessionList.length == 0) { %>
-                                    <a role="button" class="btn btn-lg btn-block btn-primary" href="/dashboard/session/create">3 - Start a Session</a>
-                                <% } else { %>
-                                    <a role="button" class="btn btn-lg btn-block btn-success" href="/dashboard/session/create">3 - Start a Session</a>
-                                <% } %>
-                            <% } %>
-                        <% } %>
-                        <p>Start a Session and ask your collaborators to join it.</p>
+                        <img src="/static/images/analyze.jpg" width="100%"/>
+                        <p>Perform an <strong>analysis</strong> of your session. Check the identified bugs and fix them.</p>
                     </div>
                 </div>
             </div>

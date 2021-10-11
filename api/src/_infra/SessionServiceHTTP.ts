@@ -2,51 +2,35 @@ import fetch from "node-fetch";
 import config from "./config";
 import Session, { SessionOverlayType } from "../domain/Session";
 import SessionService from "../domain/SessionService";
-import Token from "../domain/Token";
-import jsonwebtoken from "jsonwebtoken";
+import Screenshot from "../domain/Screenshot";
+import Interaction from "../domain/Interaction";
+import Video from "../domain/Video";
 
 const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;
 
 export default class SessionServiceHTTP implements SessionService {
-
-    findSessionIds(token: Token): Promise<string[] | "Unauthorized"> {
-        try {
-            jsonwebtoken.verify(token.token, config.tokenSecret);
-            return Promise.resolve(this.token2SessionIds(token));
-        } catch(e) {
-            return Promise.resolve("Unauthorized");
-        }
-    }
-
-    findSessionById(token: Token, id: string): Promise<Session | "Unauthorized"> {
-        try {
-            jsonwebtoken.verify(token.token, config.tokenSecret);
-            const ids : string[] = this.token2SessionIds(token);
-            if (ids.includes(id)) {
-                const sessionGetURL = SESSION_URL + id;
-                return fetch(sessionGetURL).then((response) => {
-                    if (response.ok) {
-                        return response.json().then(sessionData => {
-                            return new Session(sessionData.webSite, sessionData.baseURL, sessionData.id, sessionData.name);
-                        })
-                    } else {
-                        throw new Error("Error:"+response.status)
-                    }
-                });
+    
+    findSessionById(id: string): Promise<Session | undefined > {
+        const sessionGetURL = SESSION_URL + id;
+        return fetch(sessionGetURL).then(response => {
+            if (response.ok) {
+                return response.json().then(sesRes => {
+                    return new Session(sesRes.id, sesRes.baseURL, sesRes.webSite, sesRes.name, sesRes.desription,  sesRes.createdAt, sesRes.overlayType, sesRes.explorationList);
+                })
             } else {
-                return Promise.resolve("Unauthorized");
+                return undefined;
             }
-        } catch (e) {
-            return Promise.resolve("Unauthorized");
-        }
+        });
+    
     }
 
-    createSession(token: Token, webSiteId : string, baseURL: string, name: string, overlayType: SessionOverlayType): Promise<string> {
+    createSession(webSiteId : string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType): Promise<string> {
         let session = {
             webSiteId,
             baseURL,
             name,
-            overlayType : overlayType.toString(),
+            description,
+            overlayType : overlayType.toString()
         }
         const SessionCreateURL = 'http://' + config.session.host + ':' + config.session.port + '/session/create';
         let optionSessionCreate = {
@@ -65,16 +49,64 @@ export default class SessionServiceHTTP implements SessionService {
     }
 
 
-    private token2SessionIds(token : Token) : string[]{
-        const payload : {username: string, authorizationSet: Object[]} = jsonwebtoken.verify(token.token, config.tokenSecret) as {username: string, authorizationSet: Object[]};
-        return payload.authorizationSet.reduce<string[]>( (acc, currAuthorizationObject) => {
-            const  authorization : {_kind: number, _key:string} = currAuthorizationObject as {_kind: number, _key:string};
-            const SESSION_KIND = 1;
-            if (authorization._kind === SESSION_KIND) {
-                acc.push(authorization._key.split('$')[0]);
-            }
-            return acc;;
-        }, []);
+    addExploration(sessionId: string, testerName: string, interactionList : Interaction[], startDate?: Date, stopDate?: Date) : Promise<number> {
+        let exploration = {
+            testerName,
+            interactionList,
+            startDate,
+            stopDate
+        }
+        const AddExplorationURL = `http://${config.session.host}:${config.session.port}/session/${sessionId}/exploration/add`;
+        let optionAddExploration = {
+            method: 'POST',
+            body:    JSON.stringify(exploration),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(AddExplorationURL, optionAddExploration)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
+            })
     }
-  
+
+    addScreenshots(screenshots: Screenshot[]): Promise<"ScreenshotsAdded"> {
+        const AddScreenshotsURL = `http://${config.session.host}:${config.session.port}/session/addscreenshotlist`;
+        let optionAddScreenshots = {
+            method: 'POST',
+            body:    JSON.stringify({screenshotList:screenshots}),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(AddScreenshotsURL, optionAddScreenshots)
+            .then(response => {
+                if (response.ok) {
+                    return "ScreenshotsAdded"
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
+            })
+    }
+
+    findScreenshotsBySessionId(sessionId: string): Promise<Screenshot[]> {
+        const GetScreenshotsURL = `http://${config.session.host}:${config.session.port}/session/${sessionId}/screenshotlist`;
+        return fetch(GetScreenshotsURL)
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then(json => json.screenshotList);
+                } else {
+                    return [];
+                }
+            })
+    }
+
+    addVideo(video: Video): Promise<"VideoAdded"> {
+        throw new Error("Method not implemented.");
+    }
+
+    findVideosBySessionId(sessionId: string): Promise<Video[]> {
+        throw new Error("Method not implemented.");
+    }
+
 }

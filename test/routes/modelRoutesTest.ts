@@ -42,6 +42,9 @@ describe("Model", () => {
         const body = {
             webSiteId,
             baseURL: "http://www.test.com/index.html",
+            name:"testsession",
+            description: "test",
+            overlayType: "shadow"
         };
         const option = {
             method: "POST",
@@ -165,7 +168,7 @@ describe("Model", () => {
             interactionList: [
                 {index: 1, concreteType: "Action", kind: "start"},
                 {index: 2, concreteType: "Action", kind: "click", value: "value"},
-            ],
+            ]
         };
         return fetch(url, {
             method: "POST",

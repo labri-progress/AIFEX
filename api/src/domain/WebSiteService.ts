@@ -4,10 +4,10 @@ import WebSite from "./WebSite";
 
 export default interface WebSiteService {
 
-    findWebSiteIds(token : Token) : Promise<string[] | "Unauthorized" >;
+    findWebSiteById(id : string) : Promise<WebSite | undefined>;
 
-    findWebSiteById(token : Token, id : string) : Promise<WebSite | "Unauthorized">;
+    createWebSite(name : string, mappingList : Mapping[]) : Promise<string>;
 
-    createWebSite(token : Token, name : string, url : string, mappingList : Mapping[]) : Promise<string | "Unauthorized">;
+    updateWebSite(id : string, name : string, mappingList : Mapping[]) : Promise<"WebSiteUpdated">;
 
 }

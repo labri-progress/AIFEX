@@ -6,26 +6,35 @@ import ExplorationEvaluation from "./ExplorationEvaluation";
 import Evaluator from "./Evaluator";
 import Screenshot from "./Screenshot";
 import CommentDistribution from "./CommentDistribution";
+import Token from "./Token";
 import Action from "./Action";
 
 export default interface AifexService {
-	getSession(serverURL : string, webSiteId: string): Promise<Session | undefined> ;
+	ping(serverURL: string): Promise<void>;
 
-	getWebSite(serverURL: string, webSiteId: string): Promise<WebSite | undefined> ;
+	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> ;
 
-	hasModel(serverURL: string, modelId: string): Promise<boolean> ;
+	signin(serverURL: string, email: string, password: string): Promise<Token | "Unauthorized">;
+
+	getSession(serverURL : string, sessionId: string, token?: Token): Promise<Session | undefined | "Unauthorized"> ;
+
+	getWebSite(serverURL: string, webSiteId: string, token?: Token): Promise<WebSite | undefined | "Unauthorized"> ;
+
+	hasModel(serverURL: string, modelId: string, token?:Token): Promise<boolean | "Unauthorized"> ;
 
 	getProbabilityMap(
 		serverURL: string, 
 		modelId: string,
-		exploration: Exploration
+		exploration: Exploration,
+		token?: Token
 	): Promise<Map<string, number>> ;
 
 	createFullExploration(
 		serverURL: string, 
 		sessionId: string,
 		testerName: string,
-		exploration: Exploration
+		exploration: Exploration,
+		token?: Token
 	): Promise<number> ;
 
 	createEmptyExploration(serverURL: string, sessionId: string, testerName :string): Promise<number>;
@@ -34,7 +43,7 @@ export default interface AifexService {
 
 	notifySubmissionAttempt(serverURL: string, sessionId: string, explorationNumber: number): Promise<void>;
 
-	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration): Promise<CommentDistribution[] | undefined> ;
+	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration, token?:Token): Promise<CommentDistribution[] | undefined> ;
 
 	addScreenshotList(serverURL: string, sessionId: string, explorationNumber : number, list : Screenshot[]): Promise<void> ;
 

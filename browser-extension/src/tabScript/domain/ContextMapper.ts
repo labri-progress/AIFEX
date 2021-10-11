@@ -36,12 +36,12 @@ export default abstract class ContextMapper {
         }
     }
 
-    abstract buildElementToRuleMap() : Map<HTMLElement, Rule[]>;
+    abstract buildElementToRuleMap() : Map<HTMLElement|SVGElement, Rule[]>;
 
-    protected buildElementToRuleMapForSelectors(context? : HTMLElement) : Map<HTMLElement, Rule[]> {
-        const elementToRules : Map<HTMLElement, Rule[]> = new Map();
+    protected buildElementToRuleMapForSelectors(context? : HTMLElement|SVGElement) : Map<HTMLElement|SVGElement, Rule[]> {
+        const elementToRules : Map<HTMLElement|SVGElement, Rule[]> = new Map();
         for (const [selector, rules] of this._cssSelector2Rules) {
-            let querySelector : NodeListOf<HTMLElement>;
+            let querySelector : NodeListOf<HTMLElement|SVGElement>;
             if (context) {
                 querySelector = context.querySelectorAll(selector);
             } else {
@@ -67,14 +67,14 @@ export default abstract class ContextMapper {
                     queryXpath = document.evaluate(selector, document, null, XPathResult.ANY_TYPE, null);
                 }
             } catch (e) {
-                logger.error('XPath Error:',e);
+                logger.error('XPath Error:',new Error("e"));
             }
 
             if (queryXpath) {
                 queryXpathResult = queryXpath.iterateNext();
 
                 while (queryXpathResult) {
-                    if (queryXpathResult instanceof HTMLElement) {
+                    if (queryXpathResult instanceof HTMLElement || queryXpathResult instanceof SVGElement) {
                         let noContext = ! context;
                         let resultInContext = context && context.contains(queryXpathResult);
                         if (noContext || resultInContext) {

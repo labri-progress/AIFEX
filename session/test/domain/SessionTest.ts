@@ -23,7 +23,7 @@ describe("Domain - Session", () => {
             let session : Session;
 
             it("should build a Session", () => {
-                session = new Session(webSite, BASE_URL, undefined, "MySession" );
+                session = new Session(undefined, webSite, BASE_URL, "MySession", "do it", undefined, undefined );
                 expect(session.webSite.name).to.equal("cdiscount");
             });
             it("should start an exploration", () => {
@@ -37,7 +37,7 @@ describe("Domain - Session", () => {
             });
         });
         describe("Adding actions in an exploration", () => {
-            const session = new Session(webSite, BASE_URL, undefined, "MySession");
+            const session = new Session(undefined, webSite, BASE_URL, "MySession", "do it", undefined, undefined );
             const action = new Action("clickButton");
 
             let explorationNumber;
@@ -49,7 +49,11 @@ describe("Domain - Session", () => {
                     session.addActionToExploration(99, action);
                     expect.fail("should have failed");
                 } catch (e) {
-                    expect(e.message).to.eql("cannot add action to exploration, wrong explorationNumber.");
+                    if (e instanceof Error) {
+                        expect(e.message).to.eql("cannot add action to exploration, wrong explorationNumber.");
+                    } else {
+                        expect.fail("incorrect error");
+                    }
                 }
             });
 
@@ -77,7 +81,7 @@ describe("Domain - Session", () => {
         });
 
         describe("Adding comment in an exploration", () => {
-            const session = new Session(webSite, BASE_URL, undefined, "MySession");
+            const session = new Session(undefined, webSite, BASE_URL, "MySession", "do it", undefined, undefined );
             const action1 = new Action("action1");
             const action2 = new Action("action2");
             const comment1 = new Comment("bug", "first");

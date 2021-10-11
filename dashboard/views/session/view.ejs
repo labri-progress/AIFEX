@@ -21,6 +21,10 @@
                 <h3>Dashboard for session : unamed <a href="/account/account">(Go back to your dashboard)</a></h3>
             <% } %>
 
+            <div>
+                <input type="checkbox" id="isPublicCheckbox" <% if (isSessionPublic) { %> checked <% } %> >
+                <label for="isPublicCheckbox">is public</label>
+            </div>
 
             <div>
                 Target WebSite : <span><a href="<%= session.baseURL%>"> <%= session.webSite.name%></span></a>
@@ -175,6 +179,24 @@
             document.execCommand("copy");
         }
         document.getElementById("copy").addEventListener("click", copy);
+    </script>
+
+    <script defer>
+        document.getElementById('isPublicCheckbox').addEventListener('click', (event) => {
+            let URL = "/dashboard/public/connexionCode"
+            fetch(URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    isPublic: event.target.checked,
+                    sessionId:"<%= session.id %>",
+                    modelId:"<%= connectionCode.split('$')[1]%>",
+                    webSiteId:"<%=session.webSite.id %>"
+                })
+            }).then((response) => {
+                console.log(response);
+            })
+        });
     </script>
 
 </body>

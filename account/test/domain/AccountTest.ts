@@ -9,8 +9,7 @@ import { Kind } from "../../src/domain/Kind";
 describe("Account constructor", () => {
     let account: Account; 
     it("should create ", () => {
-        // tslint:disable-next-line: no-unused-expression
-        account = new Account("username", crypto.randomBytes(8), crypto.randomBytes(8));
+        account = new Account("username", "u.u@u.com", crypto.randomBytes(8), crypto.randomBytes(8));
     });
     it("should add an authorization", () => {
         account.addAuthorization(new Authorization(Kind.Model, "key"));

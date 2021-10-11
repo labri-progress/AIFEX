@@ -27,13 +27,13 @@ export default class SessionService {
     private readonly eventStore: EventStore;
     private readonly screenshotRepository: ScreenshotRepository;
     private readonly videoRepository: VideoRepository;
-    
+
     private mountedSessionList: Session[];
 
-    constructor(sessionRepository: SessionRepository, 
-        webSiteRepository: WebSiteRepository, 
-        eventStore: EventStore, 
-        screenshotRepository: ScreenshotRepository, 
+    constructor(sessionRepository: SessionRepository,
+        webSiteRepository: WebSiteRepository,
+        eventStore: EventStore,
+        screenshotRepository: ScreenshotRepository,
         videoRepository: VideoRepository) {
 
         this.sessionRepository = sessionRepository;
@@ -44,20 +44,20 @@ export default class SessionService {
         this.mountedSessionList = [];
     }
 
-    public createNewSessionForWebSiteId(webSiteId: string, baseURL: string, name: string, overlayType: SessionOverlayType): Promise<string | undefined> {
-
+    public createNewSessionForWebSiteId(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType): Promise<string | undefined> {
         return this.webSiteRepository.findWebSiteById(webSiteId)
-        .then((webSite) => {
-            if (webSite !== undefined) {
-
-                const session: Session = new Session(webSite, baseURL, undefined, name, undefined, undefined, overlayType);
-                this.addSessionInCache(session);
-                return this.sessionRepository.addSession(session)
-                    .then((newSessionId) => {
-                        return newSessionId;
-                    });
-            }
-        });
+            .then((webSite) => {
+                if (webSite !== undefined) {
+                    const session: Session = new Session(undefined, webSite, baseURL, name, description, undefined, overlayType);
+                    this.addSessionInCache(session);
+                    return this.sessionRepository.addSession(session)
+                        .then((newSessionId) => {
+                            return newSessionId;
+                        });
+                } else {
+                    return undefined;
+                }
+            });
     }
 
     public mountSession(sessionId: string): Promise<Session | undefined> {
@@ -82,32 +82,56 @@ export default class SessionService {
         this.mountedSessionList[this.mountedSessionList.length] = session;
     }
 
+    public changeDescription(sessionId: string, description: string): Promise<void> {
+        return this.mountSession(sessionId)
+            .then((mountSession) => {
+                if (mountSession) {
+                    mountSession.changeDescription(description);
+                    return this.sessionRepository.changeDescription(mountSession.id, description);
+                } else {
+                    throw new Error('wrong sessionId');
+                }
+            })
+    }
+
+    public changeName(sessionId: string, name: string): Promise<void> {
+        return this.mountSession(sessionId)
+            .then((mountSession) => {
+                if (mountSession) {
+                    mountSession.changeName(name);
+                    return this.sessionRepository.changeName(mountSession.id, name);
+                } else {
+                    throw new Error('wrong sessionId');
+                }
+            })
+    }
+
     public startExploration(sessionId: string, testerName: string, startDate?: Date): Promise<number> {
         let explorationNumber: number;
         let session: Session;
         return this.mountSession(sessionId)
-        .then((mountSession) => {
-            if (mountSession) {
-                session = mountSession;
-                if (testerName === undefined) {
-                    testerName = "anonymous";
+            .then((mountSession) => {
+                if (mountSession) {
+                    session = mountSession;
+                    if (testerName === undefined) {
+                        testerName = "anonymous";
+                    }
+                    if (startDate === undefined) {
+                        startDate = new Date();
+                    }
+                    const tester: Tester = new Tester(testerName);
+                    explorationNumber = session.startExploration(tester, startDate);
+                    return this.sessionRepository.addExploration(sessionId, explorationNumber, tester, startDate, 0)
+                        .then(() => {
+                            return explorationNumber
+                        });
+                } else {
+                    throw new Error('wrong sessionId');
                 }
-                if (startDate === undefined) {
-                    startDate = new Date();
-                }
-                const tester: Tester = new Tester(testerName);
-                explorationNumber = session.startExploration(tester, startDate);
-                return this.sessionRepository.addExploration(sessionId, explorationNumber, tester, startDate, 0)
-                .then(() => {
-                    return explorationNumber
-                });
-            } else {
-                throw new Error('wrong sessionId');
-            }
-        })
+            })
     }
 
-    public stopExploration(sessionId: string, explorationNumber: number, stopDate?:Date): Promise<void> {
+    public stopExploration(sessionId: string, explorationNumber: number, stopDate?: Date): Promise<void> {
         return this.mountSession(sessionId)
             .then((session) => {
                 if (session) {
@@ -119,7 +143,7 @@ export default class SessionService {
                 } else {
                     throw new Error('wrong sessionId');
                 }
-                
+
             });
     }
 
@@ -139,13 +163,13 @@ export default class SessionService {
         } else {
             tester = new Tester("anonymous");
         }
-        let explorationStartDate : Date;
+        let explorationStartDate: Date;
         if (startDate === undefined) {
             explorationStartDate = new Date();
         } else {
             explorationStartDate = startDate;
         }
-        let explorationStopDate : Date;
+        let explorationStopDate: Date;
         if (stopDate === undefined) {
             explorationStopDate = new Date();
         } else {
@@ -158,7 +182,7 @@ export default class SessionService {
 
                     explorationNumber = session.startExploration(tester, explorationStartDate);
                     if (interactionListData) {
-                        const interactionList : Interaction[] = [];
+                        const interactionList: Interaction[] = [];
                         interactionListData
                             .sort((interA, interB) => interA.index - interB.index)
                             .forEach((interaction) => {
@@ -176,22 +200,22 @@ export default class SessionService {
                     }
                     if (this.eventStore) {
                         this.eventStore.notifySessionExploration(sessionId, session.explorationList[explorationNumber]);
-                    }                    
+                    }
 
                     return this.sessionRepository.addExploration(sessionId, explorationNumber, tester, explorationStartDate, submissionAttempt)
                         .then( () => {
                             const interactionList = session.explorationList[explorationNumber].interactionList;
                             return this.sessionRepository.updateInteractionListOfExploration(sessionId, explorationNumber, interactionList);
                         })
-                        .then( () => {
+                        .then(() => {
                             return this.sessionRepository.updateExplorationIsStopped(sessionId, explorationNumber, explorationStopDate);
                         })
-                        .then( () => {
+                        .then(() => {
                             return explorationNumber;
                         });
                 } else {
                     throw new Error('wrong session id');
-                }                
+                }
             })
     }
 
@@ -274,7 +298,7 @@ export default class SessionService {
     }
 
     public getNumberOfExplorationForTester(sessionId: string, testerName: string): Promise<number> {
-        return  this.mountSession(sessionId)
+        return this.mountSession(sessionId)
             .then((session) => {
                 if (session === undefined) {
                     throw new Error('wrong session id');
@@ -287,7 +311,7 @@ export default class SessionService {
             })
     }
 
-    public findScreenshotBySession(sessionId: string): Promise<Array<{explorationNumber: number, interactionIndex: number }> | undefined> {
+    public findScreenshotBySession(sessionId: string): Promise<Array<{ explorationNumber: number, interactionIndex: number }> | undefined> {
         return this.screenshotRepository.findScreenshotBySession(sessionId);
     }
 
@@ -303,7 +327,7 @@ export default class SessionService {
             });
     }
 
-    public findVideoBySession(sessionId: string): Promise<Array<{explorationNumber: number}> | undefined> {
+    public findVideoBySession(sessionId: string): Promise<Array<{ explorationNumber: number }> | undefined> {
         return this.videoRepository.findVideoBySession(sessionId);
     }
 }

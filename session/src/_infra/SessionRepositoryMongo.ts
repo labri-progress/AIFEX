@@ -25,6 +25,8 @@ export default class SessionRepositoryMongo implements SessionRepository {
             webSiteId: session.webSite.id,
             baseURL: session.baseURL,
             name: session.name,
+            description: session.description,
+            createdAt: session.createdAt,
             overlayType: session.overlayType
         })
         .then( () => {
@@ -32,7 +34,18 @@ export default class SessionRepositoryMongo implements SessionRepository {
         });
     }
 
-    public addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date, submissionAttempt: number = 0): Promise<number> {
+    changeDescription(sessionId: string, description: string): Promise<void> {
+        return SessionSchema.updateOne({_id: sessionId}, {$set: {description}})
+        .exec().then(() => {});
+    }
+
+    changeName(sessionId: string, name: string): Promise<void> {
+        return SessionSchema.updateOne({_id: sessionId}, {$set: {name}})
+        .exec().then(() => {});
+    }
+
+
+    public addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date): Promise<number> {
         return ExplorationSchema.create({
             sessionId,
             explorationNumber,
@@ -124,26 +137,26 @@ export default class SessionRepositoryMongo implements SessionRepository {
         let id: string;
         let baseURL: string;
         let name: string;
+        let description: string;
         let overlayType: SessionOverlayType;
         let session: Session;
-        let createdAt: Date | undefined;
-        let updatedAt: Date | undefined;
-
+        let createdAt: Date;
+        
         return SessionSchema.findOne({_id: sessionId}).exec()
         .then((sessionData: SessionDocument | null) => {
             if (sessionData !== null) {    
                 id = sessionData._id;
                 baseURL = sessionData.baseURL;
                 name = sessionData.name;
-                
+                description = sessionData.description;
+
                 overlayType = sessionData.overlayType as SessionOverlayType;
                 createdAt = sessionData.createdAt;
-                updatedAt = sessionData.updatedAt;
-               
+                
                 return this._webSiteRepository.findWebSiteById(sessionData.webSiteId)
                 .then((webSite) => {
                     if (webSite !== undefined) {
-                        session = new Session(webSite, baseURL, id, name, createdAt, updatedAt, overlayType);
+                        session = new Session(id, webSite, baseURL, name, description, createdAt);
                         return ExplorationSchema.find({sessionId: session.id})
                         .then((explorationDataList) => {
                             explorationDataList

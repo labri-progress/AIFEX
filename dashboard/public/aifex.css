@@ -5,6 +5,10 @@
     background-color: #cccccc;
 }
 
+.main-text {
+    font-size: 32px;
+}
+
 .Action {
     color:blue;
     display: inline-block;

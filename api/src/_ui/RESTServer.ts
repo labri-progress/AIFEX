@@ -1,4 +1,3 @@
-import bodyParser from "body-parser";
 import express from "express";
 import http from "http";
 import morgan from "morgan";
@@ -46,8 +45,8 @@ export default class RESTServer {
         });
 
         // request parser
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(express.urlencoded({ limit: '50mb', extended: true }));
+        app.use(express.json({limit: '50mb'}));
 
         // bearer token
         app.use((req, res, next) => {
@@ -55,11 +54,13 @@ export default class RESTServer {
             
             if (bearerHeader) {
                 const bearer = bearerHeader.split(' ');
-                const bearerToken = bearer[1];
-                try {
-                    jsonwebtoken.verify(bearerToken, config.tokenSecret);
-                    req.token = new Token(bearerToken);
-                } catch(e) {
+                if (bearer.length > 1) {
+                    const bearerToken = bearer[1];
+                    try {
+                        jsonwebtoken.verify(bearerToken, config.tokenSecret);
+                        req.token = new Token(bearerToken);
+                    } catch(e) {
+                    }
                 }
             }
             next();

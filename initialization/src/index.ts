@@ -5,7 +5,7 @@ import config from "./config";
 
 import * as winston from "winston";
 const logger = winston.createLogger({
-    level: 'info',
+    level: 'debug',
     format: winston.format.combine(
       winston.format.label({ label: '[Initialization]' }),
       winston.format.timestamp({
@@ -54,16 +54,21 @@ async function loadDefault() {
     logger.info(`loadDefault`);
     try {
         await createAnonymousAccount();
-        const token = await signinAsAnonymous();
+        const tokenJWT = await signinAsAnonymous();
+        const token = tokenJWT.jwt;
+        logger.info(`get token : ${JSON.stringify(token)}`)
         const webSiteList = await createDefaultWebSite();
-        await addSiteListToAnonymous(token.jwt, webSiteList);
+        await addSiteListToAnonymous(token, webSiteList);
         const cdiscountWebSiteId = webSiteList.find(webSite => webSite.name === 'cdiscount')._id;
         logger.info(`cdiscountWebSiteID:${cdiscountWebSiteId}`);
         const connexionCode = await createSessionAndModel(cdiscountWebSiteId);
-        logger.info(connexionCode);
+        logger.info('connexion code : ',connexionCode);
         const sessionId = connexionCode.split('$')[0];
-        await addSessionToAnonymous(token.jwt, connexionCode);
-        logger.info('sessionAddesToAnonymous');
+        await addSessionToAnonymous(token, sessionId);
+        logger.info('sessionAddedToAnonymous');
+        const modelId = connexionCode.split('$')[1];
+        await addModelToAnonymous(token, modelId);
+        logger.info('modelAddedToAnonymous');
         await addAllExplorationToSession(sessionId);
         logger.info('allExplorationToSession');
     } catch (e) {
@@ -188,7 +193,7 @@ function addSiteListToAnonymous(token, websiteList) {
         logger.info(`adding website ${webSite.name} (id = ${webSite._id}) to anonymous`);
         const url = ACCOUNT_BASE_URL + "/addwebsite";
         const body = {
-            token,
+            username: "anonymous",
             webSiteId: webSite._id
         };
         const option = {
@@ -202,6 +207,7 @@ function addSiteListToAnonymous(token, websiteList) {
     return Promise.all(webSiteListAddAll)
     .then(resAll => {
         if (resAll.every((res:any) => res.ok)) {
+            logger.info(`all websites are added to anonymous`);
             return true;
         } else {
             throw new Error('some website cannot be added to anonymous');
@@ -276,8 +282,29 @@ function createSessionAndModel(webSiteId) {
 function addSessionToAnonymous(token, sessionId) {
     const url = ACCOUNT_BASE_URL + "/addsession";
     const body = {
-        token,
-        sessionid: sessionId
+        username: "anonymous",
+        sessionId: sessionId
+    };
+    const option = {
+        method: "POST",
+        body:    JSON.stringify(body),
+        headers: { "Content-Type": "application/json" },
+    };
+    return fetch(url, option)
+        .then(res => {
+            if (res.ok) {
+                return true;
+            } else {
+                throw new Error('some website cannot be added to anonymous');
+            }
+        })
+}
+
+function addModelToAnonymous(token, modelId) {
+    const url = ACCOUNT_BASE_URL + "/addmodel";
+    const body = {
+        username: "anonymous",
+        modelId: modelId
     };
     const option = {
         method: "POST",

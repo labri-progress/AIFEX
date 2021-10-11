@@ -1,11 +1,11 @@
 export default class CompatibilityCheck {
-    readonly currentVersion: string;
-	readonly latestVersion: string;
+    readonly extensionVersion: string;
+	readonly serverVersion: string;
     readonly url: string;
 
-    constructor(currentVersion : string, latestVersion: string, url : string) {
-        this.currentVersion = currentVersion;
-        this.latestVersion = latestVersion;
+    constructor(extensionVersion : string, serverVersion: string, url : string) {
+        this.extensionVersion = extensionVersion;
+        this.serverVersion = serverVersion;
         this.url = url;
     }
 }

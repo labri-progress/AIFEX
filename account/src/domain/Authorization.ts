@@ -7,7 +7,6 @@ export default class Authorization {
     constructor(kind : Kind, key : string) {
         this._kind = kind;
         this._key = key;
-
     }
 
     get kind() : Kind {

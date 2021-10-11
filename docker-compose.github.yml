@@ -41,15 +41,6 @@ services:
       - 5002:80
     restart: always
 
-  evaluator:
-    build:
-      context: evaluator/
-      dockerfile: ./Dockerfile.dev
-    volumes:
-      - ./model/src/:/app/src
-    ports:
-      - 5003:80
-  
   account:
     build:
       context: account/
@@ -72,19 +63,21 @@ services:
       - screenshot:/app/public/screenshot
       - video:/app/public/video
 
-
-  reverseproxy:
+  api:
     build:
-      context: reverseproxy/
-      dockerfile: ./Dockerfile.dev
+      context: api/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - TOKEN_SECRET=${TOKEN_SECRET}
     depends_on:
-      - "model"
+      - "account"
       - "website"
       - "session"
-      - "dashboard"
+      - "model"
     ports:
-      - 80:80
-  
+      - 5005:80
+    restart: always
 
   initialization:
     build:

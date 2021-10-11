@@ -13,7 +13,6 @@ describe("website", () => {
         const url = WEBSITE_URL + "create";
         const body = {
             name: "test",
-            url: "https://www.test.test",
             mappingList: [],
         };
         const option = {
@@ -44,7 +43,6 @@ describe("website", () => {
         const url = WEBSITE_URL + "update";
         const body = {
             name: "test",
-            url: "https://www.test.test",
             id: id,
             mappingList: [{
                 match: {

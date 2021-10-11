@@ -10,11 +10,15 @@ export default class InnerTextRule extends SimpleRule {
     makeAction(event: any): Action | undefined {
         const element = this.findActionMappedTarget(event);
         if (element) {
-            return new Action(this.prefix, element.innerText.trim());
+            if (element instanceof HTMLElement) {
+                return new Action(this.prefix, element.innerText.trim());
+            } else {
+                return new Action(this.prefix, "svg");
+            }
         }
     }
 
-    actionToElements(action: Action): HTMLElement[] {
+    actionToElements(action: Action): (HTMLElement|SVGElement)[] {
         if (action.prefix !== this.prefix) {
             return [];
         }
@@ -25,7 +29,9 @@ export default class InnerTextRule extends SimpleRule {
             const elements = this.findMatchedElements();
             return elements.filter(domElement => {
                 if (domElement instanceof HTMLElement) {
-                    return domElement.innerText.trim() === suffix.trim()
+                    return domElement.innerText.trim() === suffix.trim();
+                } else if (domElement instanceof SVGElement) {
+                    return "svg" === suffix.trim();
                 } else {
                     return false;
                 }

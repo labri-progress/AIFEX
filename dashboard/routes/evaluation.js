@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const getWebSites = require('../apiService').getWebSites;
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
@@ -10,18 +11,10 @@ module.exports = function attachRoutes(app, config) {
         const sessionId = req.params.sessionId;
         let webSiteId;
         logger.info(`GET evaluation for website (sessionId : ${sessionId})`);
-        
-        const URLsession = 'http://' + config.session.host + ':' + config.session.port + '/session/' + req.params.sessionId;
 
-        fetch(URLsession)
-            .then(sessionResponse => sessionResponse.json())
-            .then(session => {
-                webSiteId = session.webSite.id
-                const URLwebSite = 'http://' + config.website.host + ':' + config.website.port + '/website/'+ webSiteId;
-                return fetch(URLwebSite)
-            })
-            .then(webSiteResponse => webSiteResponse.json())
-            .then(webSite => {
+        getWebSites(req.session.jwt)
+            .then(webSiteList => {
+                webSite = webSiteList.find((webSite) => webSite.id === webSiteId);
                 const actionList = webSite.mappingList.map(mapping => {
                     if (mapping.output.suffix) {
                         return `${mapping.output.prefix}$${mapping.output.suffix}` 

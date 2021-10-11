@@ -1,4 +1,6 @@
 import { model, Schema, Document} from 'mongoose';
+import { Kind } from '../domain/Kind';
+
 
 const ACCOUNT_SCHEMA = new Schema({
     username : {type : String, required : true},
@@ -6,6 +8,8 @@ const ACCOUNT_SCHEMA = new Schema({
     salt : [{type : Number, required : true}],
     hash : [{type : Number, required : true}],
     authorizationSet: {type : Array},
+    receivedInvitationSet: {type: Array},
+    sentInvitationSet: {type: Array},
 },
 {
     timestamps: true,
@@ -16,7 +20,9 @@ export interface AccountDocument extends Document {
     email : string,
     salt : number[],
     hash : number[],
-    authorizationSet: {kind: number, key: string}[]
+    authorizationSet: {kind:Kind, key: string}[],
+    receivedInvitationSet: {fromUsername:string, toUsername:string, authorization:{kind:Kind, key: string}}[],
+    sentInvitationSet: {fromUsername:string, toUsername:string, authorization:{kind:Kind, key: string}}[],
 }
 
 export default model<AccountDocument>("Account", ACCOUNT_SCHEMA);

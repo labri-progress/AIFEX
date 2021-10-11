@@ -4,9 +4,9 @@ export default class HighlighterCanvas {
 
     private _canvasMap: Map<number, HTMLCanvasElement>;
     private actionBorderSize = configuration.actionBorderSize; 
-    private elementsToHighlight: Map<HTMLElement, string>;
-    private elementsToHighlightAnimated: Set<HTMLElement>;
-    private elementToZindex: Map<HTMLElement, number>;
+    private elementsToHighlight: Map<HTMLElement| SVGElement, string>;
+    private elementsToHighlightAnimated: Set<HTMLElement| SVGElement>;
+    private elementToZindex: Map<HTMLElement| SVGElement, number>;
     private animationLoop : number;
     private isStopped: boolean;
     private lastTime: number;
@@ -16,7 +16,7 @@ export default class HighlighterCanvas {
         this._canvasMap.set(1, this.buildCanvas(1))
         this.elementsToHighlight = new Map();
         this.elementToZindex = new Map();
-        this.elementsToHighlightAnimated = new Set<HTMLElement>();
+        this.elementsToHighlightAnimated = new Set<HTMLElement | SVGElement>();
         this.animationLoop = 0;
         this.isStopped = false;
         this.lastTime = 0;
@@ -56,7 +56,7 @@ export default class HighlighterCanvas {
         return canvas;
     }
 
-    public highlightElement(element: HTMLElement, color: string) {
+    public highlightElement(element: HTMLElement | SVGElement, color: string) {
         this.elementsToHighlight.set(element, color);
     }
 
@@ -182,8 +182,8 @@ export default class HighlighterCanvas {
         }
     }
 
-    private getZIndex(element: HTMLElement): number {
-        let elementIt: HTMLElement | null = element;
+    private getZIndex(element: HTMLElement| SVGElement): number {
+        let elementIt: HTMLElement| SVGElement | null = element;
         let index = this.elementToZindex.get(element);
         if (index !== undefined) {
             return index;

@@ -1,118 +1,206 @@
 import AccountRepository from "../domain/AccountRepository";
-import crypto from "crypto";
-import util from "util";
-import * as sha256 from "fast-sha256";
-import Account from "../domain/Account";
 import Authorization from "../domain/Authorization";
 import Token from "../domain/Token";
-import { account2Token, token2AuthorizationSet, token2Username } from "../domain/TokenEncoder";
-import {logger} from "../logger";
-
-const ROUNDS = 2000;
-const DKLEN = 128;
-const NB_CRYPTO_BYTES = 8;
+import { logger } from "../logger";
+import { Kind } from "../domain/Kind";
+import TokenService from "../domain/TokenService";
+import CryptoService from "../domain/CryptoService";
+import Account from "../domain/Account";
+import Invitation from "../domain/Invitation";
+import PublicAuthorizationRepository from "../domain/PublicAuthorizationRepository";
 
 export default class AccountService {
 
-    private _accountRepository : AccountRepository;
+    private _accountRepository: AccountRepository;
+    private _publicAuthorizationRepository: PublicAuthorizationRepository;
+    private _tokenService: TokenService;
+    private _cryptoService: CryptoService;
 
-    constructor(accountRepository : AccountRepository) {
+    constructor(accountRepository: AccountRepository, publicAuthorizationRepository: PublicAuthorizationRepository, tokenService: TokenService, cryptoService: CryptoService) {
         this._accountRepository = accountRepository;
+        this._publicAuthorizationRepository = publicAuthorizationRepository;
+        this._tokenService = tokenService;
+        this._cryptoService = cryptoService;
     }
 
-    signup(username : string, email : string, password : string) : Promise<string>{
+    signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
         return this._accountRepository.findAccountByUserName(username)
-        .then( account => {
-            if (account === undefined) {
-                const encoder = new util.TextEncoder();
-                const rounds = ROUNDS;
-                const saltBuffer = crypto.randomBytes(NB_CRYPTO_BYTES);
-                const dkLen = DKLEN;
-                const hash = sha256.pbkdf2(encoder.encode(password), saltBuffer, rounds, dkLen);
-                return this._accountRepository.addAccount(new Account(username, email, saltBuffer, hash))
-                .then((acc) => {
-                    return acc;
-                })
-            } else {
-                return Promise.reject("username exists already");
-            }
-        })
-
-    }
-
-    signin(username : string, password : string) : Promise<Token> {
-        return this._accountRepository.findAccountByUserName(username)
-        .then( account => {
-            if (account === undefined) {
-                return Promise.reject("username does not exist !")
-            } 
-            const encoder = new util.TextEncoder();
-            const rounds = ROUNDS;
-            const saltBuffer = account.salt;
-            const dkLen = DKLEN;
-            const computedHash = sha256.pbkdf2(encoder.encode(password), saltBuffer, rounds, dkLen);
-            if (computedHash.length !== account.hash.length) {
-                return Promise.reject("username / password don't match !")
-            }
-            for (let i = 0; i < computedHash.length; i++) {
-                if (computedHash[i] !== account.hash[i]) {
-                    return Promise.reject("username / password don't match !")
+            .then(account => {
+                if (account === undefined) {
+                    const {salt, hash} = this._cryptoService.saltAndHashPassword(password);
+                    return this._accountRepository.addAccount(new Account(username, email, salt, hash));
+                } else {
+                    return "UserNameAlreadyTaken";
                 }
-            }
-            return account2Token(account);
-        })
+            }); 
     }
 
-    getAuthorizationSet(token : Token) : Authorization[] {
-        return token2AuthorizationSet(token);
-    }
-
-    getUsername(token : Token) : string {
-        return token2Username(token);
-    }
-
-    addAuthorization(token : Token, authorization : Authorization ) : Promise<Token> {
-        const username = token2Username(token);
-        let account: Account;
-
+    signin(username: string, password: string): Promise<Token | "IncorrectUsernameOrPassword"> {
         return this._accountRepository.findAccountByUserName(username)
-        .then( foundAccount => {
-            if (foundAccount === undefined) {
-                return Promise.reject("username does not exist !")
-            }
-            account = foundAccount;
-            account.addAuthorization(authorization);
-
-            logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
-            return account;
-        })
-        .then( (updatedAccount) => {
-            logger.debug(`account repository will be updated (${JSON.stringify(updatedAccount)})`);
-            return this._accountRepository.updateAccount(updatedAccount);
-        })
-        .then( () => {
-            logger.debug(`account repository updated, new token is returned`);
-            return account2Token(account);
-        })
+            .then(account => {
+                if (account === undefined) {
+                    return "IncorrectUsernameOrPassword";
+                } else {
+                    if (this._cryptoService.checkPassword(password, account.salt, account.hash)) {
+                        return this._tokenService.account2Token(account);
+                    } else {
+                        return "IncorrectUsernameOrPassword";
+                    }
+                }
+            })
     }
 
-    removeAuthorization(token : Token, authorization : Authorization ) : Promise<Token> {
-        const username = token2Username(token);
-        let account : Account;
+    getAccount(token: Token): Promise<
+        {
+            username:string, 
+            authorizationSet:{key:string, kind:Kind}[], 
+            receivedInvitationSet:{fromUsername:string, toUsername: string, authorization:{kind:Kind,key:string}}[],
+            sentInvitationSet:{fromUsername:string, toUsername: string, authorization:{kind:Kind,key:string}}[]
+        } 
+        | "InvalidToken"> {
+        const username = this._tokenService.token2Username(token);
+        if (username) {
+            return this._accountRepository.findAccountByUserName(username)
+                .then((result) => {
+                    if (result) {
+                        return {
+                            username: result.username,
+                            authorizationSet: result.authorizationSet.map(authorization=> {
+                                return {key:authorization.key, kind: authorization.kind};
+                            }),
+                            receivedInvitationSet: result.receivedInvitationSet.map(invitation=> {
+                                return {fromUsername:invitation.fromUsername, toUsername: invitation.toUsername, authorization:{kind:invitation.authorization.kind,key:invitation.authorization.key}};
+                            }),
+                            sentInvitationSet: result.sentInvitationSet.map(invitation=> {
+                                return {fromUsername:invitation.fromUsername, toUsername: invitation.toUsername, authorization:{kind:invitation.authorization.kind,key:invitation.authorization.key}};
+                            })
+                        }
+                    } else {
+                        return "InvalidToken";
+                    }
+                });
+        } else {
+            return Promise.resolve("InvalidToken");
+        }
+    }
+
+    addAuthorization(username: string, authorization: Authorization): Promise<"AuthorizationAdded" | "AuthorizationWasAlreadyThere" | "IncorrectUsername"> {
         return this._accountRepository.findAccountByUserName(username)
-            .then( foundAccount => {
+            .then((foundAccount) => {
                 if (foundAccount === undefined) {
-                    return Promise.reject("username does not exist !")
+                    return "IncorrectUsername";
+                } else {
+                    let addResult = foundAccount.addAuthorization(authorization);
+                    if (addResult === "AuthorizationAdded") {
+                        logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
+                        return this._accountRepository.updateAccount(foundAccount)
+                            .then(() => {
+                                logger.debug(`account repository updated`);
+                                return "AuthorizationAdded";
+                            })
+                    } else {
+                        return "AuthorizationWasAlreadyThere";
+                    }
                 }
-                account = foundAccount;
-                account.removeAuthorization(authorization);
-                return account;
-            })
-            .then((updatedAccount) => {
-                return this._accountRepository.updateAccount(updatedAccount);
-            })
-            .then( () => {
-                return account2Token(account);
             })
     }
+
+    removeAuthorization(username: string, authorization: Authorization): Promise<"AuthorizationRemoved" | "AuthorizationWasNotThere" | "IncorrectUsername"> {
+        return this._accountRepository.findAccountByUserName(username)
+            .then(foundAccount => {
+                if (foundAccount === undefined) {
+                    return "IncorrectUsername";
+                } else {
+                    const removeResult = foundAccount.removeAuthorization(authorization);
+                    if (removeResult === "AuthorizationRemoved") {
+                        return this._accountRepository.updateAccount(foundAccount)
+                            .then(() => {
+                                return "AuthorizationRemoved";
+                            })
+                    } else {
+                        return "AuthorizationWasNotThere";
+                    }
+                }
+            })
+    }
+
+    addInvitation(fromUsername: string, toUsername: string, key: string, kind: Kind): Promise<"IncorrectFromUsername" | "IncorrectToUsername" | "InvitationIsAdded"> {
+        return Promise.all([this._accountRepository.findAccountByUserName(fromUsername), this._accountRepository.findAccountByUserName(toUsername)])
+            .then(([fromAccount, toAccount]) => {
+                if (fromAccount === undefined) {
+                    return "IncorrectFromUsername";
+                } else {
+                    if (toAccount === undefined) {
+                        return "IncorrectToUsername";
+                    } else {
+                        const invitation = new Invitation(fromUsername, toUsername, new Authorization(kind, key));
+                        fromAccount.addSentInvitation(invitation);
+                        toAccount.addReceivedInvitation(invitation);
+                        return Promise.all([this._accountRepository.updateAccount(fromAccount), this._accountRepository.updateAccount(toAccount)])
+                            .then(() => {
+                                return "InvitationIsAdded";
+                            });
+                    }
+                }
+            });
+    }
+
+    removeInvitation(fromUsername: string, toUsername: string, key: string, kind: Kind): Promise<"IncorrectFromUsername" | "IncorrectToUsername" | "InvitationIsRemoved"> {
+        return Promise.all([this._accountRepository.findAccountByUserName(fromUsername), this._accountRepository.findAccountByUserName(toUsername)])
+            .then(([fromAccount, toAccount]) => {
+                if (fromAccount === undefined) {
+                    return "IncorrectFromUsername";
+                } else {
+                    if (toAccount === undefined) {
+                        return "IncorrectToUsername";
+                    } else {
+                        const invitation = new Invitation(fromUsername, toUsername, new Authorization(kind, key));
+                        fromAccount.removeSentInvitation(invitation);
+                        toAccount.removeReceivedInvitation(invitation);
+                        return Promise.all([this._accountRepository.updateAccount(fromAccount), this._accountRepository.updateAccount(toAccount)])
+                            .then(() => {
+                                return "InvitationIsRemoved";
+                            });
+                    }
+                }
+            });
+    }
+
+
+
+    verify(token: Token): boolean {
+        return this._tokenService.verify(token);
+    }
+
+    verifyAuthorization(token: Token, kind: Kind, id: string): Promise<boolean> {
+        const username = this._tokenService.token2Username(token);
+        if (username === undefined) {
+            return Promise.resolve(false);
+        } else {
+            return this._accountRepository.findAccountByUserName(username)
+                .then((foundAccount) => {
+                    if (foundAccount === undefined) {
+                        return false;
+                    } else {
+                        const isAuthorized = foundAccount.authorizationSet.some((authorization) => authorization.kind === kind && authorization.key === id);
+                        const isInvited = foundAccount.receivedInvitationSet.some((invitation) => invitation.authorization.kind === kind && invitation.authorization.key === id);
+                        return Promise.resolve(isAuthorized || isInvited);
+                    }
+                })
+        }
+    }
+
+    makeAuthorizationPublic(kind: Kind, key: string): Promise<"AuthorizationIsPublic"> {
+        return this._publicAuthorizationRepository.makeAuthorizationPublic(new Authorization(kind, key));
+    }
+
+    revokePublicAuthorization(kind: Kind, key: string): Promise<"AuthorizationIsNoMorePublic"> {
+        return this._publicAuthorizationRepository.revokePublicAuthorization(new Authorization(kind, key));
+    }
+
+    isAuthorizationPublic(kind: Kind, key: string): Promise<boolean> {
+        return this._publicAuthorizationRepository.isAuthorizationPublic(new Authorization(kind, key));
+    }
+
+
 }
