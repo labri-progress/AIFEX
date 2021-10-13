@@ -23,6 +23,9 @@ export default class WindowManager {
     createConnectedWindow(url?:string) : Promise<void> {
         return this._browserService.createWindow(url)
         .then((id) => {
+            if (id === undefined) {
+                throw new Error("Window id is undefined");
+            }
             if (this._lastCreatedWindow?.id !== id) {
                 let connectedWindow = new Window(id);
                 this._connectedWindow = connectedWindow;
@@ -131,8 +134,8 @@ export default class WindowManager {
 
 
 
-    private onWindowCreated(createdWindowId: number) : void{
-        if (this._connectedWindow === undefined) {
+    private onWindowCreated(createdWindowId: number | undefined) : void{
+        if (this._connectedWindow === undefined && createdWindowId!== undefined) {
             this._lastCreatedWindow = new Window(createdWindowId);
             const window = this._lastCreatedWindow;
             const id = this._lastCreatedWindow.id;

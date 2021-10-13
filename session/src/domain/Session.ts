@@ -133,11 +133,4 @@ export default class Session {
         return this._explorationList[explorationNumber].interactionList;
     }
 
-    public setSubmissionAttempt(explorationNumber: number, submissionAttempt: number): void {
-        if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
-            throw new Error("cannot add return InteractionList to exploration, wrong explorationNumber.");
-        }
-        this._explorationList[explorationNumber].submissionAttempt = submissionAttempt
-    }
-
 }

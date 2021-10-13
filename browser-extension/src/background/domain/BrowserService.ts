@@ -3,7 +3,7 @@ export default interface BrowserService {
 
     getExtensionVesion():string;
 
-    createWindow(url?:string):Promise<number>;
+    createWindow(url?: string): Promise<number | undefined>;
 
     createTab(windowId: number, url: string): Promise<number | undefined>;
 
@@ -40,8 +40,8 @@ export default interface BrowserService {
     setPopupToAttached(): void;
 
     attachBrowserActionClicked( handler : (tabId:number ) => void): void;
-
-    attachWindowCreatedHandler( handler : (windowId:number) => void): void;
+    
+    attachWindowCreatedHandler(handler: (windowId: number | undefined) => void): void;
 
     attachWindowRemovedHandler( handler : (windowId:number) => void): void;
 

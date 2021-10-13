@@ -61,7 +61,10 @@ export default class AifexPopup {
         let createWindowPromise;
         if (!this._aifexWindow) {
             createWindowPromise = this._browserService.createWindow(this.aifexPageUrl)
-            .then((windowId : number) => {
+            .then((windowId : number | undefined) => {
+                if (windowId === undefined) {
+                    throw new Error("Window id is undefined");
+                }
                 this._aifexWindow = new Window(windowId);
                 return this._browserService.getTabIdListOfWindow(windowId)
             })

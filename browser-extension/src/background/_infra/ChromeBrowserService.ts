@@ -31,7 +31,7 @@ export default class ChromeBrowserService implements BrowserService {
         return chrome.runtime.getManifest().version
     }
 
-    createWindow(url?: string): Promise<number> {
+    createWindow(url?: string): Promise<number | undefined> {
         const options = Object.assign(DEFAULT_WINDOW_OPTIONS, { url });
         const chromeOptions = new WindowOption(options);
         return createWindow(chromeOptions)
@@ -188,7 +188,7 @@ export default class ChromeBrowserService implements BrowserService {
         });
     }
 
-    attachWindowCreatedHandler(handler: (windowId: number) => void): void {
+    attachWindowCreatedHandler(handler: (windowId: number | undefined) => void): void {
         chrome.windows.onCreated.addListener((window) => {
             handler(window.id);
         })

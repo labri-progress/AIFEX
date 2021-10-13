@@ -60,7 +60,7 @@ export default class HighlighterCanvas {
         this.elementsToHighlight.set(element, color);
     }
 
-    public animateElement(element: HTMLElement) {
+    public animateElement(element: HTMLElement | SVGElement) {
         this.elementsToHighlightAnimated.add(element);
     }
 
@@ -72,7 +72,7 @@ export default class HighlighterCanvas {
         this.clear();
         this.elementsToHighlight = new Map();
         this.elementToZindex = new Map();
-        this.elementsToHighlightAnimated = new Set<HTMLElement>();
+        this.elementsToHighlightAnimated = new Set<HTMLElement | SVGElement>();
     }
 
     public show() {

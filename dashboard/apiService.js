@@ -484,6 +484,21 @@ module.exports.revokePublicConnexionCode = function (token, sessionId, modelId, 
         })
 }
 
+module.exports.getEvaluatorBySessionId = function (sessionId) {
+    let getEvaluatorURL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/' + sessionId;
+    return fetch(getEvaluatorURL, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return undefined;
+            }
+        })
+}
+
 
 
 

@@ -25,7 +25,6 @@ export interface ExplorationDocument extends Document {
     testerName : string,
     isStopped : boolean,
     startDate: Date,
-    submissionAttempt: number,
     interactionList : ({
         concreteType: string,
         index: number,

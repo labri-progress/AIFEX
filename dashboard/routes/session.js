@@ -1,4 +1,4 @@
-const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode } = require('../apiService');
+const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId} = require('../apiService');
 const logger = require('../logger');
 const buildInvitation = require("../invitations").buildInvitation;
 
@@ -81,8 +81,8 @@ module.exports = function attachRoutes(app, config) {
 
         logger.info(`GET view session (sessionId = ${sessionId}), (modelId = ${modelId})`);
 
-        Promise.all([getSessionById(req.session.jwt,sessionId), getModelById(req.session.jwt,modelId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId), isAuthorizationPublic("Session",sessionId)])
-            .then(([session, model, screenshot, video, isSessionPublic]) => {
+        Promise.all([getSessionById(req.session.jwt,sessionId), getModelById(req.session.jwt,modelId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId), isAuthorizationPublic("Session",sessionId), getEvaluatorBySessionId(req.session.jwt,sessionId)])
+            .then(([session, model, screenshot, video, isSessionPublic, evaluator]) => {
                 logger.debug(`screenshot:${JSON.stringify(screenshot)}`);
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;

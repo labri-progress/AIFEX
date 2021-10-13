@@ -9,14 +9,14 @@ export default class WebSiteRepositoryMongoREST implements WebSiteRepository {
     public findWebSiteById(id: string): Promise<WebSite> {
         const route: string = URL + id;
         return fetch(route)
-        .then( (response) => {
+        .then( (response: any) => {
             if (response.ok) {
                 return response.json();
             } else {
                 return Promise.reject("findWebSite REST error");
             }
         })
-        .then( (resWebSite) => {
+        .then( (resWebSite: any) => {
             return new WebSite(resWebSite.id, resWebSite.name);
         });
     }

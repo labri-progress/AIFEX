@@ -52,8 +52,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
             testerName: tester.name,
             isStopped: false,
             interactionList : [],
-            startDate,
-            submissionAttempt
+            startDate
         }).
         then( () => {
             return explorationNumber;
@@ -165,7 +164,6 @@ export default class SessionRepositoryMongo implements SessionRepository {
                                 const tester: Tester = new Tester(explorationData.testerName);
                                 const explorationNumber: number = session.startExploration(tester);
                                 const interactionList : Interaction[] = [];
-                                const submissionAttempt: number = explorationData.submissionAttempt
                                 explorationData.interactionList
                                 .filter((inter) => inter !== null && inter !== undefined)
                                 .sort( (interA, interB) => interA.index - interB.index)
@@ -184,7 +182,6 @@ export default class SessionRepositoryMongo implements SessionRepository {
                                     }
                                 });
                                 session.addInteractionListToExploration(explorationNumber, interactionList);
-                                session.setSubmissionAttempt(explorationNumber, submissionAttempt);
                             });
                             return session;
                         });

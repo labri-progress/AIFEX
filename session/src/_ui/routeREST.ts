@@ -20,13 +20,8 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
     });
 
     app.post("/session/create", (req, res) => {
-<<<<<<< HEAD
-        const { webSiteId, baseURL, name, overlayType } = req.body;
-        logger.info(`create session webSiteId ${webSiteId}, baseURL ${baseURL}, name ${name}, overlayType ${overlayType}`);
-=======
         const { webSiteId, baseURL, name, description, overlayType } = req.body;
         logger.info(`create session webSiteId ${webSiteId}, baseURL ${baseURL}, name ${name}, description ${description}, overlayType ${overlayType}`);
->>>>>>> b676e36c72c7c9c350e3eef4ec4821dcf880a7d7
         if (webSiteId === undefined) {
             logger.warn(`webSiteId must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("webSiteId is undefined");
@@ -56,11 +51,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
 
         const overlayTypeValue: SessionOverlayType = overlayType as SessionOverlayType;
 
-<<<<<<< HEAD
-        sessionService.createNewSessionForWebSiteId(webSiteId, baseURL, name, overlayTypeValue)
-=======
         sessionService.createNewSessionForWebSiteId(webSiteId, baseURL, name, description, overlayTypeValue)
->>>>>>> b676e36c72c7c9c350e3eef4ec4821dcf880a7d7
         .then((sessionId) => {
             if (sessionId) {
                 logger.debug(`session created : ${sessionId}`);
@@ -93,11 +84,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
                     baseURL: session.baseURL,
                     webSite: session.webSite,
                     createdAt: session.createdAt,
-<<<<<<< HEAD
-                    updatedAt: session.updatedAt,
-=======
                     description: session.description,
->>>>>>> b676e36c72c7c9c350e3eef4ec4821dcf880a7d7
                     overlayType: session.overlayType,
 
                     explorationList: session.explorationList.map((exploration) => {
@@ -106,7 +93,6 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
                             startDate: exploration.startDate,
                             stopDate: exploration.stopDate,
                             explorationNumber: exploration.explorationNumber,
-                            submissionAttempt: exploration.submissionAttempt,
                             interactionList: exploration.interactionList.map((interaction) => {
                                 if (interaction instanceof ActionInteraction) {
                                     return {
@@ -216,7 +202,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
 
     app.post("/session/:sessionId/exploration/add", (req, res) => {
         const {sessionId} = req.params;
-        const {testerName, interactionList, startDate, stopDate, submissionAttempt} = req.body;
+        const {testerName, interactionList, startDate, stopDate} = req.body;
         logger.info(`add exploration to session ${sessionId}`);
         if (sessionId === undefined) {
             logger.warn(`sessionId must not be undefined`);
@@ -228,7 +214,7 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
             res.status(INVALID_PARAMETERS_STATUS).send("interactionList is undefined");
             return;
         }
-        sessionService.addExploration(sessionId, testerName, interactionList, submissionAttempt, startDate, stopDate)
+        sessionService.addExploration(sessionId, testerName, interactionList, startDate, stopDate)
         .then((explorationNumber) => {
             logger.debug(`exploration/add exploration ${explorationNumber} added`);
             res.json(explorationNumber);
@@ -267,31 +253,6 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
         sessionService.pushActionList(sessionId, explorationNumber, interactionList)
         .then(() => {
             logger.debug(`exploration ${number} updated`);
-            res.sendStatus(SUCCESS_STATUS);
-        })
-        .catch( (e: Error) => {
-            if (e.message === 'wrong sessionId') {
-                logger.error('wrong sessionId');
-                res.status(NOT_FOUND_STATUS).send("wrong sessionId");
-            } else {
-                logger.error(`exploration/pushAction error ${e}`);
-                res.status(INTERNAL_SERVER_ERROR_STATUS).send("error");
-            }
-        });
-    });
-
-    app.post("/session/:sessionId/exploration/:number/notifySubmision", (req, res) => {
-        let {sessionId, number} = req.params;
-        logger.info(`notify submision ${number} of session ${sessionId}`);
-
-        let explorationNumber: number = Number.parseInt(number)
-        if (!Number.isInteger(explorationNumber)) {
-            res.status(INVALID_PARAMETERS_STATUS).send("number must be an integer");
-            return;
-        }
-        sessionService.incrementSubmissionAttempt(sessionId, explorationNumber)
-        .then(() => {
-            logger.debug(`exploration ${number} submission attempt updated`);
             res.sendStatus(SUCCESS_STATUS);
         })
         .catch( (e: Error) => {

@@ -12,7 +12,7 @@ export default class SessionRepositoryREST implements SessionRepository {
     public fetchSequenceListOfSession(sessionId: string): Promise<{sequence: Sequence, sessionId: string, explorationKey: string}[]> {
         const route = URL + sessionId;
         return fetch(route)
-            .then( (response) => {
+            .then( (response: any) => {
                 return response.json();
             })
             .then( (session: any) => {

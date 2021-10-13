@@ -88,10 +88,11 @@ export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: num
     console.log("firefox captureStreamOnWindow")
 
     return new Promise((resolve, reject) => {
-        // @ts-ignore
+
         navigator.mediaDevices.getDisplayMedia({
             video: {
-                cursor: "always"
+                // @ts-ignore
+                cursor: 'always'
             },
             audio: false
         })

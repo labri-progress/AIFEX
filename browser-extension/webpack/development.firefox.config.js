@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const baseConfig = require('./base.firefox.config.js');
 const webpack = require('webpack');
 

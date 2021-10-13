@@ -34,7 +34,7 @@ export default class AttributeValueRule extends SimpleRule {
     }
 
 
-    actionToElements(action: Action): HTMLElement[] {
+    actionToElements(action: Action): (HTMLElement| SVGElement)[] {
         if (action.prefix !== this.prefix) {
             return [];
         }
