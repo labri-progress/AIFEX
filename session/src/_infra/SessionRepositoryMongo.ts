@@ -60,7 +60,6 @@ export default class SessionRepositoryMongo implements SessionRepository {
     }
 
     public updateInteractionListOfExploration(sessionId: string, explorationNumber: number, updatedInteractionList: Interaction[]): Promise<void> {
-
         const isInteraction = (interaction: {
             concreteType: string,
             index: number,
@@ -82,8 +81,8 @@ export default class SessionRepositoryMongo implements SessionRepository {
                 return {
                     concreteType: "Action",
                     index: interaction.index,
-                    kind: interaction.action.kind,
-                    value: interaction.action.value,
+                    kind: interaction.action.prefix,
+                    value: interaction.action.suffix,
                     date: interaction.date
                 };
             }
@@ -137,7 +136,6 @@ export default class SessionRepositoryMongo implements SessionRepository {
         let baseURL: string;
         let name: string;
         let description: string;
-        let overlayType: SessionOverlayType;
         let session: Session;
         let createdAt: Date;
         
@@ -148,8 +146,6 @@ export default class SessionRepositoryMongo implements SessionRepository {
                 baseURL = sessionData.baseURL;
                 name = sessionData.name;
                 description = sessionData.description;
-
-                overlayType = sessionData.overlayType as SessionOverlayType;
                 createdAt = sessionData.createdAt;
                 
                 return this._webSiteRepository.findWebSiteById(sessionData.webSiteId)
@@ -167,18 +163,18 @@ export default class SessionRepositoryMongo implements SessionRepository {
                                 explorationData.interactionList
                                 .filter((inter) => inter !== null && inter !== undefined)
                                 .sort( (interA, interB) => interA.index - interB.index)
-                                .forEach((interaction) => {
-                                    if (interaction.concreteType === "Action") {
-                                        interactionList.push(new ActionInteraction(interaction.index, new Action(interaction.kind, interaction.value), interaction.date));
+                                .forEach((interactionData) => {
+                                    if (interactionData.concreteType === "Action") {
+                                        interactionList.push(new ActionInteraction(interactionData.index, new Action(interactionData.kind, interactionData.value), interactionData.date));
                                     }
-                                    if (interaction.concreteType === "Comment") {
+                                    if (interactionData.concreteType === "Comment") {
                                         let comment: Comment;
-                                        if (interaction.value !== undefined) {
-                                            comment = new Comment(interaction.kind, interaction.value)
+                                        if (interactionData.value !== undefined) {
+                                            comment = new Comment(interactionData.kind, interactionData.value)
                                         } else {
-                                            comment = new Comment(interaction.kind, "");
+                                            comment = new Comment(interactionData.kind, "");
                                         }
-                                        interactionList.push(new CommentInteraction(interaction.index, comment, interaction.date));
+                                        interactionList.push(new CommentInteraction(interactionData.index, comment, interactionData.date));
                                     }
                                 });
                                 session.addInteractionListToExploration(explorationNumber, interactionList);

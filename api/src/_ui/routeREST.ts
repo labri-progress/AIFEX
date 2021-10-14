@@ -4,6 +4,9 @@ import Token from "../domain/Token";
 import APIApplication from '../application/APIApplication';
 import { Kind } from '../domain/Kind';
 import { parse } from 'path';
+import Evaluator from '../domain/Evaluator';
+import Evaluation from '../domain/Evaluation';
+import Action from '../domain/Action';
 
 const INVALID_PARAMETERS_STATUS = 400;
 const FORBIDDEN_STATUS = 403;
@@ -748,5 +751,165 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             }
         }
     });
+
+    app.get("/evaluator/:sessionId", (req, res) => {
+        const { sessionId } = req.params;
+        logger.info(`getEvaluator for sessionId ${sessionId}`);
+        if (sessionId === undefined) {
+            logger.warn("sessionId is required")
+            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
+        }
+        return api.getEvaluator(sessionId, req.token)
+            .then((evaluator) => {
+                if (evaluator === "Unauthorized") {
+                    return res.sendStatus(FORBIDDEN_STATUS)
+                }
+                if (evaluator === "noEvaluatorForSession") {
+                    return res.sendStatus(NOT_FOUND_STATUS)
+                }
+                else {
+                    return res.send({
+                        id: evaluator.id,
+                        description: evaluator.description,
+                        expression: evaluator.expression,
+                        sessionId: evaluator.sessionId
+                    })
+                }
+            })
+            .catch((e: Error) => {
+                logger.error(`error:${e}`);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+            });
+        });
+
+    app.post("/evaluator/create", (req, res) => {
+        const { sessionId, description, expression } = req.body;
+        logger.info(`create evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
+        if (sessionId === undefined) {
+            logger.warn("sessionId is required")
+            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
+        }
+        if (typeof expression === undefined) {
+            logger.warn(`expression is required`);
+            return res.status(INVALID_PARAMETERS_STATUS).send("expression is required");
+        }
+        if (typeof description === undefined) {
+            logger.warn(`description is required`);
+            return res.status(INVALID_PARAMETERS_STATUS).send("description is required");
+        }
+
+        if (expression.length === 0) {
+            logger.warn(`expression must not be empty`);
+            return res.status(INVALID_PARAMETERS_STATUS).send("expression must not be empty");
+        }
+        api.createEvaluator(sessionId, description, expression).then(() => {
+            logger.debug("evaluator is created")
+            return res.json({message: "Evaluator created"});
+        })
+        .catch((e: Error) => {
+            logger.error(`error:${e}`);
+            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+        });
+    });
+
+    app.post("/evaluator/update/:sessionId", (req, res) => {
+        const { sessionId } = req.params
+        const { description, expression } = req.body;
+        logger.info(`update evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
+        if (sessionId === undefined) {
+            logger.warn("sessionId is required")
+            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
+        }
+        api.updateEvaluator(sessionId, description, expression).then(() => {
+            logger.debug("evaluator is updated")
+            return res.send({sessionId: sessionId});
+        })
+        .catch((e: Error) => {
+            logger.error(`error:${e}`);
+            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+        });
+    });
+
+
+    app.post("/evaluator/evaluate", (req, res) => {
+        const { sessionId, actionList } = req.body;
+        logger.info(`evaluate sequence (sessionId : ${sessionId}, actionList : ${JSON.stringify(actionList)})`);
+        if (sessionId === undefined) {
+            logger.warn("sessionId is required")
+            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
+        }
+        if (!Array.isArray(actionList)) {
+            logger.warn("actionList must be an array")
+            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
+        }
+
+        api.evaluateSequenceByExpression(
+            sessionId, 
+            actionList.map((actionData, index) => new Action(index, actionData.prefix, actionData.suffix))
+            ).then((evaluation: Evaluation) => {
+                return res.json(evaluation);
+        }) .catch((e: Error) => {
+            logger.error(`error:${e}`);
+            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+        });
+    });
+
+    app.post("/evaluator/evaluate-expression", (req, res) => {
+        const { expression, actionList } = req.body;
+        logger.info(`evaluate sequence (expression : ${expression}, actionList : ${JSON.stringify(actionList)})`);
+        if (expression === undefined) {
+            logger.warn("expression is required")
+            return res.status(INVALID_PARAMETERS_STATUS).send("expression is required");
+        }
+        if (!Array.isArray(actionList)) {
+            logger.warn("actionList must be an array")
+            return res.status(INVALID_PARAMETERS_STATUS).send("actionList muse be an array");
+        }
+
+        api.evaluateSequenceByExpression (
+            expression, 
+            actionList.map((actionData, index) => new Action(index, actionData.prefix, actionData.suffix))
+            ).then((evaluation: Evaluation) => {
+            return res.json(evaluation);
+        }) .catch((e: Error) => {
+            logger.error(`error:${e}`);
+            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+        });
+    });
+
+    app.delete("/evaluator/remove/:sessionId", (req, res) => {
+        const { sessionId } = req.params;
+        logger.info(`remove evaluator for (sessionId : ${sessionId})`);
+        if (sessionId === undefined) {
+            logger.warn("sessionId is required")
+            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
+        }
+        api.removeEvaluator(sessionId, req.token)
+        .then(() => {
+            return res.json({sessionId})
+        }) .catch((e: Error) => {
+            logger.error(`error:${e}`);
+            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+        });
+    });
+
+    app.post("/evaluator/expressionToDot", (req, res) => {
+        const { expression } = req.body;
+        logger.info(`expression to do : ${expression}`);
+        if (!expression) {
+            logger.warn("expression parameter is required", expression)
+            return res.status(INTERNAL_SERVER_ERROR_STATUS).send("Invalid parameters");
+        }
+
+        api.expressionToDot(expression).then((dot: any) => {
+            return res.json({
+                expressionIsValid: true,
+                dot
+            })
+        }) .catch((e: Error) => {
+            logger.error(`error:${e}`);
+            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+        });
+    })
 
 }

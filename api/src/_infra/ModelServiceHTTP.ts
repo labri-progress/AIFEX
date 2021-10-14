@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import CommentDistribution from "../domain/CommentDistribution";
-import Interaction from "../domain/Interaction";
+import Interaction from "../domain/Action";
 import Model from "../domain/Model";
 import { ModelPredictionType } from "../domain/ModelPredictionType";
 import ModelService from "../domain/ModelService";

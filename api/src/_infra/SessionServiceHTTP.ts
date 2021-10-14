@@ -3,7 +3,7 @@ import config from "./config";
 import Session, { SessionOverlayType } from "../domain/Session";
 import SessionService from "../domain/SessionService";
 import Screenshot from "../domain/Screenshot";
-import Interaction from "../domain/Interaction";
+import Interaction from "../domain/Action";
 import Video from "../domain/Video";
 
 const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;

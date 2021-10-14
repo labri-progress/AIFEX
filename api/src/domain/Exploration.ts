@@ -1,14 +1,14 @@
-import Interaction from "./Interaction";
+import Action from "./Action";
 
 export default class Exploration {
     readonly tester: string;
     readonly isStopped: boolean;
     readonly explorationNumber: number;
-    readonly interactionList: Interaction[];
+    readonly actionList: Action[];
     readonly startDate : Date;
     readonly stopDate : Date | undefined;
 
-    constructor(tester: string, explorationNumber: number, interactionList: Interaction[], startDate?:Date, stopDate?:Date) {
+    constructor(tester: string, explorationNumber: number, actionList: Action[], startDate?:Date, stopDate?:Date) {
         this.tester = tester;
         if (startDate) {
             this.startDate = startDate;
@@ -23,7 +23,7 @@ export default class Exploration {
 
         this.explorationNumber = explorationNumber;
         this.isStopped = false;
-        this.interactionList = interactionList;
+        this.actionList = actionList;
     }
 
 }

@@ -98,8 +98,8 @@ export default function attachRoutes(app : Express, sessionService: SessionServi
                                     return {
                                         concreteType: "Action",
                                         index: interaction.index,
-                                        kind: interaction.action.kind,
-                                        value: interaction.action.value,
+                                        kind: interaction.action.prefix,
+                                        value: interaction.action.suffix,
                                         date: interaction.date
                                     };
                                 }

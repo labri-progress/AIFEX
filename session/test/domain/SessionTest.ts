@@ -57,25 +57,25 @@ describe("Domain - Session", () => {
                 }
             });
 
-            it("should add an action with no value to an exploration", () => {
+            it("should add an action with no suffix to an exploration", () => {
                 explorationNumber = session.startExploration(anonymousTester);
                 session.addActionToExploration(explorationNumber, action);
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
                 // tslint:disable-next-line: no-magic-numbers
                 expect(interactionList.length).to.equal(1);
-                expect((<ActionInteraction>interactionList[0]).action.kind).to.equal("clickButton");
+                expect((<ActionInteraction>interactionList[0]).action.prefix).to.equal("clickButton");
                 // tslint:disable-next-line: no-unused-expression
-                expect((<ActionInteraction>interactionList[0]).action.value).to.be.undefined;
+                expect((<ActionInteraction>interactionList[0]).action.suffix).to.be.undefined;
             });
 
-            it("should add an action with value to an exploration", () => {
+            it("should add an action with suffix to an exploration", () => {
                 explorationNumber = session.startExploration(anonymousTester);
                 session.addActionToExploration(explorationNumber,  new Action("clickButton", "toto"));
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
                 // tslint:disable-next-line: no-magic-numbers
                 expect(interactionList.length).to.equal(1);
-                expect((<ActionInteraction>interactionList[0]).action.kind).to.equal("clickButton");
-                expect((<ActionInteraction>interactionList[0]).action.value).to.equal("toto");
+                expect((<ActionInteraction>interactionList[0]).action.prefix).to.equal("clickButton");
+                expect((<ActionInteraction>interactionList[0]).action.suffix).to.equal("toto");
             });
 
         });
