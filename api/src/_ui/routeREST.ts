@@ -3,6 +3,7 @@ import { logger } from "../logger";
 import Token from "../domain/Token";
 import APIApplication from '../application/APIApplication';
 import { Kind } from '../domain/Kind';
+import { parse } from 'path';
 
 const INVALID_PARAMETERS_STATUS = 400;
 const FORBIDDEN_STATUS = 403;
@@ -381,6 +382,47 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 });
         }
     });
+
+    app.post("/sessions/:sessionId/explorations/:explorationNumber/interactions", (req, res) => {
+        const { sessionId, explorationNumber } = req.params;
+        const { interactionList } = req.body;
+        logger.info(`Push new actions in the exploration`);
+
+        if (sessionId === undefined || explorationNumber === undefined || interactionList === undefined ) {
+            logger.warn(`invalid parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No explorationNumber or No interactionList"});
+        } else {
+            console.log(explorationNumber, parseInt(explorationNumber))
+            if (parseInt(explorationNumber) === undefined) {
+                logger.warn(`invalid explorationNumber type`);
+                return res.status(INVALID_PARAMETERS_STATUS).json({message:"explorationNumber must be an integer"});
+            }
+            if (!Array.isArray(interactionList)) {
+                logger.warn(`interactionList must be an array`);
+                return res.status(INVALID_PARAMETERS_STATUS).json({message:"interactionList is malformed"});
+            }
+            const isWellFormed = interactionList.every((interaction:any) => interaction.hasOwnProperty("kind") && interaction.hasOwnProperty("value"))
+            if (!isWellFormed) {
+                logger.warn(`interactionList invalid properties`);
+                return res.status(INVALID_PARAMETERS_STATUS).json({message:"interactionList is malformed"});
+            }
+            api.addInteractions(sessionId, parseInt(explorationNumber), interactionList, req.token)
+                .then(explorationResult => {
+                    if (explorationResult === "Unauthorized") {
+                        return res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("Interactions added to exploration " + explorationNumber);
+                        return res.json({explorationNumber, sessionId});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    return res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
+        }
+    })
+
+
 
     app.post("/sessions/:sessionId/screenshots", (req, res) => {
         const sessionId = req.params.sessionId;

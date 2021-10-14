@@ -275,6 +275,26 @@ export default class APIApplication {
             });
     }
 
+    addInteractions(sessionId: string, explorationNumber: number, interactionList: Interaction[], token?: Token): Promise<"InteractionsAdded" | "ExplorationNotFound" | "Unauthorized"> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+        .then(([isPublic, maybeAccount]) => {
+            let authorized = false;
+            let invited = false;
+            if (maybeAccount !== "Unauthorized") {
+                const account: Account = maybeAccount;
+                authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+            }
+            if (isPublic || authorized || invited) {
+                return this._sessionService.addInteractions(sessionId, explorationNumber, interactionList)
+                        .then((result) => result);
+            } else {
+                return "Unauthorized";
+            }
+        });
+    }
+
+
     addScreenshots(sessionId: string, screenshots: Screenshot[], token?: Token): Promise<"Unauthorized" | "InvalidScreenshots" | "ScreenshotsAdded"> {
         if (screenshots.some(screenshot => screenshot.sessionId !== sessionId)) {
             return Promise.resolve("InvalidScreenshots");

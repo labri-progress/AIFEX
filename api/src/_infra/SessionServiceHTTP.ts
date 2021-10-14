@@ -43,6 +43,7 @@ export default class SessionServiceHTTP implements SessionService {
                 if (response.ok) {
                     return response.json()
                 } else {
+
                     throw new Error("Error"+response.statusText);
                 }
             })
@@ -68,6 +69,23 @@ export default class SessionServiceHTTP implements SessionService {
                     return response.json()
                 } else {
                     throw new Error("Error"+response.statusText);
+                }
+            })
+    }
+
+    addInteractions(sessionId: string, explorationNumber: number, interactionList: Interaction[]): Promise<"InteractionsAdded" | "ExplorationNotFound"> {
+        const AddInteractionsURL = `http://${config.session.host}:${config.session.port}/session/${sessionId}/exploration/${explorationNumber}/pushActionList`;
+        let optionAddInteractions = {
+            method: 'POST',
+            body:    JSON.stringify({interactionList}),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(AddInteractionsURL, optionAddInteractions)
+            .then(response => {
+                if (response.ok) {
+                    return "InteractionsAdded";
+                } else {
+                    throw new Error("Error" + response.statusText);
                 }
             })
     }

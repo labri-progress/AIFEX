@@ -3,7 +3,7 @@ const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
 
-const API_URL = "http://localhost:5005";
+const API_URL = "http://localhost/api";
 
 describe("API", () => {
 
@@ -270,6 +270,7 @@ describe("API", () => {
                 expect(account.authorizationSet[2].key).to.be.eql(sessionId);
             });
     });
+    
 
     it("should create a new model", () => {
         const url = `${API_URL}/models`;
@@ -366,6 +367,31 @@ describe("API", () => {
                 expect(probaMap[0][0]).to.eql("click$value");
                 expect(probaMap[0][1]).to.eql(1);
     
+            });
+    });
+
+    it("should add interactions to the exploration",() => {
+        const url = `${API_URL}/sessions/${sessionId}/explorations/${0}/interactions`;
+        const body = {
+            testerName: "testAPI",
+            interactionList: [
+                {index: 3, concreteType: "Action", kind: "type", value: "value"},
+            ]
+        };
+        return fetch(url, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(body)})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.sessionId).to.be.eql(sessionId);
             });
     });
 

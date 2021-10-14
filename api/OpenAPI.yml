@@ -374,6 +374,72 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
+  /session/{sessionId}/exploration/{explorationNumber}/interactions:
+    post:
+      description: add a list of action to an existing exploration
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+        - in: path
+          name: explorationNumber
+          schema:
+            type: integer
+          required: true
+          description: Exploration number in the session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                testerName:
+                  type: string
+                interactionList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      concreteType:
+                        type: string
+                        enum: [Action, Comment]
+                      kind:
+                        type: string
+                      value: 
+                        type: string
+
+      responses:
+        '200':
+          description: Interaction list have been added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'      
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+
   /sessions/{sessionId}/explorations:
     post:
       description: add a new /explorations
@@ -399,7 +465,7 @@ paths:
                     properties:
                       concreteType:
                         type: string
-                        enum: [Action, Comment, Answer]
+                        enum: [Action, Comment]
                       kind:
                         type: string
                       value: 
@@ -586,7 +652,7 @@ paths:
                     properties:
                       concreteType:
                         type: string
-                        enum: [Action, Comment, Answer]
+                        enum: [Action, Comment]
                       kind:
                         type: string
                       value: 
@@ -640,7 +706,7 @@ paths:
                     properties:
                       concreteType:
                         type: string
-                        enum: [Action, Comment, Answer]
+                        enum: [Action, Comment]
                       kind:
                         type: string
                       value: 

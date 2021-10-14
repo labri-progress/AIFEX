@@ -120,7 +120,7 @@ export default class Session {
 
     public addInteractionListToExploration(explorationNumber: number, interactionList: Interaction[]): void {
         if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
-            throw new Error("cannot add comment to exploration, wrong explorationNumber.");
+            throw new Error("cannot add interaction to exploration, wrong explorationNumber.");
         }
         const exploration = this._explorationList[explorationNumber];
         exploration.addInteractionList(interactionList);

@@ -19,4 +19,6 @@ export default interface SessionService {
 
     findVideosBySessionId(sessionId: string): Promise<Video[]>;
 
+    addInteractions(sessionId: string, explorationNumber: number, interactionList: Interaction[]): Promise<"InteractionsAdded" | "ExplorationNotFound">;
+
 }
