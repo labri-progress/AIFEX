@@ -13,15 +13,7 @@ services:
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
 
-  evaluator:
-    environment:
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-
   account:
-    environment:
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-
-  printer:
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
 
