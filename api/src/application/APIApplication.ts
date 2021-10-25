@@ -18,6 +18,7 @@ import Ngram from "../domain/Ngram";
 import Comment from "../domain/Comment";
 import EvaluatorService from "../domain/EvaluatorService";
 import Evaluator from "../domain/Evaluator";
+import Evaluation from "../domain/Evaluation";
 
 export default class APIApplication {
 
@@ -538,7 +539,6 @@ export default class APIApplication {
         return this._accountService.isAuthorizationPublic(kind, key);
     }
 
-
     accountInitialization(username: string) : Promise<"WebSiteAdded" | "IncorrectUsername"> {
         let mappings : Mapping[] = [];
         mappings.push(new Mapping({event:"click",css:"body"},{prefix:"ClickOn",suffix:"cssSelector"}));
@@ -556,10 +556,26 @@ export default class APIApplication {
 
     evaluateSequenceByExpression(expression: string, actionList: Action[]) {
         return this._evaluatorService.evaluateSequenceByExpression(expression, actionList);
-
     }
 
-    removeEvaluator(sessionId: string, token?: Token) :Promise<void> {
+    removeEvaluator(sessionId: string, token?: Token): Promise<"Unauthorized" | void> {
+        let authorized: boolean;
+        let invited: boolean;
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._evaluatorService.removeEvaluator(sessionId).then(() =>{})
+                }
+                return "Unauthorized";
+            })
+    }
+
+    createEvaluator(sessionId: string, description: string, expression: string, token?: Token): Promise<"Unauthorized" | void>  {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
         .then(([isPublic, maybeAccount]) => {
             let authorized = false;
@@ -570,32 +586,13 @@ export default class APIApplication {
                 invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
             }
             if (isPublic || authorized || invited) {
-                return this._evaluatorService.removeEvaluator(sessionId)
-            } else {
-                return "Unauthorized";
+                return this._evaluatorService.createEvaluator(sessionId, description, expression).then(() =>{})
             }
-        });
-    }
-
-    createEvaluator(sessionId: string, description: string, expression: string, token?: Token) {
-        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
-        .then(([isPublic, maybeAccount]) => {
-            let authorized = false;
-            let invited = false;
-            if (maybeAccount !== "Unauthorized") {
-                const account: Account = maybeAccount;
-                authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-            }
-            if (isPublic || authorized || invited) {
-                return this._evaluatorService.createEvaluator(sessionId, description, expression);
-            } else {
-                return "Unauthorized";
-            }
+            return "Unauthorized";
         });    
     }
 
-    updateEvaluator(sessionId: string, description: string, expression: string, token?: Token ) {
+    updateEvaluator(sessionId: string, description: string, expression: string, token?: Token ): Promise<"Unauthorized" | void>  {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
         .then(([isPublic, maybeAccount]) => {
             let authorized = false;
@@ -606,14 +603,14 @@ export default class APIApplication {
                 invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
             }
             if (isPublic || authorized || invited) {
-                return this._evaluatorService.updateEvaluator(sessionId, description, expression);
+                return this._evaluatorService.updateEvaluator(sessionId, description, expression).then(() =>{});
             } else {
                 return "Unauthorized";
             }
         });        
     }
 
-    getEvaluator(sessionId: string, token?: Token): Promise<Evaluator | "noEvaluatorForSession" | "Unauthorized"> {
+    getEvaluator(sessionId: string, token?: Token): Promise<Evaluator | undefined | "Unauthorized"> {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
             .then(([isPublic, maybeAccount]) => {
                 let authorized = false;
@@ -625,6 +622,25 @@ export default class APIApplication {
                 }
                 if (isPublic || authorized || invited) {
                     return this._evaluatorService.getEvaluator(sessionId)
+                        .then((result) => result);
+                } else {
+                    return "Unauthorized";
+                }
+            });   
+    }
+
+    evaluateSequence(sessionId: string, actionList: Action[], token?: Token): Promise<Evaluation | "Unauthorized"> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._evaluatorService.evaluate(sessionId, actionList)
                         .then((result) => result);
                 } else {
                     return "Unauthorized";

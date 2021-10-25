@@ -25,6 +25,10 @@ services:
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
 
+  evaluator:
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
   api:
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}

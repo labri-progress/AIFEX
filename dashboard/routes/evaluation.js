@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
-const getWebSites = require('../apiService').getWebSites;
+const { getSessionById, getWebSiteById } = require('../apiService');
+
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
@@ -9,12 +10,14 @@ module.exports = function attachRoutes(app, config) {
         let errorMessage;
         let renderOptions
         const sessionId = req.params.sessionId;
-        let webSiteId;
         logger.info(`GET evaluation for website (sessionId : ${sessionId})`);
 
-        getWebSites(req.session.jwt)
-            .then(webSiteList => {
-                webSite = webSiteList.find((webSite) => webSite.id === webSiteId);
+        getSessionById(req.session.jwt, sessionId)
+            .then(session => {
+                return getWebSiteById(session.webSite.id)
+            }).then((webSite) => {
+                console.log(webSite)
+
                 const actionList = webSite.mappingList.map(mapping => {
                     if (mapping.output.suffix) {
                         return `${mapping.output.prefix}$${mapping.output.suffix}` 

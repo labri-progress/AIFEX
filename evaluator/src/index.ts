@@ -16,7 +16,7 @@ const stepParser = new AntlrStepParser()
 const sequenceConstraintService = new EvaluationApplication(sequenceEvaluatorRepositoryMongo, stepParser);
 
 function connectWithRetry(): Promise<void> {
-  return mongoose.connect(config.database, { useUnifiedTopology: true, useNewUrlParser: true })
+  return mongoose.connect(config.database)
   .then(() => {
       logger.info("Connecting to database : " + config.database );
   })

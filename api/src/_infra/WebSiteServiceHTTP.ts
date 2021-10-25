@@ -1,8 +1,8 @@
-import fetch from "node-fetch";
 import config from "./config";
 import WebSite from "../domain/WebSite";
 import WebSiteService from "../domain/WebSiteService";
 import Mapping from "../domain/Mapping";
+import fetch from "node-fetch";
 
 const WEBSITE_URL : string = `http://${config.website.host}:${config.website.port}/website/`;
 

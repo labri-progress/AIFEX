@@ -1,9 +1,4 @@
-import Action from "./Action";
-import Evaluation from "./Evaluation";
-
-
 export default class Evaluator {
-
 
     public id: string;
     public description: string;

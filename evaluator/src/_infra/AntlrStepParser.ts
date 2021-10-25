@@ -3,7 +3,7 @@ import { ErrorListener } from "antlr4/error/ErrorListener";
 import IStepParser from "../domain/IStepParser";
 import AST from "./AST";
 // tslint:disable-next-line: no-var-requires
-const grammarLexer = require("./stepParser/StepGrammarLexer.js");
+const grammarLexer:any = require("./stepParser/StepGrammarLexer.js");
 // tslint:disable-next-line: no-var-requires
 const grammarParser = require("./stepParser/StepGrammarParser.js");
 // tslint:disable-next-line: no-var-requires

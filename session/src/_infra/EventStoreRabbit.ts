@@ -30,8 +30,8 @@ export default class EventStoreRabbit implements EventStore {
             if (interaction instanceof ActionInteraction) {
                 sequence.push({
                     concreteType : "Action",
-                    kind : interaction.action.kind,
-                    value : interaction.action.value,
+                    kind : interaction.action.prefix,
+                    value : interaction.action.suffix,
                 });
             }
             if (interaction instanceof CommentInteraction) {

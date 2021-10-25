@@ -3,8 +3,6 @@ import { logger } from "../logger";
 import Token from "../domain/Token";
 import APIApplication from '../application/APIApplication';
 import { Kind } from '../domain/Kind';
-import { parse } from 'path';
-import Evaluator from '../domain/Evaluator';
 import Evaluation from '../domain/Evaluation';
 import Action from '../domain/Action';
 
@@ -764,7 +762,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 if (evaluator === "Unauthorized") {
                     return res.sendStatus(FORBIDDEN_STATUS)
                 }
-                if (evaluator === "noEvaluatorForSession") {
+                if (evaluator === undefined) {
                     return res.sendStatus(NOT_FOUND_STATUS)
                 }
                 else {

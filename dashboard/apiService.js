@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const config = require('./config');
+const logger = require('./logger');
 
 module.exports.signup = function (username, email, password) {
     const SIGNUP_URL = `http://${config.api.host}:${config.api.port}/signup`;
@@ -205,6 +206,7 @@ module.exports.createSession = function (token, webSiteId, name, baseURL, descri
         body: JSON.stringify(bodyCreateSession),
         headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }
+    logger.info("calling route session create")
     return fetch(apiCreateSessionURL, optionCreateSession)
         .then(response => {
             if (response.ok) {
@@ -484,7 +486,7 @@ module.exports.revokePublicConnexionCode = function (token, sessionId, modelId, 
         })
 }
 
-module.exports.getEvaluatorBySessionId = function (sessionId) {
+module.exports.getEvaluatorBySessionId = function (token, sessionId) {
     let getEvaluatorURL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/' + sessionId;
     return fetch(getEvaluatorURL, {
         method: 'GET',

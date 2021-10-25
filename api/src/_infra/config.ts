@@ -20,6 +20,10 @@ const config = {
     account: {
         host: "account",
         port: 80
+    },
+    evaluator: {
+        host: "evaluator",
+        port: 80
     }
 }
 

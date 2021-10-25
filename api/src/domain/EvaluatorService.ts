@@ -3,10 +3,11 @@ import Evaluation from "./Evaluation";
 import Evaluator from "./Evaluator";
 
 export default interface EvaluatorService {
-    getEvaluator(sessionId: string): Promise<Evaluator | "noEvaluatorForSession">;
-    updateEvaluator(sessionId: string, description: string, expression: string): any;
-    createEvaluator(sessionId: string, description: string, expression: string): any;
-    removeEvaluator(sessionId: string): any;
+    getEvaluator(sessionId: string): Promise<Evaluator | undefined>;
+    updateEvaluator(sessionId: string, description: string, expression: string): Promise<void>;
+    createEvaluator(sessionId: string, description: string, expression: string):  Promise<void>;
+    removeEvaluator(sessionId: string):  Promise<void>;
+    evaluate(sessionId: string, actionList: Action[]): Promise<Evaluation>;
     evaluateSequenceByExpression(expression: string, actionList: Action[]): Promise<Evaluation>;
     expressionToDot(expression: string): Promise< {expressionIsValid: boolean, dot: string}>;
 }

@@ -33,7 +33,7 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.post('/dashboard/session/create', (req, res) => {
-        let { webSiteId, name, baseURL, interpolationfactor, depth, overlayType } = req.body;
+        let { webSiteId, name, baseURL, interpolationfactor, depth, description, overlayType } = req.body;
 
         if (overlayType === "shadowMode") {
             overlayType = "shadow"
@@ -81,12 +81,11 @@ module.exports = function attachRoutes(app, config) {
 
         logger.info(`GET view session (sessionId = ${sessionId}), (modelId = ${modelId})`);
 
-        Promise.all([getSessionById(req.session.jwt,sessionId), getModelById(req.session.jwt,modelId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId), isAuthorizationPublic("Session",sessionId), getEvaluatorBySessionId(req.session.jwt,sessionId)])
+        Promise.all([getSessionById(req.session.jwt,sessionId), getModelById(req.session.jwt, modelId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId), isAuthorizationPublic("Session",sessionId), getEvaluatorBySessionId(req.session.jwt, sessionId)])
             .then(([session, model, screenshot, video, isSessionPublic, evaluator]) => {
                 logger.debug(`screenshot:${JSON.stringify(screenshot)}`);
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
-                console.log(evaluator)
                 res.render('session/view.ejs', {
                     account: req.session,
                     serverURL: buildInvitation(model.id, session.id),
@@ -273,13 +272,13 @@ module.exports = function attachRoutes(app, config) {
     app.get('/dashboard/session/remove/:connectionCode', (req, res) => {
         const { connectionCode } = req.params;
         const [sessionId] = connectionCode.split('$');
-        logger.info(`remove session (${connectionCode})`);
+        logger.info(`remove session (${sessionId})`);
         removeSession(req.session.jwt, sessionId)
             .then(() => {
                 res.redirect('/account/account');
             }).catch(e => {
                 logger.error(e);
-                let message = 'Failed to remove connectionCode';
+                let message = 'Failed to remove session';
                 res.render('error.ejs', { message, account: req.session, error: e });
             })
     });
