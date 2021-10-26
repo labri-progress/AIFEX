@@ -1,7 +1,6 @@
 import fetch from "node-fetch";
 import fs from "fs";
 import path from "path";
-import config from "./config";
 
 import * as winston from "winston";
 const logger = winston.createLogger({
@@ -24,22 +23,17 @@ const logger = winston.createLogger({
   //}
 
 
-const WEBSITE_BASE_URL = `http://${config.website.host}:${config.website.port}/website`;
-const ACCOUNT_BASE_URL = `http://${config.account.host}:${config.account.port}/account`;
-const MODEL_BASE_URL = `http://${config.model.host}:${config.model.port}/model`;
-const SESSION_BASE_URL = `http://${config.session.host}:${config.session.port}/session`;
+const API_URL = `http://localhost/api`;
+
 pingThenLoadDefault();
 
 function pingThenLoadDefault() {
-    logger.info(`ping servers`);
-    const WEBSITE_PING_URL = `${WEBSITE_BASE_URL}/ping`;
-    const ACCOUNT_PING_URL = `${ACCOUNT_BASE_URL}/ping`;
-    const MODEL_PING_URL = `${MODEL_BASE_URL}/ping`;
-    const SESSION_PING_URL = `${SESSION_BASE_URL}/ping`;
+    logger.info(`ping api`);
+    const API_PING_URL = `${API_URL}/ping`;
 
-    return Promise.all([fetch(WEBSITE_PING_URL), fetch(ACCOUNT_PING_URL), fetch(MODEL_PING_URL), fetch(SESSION_PING_URL)])
-    .then(([resWebsite, resAccount, resModel, resSession]) => {
-        if (resWebsite.ok && resAccount.ok && resModel.ok && resSession.ok) {
+    return fetch(API_PING_URL)
+    .then((resPing) => {
+        if (resPing.ok) {
             loadDefault();
         } else {
             setTimeout(pingThenLoadDefault, 4000);
