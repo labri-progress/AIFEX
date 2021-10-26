@@ -156,7 +156,8 @@ describe("API", () => {
             body: JSON.stringify(body),
             headers: { 
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`}
+                "Authorization": `Bearer ${token}`
+            }
             })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression

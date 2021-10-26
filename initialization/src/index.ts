@@ -1,8 +1,10 @@
 import fetch from "node-fetch";
 import fs from "fs";
 import path from "path";
-
 import * as winston from "winston";
+
+const API_URL = `http://localhost/api`;
+
 const logger = winston.createLogger({
     level: 'debug',
     format: winston.format.combine(
@@ -18,12 +20,6 @@ const logger = winston.createLogger({
       new winston.transports.File({ filename: 'combined.log' }),
     ],
   });
-  
-  //if (process.env.NODE_ENV === 'production') {
-  //}
-
-
-const API_URL = `http://localhost/api`;
 
 pingThenLoadDefault();
 
@@ -34,7 +30,7 @@ function pingThenLoadDefault() {
     return fetch(API_PING_URL)
     .then((resPing) => {
         if (resPing.ok) {
-            loadDefault();
+            loadingAnonymousAccount();
         } else {
             setTimeout(pingThenLoadDefault, 4000);
         }
@@ -44,65 +40,62 @@ function pingThenLoadDefault() {
     })
 }
 
-async function loadDefault() {
-    logger.info(`loadDefault`);
+async function loadingAnonymousAccount() {
+    logger.info(`Loading anonymous account`);
     try {
         await createAnonymousAccount();
         const tokenJWT = await signinAsAnonymous();
-        const token = tokenJWT.jwt;
-        logger.info(`get token : ${JSON.stringify(token)}`)
-        const webSiteList = await createDefaultWebSite();
-        await addSiteListToAnonymous(token, webSiteList);
+        const token = tokenJWT.bearerToken;
+        const webSiteList = await createDefaultWebSite(token);
         const cdiscountWebSiteId = webSiteList.find(webSite => webSite.name === 'cdiscount')._id;
         logger.info(`cdiscountWebSiteID:${cdiscountWebSiteId}`);
-        const connexionCode = await createSessionAndModel(cdiscountWebSiteId);
-        logger.info('connexion code : ',connexionCode);
+
+        const connexionCode = await createSessionAndModel(token, cdiscountWebSiteId);
         const sessionId = connexionCode.split('$')[0];
-        await addSessionToAnonymous(token, sessionId);
         logger.info('sessionAddedToAnonymous');
-        const modelId = connexionCode.split('$')[1];
-        await addModelToAnonymous(token, modelId);
-        logger.info('modelAddedToAnonymous');
-        await addAllExplorationToSession(sessionId);
+
+        await addAllExplorationToSession(token, sessionId);
         logger.info('allExplorationToSession');
     } catch (e) {
         logger.error(e);
     }    
 }
 
-
-async function createDefaultWebSite() {
+async function createDefaultWebSite(token) {
     logger.info(`createDefaultWebSite`)
     const mappingDirectory = path.join(__dirname, "..","mapping");
 
     const siteList = JSON.parse(fs.readFileSync(path.join(mappingDirectory, "siteList.json"), "utf8"));
     for (const site of siteList) {
-        site._id = await createSite(site);
+        site._id = await createSite(token, site);
         let mappingList = [];
         for (const mappingfile of site.mappingFiles) {
             const mapPath = path.join(mappingDirectory, mappingfile);
             const mapping = JSON.parse(fs.readFileSync(mapPath, "utf8"));
             mappingList = mappingList.concat(mapping);
         }
-        await addMappingListToWebSite(site, mappingList);
+        await addMappingListToWebSite(token, site, mappingList);
     }
     logger.info("default website are loaded");
     return siteList;
 }
 
 
-function createSite(site) {
-    const url = WEBSITE_BASE_URL + "/create";
+function createSite(token, site) {
+    const url = API_URL + "/websites";
     const body = {
         name: site.name,
-        url: site.url,
         mappingList: [],
     };
+    console.log(token)
     const option = {
         method: "POST",
         body:    JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-    };
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
+    }    
     return fetch(url, option)
     .then(res => {
         if (res.ok) {
@@ -114,18 +107,19 @@ function createSite(site) {
     })
 }
 
-function addMappingListToWebSite(site, mappingList) {
-    const url = WEBSITE_BASE_URL + "/update";
+function addMappingListToWebSite(token, site, mappingList) {
+    const url = API_URL + "/websites/" + site._id.webSiteId;
     const body = {
         name: site.name,
-        id: site._id,
-        url: site.url,
         mappingList
     };
     const option = {
-        method: "POST",
+        method: "PATCH",
         body:    JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
     };
     return fetch(url, option)
         .then(res => {
@@ -137,13 +131,12 @@ function addMappingListToWebSite(site, mappingList) {
         })
 }
 
-
-
 function createAnonymousAccount() {
-    const url = ACCOUNT_BASE_URL + "/signup";
+    const url = API_URL + "/signup";
     const body = {
         username: "anonymous",
-        password: "anonymous"
+        password: "anonymous",
+        email: "anonymous@email.com"
     };
     const option = {
         method: "POST",
@@ -162,7 +155,7 @@ function createAnonymousAccount() {
 }
 
 function signinAsAnonymous() {
-    const url = ACCOUNT_BASE_URL + "/signin";
+    const url = API_URL + "/signin";
     const body = {
         username: "anonymous",
         password: "anonymous"
@@ -182,34 +175,7 @@ function signinAsAnonymous() {
     })
 }
 
-function addSiteListToAnonymous(token, websiteList) {
-    const webSiteListAddAll = websiteList.map(webSite => {
-        logger.info(`adding website ${webSite.name} (id = ${webSite._id}) to anonymous`);
-        const url = ACCOUNT_BASE_URL + "/addwebsite";
-        const body = {
-            username: "anonymous",
-            webSiteId: webSite._id
-        };
-        const option = {
-            method: "POST",
-            body:    JSON.stringify(body),
-            headers: { "Content-Type": "application/json" },
-        };
-        return fetch(url, option)
-    })
-
-    return Promise.all(webSiteListAddAll)
-    .then(resAll => {
-        if (resAll.every((res:any) => res.ok)) {
-            logger.info(`all websites are added to anonymous`);
-            return true;
-        } else {
-            throw new Error('some website cannot be added to anonymous');
-        }
-    })
-}
-
-function createSessionAndModel(webSiteId) {
+function createSessionAndModel(token, webSiteId) {
     const baseURL = "https://www.cdiscount.com";
     const depth = 8;
     const interpolationfactor = 2;
@@ -217,7 +183,7 @@ function createSessionAndModel(webSiteId) {
     let sessionId;
     let modelId;
 
-    const sessionCreateURL = 'http://' + config.session.host + ':' + config.session.port + '/session/create';
+    const sessionCreateURL = API_URL + '/sessions/';
     const bodySessionCreate = {
         webSiteId,
         baseURL,
@@ -225,10 +191,13 @@ function createSessionAndModel(webSiteId) {
     const optionSessionCreate = {
         method: 'POST',
         body:    JSON.stringify(bodySessionCreate),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
     }
 
-    const modelCreateURL = 'http://' + config.model.host + ':' + config.model.port + '/model/create';
+    const modelCreateURL =API_URL + '/models/';
     const bodyModelCreate = {
         depth,
         interpolationfactor
@@ -236,7 +205,10 @@ function createSessionAndModel(webSiteId) {
     const optionModelCreate = {
         method: 'POST',
         body:    JSON.stringify(bodyModelCreate),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
     }
 
     const createSessionPromise = fetch(sessionCreateURL, optionSessionCreate);
@@ -256,8 +228,7 @@ function createSessionAndModel(webSiteId) {
     .then( idList => {
         sessionId = idList[0];
         modelId = idList[1];
-        let linkModel2SessionURL = 'http://' + config.model.host + ':' + config.model.port + '/model/';
-        linkModel2SessionURL = linkModel2SessionURL + modelId +'/link/' + sessionId;
+        let linkModel2SessionURL = API_URL + '/models/' + modelId + "/link/" + sessionId;
         const optionLinkModel = {
             method: 'POST',
             body:    JSON.stringify({}),
@@ -273,51 +244,8 @@ function createSessionAndModel(webSiteId) {
     });
 }
 
-function addSessionToAnonymous(token, sessionId) {
-    const url = ACCOUNT_BASE_URL + "/addsession";
-    const body = {
-        username: "anonymous",
-        sessionId: sessionId
-    };
-    const option = {
-        method: "POST",
-        body:    JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-    };
-    return fetch(url, option)
-        .then(res => {
-            if (res.ok) {
-                return true;
-            } else {
-                throw new Error('some website cannot be added to anonymous');
-            }
-        })
-}
-
-function addModelToAnonymous(token, modelId) {
-    const url = ACCOUNT_BASE_URL + "/addmodel";
-    const body = {
-        username: "anonymous",
-        modelId: modelId
-    };
-    const option = {
-        method: "POST",
-        body:    JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-    };
-    return fetch(url, option)
-        .then(res => {
-            if (res.ok) {
-                return true;
-            } else {
-                throw new Error('some website cannot be added to anonymous');
-            }
-        })
-}
-
-
-async function addAllExplorationToSession(sessionId) {
-    const url = `${SESSION_BASE_URL}/${sessionId}/exploration/add`;
+async function addAllExplorationToSession(token, sessionId) {
+    const url = `${API_URL}/${sessionId}/explorations`;
 
     const explorationsDirectory = path.join(__dirname, "..","explorations");
     const explorationList = JSON.parse(fs.readFileSync(path.join(explorationsDirectory, "demo.json"), "utf8")).explorationList;
@@ -330,7 +258,10 @@ async function addAllExplorationToSession(sessionId) {
         const option = {
             method: "POST",
             body:    JSON.stringify(body),
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }        
         };
         await fetch(url, option)
             .then(res => {
