@@ -46,11 +46,6 @@ services:
         source: ${CERTIFICAT_SOURCE}
         target: ${CERTIFICAT_TARGET}
         read_only: true
-    depends_on:
-      - "model"
-      - "website"
-      - "session"
-      - "dashboard"
     ports:
       - 80:80
       - 443:443

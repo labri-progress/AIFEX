@@ -75,8 +75,6 @@ services:
       - "website"
       - "session"
       - "model"
-    ports:
-      - 80:80
     restart: always
 
   initialization:
@@ -87,19 +85,6 @@ services:
     depends_on:
       - "website"
       - "account"
-    
-  test:
-    build:
-      context: test/
-      dockerfile: ./Dockerfile.github
-    environment:
-      -  NODE_ENV=github
-    depends_on:
-      - "mongo"
-      - "session"
-      - "website"
-      - "dashboard"  
-
 
   rabbitmq:
     image: rabbitmq:3.8.5

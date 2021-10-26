@@ -88,6 +88,18 @@ services:
       - screenshot:/app/public/screenshot
       - video:/app/public/video
 
+  reverseproxy:
+    build:
+      context: reverseproxy/
+      dockerfile: ./Dockerfile.dev
+    depends_on:
+      - "model"
+      - "website"
+      - "session"
+      - "dashboard"
+    ports:
+      - 80:80
+
   rabbitmq:
     image: rabbitmq:3.8.5
     restart: always

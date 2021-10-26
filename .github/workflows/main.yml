@@ -103,22 +103,14 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
-      - name: compile browser-extension
-        working-directory: ./browser-extension
-        run: | 
-          npm install
-          npm run github
-      - name: copy extension to test
-        run: mv ./browser-extension/dist ./test/dist
       - name: build docker compose
-        run: docker-compose -f docker-compose.github.yml up --build --no-start
+        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml up --build --no-start
       - name: start all but test
-        run: docker-compose -f docker-compose.github.yml start mongo rabbitmq website session model dashboard account api
+        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml start mongo rabbitmq website session model dashboard account api reverseproxy
       - name: install test dependencies
         working-directory: ./test
         run: |
           npm install
-          npm install -g mocha
       - name: test WebSite
         working-directory: ./test
         run: npm run testWebSite
