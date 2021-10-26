@@ -30,7 +30,7 @@ echo "PLUGIN_INFO = $PLUGIN_INFO"
 
 echo ========================== CONTAINER DOWN ==================================
 
-docker-compose -f docker-compose.yml -f docker-compose.development.yml down --remove-orphans
+docker-compose -f docker-compose.yml -f docker-compose.development.yml down -v --remove-orphans
 
 echo ========================== CONTAINER BUILDING ==================================
 

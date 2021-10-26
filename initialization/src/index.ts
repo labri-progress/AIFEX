@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import * as winston from "winston";
 
-const API_URL = `http://localhost/api`;
+const API_URL = `http://reverseproxy/api`;
 
 const logger = winston.createLogger({
     level: 'debug',
@@ -24,14 +24,15 @@ const logger = winston.createLogger({
 pingThenLoadDefault();
 
 function pingThenLoadDefault() {
-    logger.info(`ping api`);
     const API_PING_URL = `${API_URL}/ping`;
+    logger.info(`ping api: ${API_PING_URL}`);
 
     return fetch(API_PING_URL)
     .then((resPing) => {
         if (resPing.ok) {
             loadingAnonymousAccount();
         } else {
+            logger.debug(`ping api: ${API_PING_URL} failed: ${resPing}`);
             setTimeout(pingThenLoadDefault, 4000);
         }
     })
@@ -44,8 +45,7 @@ async function loadingAnonymousAccount() {
     logger.info(`Loading anonymous account`);
     try {
         await createAnonymousAccount();
-        const tokenJWT = await signinAsAnonymous();
-        const token = tokenJWT.bearerToken;
+        const token = await signinAsAnonymous();
         const webSiteList = await createDefaultWebSite(token);
         const cdiscountWebSiteId = webSiteList.find(webSite => webSite.name === 'cdiscount')._id;
         logger.info(`cdiscountWebSiteID:${cdiscountWebSiteId}`);
@@ -67,25 +67,26 @@ async function createDefaultWebSite(token) {
 
     const siteList = JSON.parse(fs.readFileSync(path.join(mappingDirectory, "siteList.json"), "utf8"));
     for (const site of siteList) {
-        site._id = await createSite(token, site);
         let mappingList = [];
         for (const mappingfile of site.mappingFiles) {
             const mapPath = path.join(mappingDirectory, mappingfile);
             const mapping = JSON.parse(fs.readFileSync(mapPath, "utf8"));
             mappingList = mappingList.concat(mapping);
         }
-        await addMappingListToWebSite(token, site, mappingList);
+        let id = await createSite(token, site.name, site.url, mappingList);
+        site._id = id;
     }
     logger.info("default website are loaded");
     return siteList;
 }
 
 
-function createSite(token, site) {
-    const url = API_URL + "/websites";
+function createSite(token, name, url, mappingList) {
+    const CREATE_URL = API_URL + "/websites";
     const body = {
-        name: site.name,
-        mappingList: [],
+        name,
+        url,
+        mappingList
     };
     console.log(token)
     const option = {
@@ -96,39 +97,17 @@ function createSite(token, site) {
             "Authorization": `Bearer ${token}`
         }
     }    
-    return fetch(url, option)
+    return fetch(CREATE_URL, option)
     .then(res => {
         if (res.ok) {
             return res.json();
         } else {
             throw new Error('website cannot be created');
         }
-
     })
-}
-
-function addMappingListToWebSite(token, site, mappingList) {
-    const url = API_URL + "/websites/" + site._id.webSiteId;
-    const body = {
-        name: site.name,
-        mappingList
-    };
-    const option = {
-        method: "PATCH",
-        body:    JSON.stringify(body),
-        headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        }
-    };
-    return fetch(url, option)
-        .then(res => {
-            if (res.ok) {
-                res.json();
-            } else {
-                throw new Error('mapping cannot be added');
-            }
-        })
+    .then((result) => {
+        return result.webSiteId;
+    })
 }
 
 function createAnonymousAccount() {
@@ -173,6 +152,9 @@ function signinAsAnonymous() {
             throw new Error('anonymous cannot signin');
         }
     })
+    .then((json) => {
+        return json.bearerToken;
+    });
 }
 
 function createSessionAndModel(token, webSiteId) {
@@ -187,6 +169,8 @@ function createSessionAndModel(token, webSiteId) {
     const bodySessionCreate = {
         webSiteId,
         baseURL,
+        name: "example",
+        description: "Just exploring the purchase funnel"
     }
     const optionSessionCreate = {
         method: 'POST',
@@ -200,7 +184,8 @@ function createSessionAndModel(token, webSiteId) {
     const modelCreateURL =API_URL + '/models/';
     const bodyModelCreate = {
         depth,
-        interpolationfactor
+        interpolationfactor,
+        predictionType: "CSP"
     }
     const optionModelCreate = {
         method: 'POST',
@@ -226,13 +211,13 @@ function createSessionAndModel(token, webSiteId) {
         return Promise.all([sessionResponse.json(), modelResponse.json()])
     })
     .then( idList => {
-        sessionId = idList[0];
-        modelId = idList[1];
+        sessionId = idList[0].sessionId;
+        modelId = idList[1].modelId;
         let linkModel2SessionURL = API_URL + '/models/' + modelId + "/link/" + sessionId;
         const optionLinkModel = {
             method: 'POST',
             body:    JSON.stringify({}),
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' , "Authorization": `Bearer ${token}` },
         }
         return fetch(linkModel2SessionURL, optionLinkModel);
     })
@@ -245,7 +230,7 @@ function createSessionAndModel(token, webSiteId) {
 }
 
 async function addAllExplorationToSession(token, sessionId) {
-    const url = `${API_URL}/${sessionId}/explorations`;
+    const url = `${API_URL}/sessions/${sessionId}/explorations`;
 
     const explorationsDirectory = path.join(__dirname, "..","explorations");
     const explorationList = JSON.parse(fs.readFileSync(path.join(explorationsDirectory, "demo.json"), "utf8")).explorationList;
