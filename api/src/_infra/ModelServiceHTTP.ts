@@ -12,6 +12,14 @@ const MODEL_URL: string = `http://${config.model.host}:${config.model.port}/mode
 
 export default class ModelServiceHTTP implements ModelService {
 
+    ping() {
+        const route: string = MODEL_URL + "ping";
+        return fetch(route)
+            .then( (response) => {
+                return response.ok;
+            })
+    }
+
     findModelById(modelId: string): Promise<Model | undefined> {
         const ModelFindURL = MODEL_URL + modelId;
         return fetch(ModelFindURL)

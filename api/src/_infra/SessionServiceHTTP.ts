@@ -9,6 +9,14 @@ import fetch from "node-fetch";
 const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;
 
 export default class SessionServiceHTTP implements SessionService {
+
+    ping() {
+        const route: string = SESSION_URL + "ping";
+        return fetch(route)
+            .then( (response) => {
+                return response.ok;
+            })
+    }
     
     findSessionById(id: string): Promise<Session | undefined > {
         const sessionGetURL = SESSION_URL + id;

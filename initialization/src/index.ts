@@ -45,10 +45,13 @@ async function loadingAnonymousAccount() {
     logger.info(`Loading anonymous account`);
     try {
         await createAnonymousAccount();
+        logger.info(`anonymous account is created`);	
         const token = await signinAsAnonymous();
+        logger.info(`anonymous is signedin`);
         const webSiteList = await createDefaultWebSite(token);
+        logger.info(`default website are loaded`);
         const cdiscountWebSiteId = webSiteList.find(webSite => webSite.name === 'cdiscount')._id;
-        logger.info(`cdiscountWebSiteID:${cdiscountWebSiteId}`);
+        logger.info(`cdiscount WebSite Id:${cdiscountWebSiteId}`);
 
         const connexionCode = await createSessionAndModel(token, cdiscountWebSiteId);
         const sessionId = connexionCode.split('$')[0];
@@ -76,7 +79,6 @@ async function createDefaultWebSite(token) {
         let id = await createSite(token, site.name, site.url, mappingList);
         site._id = id;
     }
-    logger.info("default website are loaded");
     return siteList;
 }
 
@@ -88,7 +90,6 @@ function createSite(token, name, url, mappingList) {
         url,
         mappingList
     };
-    console.log(token)
     const option = {
         method: "POST",
         body:    JSON.stringify(body),
@@ -100,6 +101,7 @@ function createSite(token, name, url, mappingList) {
     return fetch(CREATE_URL, option)
     .then(res => {
         if (res.ok) {
+            logger.info(`Site (${name}) is created`);
             return res.json();
         } else {
             throw new Error('website cannot be created');
@@ -169,6 +171,7 @@ function createSessionAndModel(token, webSiteId) {
     const bodySessionCreate = {
         webSiteId,
         baseURL,
+        overlayType: "rainbow",
         name: "example",
         description: "Just exploring the purchase funnel"
     }
@@ -196,23 +199,31 @@ function createSessionAndModel(token, webSiteId) {
         }
     }
 
-    const createSessionPromise = fetch(sessionCreateURL, optionSessionCreate);
-    const createModelPromise = fetch(modelCreateURL, optionModelCreate);
-    return Promise.all([createSessionPromise, createModelPromise])
-    .then( responseList => {
-        const sessionResponse = responseList[0];
-        const modelResponse = responseList[1];
-        if (!sessionResponse.ok) {
+    return fetch(sessionCreateURL, optionSessionCreate)
+    .then( resSession => {
+        if (resSession.ok) {
+            return resSession.json().then(json => {
+                sessionId = json.sessionId;
+                logger.info(`sessionId: ${sessionId}`);
+            });
+        } else {
             throw new Error('session cannot be created');
         }
-        if (!modelResponse.ok) {
+    })
+    .then( sessionId => {
+        return fetch(modelCreateURL, optionModelCreate)
+    })
+    .then( resModel => {
+        if (resModel.ok) { 
+            return resModel.json().then(json => {
+                modelId = json.modelId;
+                logger.info(`modelId: ${modelId}`);
+            });
+        } else {
             throw new Error('model cannot be created');
         }
-        return Promise.all([sessionResponse.json(), modelResponse.json()])
     })
-    .then( idList => {
-        sessionId = idList[0].sessionId;
-        modelId = idList[1].modelId;
+    .then( () => {
         let linkModel2SessionURL = API_URL + '/models/' + modelId + "/link/" + sessionId;
         const optionLinkModel = {
             method: 'POST',
@@ -225,6 +236,7 @@ function createSessionAndModel(token, webSiteId) {
         if (!response.ok) {
             throw new Error('model cannot be linked to session');
         }
+        logger.info(`model linked to session: ${response}`);
         return `${sessionId}$${modelId}`;
     });
 }

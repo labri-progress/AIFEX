@@ -4,6 +4,8 @@ import WebSite from "./WebSite";
 
 export default interface WebSiteService {
 
+    ping(): Promise<boolean>;
+
     findWebSiteById(id : string) : Promise<WebSite | undefined>;
 
     createWebSite(name : string, mappingList : Mapping[]) : Promise<string>;

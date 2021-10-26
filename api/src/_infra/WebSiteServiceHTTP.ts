@@ -7,6 +7,14 @@ import fetch from "node-fetch";
 const WEBSITE_URL : string = `http://${config.website.host}:${config.website.port}/website/`;
 
 export default class WebSiteServiceHTTP implements WebSiteService {
+
+    ping() {
+        const route: string = WEBSITE_URL + "ping";
+        return fetch(route)
+            .then( (response) => {
+                return response.ok;
+            })
+    }
         
     findWebSiteById(id: string): Promise<WebSite | undefined> {
         const webSiteGetURL = WEBSITE_URL + id;

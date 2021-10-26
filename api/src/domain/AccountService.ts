@@ -3,6 +3,8 @@ import { Kind } from "./Kind";
 import Token from "./Token";
 
 export default interface AccountService {
+
+    ping(): Promise<boolean>;
     
     signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated">;
     

@@ -11,6 +11,14 @@ const URL: string = `http://${config.account.host}:${config.account.port}/accoun
 
 export default class AccountServiceHTTP implements AccountService {
 
+    ping() {
+        const route: string = URL + "ping";
+        return fetch(route)
+            .then( (response) => {
+                return response.ok;
+            })
+    }
+
     signup(username: string, email: string, password: string): Promise<"UserNameAlreadyTaken" | "AccountCreated"> {
         const route: string = URL + "signup/";
         return fetch(route, {

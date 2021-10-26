@@ -7,6 +7,8 @@ import Ngram from "./Ngram";
 
 export default interface ModelService {
 
+    ping(): Promise<boolean>;
+
     findModelById(id: string): Promise<Model | undefined>;
 
     createModel(depth: number, interpolationfactor: number, predictionType : ModelPredictionType): Promise<string>;

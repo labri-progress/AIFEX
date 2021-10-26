@@ -36,6 +36,16 @@ export default class APIApplication {
         this._evaluatorService = evaluatorService
     }
 
+    ping() {
+        return Promise.all([this._accountService.ping(), this._webSiteService.ping(), this._sessionService.ping(), this._modelService.ping()])
+        .then((results) => {
+            return results.every((result) => result === true);
+        })
+        .catch(() => {
+            return false;
+        })
+    }
+
     getPluginInfo(): undefined | {version: string, name: string, description: string} {
         if (process.env.PLUGIN_INFO) {
             try {

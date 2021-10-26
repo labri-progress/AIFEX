@@ -6,6 +6,8 @@ import Video from "./Video";
 
 export default interface SessionService {
 
+    ping(): Promise<boolean>;
+
     findSessionById(id: string): Promise<Session | undefined>;
 
     createSession(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType): Promise<string>;

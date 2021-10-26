@@ -15,7 +15,13 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.get("/ping", (req, res) => {
         logger.info(`ping`);
-        res.json({message:'alive'});
+        api.ping().then((result) => {
+            if (result) {
+                res.json({message:'alive'});
+            } else {
+                res.status(NOT_FOUND_STATUS).json({message:'dead'});
+            }
+        })
     });
 
     app.get('/plugin-info', (req, res) => {
@@ -332,7 +338,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
     });
 
     app.post("/sessions", (req, res) => {
-        logger.info(`create sessions`);
+        logger.info(`create session`);
         const { webSiteId, baseURL, name, description, overlayType } = req.body;
         if (req.token === undefined) {
             logger.warn(`no token`);
