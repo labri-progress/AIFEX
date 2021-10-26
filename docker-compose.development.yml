@@ -56,7 +56,6 @@ services:
       - ./dashboard/routes:/app/routes
       - ./dashboard/views:/app/views
 
-
   api:
     build:
       context: api/
