@@ -79,18 +79,3 @@ jobs:
       working-directory: ./dashboard
       run: |
         npm audit
-
-  printer-npm-audit:
-    name: Printer NPM version check
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
-    - name: printer-npm-install
-      working-directory: ./printer
-      run: |
-        npm install 
-    - name: printer-npm-audit
-      working-directory: ./printer
-      run: |
-        npm audit
