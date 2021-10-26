@@ -384,19 +384,19 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
-    app.post("/sessions/:sessionId/explorations/:explorationNumber/interactions", (req, res) => {
-        const { sessionId, explorationNumber } = req.params;
+    app.post("/sessions/:sessionId/explorations/:expNum/interactions", (req, res) => {
+        const { sessionId, expNum } = req.params;
         const { interactionList } = req.body;
         logger.info(`Push new actions in the exploration`);
 
-        if (sessionId === undefined || explorationNumber === undefined || interactionList === undefined ) {
+        if (sessionId === undefined || expNum === undefined || interactionList === undefined ) {
             logger.warn(`invalid parameters`);
-            res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No explorationNumber or No interactionList"});
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No expNum or No interactionList"});
         } else {
-            console.log(explorationNumber, parseInt(explorationNumber))
-            if (parseInt(explorationNumber) === undefined) {
-                logger.warn(`invalid explorationNumber type`);
-                return res.status(INVALID_PARAMETERS_STATUS).json({message:"explorationNumber must be an integer"});
+            console.log(expNum, parseInt(expNum))
+            if (parseInt(expNum) === undefined) {
+                logger.warn(`invalid expNum type`);
+                return res.status(INVALID_PARAMETERS_STATUS).json({message:"expNum must be an integer"});
             }
             if (!Array.isArray(interactionList)) {
                 logger.warn(`interactionList must be an array`);
@@ -407,13 +407,13 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 logger.warn(`interactionList invalid properties`);
                 return res.status(INVALID_PARAMETERS_STATUS).json({message:"interactionList is malformed"});
             }
-            api.addInteractions(sessionId, parseInt(explorationNumber), interactionList, req.token)
+            api.addInteractions(sessionId, parseInt(expNum), interactionList, req.token)
                 .then(explorationResult => {
                     if (explorationResult === "Unauthorized") {
                         return res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                     } else {
-                        logger.info("Interactions added to exploration " + explorationNumber);
-                        return res.json({explorationNumber, sessionId});
+                        logger.info("Interactions added to exploration " + expNum);
+                        return res.json({expNum, sessionId});
                     }
                 })
                 .catch((e) => {
