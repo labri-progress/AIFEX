@@ -30,20 +30,20 @@ echo "PLUGIN_INFO = $PLUGIN_INFO"
 
 echo ========================== CONTAINER DOWN ==================================
 
-docker-compose -f docker-compose.yml -f docker-compose.development.yml down -v --remove-orphans
+docker-compose -f docker-compose.yml -f docker-compose.development.yml down
 
 echo ========================== CONTAINER BUILDING ==================================
 
 cmd="docker-compose -f docker-compose.yml -f docker-compose.development.yml up"
 
 
-if [ $# -eq 0 ]
-  then
-    echo "Up containers"
-elif [ $1 == "build" ]
-    then
-        echo "Build containers"
-        cmd=${cmd}" --build"
+if [ $# -eq 1] && [ $1 == "--no-build" ]
+then
+    echo "up containers withour building images"
+else
+    echo "Build images and up containers"
+    cmd="$cmd --build"
 fi
+
 
 $cmd

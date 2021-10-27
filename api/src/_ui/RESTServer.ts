@@ -10,6 +10,7 @@ import routes from "./routeREST";
 import Token from "../domain/Token";
 import config from "../_infra/config";
 import APIApplication from "../application/APIApplication";
+import { logger } from "../logger";
 
 
 export default class RESTServer {
@@ -72,7 +73,7 @@ export default class RESTServer {
 
         // Start server
         server.listen(port, () => {
-            console.log("server is listening on port", this.port);
+            logger.info("server is listening on port", this.port);
         });
 
     }

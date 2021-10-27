@@ -43,25 +43,42 @@ function pingThenLoadDefault() {
 
 async function loadingAnonymousAccount() {
     logger.info(`Loading anonymous account`);
-    try {
-        await createAnonymousAccount();
+    let token;
+    createAnonymousAccount()
+    .then(() => {
         logger.info(`anonymous account is created`);	
-        const token = await signinAsAnonymous();
+    })
+    .catch(() => {
+        logger.info(`anonymous was already created`);
+        throw new Error('anonymous account was already created');
+    })
+    .then(() => {
+        return signinAsAnonymous();
+    })
+    .then((returnedToken) => {
+        token = returnedToken;
         logger.info(`anonymous is signedin`);
-        const webSiteList = await createDefaultWebSite(token);
+        return createDefaultWebSite(token);
+    })
+    .then((webSiteList) => {
         logger.info(`default website are loaded`);
         const cdiscountWebSiteId = webSiteList.find(webSite => webSite.name === 'cdiscount')._id;
         logger.info(`cdiscount WebSite Id:${cdiscountWebSiteId}`);
 
-        const connexionCode = await createSessionAndModel(token, cdiscountWebSiteId);
+        return createSessionAndModel(token, cdiscountWebSiteId);
+    })
+    .then((connexionCode) => {
         const sessionId = connexionCode.split('$')[0];
         logger.info('sessionAddedToAnonymous');
 
-        await addAllExplorationToSession(token, sessionId);
+        return addAllExplorationToSession(token, sessionId);
+    })
+    .then(() => {
         logger.info('allExplorationToSession');
-    } catch (e) {
-        logger.error(e);
-    }    
+    })
+    .catch (() => {
+        logger.info('initialization aborded');
+    })
 }
 
 async function createDefaultWebSite(token) {
