@@ -1001,6 +1001,9 @@ components:
         overlayType:
           type: string
           enum: [shadow, bluesky, rainbow]
+        recordingMode:
+          type: string
+          enum: [byexploration, byinteraction]
     Model:
       type: object
       properties:

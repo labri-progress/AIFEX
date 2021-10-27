@@ -44,7 +44,8 @@ describe("Model", () => {
             baseURL: "http://www.test.com/index.html",
             name:"testsession",
             description: "test",
-            overlayType: "shadow"
+            overlayType: "shadow",
+            recordingMode: "byexploration"
         };
         const option = {
             method: "POST",

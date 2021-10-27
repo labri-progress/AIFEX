@@ -1,10 +1,12 @@
 import config from "./config";
-import Session, { SessionOverlayType } from "../domain/Session";
+import Session from "../domain/Session";
 import SessionService from "../domain/SessionService";
 import Screenshot from "../domain/Screenshot";
 import Interaction from "../domain/Action";
 import Video from "../domain/Video";
 import fetch from "node-fetch";
+import { SessionOverlayType } from "../domain/SessionOverlayType";
+import { RecordingMode } from "../domain/RecordingMode";
 
 const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;
 
@@ -23,7 +25,7 @@ export default class SessionServiceHTTP implements SessionService {
         return fetch(sessionGetURL).then(response => {
             if (response.ok) {
                 return response.json().then(sesRes => {
-                    return new Session(sesRes.id, sesRes.baseURL, sesRes.webSite, sesRes.name, sesRes.desription,  sesRes.createdAt, sesRes.overlayType, sesRes.explorationList);
+                    return new Session(sesRes.id, sesRes.baseURL, sesRes.webSite, sesRes.name, sesRes.desription,  sesRes.createdAt, sesRes.overlayType, sesRes.recordingMode, sesRes.explorationList);
                 })
             } else {
                 return undefined;
@@ -32,13 +34,14 @@ export default class SessionServiceHTTP implements SessionService {
     
     }
 
-    createSession(webSiteId : string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType): Promise<string> {
+    createSession(webSiteId : string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<string> {
         let session = {
             webSiteId,
             baseURL,
             name,
             description,
-            overlayType : overlayType.toString()
+            overlayType : overlayType.toString(),
+            recordingMode : recordingMode.toString()
         }
         const SessionCreateURL = 'http://' + config.session.host + ':' + config.session.port + '/session/create';
         let optionSessionCreate = {

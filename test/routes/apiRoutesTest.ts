@@ -238,7 +238,8 @@ describe("API", () => {
                 baseURL: "http://mywebsite.com",
                 name: "MySession",
                 description: "MySessionDescription",
-                overlayType: "shadow"
+                overlayType: "shadow",
+                recordingMode: "byexploration"
             })})
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression

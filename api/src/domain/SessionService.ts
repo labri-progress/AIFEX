@@ -1,7 +1,9 @@
 import Action from "./Action";
 import Comment from "./Comment";
+import { RecordingMode } from "./RecordingMode";
 import Screenshot from "./Screenshot";
-import Session, { SessionOverlayType } from "./Session";
+import Session from "./Session";
+import { SessionOverlayType } from "./SessionOverlayType";
 import Video from "./Video";
 
 export default interface SessionService {
@@ -10,7 +12,7 @@ export default interface SessionService {
 
     findSessionById(id: string): Promise<Session | undefined>;
 
-    createSession(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType): Promise<string>;
+    createSession(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<string>;
 
     addExploration(sessionId: string, testerName: string, interactionList: (Action | Comment)[], startDate?: Date, stopDate?: Date): Promise<number>;
 
