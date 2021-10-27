@@ -470,23 +470,18 @@ export default class Background {
     private stopRecordingExploration(): Promise<boolean> {
         if (this._isRecording && this._exploration) {
             this._isRecording = false;
-            if (this._exploration.hasBeenUpdated && this._serverURL && this._sessionId && this._recordActionByAction) {
-                this._aifexService.notifySubmissionAttempt(this._serverURL, this._sessionId, this._exploration.explorationNumber);
-            } else {
-                this._exploration.incSubmissionAttempt()
-            }
-            let exploration : Exploration = this._exploration;
-            return this.evaluateExploration()
-                .then(() => {
-                    if (this._evaluator && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
-                        this.displayInvalidExploration();
-                        this._isRecording = true;
-                        return false;
-                    }
-                    else {
-                        this.processNewAction("end");
+
+            let exploration: Exploration = this._exploration;
+            return this.evaluateExploration().then(() => {
+                if (this._evaluator && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
+                    this.displayInvalidExploration();
+                    this._isRecording = true;
+                    return false;
+                }
+                else {
+                    return this.processNewAction("end")
+                    .then(() => {
                         exploration.stop();
-                        let getExplorationNumberPromise;
                         if (!this._recordActionByAction) {
                             if (!(this._serverURL && this._sessionId)) {
                                 throw new Error("Not connected to a session")
@@ -494,38 +489,38 @@ export default class Background {
                             if (!this._exploration) {
                                 throw new Error("Exploration is required")
                             }
-                            getExplorationNumberPromise = 
-                            this._aifexService.createFullExploration(this._serverURL, this._sessionId, this._testerName, this._exploration)
-                        } else {
-                            getExplorationNumberPromise = Promise.resolve(this._exploration?.explorationNumber);
-                        }
-                        return getExplorationNumberPromise.then(() => {
-                            return this._mediaRecordManager.stopRecording()
-                        })
-                        .then(() => {
                             const MIN_NUMBER_OF_ACTIONS = 2;
                             const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
                             if (HAS_MORE_THAN_START_END_ACTIONS) {
-                                return this.sendExploration();
+                                return this._aifexService.createFullExploration(this._serverURL, this._sessionId, this._testerName, this._exploration)
                             }
-                        })
-                        .then(() => {
-                            this._exploration = undefined;
-                            this._screenshotList = [];
-                            this._commentsUp = [];
-                            const state = this.getStateForTabScript();
-                            const tabIds = this._windowManager.getConnectedTabIds();
-                            return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
-                        })
-                        .then((_ : void[]) => {
-                            return true;
-                        })
-                        .catch((error) => {
-                            console.error(error.message);
-                            return false;
-                        })
-               }
-           })
+                                else {
+                                    return Promise.resolve();
+                                }
+                        } else {
+                            return Promise.resolve();
+                        }
+                    })
+                    .then(() => {
+                        return this._mediaRecordManager.stopRecording()
+                    })
+                    .then(() => {
+                        this._exploration = undefined;
+                        this._screenshotList = [];
+                        this._commentsUp = [];
+                        const state = this.getStateForTabScript();
+                        const tabIds = this._windowManager.getConnectedTabIds();
+                        return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
+                    })
+                    .then((_ : void[]) => {
+                        return true;
+                    })
+                    .catch((error) => {
+                        console.error(error.message);
+                        return false;
+                    })
+                }
+            })
         } else {
             return Promise.resolve(true);
         }
