@@ -390,6 +390,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
+    
+
     app.post("/sessions/:sessionId/explorations/:expNum/interactions", (req, res) => {
         const { sessionId, expNum } = req.params;
         const { interactionList } = req.body;

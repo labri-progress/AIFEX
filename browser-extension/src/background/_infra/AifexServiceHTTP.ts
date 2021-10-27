@@ -203,14 +203,13 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { "Content-Type": "application/json" },
 		};
 		return fetch(
-			`${serverURL + '/api/sessions/' + sessionId}/exploration/add`,
-			option)
+			`${serverURL} + '/api/sessions/' + ${sessionId}/explorations`, option)
 		.then((response) => {
 			if (response.status === OK_STATUS) {
 				return response.json();
 			}
 			if (response.status === NOT_FOUND_STATUS) {
-				return Promise.reject(new Error(`sessionId not found`));
+				return Promise.reject(new Error(`no session not found for Id`));
 			}
 			if (response.status === INVALID_PARAMETERS_STATUS) {
 				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));

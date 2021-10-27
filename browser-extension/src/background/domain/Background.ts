@@ -271,26 +271,22 @@ export default class Background {
             this._isRecording = true;
 
             return this.createExploration()
-            .then((explorationNumber) => {
+            .then(() => {
                 return this.processNewAction("start");
             })
             .then(() => {
                 const state = this.getStateForTabScript();
                 const tabIds = this._windowManager.getConnectedTabIds();
-                return Promise.all(tabIds.map(id => this._tabScriptService.startExploration(id, state)));
+                return Promise.all(tabIds.map(tabId => this._tabScriptService.startExploration(tabId, state)));
             })
             .catch((e) => {
                 this._exploration = undefined;
                 this._isRecording = false;
-                console.error(e)
+                throw new Error(e);
             })
             .then(() => {
                 return this._mediaRecordManager.startRecording()
-                .catch((e) => {
-                    this._exploration = undefined;
-                    this._isRecording = false;
-                    console.error(e)
-                })
+
             })
             .then(() => {
                 if (this._evaluator) {
