@@ -1,5 +1,5 @@
 {
-    "recordActionByAction": true,
+    "recordActionByAction": false,
     "rejectIncorrectExplorations": true,
     "displayEvaluatorGuide": true,
     "displayNeverUsedAction": true,

@@ -435,12 +435,9 @@ export default class Background {
             }
             return Promise.all(promises)
                 .then(() => {
-                    //console.log("comments",JSON.stringify(this._commentDistributions));
                     if (this._commentDistributions && this._commentDistributions.length > 0) {
-                        //console.log("with notif");
                         this._browserService.setExtensionIconToReceivedNotification();
                     } else {
-                        //console.log("without notif");
                         this._browserService.setExtensionIconToRecording();
                     }
                     this.refreshPopup();
@@ -478,7 +475,6 @@ export default class Background {
         if (this._exploration === undefined) {
             return Promise.resolve();
         }
-        this._isRecording = false;
         let exploration: Exploration = this._exploration;
         return this.evaluateExploration()
         .then(() => {
@@ -490,7 +486,8 @@ export default class Background {
             else {
                 return this.processNewAction("end")
                 .then(() => {
-                    exploration.stop();
+                    this._isRecording = false;
+                    exploration.setStopDate();
                     if (!this._recordActionByAction) {
                         if (!(this._serverURL && this._sessionId)) {
                             throw new Error("Not connected to a session")
@@ -498,8 +495,8 @@ export default class Background {
                         if (!this._exploration) {
                             throw new Error("Exploration is required")
                         }
-                        const MIN_NUMBER_OF_ACTIONS = 2;
-                        const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
+                        const MIN_NUMBER_OF_ACTIONS = 3; //start + end
+                        const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length >= MIN_NUMBER_OF_ACTIONS;
                         if (HAS_MORE_THAN_START_END_ACTIONS) {
                             return this._aifexService.createFullExploration(this._serverURL, this._sessionId, this._testerName, this._exploration)
                         }

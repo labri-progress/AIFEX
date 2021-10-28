@@ -75,7 +75,7 @@ export default class Exploration {
         this._actions.push(comment);
     }
 
-    stop(): void {
+    setStopDate(): void {
         this._stopDate = new Date();
     }
 
