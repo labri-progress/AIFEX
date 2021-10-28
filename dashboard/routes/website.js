@@ -1,4 +1,4 @@
-const { getWebSites, createWebSite, removeWebSite, updateWebSite } = require('../apiService');
+const { getWebSites, createWebSite, removeWebSite, updateWebSite } = require('../service/apiService');
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {

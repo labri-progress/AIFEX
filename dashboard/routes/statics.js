@@ -1,5 +1,5 @@
 const logger = require('../logger');
-const { getWebSites, getSessions } = require('../apiService');
+const { getWebSites, getSessions } = require('../service/apiService');
 
 module.exports = function attachRoutes(app, config) {
 

@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
-const config = require('./config');
-const logger = require('./logger');
+const config = require('../config');
+const logger = require('../logger');
 
 module.exports.signup = function (username, email, password) {
     const SIGNUP_URL = `http://${config.api.host}:${config.api.port}/signup`;
@@ -61,8 +61,24 @@ module.exports.getAccount = function (token) {
 }
 
 module.exports.getWebSiteById = function (token, webSiteId) {
-    const webSiteByIDURL = `http://${config.api.host}:${config.api.port}/website/${webSiteId}`;
+    const webSiteByIDURL = `http://${config.api.host}:${config.api.port}/websites/${webSiteId}`;
     return fetch(webSiteByIDURL, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+
+                throw new Error("Failed to get Website for session id " + webSiteId);
+            }
+        })
+}
+
+module.exports.getEvaluatorBySessionId = function (token, sessionId) {
+    let getEvaluatorURL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/' + sessionId;
+    return fetch(getEvaluatorURL, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     })
@@ -73,6 +89,50 @@ module.exports.getWebSiteById = function (token, webSiteId) {
                 return undefined;
             }
         })
+}
+
+module.exports.createEvaluator = function(token, sessionId, evaluatorExpression, description) {
+    logger.info(`POST create evaluator for session (id = ${sessionId})`);
+    const URL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/'
+    console.log("CreateEvaluator")
+    return fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            sessionId,
+            description,
+            expression: evaluatorExpression,
+        }),
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+    }).then(response => {
+        console.log(response)
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error("Failed to create evaluator " + response.statusText)
+        }
+    })
+}
+
+module.exports.getEvaluatorExpressionDot = function(expression) {
+    if (expression && expression.length > 0) {
+        const checkEvaluatorValidityURL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/expressionToDot';
+        return fetch(checkEvaluatorValidityURL, {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                expression
+            })
+        }).then(response => {
+            return response.json()
+        })
+        .catch(error => {
+            logger.error(error);
+            let message = 'Error when checking expression validity';
+            res.render('error.ejs', {message,error:e, account:req.session});
+        })
+    } else {
+        res.status(200).send({expressionIsValid: true})
+    }
 }
 
 module.exports.updateWebSite = function (token, webSiteId, name, mappingList) {
@@ -485,22 +545,6 @@ module.exports.revokePublicConnexionCode = function (token, sessionId, modelId, 
             }
         })
 }
-
-module.exports.getEvaluatorBySessionId = function (token, sessionId) {
-    let getEvaluatorURL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/' + sessionId;
-    return fetch(getEvaluatorURL, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                return undefined;
-            }
-        })
-}
-
 
 
 

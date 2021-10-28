@@ -1,22 +1,21 @@
 const fetch = require('node-fetch');
-const { getSessionById, getWebSiteById } = require('../apiService');
+const { getSessionById, getWebSiteById, getEvaluatorBySessionId, getEvaluatorExpressionDot, createEvaluator } = require('../service/apiService');
 
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
 
-
     app.get('/dashboard/evaluator/:sessionId', (req, res) => {
         let errorMessage;
         let renderOptions
         const sessionId = req.params.sessionId;
-        logger.info(`GET evaluation for website (sessionId : ${sessionId})`);
+        let token = req.session.jwt;
+        logger.info(`GET evaluator for website (sessionId : ${sessionId})`);
 
-        getSessionById(req.session.jwt, sessionId)
+        getSessionById(token, sessionId)
             .then(session => {
-                return getWebSiteById(session.webSite.id)
+                return getWebSiteById(token ,session.webSite.id)
             }).then((webSite) => {
-                console.log(webSite)
 
                 const actionList = webSite.mappingList.map(mapping => {
                     if (mapping.output.suffix) {
@@ -35,32 +34,9 @@ module.exports = function attachRoutes(app, config) {
                     isUpdate: false,
                     evaluatorExpression: undefined
                 }
-                if (webSite) {
-                    const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/' + sessionId;
-                    return fetch(URL, {
-                        method: 'GET',
-                        headers: {
-                        Accept: 'application/json',
-                        },
-                    })
-                } else {
-                    logger.error(`You don\'t have access to this webSite. you cannot create an evaluator`);
-                    throw new Error('You don\'t have access to this webSite. you cannot create an evaluator')
-                }
-            })
-            .then((response) => {
-                if (!response.ok) {
-                    logger.error(`Failed to check for existing evaluator: ${response.message}`);
-                    throw new Error('Failed to check for existing evaluator', response.message);
-                } else if (response.status === 204) {
-                    renderOptions.isUpdate = false;
-                    return;
-                } else {
-                    return response.json();
-                }
+                return getEvaluatorBySessionId(token, sessionId)
             })
             .then((evaluator) => {
-                logger.debug(`return evaluator ${evaluator}`);
                 if (evaluator) {
                     renderOptions.evaluatorExpression = evaluator.expression
                     renderOptions.description = evaluator.description;
@@ -70,39 +46,32 @@ module.exports = function attachRoutes(app, config) {
             })
             .catch(error => {
                 logger.error(`${error}`);
-                let message = 'Error when fetching WebSite from Security Token';
                 res.render('error.ejs', {message,error, account:req.session});
             })
     });
 
     app.post('/dashboard/evaluation/create', (req, res) => {
         const {sessionId, evaluatorExpression, description} = req.body;
+        let token = req.session.jwt;
+        console.log(evaluatorExpression)
         if (evaluatorExpression.length === 0) {
-            res.render('error.ejs', {message: "Evaluator cannot be empty", account: req.session, error:e});
-            return;
+            return res.render('error.ejs', {message: "Evaluator cannot be empty", account: req.session, error:e});
+        } else {
+            return createEvaluator(token, sessionId, evaluatorExpression, description).then((response) => {
+                console.log("RESPONSES")
+                if (response.ok) {
+                    return res.redirect("/account/account");
+                } else {
+                    throw new Error(response.message);
+                }
+            }).catch( e => {
+                let message = 'Failed to create evaluator';
+                logger.error(`${e}`);
+                res.render('error.ejs', {message, account: req.session, error:e});
+            })
         } 
         
-        logger.info(`POST create evaluation for session (id = ${sessionId})`);
-        const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/create'
-        return fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                sessionId,
-                description,
-                expression: evaluatorExpression,
-            }),
-            headers: { 'Content-Type': 'application/json' },
-        }).then((response) => {
-            if (response.ok) {
-                return res.redirect("/account/account");
-            } else {
-                throw new Error(response.message);
-            }
-        }).catch( e => {
-            let message = 'Failed to create evaluator';
-            logger.error(`${e}`);
-            res.render('error.ejs', {message, account: req.session, error:e});
-        })
+        
     })
 
     app.get('/dashboard/evaluator/remove/:sessionId', (req,res) => {
@@ -157,29 +126,10 @@ module.exports = function attachRoutes(app, config) {
 
     app.post("/dashboard/evaluation/expressionToDot", (req, res) => {
         const { expression } = req.body;
-
-        logger.info(`POST create dot from evaluation`);
-
-        if (expression && expression.length > 0) {
-            const checkEvaluatorValidityURL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/expressionToDot';
-            fetch(checkEvaluatorValidityURL, {
-                method: "POST",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    expression
-                })
-            }).then(response => {
-                return response.json()
-            }).then(({expressionIsValid, dot}) => {
-                res.status(200).send({expressionIsValid, dot});
-            }).catch(error => {
-                logger.error(error);
-                let message = 'Error when checking expression validity';
-                res.render('error.ejs', {message,error:e, account:req.session});
+        return getEvaluatorExpressionDot(expression)
+            .then(data => {
+                return res.status(200).json(data);
             })
-        } else {
-            res.status(200).send({expressionIsValid: true})
-        }
     })
     
 }

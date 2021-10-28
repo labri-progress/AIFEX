@@ -371,7 +371,6 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         const { testerName, interactionList, startDate, stopDate } = req.body;
         logger.info(`Add a new exploration to the session`);
         if (sessionId === undefined || interactionList === undefined ) {
-            logger.warn(`sessionId`);
             res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No interactionList"});
         } else {
             api.addExploration(sessionId, testerName, interactionList, startDate, stopDate, req.token)
@@ -389,8 +388,6 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                 });
         }
     });
-
-
 
     app.post("/sessions/:sessionId/explorations/:expNum/interactions", (req, res) => {
         const { sessionId, expNum } = req.params;
@@ -782,7 +779,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             });
         });
 
-    app.post("/evaluator/create", (req, res) => {
+    app.post("/evaluator/", (req, res) => {
         const { sessionId, description, expression } = req.body;
         logger.info(`create evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
         if (sessionId === undefined) {
@@ -812,7 +809,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         });
     });
 
-    app.post("/evaluator/update/:sessionId", (req, res) => {
+    app.patch("/evaluator/:sessionId", (req, res) => {
         const { sessionId } = req.params
         const { description, expression } = req.body;
         logger.info(`update evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
@@ -820,7 +817,10 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             logger.warn("sessionId is required")
             return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
         }
-        api.updateEvaluator(sessionId, description, expression).then(() => {
+        api.updateEvaluator(sessionId, description, expression).then((response) => {
+            if (response === "Unauthorized") {
+                return res.sendStatus(FORBIDDEN_STATUS)
+            }
             logger.debug("evaluator is updated")
             return res.send({sessionId: sessionId});
         })
@@ -843,10 +843,14 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
         }
 
-        api.evaluateSequenceByExpression(
+        api.evaluateSequence(
             sessionId, 
-            actionList.map((actionData, index) => new Action(index, actionData.prefix, actionData.suffix))
-            ).then((evaluation: Evaluation) => {
+            actionList.map((actionData, index) => new Action(index, actionData.prefix, actionData.suffix)), 
+            req.token
+            ).then((evaluation: Evaluation | "Unauthorized") => {
+                if (evaluation === "Unauthorized") {
+                    return res.sendStatus(FORBIDDEN_STATUS)
+                }
                 return res.json(evaluation);
         }) .catch((e: Error) => {
             logger.error(`error:${e}`);
@@ -901,11 +905,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             return res.status(INTERNAL_SERVER_ERROR_STATUS).send("Invalid parameters");
         }
 
-        api.expressionToDot(expression).then((dot: any) => {
-            return res.json({
-                expressionIsValid: true,
-                dot
-            })
+        api.expressionToDot(expression).then((data: any) => {
+            return res.json(data)
         }) .catch((e: Error) => {
             logger.error(`error:${e}`);
             res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });

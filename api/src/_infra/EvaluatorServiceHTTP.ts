@@ -72,7 +72,7 @@ export default class EvaluatorServiceHTTP implements EvaluatorService {
         });       
     }
 
-    evaluate(sessionId: string, actionList: Action[]): Promise<Evaluation> {
+    evaluate(sessionId: string, actionList: Action[]): Promise<Evaluation | "Unauthorized"> {
         const evaluatorGetURL = EVALUATOR_URL + "evaluate/";
         let optionModelCreate = {
             method: 'POST',

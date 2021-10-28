@@ -1,12 +1,11 @@
 version: "3.3"
 services:
-
   website:
     build:
       context: website/
       dockerfile: ./Dockerfile.dev
     environment:
-      -  NODE_ENV=development
+      - NODE_ENV=development
     ports:
       - 5000:80
     volumes:
@@ -17,7 +16,7 @@ services:
       context: session/
       dockerfile: ./Dockerfile.dev
     environment:
-      -  NODE_ENV=development
+      - NODE_ENV=development
     ports:
       - 5001:80
     volumes:
@@ -28,7 +27,7 @@ services:
       context: model/
       dockerfile: ./Dockerfile.dev
     environment:
-      -  NODE_ENV=development
+      - NODE_ENV=development
     ports:
       - 5002:80
     volumes:
@@ -39,7 +38,7 @@ services:
       context: account/
       dockerfile: ./Dockerfile.dev
     environment:
-      -  NODE_ENV=development
+      - NODE_ENV=development
     ports:
       - 5004:80
     volumes:
@@ -55,18 +54,18 @@ services:
       - ./dashboard/public:/app/public
       - ./dashboard/routes:/app/routes
       - ./dashboard/views:/app/views
-
+      - ./dashboard/service:/app/service
   api:
     build:
       context: api/
       dockerfile: ./Dockerfile.dev
     environment:
-      -  NODE_ENV=development
+      - NODE_ENV=development
     ports:
       - 8080:80
     volumes:
       - ./api/src/:/app/src
-      
+
   mongo:
     ports:
       - 27017:27017
@@ -74,7 +73,7 @@ services:
   rabbitmq:
     ports:
       - 15672:15672
-  
+
   # kibana:
   #   ports:
   #       - 5601:5601
@@ -84,7 +83,7 @@ services:
       context: initialization/
       dockerfile: ./Dockerfile
     environment:
-      -  NODE_ENV=development
+      - NODE_ENV=development
     depends_on:
       - "website"
       - "account"

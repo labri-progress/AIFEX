@@ -41,7 +41,6 @@ app.locals.markdown = (filename) => {
     return markdown.render(data);
 }
 
-                    
 // Configure the EJS template engine
 // Add support for markdown file rendering
 

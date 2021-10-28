@@ -1,4 +1,4 @@
-const { getSessionById, getModelById } = require('../apiService');
+const { getSessionById, getModelById } = require('../service/apiService');
 const buildInvitation = require("../invitations").buildInvitation;
 
 const logger = require('../logger');

@@ -566,7 +566,7 @@ export default class APIApplication {
         return this._evaluatorService.expressionToDot(expression);
     }
 
-    evaluateSequenceByExpression(expression: string, actionList: Action[]) {
+    evaluateSequenceByExpression(expression: string, actionList: Action[]): Promise<Evaluation>  {
         return this._evaluatorService.evaluateSequenceByExpression(expression, actionList);
     }
 
