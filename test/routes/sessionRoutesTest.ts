@@ -42,6 +42,7 @@ describe("Infra", () => {
                 name:"testsession",
                 description: "test",
                 overlayType: "shadow",
+                recordingMode: "byexploration"
             };
             const option = {
                 method: "POST",

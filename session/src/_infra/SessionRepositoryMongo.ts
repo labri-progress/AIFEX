@@ -4,7 +4,9 @@ import AnswerInteraction from "../domain/AnswerInteraction";
 import Comment from "../domain/Comment";
 import CommentInteraction from "../domain/CommentInteraction";
 import Interaction from "../domain/Interaction";
-import Session, { SessionOverlayType } from "../domain/Session";
+import { RecordingMode } from "../domain/RecordingMode";
+import Session from "../domain/Session";
+import { SessionOverlayType } from "../domain/SessionOverlyaType";
 import SessionRepository from "../domain/SessionRepository";
 import Tester from "../domain/Tester";
 import WebSiteRepository from "../domain/WebSiteRepository";
@@ -27,7 +29,8 @@ export default class SessionRepositoryMongo implements SessionRepository {
             name: session.name,
             description: session.description,
             createdAt: session.createdAt,
-            overlayType: session.overlayType
+            overlayType: session.overlayType,
+            recordingMode: session.recordingMode
         })
         .then( () => {
             return session.id;
@@ -138,6 +141,8 @@ export default class SessionRepositoryMongo implements SessionRepository {
         let description: string;
         let session: Session;
         let createdAt: Date;
+        let overlayType: SessionOverlayType;
+        let recordingMode: RecordingMode;
         
         return SessionSchema.findOne({_id: sessionId}).exec()
         .then((sessionData: SessionDocument | null) => {
@@ -147,11 +152,22 @@ export default class SessionRepositoryMongo implements SessionRepository {
                 name = sessionData.name;
                 description = sessionData.description;
                 createdAt = sessionData.createdAt;
+
+                if (sessionData.overlayType === "shadow" || sessionData.overlayType === "bluesky" || sessionData.overlayType === "rainbow") {
+                    overlayType = sessionData.overlayType;
+                } else {
+                    overlayType = "rainbow";
+                }
+                if (sessionData.recordingMode === "byexploration" || sessionData.recordingMode === "byinteraction") {
+                    recordingMode = sessionData.recordingMode;
+                } else {
+                    recordingMode = "byexploration";
+                }
                 
                 return this._webSiteRepository.findWebSiteById(sessionData.webSiteId)
                 .then((webSite) => {
                     if (webSite !== undefined) {
-                        session = new Session(id, webSite, baseURL, name, description, createdAt);
+                        session = new Session(id, webSite, baseURL, name, description, createdAt, overlayType, recordingMode);
                         return ExplorationSchema.find({sessionId: session.id})
                         .then((explorationDataList) => {
                             explorationDataList

@@ -6,9 +6,11 @@ import Comment from "../domain/Comment";
 import CommentInteraction from "../domain/CommentInteraction";
 import Exploration from "../domain/Exploration";
 import Interaction from "../domain/Interaction";
+import { RecordingMode } from "../domain/RecordingMode";
 import Screenshot from "../domain/Screenshot";
 import ScreenshotRepository from "../domain/ScreenshotRepository";
-import Session, { SessionOverlayType } from "../domain/Session";
+import Session from "../domain/Session";
+import { SessionOverlayType } from "../domain/SessionOverlyaType";
 import SessionRepository from "../domain/SessionRepository";
 import Tester from "../domain/Tester";
 import Video from "../domain/Video";
@@ -44,11 +46,11 @@ export default class SessionService {
         this.mountedSessionList = [];
     }
 
-    public createNewSessionForWebSiteId(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType): Promise<string | undefined> {
+    public createNewSessionForWebSiteId(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode : RecordingMode): Promise<string | undefined> {
         return this.webSiteRepository.findWebSiteById(webSiteId)
             .then((webSite) => {
                 if (webSite !== undefined) {
-                    const session: Session = new Session(undefined, webSite, baseURL, name, description, undefined, overlayType);
+                    const session: Session = new Session(undefined, webSite, baseURL, name, description, undefined, overlayType, recordingMode);
                     this.addSessionInCache(session);
                     return this.sessionRepository.addSession(session)
                         .then((newSessionId) => {

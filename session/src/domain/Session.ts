@@ -2,14 +2,11 @@ import { generate } from "shortid";
 import Comment from "../domain/Comment";
 import Action from "./Action";
 import Exploration from "./Exploration";
+import { RecordingMode } from "./RecordingMode";
 import Interaction from "./Interaction";
+import { SessionOverlayType } from "./SessionOverlyaType";
 import Tester from "./Tester";
 import WebSite from "./WebSite";
-
-
-
-export type SessionOverlayType = "shadow" | "bluesky" | "rainbow";
-
 
 export default class Session {
 
@@ -21,6 +18,7 @@ export default class Session {
     private _explorationList: Exploration[];
     private _createdAt: Date;
     private _overlayType: SessionOverlayType;
+    private _explorationRecordingMode: RecordingMode;
 
     constructor(id: string = generate(),
         webSite: WebSite,
@@ -28,7 +26,8 @@ export default class Session {
         name: string,
         description: string,
         createdAt: Date = new Date(),
-        overlayType: SessionOverlayType = "rainbow")
+        overlayType: SessionOverlayType = "rainbow",
+        explorationRecordingMode: RecordingMode = "byexploration") 
     {
         this._id = id;
         this._webSite = webSite;
@@ -38,6 +37,7 @@ export default class Session {
         this._explorationList = [];
         this._createdAt = createdAt;
         this._overlayType = overlayType;
+        this._explorationRecordingMode = explorationRecordingMode;
     }
 
     get id(): string {
@@ -76,8 +76,16 @@ export default class Session {
         return this._overlayType;
     }
 
+    get recordingMode(): RecordingMode {
+        return this._explorationRecordingMode;
+    }
+
     public static getOverlayTypes(): SessionOverlayType[] {
         return ["shadow", "bluesky", "rainbow"]
+    }
+
+    public static getRecordingModes(): RecordingMode[] {
+        return ["byexploration", "byinteraction"]
     }
 
     public changeName(name : string) {
@@ -106,6 +114,9 @@ export default class Session {
         if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
             throw new Error("cannot add action to exploration, wrong explorationNumber.");
         }
+        if (this._explorationRecordingMode !== "byexploration") {
+            throw new Error("cannot add action to exploration, wrong explorationRecordingMode.");
+        }
         const exploration = this._explorationList[explorationNumber];
         exploration.addAction(action);
     }
@@ -121,6 +132,9 @@ export default class Session {
     public addInteractionListToExploration(explorationNumber: number, interactionList: Interaction[]): void {
         if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
             throw new Error("cannot add interaction to exploration, wrong explorationNumber.");
+        }
+        if (this._explorationRecordingMode !== "byexploration") {
+            throw new Error("cannot add interaction to exploration, wrong explorationRecordingMode.");
         }
         const exploration = this._explorationList[explorationNumber];
         exploration.addInteractionList(interactionList);

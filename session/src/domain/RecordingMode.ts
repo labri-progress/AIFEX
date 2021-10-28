@@ -1,0 +1,1 @@
+export type RecordingMode = "byexploration" | "byinteraction";

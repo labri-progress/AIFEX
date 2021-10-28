@@ -255,9 +255,10 @@ export default class Background {
             throw new Error("Not connected to a session")
         }
         if (this._recordActionByAction) {
-            return this._aifexService.createEmptyExploration(this._serverURL, this._sessionId, this._testerName).then(explorationNumber => {
-                this._exploration = new Exploration(explorationNumber);
-            })
+            return this._aifexService.createEmptyExploration(this._serverURL, this._sessionId, this._testerName)
+                .then(explorationNumber => {
+                    this._exploration = new Exploration(explorationNumber);
+                })
         } else {
             return new Promise((resolve) => {
                 this._exploration = new Exploration(NaN); 

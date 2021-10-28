@@ -1,4 +1,4 @@
-import Session, { SessionOverlayType } from "../domain/Session";
+import Session from "../domain/Session";
 import AccountService from "../domain/AccountService";
 import Mapping from "../domain/Mapping";
 import SessionService from "../domain/SessionService";
@@ -19,6 +19,8 @@ import Comment from "../domain/Comment";
 import EvaluatorService from "../domain/EvaluatorService";
 import Evaluator from "../domain/Evaluator";
 import Evaluation from "../domain/Evaluation";
+import { RecordingMode } from "../domain/RecordingMode";
+import { SessionOverlayType } from "../domain/SessionOverlayType";
 
 export default class APIApplication {
 
@@ -201,7 +203,7 @@ export default class APIApplication {
             });
     }
 
-    createSession(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, token: Token): Promise<Session | "Unauthorized"> {
+    createSession(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode, token: Token): Promise<Session | "Unauthorized"> {
         return this.getAccount(token)
             .then((result) => {
                 if (result === "Unauthorized") {
@@ -214,14 +216,14 @@ export default class APIApplication {
                                 return "Unauthorized";
                             } else {
                                 const webSite: WebSite = findResult;
-                                return this._sessionService.createSession(webSiteId, baseURL, name, description, overlayType)
+                                return this._sessionService.createSession(webSiteId, baseURL, name, description, overlayType, recordingMode)
                                     .then((sessionId) => {
                                         return this._accountService.addSession(account.username, sessionId)
                                             .then((addSessionResult) => {
                                                 if (addSessionResult === "IncorrectUsername") {
                                                     return "Unauthorized";
                                                 } else {
-                                                    return new Session(sessionId, baseURL, webSite, name, description, new Date(), overlayType, []);
+                                                    return new Session(sessionId, baseURL, webSite, name, description, new Date(), overlayType, recordingMode, []);
                                                 }
                                             })
                                     });

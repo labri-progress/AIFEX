@@ -1,9 +1,9 @@
 import Exploration from "./Exploration";
+import { SessionOverlayType } from "./SessionOverlayType";
+import { RecordingMode } from "./RecordingMode";
 import WebSite from "./WebSite";
 
 
-
-export type SessionOverlayType = "shadow" | "bluesky" | "rainbow";
 
 
 export default class Session {
@@ -14,6 +14,7 @@ export default class Session {
     readonly description: string;
     readonly createdAt: Date;
     readonly overlayType: SessionOverlayType;
+    readonly recordingMode: RecordingMode;
     readonly explorationList: Exploration[];
 
     constructor(id: string,
@@ -23,6 +24,7 @@ export default class Session {
         description: string,
         createdAt: Date,
         overlayType: SessionOverlayType,
+        recordingMode: RecordingMode,
         explorationList: Exploration[] )
     {
         this.id = id;
@@ -33,6 +35,7 @@ export default class Session {
         this.explorationList = [];
         this.createdAt = createdAt;
         this.overlayType = overlayType;
+        this.recordingMode = recordingMode;
         this.explorationList = explorationList;
     }
 

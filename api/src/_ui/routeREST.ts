@@ -339,16 +339,16 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.post("/sessions", (req, res) => {
         logger.info(`create session`);
-        const { webSiteId, baseURL, name, description, overlayType } = req.body;
+        const { webSiteId, baseURL, name, description, overlayType, recordingMode } = req.body;
         if (req.token === undefined) {
             logger.warn(`no token`);
             res.status(FORBIDDEN_STATUS).json({message:"No token"});
         } else {
             const token: Token = req.token;
-            if (baseURL === undefined || name === undefined || overlayType === undefined || webSiteId === undefined || description === undefined) {
+            if (baseURL === undefined || name === undefined || overlayType === undefined || webSiteId === undefined || description === undefined || recordingMode === undefined) {
                 res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
             } else {
-                api.createSession(webSiteId, baseURL, name, description, overlayType, token)
+                api.createSession(webSiteId, baseURL, name, description, overlayType, recordingMode, token)
                     .then(creationResult => {
                         if (creationResult === "Unauthorized") {
                             res.status(FORBIDDEN_STATUS).json({message:creationResult});
