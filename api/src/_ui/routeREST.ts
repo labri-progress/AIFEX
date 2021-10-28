@@ -390,30 +390,24 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
-    
+
 
     app.post("/sessions/:sessionId/explorations/:expNum/interactions", (req, res) => {
         const { sessionId, expNum } = req.params;
         const { interactionList } = req.body;
         logger.info(`Push new actions in the exploration`);
-
+        logger.info(interactionList)
         if (sessionId === undefined || expNum === undefined || interactionList === undefined ) {
             logger.warn(`invalid parameters`);
             res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No expNum or No interactionList"});
         } else {
-            console.log(expNum, parseInt(expNum))
-            if (parseInt(expNum) === undefined) {
+            if (parseInt(expNum) === NaN) {
                 logger.warn(`invalid expNum type`);
                 return res.status(INVALID_PARAMETERS_STATUS).json({message:"expNum must be an integer"});
             }
             if (!Array.isArray(interactionList)) {
                 logger.warn(`interactionList must be an array`);
-                return res.status(INVALID_PARAMETERS_STATUS).json({message:"interactionList is malformed"});
-            }
-            const isWellFormed = interactionList.every((interaction:any) => interaction.hasOwnProperty("kind") && interaction.hasOwnProperty("value"))
-            if (!isWellFormed) {
-                logger.warn(`interactionList invalid properties`);
-                return res.status(INVALID_PARAMETERS_STATUS).json({message:"interactionList is malformed"});
+                return res.status(INVALID_PARAMETERS_STATUS).json({message:"interactionList must be an array"});
             }
             api.addInteractions(sessionId, parseInt(expNum), interactionList, req.token)
                 .then(explorationResult => {

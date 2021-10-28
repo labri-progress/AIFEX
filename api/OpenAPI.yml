@@ -310,6 +310,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []        
+        
   /sessions/{sessionId}:
     get:
       description: returns Session 

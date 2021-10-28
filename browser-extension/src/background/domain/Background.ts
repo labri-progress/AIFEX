@@ -258,6 +258,7 @@ export default class Background {
             return this._aifexService.createEmptyExploration(this._serverURL, this._sessionId, this._testerName)
                 .then(explorationNumber => {
                     this._exploration = new Exploration(explorationNumber);
+
                 })
         } else {
             return new Promise((resolve) => {
@@ -278,6 +279,7 @@ export default class Background {
             .then(() => {
                 const state = this.getStateForTabScript();
                 const tabIds = this._windowManager.getConnectedTabIds();
+
                 return Promise.all(tabIds.map(tabId => this._tabScriptService.startExploration(tabId, state)));
             })
             .catch((e) => {
@@ -287,7 +289,6 @@ export default class Background {
             })
             .then(() => {
                 return this._mediaRecordManager.startRecording()
-
             })
             .then(() => {
                 if (this._evaluator) {
@@ -404,6 +405,7 @@ export default class Background {
     }
 
     processNewAction(prefix: string, suffix?: string): Promise<void> {
+
         if (this._isRecording && this._exploration) {
             this._exploration.addAction(prefix, suffix);
             this._commentsUp = [];
@@ -423,6 +425,7 @@ export default class Background {
                 }
                 const actionList = this._exploration.actions;
                 const lastAction = actionList[actionList.length-1];
+                console.log(this._exploration)
                 const pushActionListPromise = this._aifexService.pushActionList(
                     this._serverURL, 
                     this._sessionId, 
@@ -443,6 +446,7 @@ export default class Background {
                     }
                     this.refreshPopup();
                 })
+
         } else {
             return Promise.resolve();
         }

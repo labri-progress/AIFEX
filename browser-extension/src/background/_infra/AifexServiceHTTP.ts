@@ -203,10 +203,14 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { "Content-Type": "application/json" },
 		};
 		return fetch(
-			`${serverURL} + '/api/sessions/' + ${sessionId}/explorations`, option)
+			`${serverURL}/api/sessions/${sessionId}/explorations`,
+			option
+		)
 		.then((response) => {
 			if (response.status === OK_STATUS) {
-				return response.json();
+				return response.json().then(data => {
+					return data.explorationNumber
+				})
 			}
 			if (response.status === NOT_FOUND_STATUS) {
 				return Promise.reject(new Error(`no session not found for Id`));
@@ -217,7 +221,7 @@ export default class AifexServiceHTTP implements AifexService {
 			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
 				return Promise.reject(new Error(`server error`));
 			}
-		});
+		})
 	}
 
 	createFullExploration(
@@ -268,14 +272,13 @@ export default class AifexServiceHTTP implements AifexService {
 				date: action.date
 			}))
 		}
-		
 		const option = {
 			method: "POST",
 			body: JSON.stringify(body),
 			headers: { "Content-Type": "application/json" },
 		};
 		return fetch(
-			`${serverURL}/api/session/${sessionId}/exploration/${explorationNumber}/pushActionList`,
+			`${serverURL}/api/sessions/${sessionId}/explorations/${explorationNumber}/interactions`,
 			option)
 		.then((response) => {
 			if (response.status === OK_STATUS) {
@@ -290,7 +293,10 @@ export default class AifexServiceHTTP implements AifexService {
 			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
 				return Promise.reject(new Error(`server error`));
 			}
-		});	
+		}).catch(error => {
+			console.error(error);
+			throw new Error("Service Failed to push new action");
+		})
 	}
 
 	notifySubmissionAttempt(serverURL: string, sessionId: string, explorationNumber: number) {		

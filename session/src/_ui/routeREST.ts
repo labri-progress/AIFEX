@@ -238,7 +238,6 @@ export default function attachRoutes(app: Express, sessionService: SessionServic
                 }
             });
     });
-
     app.post("/session/:sessionId/exploration/:number/pushActionList", (req, res) => {
         let { sessionId, number } = req.params;
         const { interactionList } = req.body;
