@@ -14,11 +14,6 @@ function handlePlay() {
         if (newState.error) {
             getState();
         } else {
-            alert(`
-            To get the reward bonus, you must complete every step of the scenario! \n
-            The participation code for the HIT is :  \n
-            Gelatine
-            ` )
             render(newState);
         }
     })
@@ -36,14 +31,6 @@ function handleStop() {
             console.error('stop exploration error', response.error);
         } else {
             console.log(response)
-            ////REMOVE THIS LINE
-            if (state.evaluation && state.evaluation.validated) {
-                alert(`
-                Thank you for participating ! \n
-                The completion code to get the bonus reward is: \n
-                Marvellous \n
-                ` )
-            }
             render(response)
         }
     })

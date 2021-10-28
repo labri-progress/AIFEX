@@ -266,27 +266,6 @@ export default class SessionService {
             })       
     }
 
-    // REMOVE THIS
-    incrementSubmissionAttempt(sessionId: string, explorationNumber: number): Promise<void> {
-        let session: Session;
-        return this.mountSession(sessionId)
-            .then((mountSession) => {
-                if (mountSession) {
-                    session = mountSession;
-                    
-                    if (explorationNumber <= session.explorationList.length) {
-                        const exploration: Exploration = session.explorationList[explorationNumber];
-                        exploration.submissionAttempt++; 
-                        return this.sessionRepository.setSubmissionAttempt(sessionId, explorationNumber, exploration.submissionAttempt);
-                    } else {
-                        throw new Error(`wrong exploration number ${explorationNumber} / ${session.explorationList.length}`);
-                    } 
-                } else {
-                    throw new Error('wrong session id');
-                }    
-            })
-    }
-
     public addScreenshot(sessionId: string, explorationNumber: number, interactionIndex: number, image: string): Promise<string> {
         return this.screenshotRepository.findScreenshot(sessionId, explorationNumber, interactionIndex)
             .then((screenshotId) => {

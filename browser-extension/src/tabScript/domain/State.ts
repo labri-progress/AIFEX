@@ -16,7 +16,6 @@ export default class State {
     webSite: any;
     overlayType: OverlayType;
 
-    //REMOVE THIS LINE
     exploration: Exploration;
 
     constructor(confirmedComments : Comment[] = [], displayUserView: boolean, isActive: boolean= false, webSite : any, userTabPosition : {x: string, y: string}, overlayType: OverlayType, exploration: Exploration) {

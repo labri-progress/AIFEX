@@ -92,7 +92,6 @@ export default class Background {
         this._popupCommentPosition = { x: "75%", y: "75%" };
         this._screenshotList = [];
         this._explorationEvaluation = undefined;
-        this._isRecording = false;
         this._rejectIncorrectExplorations = configuration.rejectIncorrectExplorations;
         this._recordActionByAction = configuration.recordActionByAction;
     }
@@ -230,8 +229,10 @@ export default class Background {
         }
         return this._aifexService.getWebSite(this._serverURL, this._webSite.id, this._token)
             .then((webSite) => {
-                //TODO: check if the website has changed
-                //this._webSite = webSite;
+                if (webSite === "Unauthorized") {
+                    throw new Error("Unauthorized to load website")
+                }
+                this._webSite = webSite;
             })
             .then((_) => {
                 const state = this.getStateForTabScript();
@@ -405,7 +406,6 @@ export default class Background {
     }
 
     processNewAction(prefix: string, suffix?: string): Promise<void> {
-
         if (this._isRecording && this._exploration) {
             this._exploration.addAction(prefix, suffix);
             this._commentsUp = [];
@@ -425,7 +425,6 @@ export default class Background {
                 }
                 const actionList = this._exploration.actions;
                 const lastAction = actionList[actionList.length-1];
-                console.log(this._exploration)
                 const pushActionListPromise = this._aifexService.pushActionList(
                     this._serverURL, 
                     this._sessionId, 
@@ -472,12 +471,12 @@ export default class Background {
         }
     }
 
-    private stopRecordingExploration(): Promise<boolean> {
+    private stopRecordingExploration(): Promise<void> {
         if (!this._isRecording) {
-            return Promise.resolve(true);
+            return Promise.resolve();
         } 
         if (this._exploration === undefined) {
-            return Promise.resolve(true);
+            return Promise.resolve();
         }
         this._isRecording = false;
         let exploration: Exploration = this._exploration;
@@ -486,7 +485,7 @@ export default class Background {
             if (this._evaluator && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
                 this.displayInvalidExploration();
                 this._isRecording = true;
-                return false;
+                return;
             }
             else {
                 return this.processNewAction("end")
@@ -518,24 +517,24 @@ export default class Background {
                     return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
                 })
                 .then((_ : void[]) => {
-                    return true;
+                    return;
                 })
                 .catch((error) => {
                     console.error(error.message);
-                    return false;
+                    return;
                 })
             }
         })
     }
 
     stopExploration(): Promise<void> {
-        return this.stopRecordingExploration().then(() => { })
+        return this.stopRecordingExploration()
     }
 
     restartExploration(): Promise<void> {
         return this.stopRecordingExploration()
-            .then((isStopped) => {
-                if (isStopped) {
+            .then(() => {
+                if (!this._isRecording) {
                     return this._windowManager.reloadConnectedWindow(this._sessionBaseURL).then(() => this.startExploration())
                 }
             })

@@ -16,7 +16,6 @@ export default class RuleMapper {
     public rules: Rule[];
 
     constructor(rules : Rule[]) {
-        logger.debug(`rules: ${rules.length}`);
         this._cssContext2ContextMapper = new Map();
         this._xpathContext2ContextMapper = new Map();
         this._urlContext2ContextMapper = new Map();
@@ -38,7 +37,6 @@ export default class RuleMapper {
             }
 
             if (rule.contextCSS) {
-                logger.debug(rule.contextCSS);
                 let contextMapper4CssContext = this._cssContext2ContextMapper.get(rule.contextCSS);
                 if (!contextMapper4CssContext) {
                     contextMapper4CssContext = new CSSContextMapper(rule.contextCSS)
@@ -46,7 +44,6 @@ export default class RuleMapper {
                 }
                 contextMapper4CssContext.add(rule);
             } else if (rule.contextXPath) {
-                logger.debug(rule.contextXPath);
                 let contextMapper4XpathContext = this._xpathContext2ContextMapper.get(rule.contextXPath);
                 if (!contextMapper4XpathContext) {
                     contextMapper4XpathContext = new XPathContextMapper(rule.contextXPath);
@@ -64,10 +61,6 @@ export default class RuleMapper {
                 this._contextLessMapper.add(rule);
             }
         })
-
-        logger.debug(`css context: ${this._cssContext2ContextMapper.size}`);
-        logger.debug(`xpath context: ${this._xpathContext2ContextMapper.size}`);
-        logger.debug(`url context: ${this._urlContext2ContextMapper.size}`);
     }
 
     getIsLoaded(): boolean {
@@ -97,7 +90,6 @@ export default class RuleMapper {
                     result.set(element,rules4element);
                 }
                 rules4element.push(...rules);
-                logger.debug(`${rules4element.length} rules added to element ${element} with URL as a context`);
             }
         }
         for (const mapper of this._cssContext2ContextMapper.values()) {
@@ -108,7 +100,6 @@ export default class RuleMapper {
                     result.set(element,rules4element);
                 }
                 rules4element.push(...rules);
-                logger.debug(`${rules4element.length} rules added to element ${element} with CSS as a context`);
             }
         }
         for (const mapper of this._xpathContext2ContextMapper.values()) {
@@ -119,7 +110,6 @@ export default class RuleMapper {
                     result.set(element,rules4element);
                 }
                 rules4element.push(...rules);
-                logger.debug(`${rules4element.length} rules added to element ${element} with URL as a context`);
             }
         }
         for (const [element, rules] of this._contextLessMapper.buildElementToRuleMap()) {
@@ -129,7 +119,6 @@ export default class RuleMapper {
                 result.set(element,rules4element);
             }
             rules4element.push(...rules);
-            logger.debug(`${rules4element.length} rules added to element ${element} with nothing as a context`);
         }
         return result;
     }
