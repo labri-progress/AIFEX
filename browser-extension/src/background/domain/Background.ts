@@ -469,62 +469,59 @@ export default class Background {
     }
 
     private stopRecordingExploration(): Promise<boolean> {
-        if (this._isRecording && this._exploration) {
-            this._isRecording = false;
-
-            let exploration: Exploration = this._exploration;
-            return this.evaluateExploration().then(() => {
-                if (this._evaluator && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
-                    this.displayInvalidExploration();
-                    this._isRecording = true;
-                    return false;
-                }
-                else {
-                    return this.processNewAction("end")
-                    .then(() => {
-                        exploration.stop();
-                        if (!this._recordActionByAction) {
-                            if (!(this._serverURL && this._sessionId)) {
-                                throw new Error("Not connected to a session")
-                            }
-                            if (!this._exploration) {
-                                throw new Error("Exploration is required")
-                            }
-                            const MIN_NUMBER_OF_ACTIONS = 2;
-                            const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
-                            if (HAS_MORE_THAN_START_END_ACTIONS) {
-                                return this._aifexService.createFullExploration(this._serverURL, this._sessionId, this._testerName, this._exploration)
-                            }
-                                else {
-                                    return Promise.resolve();
-                                }
-                        } else {
-                            return Promise.resolve();
-                        }
-                    })
-                    .then(() => {
-                        return this._mediaRecordManager.stopRecording()
-                    })
-                    .then(() => {
-                        this._exploration = undefined;
-                        this._screenshotList = [];
-                        this._commentsUp = [];
-                        const state = this.getStateForTabScript();
-                        const tabIds = this._windowManager.getConnectedTabIds();
-                        return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
-                    })
-                    .then((_ : void[]) => {
-                        return true;
-                    })
-                    .catch((error) => {
-                        console.error(error.message);
-                        return false;
-                    })
-                }
-            })
-        } else {
+        if (!this._isRecording) {
+            return Promise.resolve(true);
+        } 
+        if (this._exploration === undefined) {
             return Promise.resolve(true);
         }
+        this._isRecording = false;
+        let exploration: Exploration = this._exploration;
+        return this.evaluateExploration()
+        .then(() => {
+            if (this._evaluator && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
+                this.displayInvalidExploration();
+                this._isRecording = true;
+                return false;
+            }
+            else {
+                return this.processNewAction("end")
+                .then(() => {
+                    exploration.stop();
+                    if (!this._recordActionByAction) {
+                        if (!(this._serverURL && this._sessionId)) {
+                            throw new Error("Not connected to a session")
+                        }
+                        if (!this._exploration) {
+                            throw new Error("Exploration is required")
+                        }
+                        const MIN_NUMBER_OF_ACTIONS = 2;
+                        const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length > MIN_NUMBER_OF_ACTIONS;
+                        if (HAS_MORE_THAN_START_END_ACTIONS) {
+                            return this._aifexService.createFullExploration(this._serverURL, this._sessionId, this._testerName, this._exploration)
+                        }
+                    }
+                })
+                .then(() => {
+                    return this._mediaRecordManager.stopRecording()
+                })
+                .then(() => {
+                    this._exploration = undefined;
+                    this._screenshotList = [];
+                    this._commentsUp = [];
+                    const state = this.getStateForTabScript();
+                    const tabIds = this._windowManager.getConnectedTabIds();
+                    return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
+                })
+                .then((_ : void[]) => {
+                    return true;
+                })
+                .catch((error) => {
+                    console.error(error.message);
+                    return false;
+                })
+            }
+        })
     }
 
     stopExploration(): Promise<void> {
