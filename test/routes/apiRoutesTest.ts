@@ -455,4 +455,125 @@ describe("API", () => {
                 expect(result.message).to.be.eql("WebSiteRemoved");
             });
     });
+
+    it("should create an evaluator for the session", () => {
+        const url = `${API_URL}/evaluator/`;
+        const body = {
+            sessionId,
+            description: "testing evaluator",
+            expression: "click => click"
+        };
+        return fetch(url, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+                
+            }, 
+            body: JSON.stringify(body)})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.message).to.be.eql("Evaluator created");
+            });
+    });
+
+    it("should get the evaluator of the session", () => {
+        const url = `${API_URL}/evaluator/${sessionId}`;
+        return fetch(url, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((evaluator) => {
+                expect(evaluator.id).to.not.eql(undefined);
+                expect(evaluator.description).to.eql("testing evaluator");
+                expect(evaluator.expression).to.eql("click => click");
+            });
+    });
+
+    it("should update the evaluator of the session", () => {
+        const url = `${API_URL}/evaluator/${sessionId}`;
+        const body = {
+            description: "testing evaluator updated",
+            expression: "click => click => click"
+        };
+        return fetch(url, {
+            method: "PATCH",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(body)})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+    });
+
+    it("should get the updated evaluator of the session", () => {
+        const url = `${API_URL}/evaluator/${sessionId}`;
+        return fetch(url, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((evaluator) => {
+                expect(evaluator.id).to.not.eql(undefined);
+                expect(evaluator.description).to.eql("testing evaluator updated");
+                expect(evaluator.expression).to.eql("click => click => click");
+            });
+    });
+
+    it("should remove the evaluator of the session", () => {
+        const url = `${API_URL}/evaluator/${sessionId}`;
+        return fetch(url, {
+            method: "DELETE",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((response) => {
+                expect(response.sessionId).eql(sessionId);
+            });
+    });
+
+    it("should not find the deleted evaluator", () => {
+        const url = `${API_URL}/evaluator/${sessionId}`;
+        return fetch(url, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.false;
+                return res.json()
+            }).then((resultData)=> {
+                expect(resultData.message).eql("No Evaluator found for session")
+            })
+           
+    });
 });

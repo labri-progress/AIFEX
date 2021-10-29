@@ -94,7 +94,6 @@ module.exports.getEvaluatorBySessionId = function (token, sessionId) {
 module.exports.createEvaluator = function(token, sessionId, evaluatorExpression, description) {
     logger.info(`POST create evaluator for session (id = ${sessionId})`);
     const URL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/'
-    console.log("CreateEvaluator")
     return fetch(URL, {
         method: 'POST',
         body: JSON.stringify({
@@ -104,7 +103,6 @@ module.exports.createEvaluator = function(token, sessionId, evaluatorExpression,
         }),
         headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }).then(response => {
-        console.log(response)
         if (response.ok) {
             return response.json();
         } else {

@@ -9,6 +9,7 @@ const SUCCESS_STATUS = 200;
 const STATUS_REPONSE_IS_NULL = 204;
 const STATUS_WRONG_PARAMETERS = 400;
 const ERROR_STATUS = 500;
+const STATUS_NOT_FOUND = 404;
 
 export default function attachRoutes(app: Express, evaluatorService: ObjectiveService): void {
 
@@ -28,7 +29,7 @@ export default function attachRoutes(app: Express, evaluatorService: ObjectiveSe
             .then((evaluator: Evaluator | "noEvaluatorForSession") => {
                 if (evaluator === "noEvaluatorForSession") {
                     logger.info(`no evaluator found for session ${sessionId}`);
-                    return res.sendStatus(STATUS_REPONSE_IS_NULL)
+                    return res.sendStatus(STATUS_NOT_FOUND)
                 }
                 else {
                     logger.info(`sending evaluator ${evaluator.id} for website ${evaluator.sessionId}`);

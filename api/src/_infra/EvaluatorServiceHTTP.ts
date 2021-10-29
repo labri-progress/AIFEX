@@ -5,6 +5,7 @@ import EvaluatorService from "../domain/EvaluatorService";
 import Action from "../domain/Action";
 import Evaluation from "../domain/Evaluation";
 import Evaluator from "../domain/Evaluator";
+import { logger } from "../logger";
 
 const EVALUATOR_URL : string = `http://${config.evaluator.host}:${config.evaluator.port}/evaluator/`;
 
@@ -20,7 +21,7 @@ export default class EvaluatorServiceHTTP implements EvaluatorService {
             } else {
                 return undefined;
             }
-        });
+        })
     }
 
     updateEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
@@ -41,7 +42,8 @@ export default class EvaluatorServiceHTTP implements EvaluatorService {
     }
 
     createEvaluator(sessionId: string, description: string, expression: string): Promise<void> {
-        const evaluatorGetURL = EVALUATOR_URL + "create/" + sessionId;
+        logger.debug("Calling createEvaluator" + " sessionId ")
+        const evaluatorGetURL = EVALUATOR_URL + "create/";
         let optionModelCreate = {
             method: 'POST',
             body:    JSON.stringify({
@@ -53,6 +55,7 @@ export default class EvaluatorServiceHTTP implements EvaluatorService {
         }
         return fetch(evaluatorGetURL, optionModelCreate).then(response => {
             if (!response.ok) {
+                logger.debug("Failed createEvaluator")
                 throw new Error("Error"+response.statusText);
             }
         });        

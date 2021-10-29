@@ -33,6 +33,17 @@ services:
     volumes:
       - ./model/src/:/app/src
 
+  evaluator:
+    build:
+      context: evaluator/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 5005:80
+    volumes:
+      - ./evaluator/src/:/app/src
+
   account:
     build:
       context: account/

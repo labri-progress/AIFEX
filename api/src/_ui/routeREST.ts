@@ -760,13 +760,13 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         return api.getEvaluator(sessionId, req.token)
             .then((evaluator) => {
                 if (evaluator === "Unauthorized") {
-                    return res.sendStatus(FORBIDDEN_STATUS)
+                    return res.status(FORBIDDEN_STATUS).json({message: "Unauthorized"})
                 }
                 if (evaluator === undefined) {
-                    return res.sendStatus(NOT_FOUND_STATUS)
+                    return res.status(NOT_FOUND_STATUS).json({message: "No Evaluator found for session"})
                 }
                 else {
-                    return res.send({
+                    return res.json({
                         id: evaluator.id,
                         description: evaluator.description,
                         expression: evaluator.expression,
@@ -785,27 +785,30 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         logger.info(`create evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
         if (sessionId === undefined) {
             logger.warn("sessionId is required")
-            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
+            return res.status(INVALID_PARAMETERS_STATUS).json({message: "session is required"});
         }
         if (typeof expression === undefined) {
             logger.warn(`expression is required`);
-            return res.status(INVALID_PARAMETERS_STATUS).send("expression is required");
+            return res.status(INVALID_PARAMETERS_STATUS).json({message: "expression is required"});
         }
         if (typeof description === undefined) {
             logger.warn(`description is required`);
-            return res.status(INVALID_PARAMETERS_STATUS).send("description is required");
+            return res.status(INVALID_PARAMETERS_STATUS).json({message: "description is required"});
         }
 
         if (expression.length === 0) {
             logger.warn(`expression must not be empty`);
-            return res.status(INVALID_PARAMETERS_STATUS).send("expression must not be empty");
+            return res.status(INVALID_PARAMETERS_STATUS).json({message: "expression must not be empty"});
         }
-        api.createEvaluator(sessionId, description, expression).then(() => {
-            logger.debug("evaluator is created")
-            return res.json({message: "Evaluator created"});
+        api.createEvaluator(sessionId, description, expression, req.token).then((result) => {
+            if (result === "Unauthorized") {
+                return res.sendStatus(FORBIDDEN_STATUS)
+            } else {
+                return res.json({message: "Evaluator created"});
+            }
         })
         .catch((e: Error) => {
-            logger.error(`error:${e}`);
+            logger.error(`${e}`);
             res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
         });
     });
@@ -818,8 +821,9 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             logger.warn("sessionId is required")
             return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
         }
-        api.updateEvaluator(sessionId, description, expression).then((response) => {
+        api.updateEvaluator(sessionId, description, expression, req.token).then((response) => {
             if (response === "Unauthorized") {
+                logger.warn("update is Unauthorized")
                 return res.sendStatus(FORBIDDEN_STATUS)
             }
             logger.debug("evaluator is updated")
@@ -882,7 +886,7 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         });
     });
 
-    app.delete("/evaluator/remove/:sessionId", (req, res) => {
+    app.delete("/evaluator/:sessionId", (req, res) => {
         const { sessionId } = req.params;
         logger.info(`remove evaluator for (sessionId : ${sessionId})`);
         if (sessionId === undefined) {

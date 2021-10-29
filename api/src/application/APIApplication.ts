@@ -21,6 +21,8 @@ import Evaluator from "../domain/Evaluator";
 import Evaluation from "../domain/Evaluation";
 import { RecordingMode } from "../domain/RecordingMode";
 import { SessionOverlayType } from "../domain/SessionOverlayType";
+import { debug } from "console";
+import { logger } from "../logger";
 
 export default class APIApplication {
 
@@ -597,7 +599,10 @@ export default class APIApplication {
                 authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
                 invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
             }
+            logger.debug(`Application createEvaluator ${isPublic} ${authorized}  ${invited}`)
+
             if (isPublic || authorized || invited) {
+
                 return this._evaluatorService.createEvaluator(sessionId, description, expression).then(() =>{})
             }
             return "Unauthorized";

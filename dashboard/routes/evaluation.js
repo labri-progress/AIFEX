@@ -53,13 +53,11 @@ module.exports = function attachRoutes(app, config) {
     app.post('/dashboard/evaluation/create', (req, res) => {
         const {sessionId, evaluatorExpression, description} = req.body;
         let token = req.session.jwt;
-        console.log(evaluatorExpression)
         if (evaluatorExpression.length === 0) {
             return res.render('error.ejs', {message: "Evaluator cannot be empty", account: req.session, error:e});
         } else {
-            return createEvaluator(token, sessionId, evaluatorExpression, description).then((response) => {
-                console.log("RESPONSES")
-                if (response.ok) {
+            return createEvaluator(token, sessionId, evaluatorExpression, description).then(() => {
+                if (evaluator) {
                     return res.redirect("/account/account");
                 } else {
                     throw new Error(response.message);
