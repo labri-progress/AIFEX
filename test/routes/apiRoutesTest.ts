@@ -2,8 +2,13 @@ import chai from "chai";
 const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
+import { dropAllDatabases } from "../services/databasesService"
 
 const API_URL = "http://localhost/api";
+
+before("Dropping database", async () => {
+    dropAllDatabases();
+})
 
 describe("API", () => {
 

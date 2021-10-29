@@ -2,10 +2,15 @@ import chai from "chai";
 const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
+import { dropAllDatabases } from "../services/databasesService";
 
 const SESSION_URL = "http://localhost:5001/session/";
 const WEBSITE_URL = "http://localhost:5000/website/";
 
+
+before("Dropping database", async () => {
+    dropAllDatabases();
+})
 
 describe("Infra", () => {
     let webSiteId;

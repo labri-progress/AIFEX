@@ -25,5 +25,4 @@ export interface SessionDocument extends Document {
     recordingMode: string,
 }
 
-
 export default model<SessionDocument>("Session", SESSION_SCHEMA);

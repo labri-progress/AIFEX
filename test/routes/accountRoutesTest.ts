@@ -2,10 +2,15 @@ import chai from "chai";
 const expect = chai.expect;
 import "mocha";
 import fetch from "node-fetch";
-import jsonwebtoken from "jsonwebtoken"; 
+import { dropAllDatabases } from "../services/databasesService";
 const SECRET = "changeme";
 
 const ACCOUNT_URL = "http://localhost:5004/account";
+
+
+before("Dropping database", async () => {
+    dropAllDatabases();
+})
 
 describe("Account", () => {
 
