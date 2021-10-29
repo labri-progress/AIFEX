@@ -34,7 +34,7 @@ module.exports = function attachRoutes(app, config) {
 
     app.post('/dashboard/session/create', (req, res) => {
         let { webSiteId, name, baseURL, interpolationfactor, depth, description, overlayType } = req.body;
-
+        let recordingMode = "byexploration"
         if (overlayType === "shadowMode") {
             overlayType = "shadow"
         }
@@ -54,7 +54,7 @@ module.exports = function attachRoutes(app, config) {
         let sessionId;
         let modelId;
 
-        let createSessionPromise = createSession(req.session.jwt, webSiteId, name, baseURL, description, overlayType)
+        let createSessionPromise = createSession(req.session.jwt, webSiteId, name, baseURL, description, overlayType, recordingMode)
         let createModelPromise = createModel(req.session.jwt, depth, interpolationfactor, "CSP")
         return Promise.all([createSessionPromise, createModelPromise])
             .then(([createdSessionId, createdModelId]) => {

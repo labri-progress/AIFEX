@@ -40,6 +40,7 @@ module.exports.signin = function (username, password) {
             if (response.ok) {
                 return response.json().then(json => json.bearerToken)
             } else {
+                logger.debug("IncorrectUsernameOrPassword")
                 return "IncorrectUsernameOrPassword"
             }
         })
@@ -91,7 +92,7 @@ module.exports.getEvaluatorBySessionId = function (token, sessionId) {
         })
 }
 
-module.exports.createEvaluator = function(token, sessionId, evaluatorExpression, description) {
+module.exports.createEvaluator = function(token, sessionId, expression, description) {
     logger.info(`POST create evaluator for session (id = ${sessionId})`);
     const URL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/'
     return fetch(URL, {
@@ -99,7 +100,7 @@ module.exports.createEvaluator = function(token, sessionId, evaluatorExpression,
         body: JSON.stringify({
             sessionId,
             description,
-            expression: evaluatorExpression,
+            expression,
         }),
         headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
     }).then(response => {
@@ -111,26 +112,55 @@ module.exports.createEvaluator = function(token, sessionId, evaluatorExpression,
     })
 }
 
+module.exports.deleteEvaluator = function(token, sessionId) {
+    const deleteEvaluatorURL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/' + sessionId;
+    return fetch(deleteEvaluatorURL, {
+        method: "DELETE",
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+    }).then(response => {
+        return response.json()
+    })
+    .catch(error => {
+        logger.error(error);
+        throw new Error("Failed to delete evaluator")
+    })
+}
+
+module.exports.updateEvaluator = function(token, sessionId, description, expression) {
+    const updateEvaluatorURL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/' + sessionId;
+    return fetch(updateEvaluatorURL, {
+        method: "PATCH",
+        body: JSON.stringify({
+            sessionId,
+            description,
+            expression        
+        }),
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+    }).then(response => {
+        return response.json()
+    })
+    .catch(error => {
+        logger.error(error);
+        throw new Error("Failed to update evaluator")
+    })
+}
+
 module.exports.getEvaluatorExpressionDot = function(expression) {
-    if (expression && expression.length > 0) {
-        const checkEvaluatorValidityURL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/expressionToDot';
-        return fetch(checkEvaluatorValidityURL, {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                expression
-            })
-        }).then(response => {
-            return response.json()
+    const checkEvaluatorValidityURL = 'http://' + config.api.host + ':' + config.api.port + '/evaluator/expressionToDot';
+    logger.debug(expression)
+    return fetch(checkEvaluatorValidityURL, {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            expression
         })
-        .catch(error => {
-            logger.error(error);
-            let message = 'Error when checking expression validity';
-            res.render('error.ejs', {message,error:e, account:req.session});
-        })
-    } else {
-        res.status(200).send({expressionIsValid: true})
-    }
+    }).then(response => {
+        return response.json()
+    })
+    .catch(error => {
+        logger.error(error);
+        throw new Error("Failed to get DOT expression")
+    })
 }
 
 module.exports.updateWebSite = function (token, webSiteId, name, mappingList) {
@@ -250,14 +280,15 @@ module.exports.removeSession = function (token, sessionId) {
         })
 }
 
-module.exports.createSession = function (token, webSiteId, name, baseURL, description, overlayType) {
+module.exports.createSession = function (token, webSiteId, name, baseURL, description, overlayType, recordingMode) {
     const apiCreateSessionURL = 'http://' + config.api.host + ':' + config.api.port + '/sessions';
     let bodyCreateSession = {
         name,
         webSiteId,
         baseURL,
         description,
-        overlayType
+        overlayType,
+        recordingMode
     };
     let optionCreateSession = {
         method: 'POST',

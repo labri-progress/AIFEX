@@ -557,6 +557,39 @@ paths:
                   $ref: '#/components/schemas/Message'
         security:
           - bearerAuth: []
+    delete:
+      description: delete evaluator of a session
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      responses:
+        '200':
+          description: The evaluator is deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
 
   /evaluator/evaluate:
     post:

@@ -1,5 +1,4 @@
-const fetch = require('node-fetch');
-const { getSessionById, getWebSiteById, getEvaluatorBySessionId, getEvaluatorExpressionDot, createEvaluator } = require('../service/apiService');
+const { getSessionById, getWebSiteById, getEvaluatorBySessionId, getEvaluatorExpressionDot, createEvaluator, deleteEvaluator, updateEvaluator } = require('../service/apiService');
 
 const logger = require('../logger');
 
@@ -57,36 +56,24 @@ module.exports = function attachRoutes(app, config) {
             return res.render('error.ejs', {message: "Evaluator cannot be empty", account: req.session, error:e});
         } else {
             return createEvaluator(token, sessionId, evaluatorExpression, description).then(() => {
-                if (evaluator) {
-                    return res.redirect("/account/account");
-                } else {
-                    throw new Error(response.message);
-                }
+                return res.redirect("/account/account");
             }).catch( e => {
                 let message = 'Failed to create evaluator';
                 logger.error(`${e}`);
                 res.render('error.ejs', {message, account: req.session, error:e});
             })
         } 
-        
-        
     })
 
     app.get('/dashboard/evaluator/remove/:sessionId', (req,res) => {
         const sessionId = req.params.sessionId;
+        let token = req.session.jwt;
+
         logger.info(`GET remove evaluation for session (id = ${sessionId})`);
-        const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/remove/' + sessionId;
-        return fetch(URL, {
-            method: 'POST',
-        }).then((response) => {
-            if (response.ok) {
-                res.redirect(req.get('referer'));
-            } else {
-                logger.error(`${response.message})`);
-                throw new Error(response.message);
-            }
+        return deleteEvaluator(token, sessionId).then(() => {
+            return res.redirect(req.get('referer'));
         }).catch( e => {
-            let message = 'Failed to remove evaluator';
+            let message = 'Failed to delete evaluator';
             logger.error(`${e}`);
             res.render('error.ejs', {message, account: req.session, error:e});
         })
@@ -94,40 +81,32 @@ module.exports = function attachRoutes(app, config) {
 
     app.post('/dashboard/evaluation/update', (req, res) => {
         const {sessionId, evaluatorExpression, description} = req.body;
-        logger.info(`POST update evaluation for session (id = ${sessionId})`);
-        const URL = 'http://' + config.evaluator.host + ':' + config.evaluator.port + '/evaluator/update/'+ sessionId
-
+        let token = req.session.jwt;
         if (evaluatorExpression.length === 0) {
-            res.render('error.ejs', {message: "Evaluator cannot be empty", account: req.session, error: new Error("Evaluator cannot be empty")});
-            return;
+            return res.render('error.ejs', {message: "Evaluator cannot be empty", account: req.session, error:e});
+        } else {
+            return updateEvaluator(token, sessionId, description, evaluatorExpression).then(() => {
+                return res.redirect(req.get('referer'));
+            }).catch( e => {
+                let message = 'Failed to update evaluator';
+                logger.error(`${e}`);
+                res.render('error.ejs', {message, account: req.session, error:e});
+            })
         } 
-        return fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                description,
-                expression: evaluatorExpression,
-            }),
-            headers: { 'Content-Type': 'application/json' },
-        }).then((response) => {
-            if (response.ok) {
-                return res.redirect("/account/account");
-            } else {
-                logger.error(`${response.message})`);
-                throw new Error(response.message);
-            }
-        }).catch( e => {
-            let message = 'Failed to update evaluator';
-            logger.error(`${e}`);
-            res.render('error.ejs', {message, account: req.session, error:e});
-        })
     });
 
     app.post("/dashboard/evaluation/expressionToDot", (req, res) => {
         const { expression } = req.body;
+        if (expression && expression.length > 0) {
         return getEvaluatorExpressionDot(expression)
             .then(data => {
                 return res.status(200).json(data);
+            }).catch( e => {
+                let message = 'Failed to evaluate expression';
+                logger.error(`${e}`);
+                res.render('error.ejs', {message, account: req.session, error:e});
             })
+        }
     })
     
 }
