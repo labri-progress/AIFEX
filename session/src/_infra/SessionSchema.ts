@@ -8,7 +8,7 @@ const SESSION_SCHEMA: Schema = new Schema({
     description: String,
     overlayType: { type: 'String', enum: ["shadow", "bluesky", "rainbow"], default: 'rainbow' },
     createdAt: {type: Date, default: Date.now},
-    recordingMode: { type: 'String', enum: ["byexporation", "byinteraction"], default: 'byexporation' },
+    recordingMode: { type: 'String', enum: ["byexploration", "byinteraction"], default: 'byexploration' },
 },
 {
     timestamps: true,

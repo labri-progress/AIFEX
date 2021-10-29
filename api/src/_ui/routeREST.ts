@@ -346,7 +346,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         } else {
             const token: Token = req.token;
             if (baseURL === undefined || name === undefined || overlayType === undefined || webSiteId === undefined || description === undefined || recordingMode === undefined) {
-                res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
+                logger.info("invalid parameters for session creation")
+                return res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
             } else {
                 api.createSession(webSiteId, baseURL, name, description, overlayType, recordingMode, token)
                     .then(creationResult => {

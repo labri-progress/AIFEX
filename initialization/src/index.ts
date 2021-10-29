@@ -76,7 +76,9 @@ async function loadingAnonymousAccount() {
     .then(() => {
         logger.info('allExplorationToSession');
     })
-    .catch (() => {
+    .catch ((error) => {
+        logger.error(error);
+        
         logger.info('initialization aborded');
     })
 }
@@ -190,7 +192,8 @@ function createSessionAndModel(token, webSiteId) {
         baseURL,
         overlayType: "rainbow",
         name: "example",
-        description: "Just exploring the purchase funnel"
+        description: "Just exploring the purchase funnel",
+        recordingMode: "byexploration"
     }
     const optionSessionCreate = {
         method: 'POST',
@@ -227,7 +230,7 @@ function createSessionAndModel(token, webSiteId) {
             throw new Error('session cannot be created');
         }
     })
-    .then( sessionId => {
+    .then(sessionId => {
         return fetch(modelCreateURL, optionModelCreate)
     })
     .then( resModel => {
@@ -282,7 +285,7 @@ async function addAllExplorationToSession(token, sessionId) {
                 if (res.ok) {
                     return true;
                 } else {
-                    throw new Error('some website cannot be added to anonymous');
+                    throw new Error('some exploration cannot be added to the session');
                 }
             })
     }
