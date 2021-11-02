@@ -130,3 +130,6 @@ jobs:
       - name: test API
         working-directory: ./test
         run: npm run testAPI
+      - name: test Playwright
+        working-directory: ./test
+        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml start test

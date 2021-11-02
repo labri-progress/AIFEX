@@ -1,9 +1,9 @@
-FROM node:10-slim
+FROM node:latest
 
 # upage
 RUN apt-get update -y
 
-RUN apt-get install -y \
+ RUN apt-get install -y \
   wget \
   xvfb \
   x11-xkb-utils \
@@ -13,17 +13,7 @@ RUN apt-get install -y \
   xfonts-cyrillic \
   x11-apps \
   clang \
-  libdbus-1-dev \
-  libgtk2.0-dev \
-  libnotify-dev \
-  libgnome-keyring-dev \
-  libgconf2-dev \
-  libasound2-dev \
-  libcap-dev \
-  libcups2-dev \
-  libxtst-dev \
   libxss1 \
-  libnss3-dev \
   gcc-multilib \
   g++-multilib
 
@@ -47,28 +37,28 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 # Uncomment to skip the chromium download when installing puppeteer. If you do,
 # you'll need to launch puppeteer with:
 #     browser.launch({executablePath: 'google-chrome-unstable'})
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV PUPPETEER_EXEC_PATH google-chrome-unstable
+
+ENV PLAYWRIGHT_EXEC_PATH google-chrome-unstable
 
 # COPY Files
-COPY package.test.json package.json
-COPY e2e/ .
+COPY package.json package.json
+COPY playwright/ .
 RUN npm i
 
 # COPY Extension
 COPY ./dist/chrome /browser-extension/dist/chrome
 
 # Install puppeteer so it's available in the container.
-RUN npm i puppeteer \
+RUN npm i playwright \
     # Add user so we don't need --no-sandbox.
     # same layer as npm install to keep re-chowned files from using up several hundred MBs more space
-    && groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
-    && mkdir -p /home/pptruser/Downloads \
-    && chown -R pptruser:pptruser /home/pptruser \
-    && chown -R pptruser:pptruser /node_modules
+    && groupadd -r pluser && useradd -r -g pluser -G audio,video pluser \
+    && mkdir -p /home/pluser/Downloads \
+    && chown -R pluser:pluser /home/pluser \
+    && chown -R pluser:pluser /node_modules
 
 
 # Run everything after as non-privileged user.
-USER pptruser
+USER pluser
 
-CMD xvfb-run -a --server-args='-screen 0 1024x768x24' npm run testE2E
+CMD xvfb-run -a --server-args='-screen 0 1024x768x24' npm run testPlaywright

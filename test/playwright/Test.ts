@@ -1,5 +1,5 @@
 import chai from "chai";
-import { chromium } from 'playwright';
+import { BrowserContext, chromium } from 'playwright';
 import BrowserExtensionPage from './BrowserExtensionPage';
 import ChromeExtensionsPage from './ChromeExtensionsPage';
 const expect = chai.expect;
@@ -8,23 +8,21 @@ import DashboardHomePage from "./DashboardHomePage";
 import DashboardSignUpPage from "./DashboardSignUpPage";
 import DashboardSignInPage from "./DashboardSignInPage";
 import DashboardAccountPage from "./DashboardAccountPage";
+import path from "path";
 
 
 describe("Playwright", () => {
 
-    let browser;
 
-    before("creating browser", async () => {
-        const path = require("path")
-        let PATH_TO_EXTENSION;
-        let DASHBOARD_HOST;
+    let browser : BrowserContext;
+    let PATH_TO_EXTENSION = path.join(__dirname, '..', '..', 'browser-extension', 'dist', "chrome");
+    let DASHBOARD_URL = 'http://localhost/';
 
+
+    before("creating browser", async () => {        
         if (process.env.NODE_ENV === 'github') {
-            DASHBOARD_HOST = 'dashboard';
+            DASHBOARD_URL = 'http://dashboard/';
             PATH_TO_EXTENSION = '/browser-extension/dist/chrome';
-        } else {
-            DASHBOARD_HOST = 'localhost';
-            PATH_TO_EXTENSION = path.join(__dirname, '..', '..', 'browser-extension', 'dist', "chrome");
         }
 
         console.log(PATH_TO_EXTENSION);
@@ -62,28 +60,28 @@ describe("Playwright", () => {
 
     it("should go to the dashboard and try for free", async () => {
         const page = await browser.newPage();
-        const dhp = new DashboardHomePage(page);
+        const dhp = new DashboardHomePage(page, DASHBOARD_URL);
         await dhp.goto();
         await dhp.tryForFree();
     })
 
     it("should create a new user", async () => {
         const page = await browser.newPage();
-        const dsup = new DashboardSignUpPage(page);
+        const dsup = new DashboardSignUpPage(page, DASHBOARD_URL);
         await dsup.goto();
         await dsup.signup('playwright', 'playwright', 'playwright');
     })
 
     it("should signin", async () => {
         const page = await browser.newPage();
-        const dsip = new DashboardSignInPage(page);
+        const dsip = new DashboardSignInPage(page, DASHBOARD_URL);
         await dsip.goto();
         await dsip.signin('playwright', 'playwright');
     })
 
     it("should create a new sesion", async () => {
         const page = await browser.newPage();
-        const dap = new DashboardAccountPage(page);
+        const dap = new DashboardAccountPage(page, DASHBOARD_URL);
         await dap.goto();
         await dap.startNewSession();
     })
