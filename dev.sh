@@ -37,7 +37,7 @@ echo ========================== CONTAINER BUILDING =============================
 cmd="docker-compose -f docker-compose.yml -f docker-compose.development.yml up"
 
 
-if [ $# -eq 1] && [ $1 == "--no-build" ]
+if [ $# -eq 1 ] && [ $1 == "--no-build" ]
 then
     echo "up containers withour building images"
 else
