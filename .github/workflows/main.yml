@@ -8,8 +8,10 @@ jobs:
     name: Typescript Validity
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+            node-version: '14.x'
     - name: install-typescript
       run: npm install -g typescript
     - name: model-compile
@@ -33,8 +35,8 @@ jobs:
     name: Session Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: '14.x'
       - name: install test dependencies
@@ -50,8 +52,8 @@ jobs:
     name: Model Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
             node-version: '14.x'
       - name: install test dependencies
@@ -67,8 +69,8 @@ jobs:
     name: Objective Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
             node-version: '14.x'
       - name: install test dependencies
@@ -84,8 +86,8 @@ jobs:
     name: Website Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
             node-version: '14.x'
       - name: install test dependencies
@@ -101,8 +103,10 @@ jobs:
     name: Routes test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+            node-version: '14.x'
       - name: build docker compose
         run: docker-compose -f docker-compose.yml -f docker-compose.github.yml up --build --no-start
       - name: start all but test
