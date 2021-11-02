@@ -8,7 +8,7 @@ const ACCOUNT_URL = "http://localhost:5004/account";
 
 
 before("Dropping database", async () => {
-    dropAllDatabases();
+    await dropAllDatabases();
 })
 
 describe("Account", () => {

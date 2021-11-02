@@ -9,7 +9,7 @@ const SESSION_URL = "http://localhost:5001/session/";
 const WEBSITE_URL = "http://localhost:5000/website/";
 
 before("Dropping database", async () => {
-    dropAllDatabases();
+    await dropAllDatabases();
 })
 
 

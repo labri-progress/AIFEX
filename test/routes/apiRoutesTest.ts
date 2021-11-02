@@ -7,7 +7,7 @@ import { dropAllDatabases } from "../services/databasesService"
 const API_URL = "http://localhost/api";
 
 before("Dropping database", async () => {
-    dropAllDatabases();
+    await dropAllDatabases();
 })
 
 describe("API", () => {
