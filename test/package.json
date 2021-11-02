@@ -12,7 +12,7 @@
     "testAPI": "mocha --inspect -r ts-node/register ./routes/apiRoutesTest.ts --timeout 30000",
     "testE2E": "mocha ./e2e/*Test.js --timeout 60000",
     "webSite": "node ./website/index.js",
-    "playwright": "node ./playwright/Runner.ts"
+    "testPlaywright": "mocha --inspect -r ts-node/register ./playwright/Test.ts --timeout 60000"
   },
   "author": "",
   "license": "ISC",

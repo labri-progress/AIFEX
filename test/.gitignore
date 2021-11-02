@@ -8,6 +8,9 @@ node_modules/
 # testing
 /coverage
 
+# playwright
+/playwright/tmp
+
 # production
 build/
 dist/

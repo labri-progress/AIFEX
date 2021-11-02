@@ -1,6 +1,6 @@
 import {Page} from 'playwright';
 
-export default class DashboardHomePage {
+export default class DashboardAccountPage {
     private _page : Page;
     private _url : string = 'http://localhost/'
 
@@ -10,10 +10,10 @@ export default class DashboardHomePage {
     }
 
     async goto() {
-        await this._page.goto(this._url);
+        await this._page.goto(this._url + 'account/account');
     }
 
-    async tryForFree() {
-        await this._page.click('body > div > div > div.text-center > a');
+    async startNewSession() {
+        await this._page.click('body > div > div > a:nth-child(7)');
     }
 }

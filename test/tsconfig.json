@@ -11,5 +11,5 @@
 		"allowJs": true,
 		"strictFunctionTypes": true
 	},
-	"include": ["routes", "e2e"]
+	"include": ["routes", "e2e", "playwright"]
 }

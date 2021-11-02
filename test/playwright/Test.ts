@@ -1,0 +1,98 @@
+import chai from "chai";
+import { chromium } from 'playwright';
+import BrowserExtensionPage from './BrowserExtensionPage';
+import ChromeExtensionsPage from './ChromeExtensionsPage';
+const expect = chai.expect;
+import "mocha";
+import DashboardHomePage from "./DashboardHomePage";
+import DashboardSignUpPage from "./DashboardSignUpPage";
+import DashboardSignInPage from "./DashboardSignInPage";
+import DashboardAccountPage from "./DashboardAccountPage";
+
+
+describe("Playwright", () => {
+
+    let browser;
+
+    before("creating browser", async () => {
+        const path = require("path")
+        let PATH_TO_EXTENSION;
+        let DASHBOARD_HOST;
+
+        if (process.env.NODE_ENV === 'github') {
+            DASHBOARD_HOST = 'dashboard';
+            PATH_TO_EXTENSION = '/browser-extension/dist/chrome';
+        } else {
+            DASHBOARD_HOST = 'localhost';
+            PATH_TO_EXTENSION = path.join(__dirname, '..', '..', 'browser-extension', 'dist', "chrome");
+        }
+
+        console.log(PATH_TO_EXTENSION);
+
+        const args = [
+            `--disable-extensions-except=${PATH_TO_EXTENSION}`,
+            `--load-extension=${PATH_TO_EXTENSION}`,
+            '--disable-web-security',
+            '--allow-running-insecure-content',
+            '--disable-dev-shm-usage',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-gpu'
+        ]
+        const options = {
+            //executablePath: 'google-chrome-unstable', // set by docker container
+            //executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+            headless: false,
+            devtools: false,
+            dumpio: true,
+            ignoreHTTPSErrors: true,
+            args: args
+        };
+        //const browser = await chromium.launch(options);
+        browser = await chromium.launchPersistentContext(path.join(__dirname,"tmp"), options);
+    })
+
+    it("should have one extension, aifex", async () => {
+        const page = await browser.newPage();
+        const cep = new ChromeExtensionsPage(page);
+        await cep.goto();
+        expect(await cep.getNumberOfExtensions()).to.equal(1);
+        expect(await cep.getAIFEXExtensionId()).to.be.not.empty;
+    });
+
+    it("should go to the dashboard and try for free", async () => {
+        const page = await browser.newPage();
+        const dhp = new DashboardHomePage(page);
+        await dhp.goto();
+        await dhp.tryForFree();
+    })
+
+    it("should create a new user", async () => {
+        const page = await browser.newPage();
+        const dsup = new DashboardSignUpPage(page);
+        await dsup.goto();
+        await dsup.signup('playwright', 'playwright', 'playwright');
+    })
+
+    it("should signin", async () => {
+        const page = await browser.newPage();
+        const dsip = new DashboardSignInPage(page);
+        await dsip.goto();
+        await dsip.signin('playwright', 'playwright');
+    })
+
+    it("should create a new sesion", async () => {
+        const page = await browser.newPage();
+        const dap = new DashboardAccountPage(page);
+        await dap.goto();
+        await dap.startNewSession();
+    })
+
+
+
+    after("closing browser", async () => {
+        await browser.close();
+    });
+
+
+});
