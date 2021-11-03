@@ -16,4 +16,8 @@ export default class DashboardAccountPage {
     async startNewSession() {
         await this._page.click('body > div > div > a:nth-child(7)');
     }
+
+    async createNewWebSite() {
+        await this._page.click('body > div > div > a:nth-child(11)');
+    }
 }

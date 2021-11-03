@@ -121,6 +121,7 @@ jobs:
       - name: install test dependencies
         working-directory: ./test
         run: |
+          npm uninstall playwright --save-dev
           npm install
       - name: test WebSite
         working-directory: ./test
