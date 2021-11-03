@@ -8,7 +8,7 @@
         "strict": true,
         "target": "ES2020"
 	},
-	"include": ["routes", "e2e", "playwright"],
+	"include": ["routes", "services"],
     "exclude": [
         "node_modules"
     ]
