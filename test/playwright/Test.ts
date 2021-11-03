@@ -29,6 +29,7 @@ describe("Playwright", () => {
         console.log(PATH_TO_EXTENSION);
 
         const args = [
+            '--disable-web-security',
             `--disable-extensions-except=${PATH_TO_EXTENSION}`,
             `--load-extension=${PATH_TO_EXTENSION}`,
             '--disable-web-security',
