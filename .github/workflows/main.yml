@@ -138,4 +138,4 @@ jobs:
         working-directory: ./test
         run: npm run testAPI
       - name: test Playwright
-        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml start test
+        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml run test
