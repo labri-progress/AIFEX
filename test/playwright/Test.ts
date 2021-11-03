@@ -19,6 +19,7 @@ describe("Playwright", () => {
     let DASHBOARD_URL = 'http://localhost/';
 
 
+
     before("creating browser", async () => {        
         if (process.env.NODE_ENV === 'github') {
             DASHBOARD_URL = 'http://dashboard/';
@@ -46,6 +47,9 @@ describe("Playwright", () => {
             ignoreHTTPSErrors: true,
             args: args
         };
+        // if (process.env.NODE_ENV === 'github') {
+        //     options.executablePath = 'google-chrome-unstable';
+        // }
         //const browser = await chromium.launch(options);
         browser = await chromium.launchPersistentContext(path.join(__dirname,"tmp"), options);
     })
@@ -89,7 +93,9 @@ describe("Playwright", () => {
 
 
     after("closing browser", async () => {
-        await browser.close();
+        if (browser) {
+            await browser.close();
+        }
     });
 
 

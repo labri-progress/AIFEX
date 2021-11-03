@@ -94,6 +94,17 @@ services:
       dockerfile: ./Dockerfile
     command: npm start
     depends_on:
+      - "api"
+      - "account"
+      - "website"
+      - "session"
+      - "model"
+
+  test:
+    build:
+      context: test/
+      dockerfile: ./Dockerfile.github
+    depends_on:
       - "website"
       - "account"
 
