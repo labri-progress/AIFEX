@@ -41,12 +41,12 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 ENV PLAYWRIGHT_EXEC_PATH google-chrome-unstable
 
 # COPY Files
-COPY docker-package.json package.json
+COPY package.json package.json
 COPY playwright/ .
 RUN npm i
 
 # COPY Extension
-COPY ./dist/chrome /browser-extension/dist/chrome
+COPY ./chrome /browser-extension/dist/chrome
 
 # Install puppeteer so it's available in the container.
 RUN npm i playwright \
@@ -56,6 +56,8 @@ RUN npm i playwright \
     && mkdir -p /home/pluser/Downloads \
     && chown -R pluser:pluser /home/pluser \
     && chown -R pluser:pluser /node_modules
+
+RUN npm run compile
 
 
 # Run everything after as non-privileged user.

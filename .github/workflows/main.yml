@@ -107,6 +107,12 @@ jobs:
       - uses: actions/setup-node@v2
         with:
             node-version: '14.x'
+      - name: compile extension and move it to 
+        run: |
+          cd browser-extension
+          npm run development
+          cd .. 
+          cp -r  browser-extension/dist/chrome/ test/chrome
       - name: build docker compose
         run: docker-compose -f docker-compose.yml -f docker-compose.github.yml up --build --no-start
       - name: start all but test
