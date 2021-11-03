@@ -26,7 +26,7 @@ export default class FirefoxBrowserService implements BrowserService {
     }
 
     get aifexPopupDeactivatedPage(): string {
-        return chrome.runtime.getURL("/aifex_page/deactivated.html");
+        return chrome.runtime.getURL("/aifex_page/detached.html");
     }
 
     getExtensionVesion(): string {

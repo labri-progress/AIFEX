@@ -16,14 +16,18 @@
     <script src="./js/configureComponent.js" defer></script>
     <script src="./js/connectToSessionComponent.js" defer></script>
     <script src="./js/makeExplorationsComponent.js" defer></script>
-
-
 </head>
 
 <body>
     <header>
         <h2>AIFEX</h2>
-        <img id="detach-button" src="img/externalWindow.svg" />
+        <div class="btn-group" role="group" aria-label="windowButtons">
+            <span id="detach-button" class="fa fa-arrows-alt fa-lg"></span>
+            <span id="attach-button" class="fa fa-arrows-alt fa-lg"></span>
+
+            <span id="draw-attention-button" class="fa fa-window-maximize fa-lg"></span>
+        </div>
+
         <button id="configure-button" type="button">configure</button>
         <button id="home-button" type="button">home</button>
     </header>

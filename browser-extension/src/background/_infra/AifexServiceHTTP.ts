@@ -86,9 +86,11 @@ export default class AifexServiceHTTP implements AifexService {
 							webSite: { id: string },
 							overlayType: "rainbow" | "bluesky" | "shadow",
 							useTestScenario: boolean,
-							baseURL: string
+							baseURL: string,
+							recordingMode: "byexploration" | "byinteraction"
+
 						}) => {
-							return new Session(session.id, session.webSite.id, session.overlayType, session.baseURL);
+							return new Session(session.id, session.webSite.id, session.overlayType, session.recordingMode, session.baseURL);
 						});
 				}
 				if (response.status === INVALID_PARAMETERS_STATUS) {

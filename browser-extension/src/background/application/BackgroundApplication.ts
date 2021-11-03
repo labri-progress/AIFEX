@@ -90,6 +90,7 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 	}
 
 	drawAttention(): Promise<void> {
+		
 		return this._background.drawAttention();
 	}
 

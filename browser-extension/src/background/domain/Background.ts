@@ -73,7 +73,6 @@ export default class Background {
         this._mediaRecordManager = new MediaRecorderManager(this._browserService);
         this._windowManager = new WindowManager(browserService);
         this._windowManager.attachHandlers();
-        this._windowManager.addOnWindowRemovedListener(this.onManagedWindowRemoved.bind(this));
         this._shouldCreateNewWindowsOnConnect = true;
         this._shouldCloseWindowOnDisconnect = true;
         this._aifexPopup = new AifexPopup(this._browserService);
@@ -210,14 +209,7 @@ export default class Background {
         }
     }
 
-    onManagedWindowRemoved(): void {
-        this._sessionId = undefined;
-        this._modelId = undefined;
-        this._serverURL = undefined;
-        this._sessionBaseURL = undefined;
-        this._webSite = undefined;
-        this._evaluator = undefined;
-    }
+
 
     isConnected(): boolean {
         return this._sessionId !== undefined;
@@ -247,7 +239,8 @@ export default class Background {
             return this._browserService.drawAttentionToWindow(id);
         }
         else {
-            return Promise.resolve();
+            console.log("Reload")
+            return this._windowManager.createConnectedWindow(this._sessionBaseURL)
         }
     }
 
