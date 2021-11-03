@@ -110,6 +110,7 @@ jobs:
       - name: compile extension and move it to 
         run: |
           cd browser-extension
+          npm install
           npm run development
           cd .. 
           cp -r  browser-extension/dist/chrome/ test/chrome
