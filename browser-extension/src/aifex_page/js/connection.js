@@ -1,15 +1,4 @@
 document.getElementById("signinButton").addEventListener("click", handleSignin);
-// document.getElementById("unlinkToServerButton").addEventListener("click", handleServerUnLink);
-// document.getElementById("connectionSignIn").addEventListener("click", handleConnection);
-// document.getElementById("connectionForm").addEventListener("submit", handleConnection);
-// document.getElementById("connectionSignOut").addEventListener("click", handleDisconnection);
-// document.getElementById("connectionSync").addEventListener("click", handleSync);
-// document.getElementById("openSessionWindow").addEventListener("click", handleDrawAttentionToWindow);
-// document.getElementById("toggleShouldTestInNewWindow").addEventListener("change", handleTestOnNewWindow);
-
-
-
-
 
 function handleConnection(e) {
     console.log('connect');

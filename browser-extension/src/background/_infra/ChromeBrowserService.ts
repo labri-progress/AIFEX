@@ -73,10 +73,13 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
     drawAttentionToWindow(windowId: number): Promise<void> {
+        console.log("drawAttentionToWindow")
         return getWindowById(windowId)
             .then(_window => {
+                console.log("window", _window)
                 return updateWindowById(windowId, { drawAttention: true, focused: true });
             })
+
     }
 
     setExtensionIconToDefault(): void {
