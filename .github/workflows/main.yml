@@ -107,7 +107,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
             node-version: '14.x'
-      - name: compile extension and move it to 
+      - name: compile extension and move it to test
         run: |
           cd browser-extension
           npm install
@@ -117,7 +117,7 @@ jobs:
       - name: build docker compose
         run: docker-compose -f docker-compose.yml -f docker-compose.github.yml up --build --no-start
       - name: start all but test
-        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml start mongo rabbitmq website session model dashboard evaluator account api reverseproxy
+        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml start mongo rabbitmq website session model dashboard evaluator account api reverseproxy test
       - name: install test dependencies
         working-directory: ./test
         run: |
