@@ -7,14 +7,14 @@
   "scripts": {
     "clearDB": "node init.js",
     "compile": "tsc",
-    "testWebSite": "mocha --inspect -r ts-node/register ./routes/webSiteRoutesTest.js --timeout 30000",
+    "testWebSite": "mocha --inspect -r ts-node/register ./routes/webSiteRoutesTest.ts --timeout 30000",
     "testModel": "mocha --inspect -r ts-node/register ./routes/modelRoutesTest.ts --timeout 30000",
     "testSession": "mocha --inspect -r ts-node/register ./routes/sessionRoutesTest.ts --timeout 30000",
     "testAccount": "mocha --inspect -r ts-node/register ./routes/accountRoutesTest.ts --timeout 30000",
     "testAPI": "mocha --inspect -r ts-node/register ./routes/apiRoutesTest.ts --timeout 30000",
     "testE2E": "mocha ./e2e/*Test.js --timeout 60000",
     "webSite": "node ./website/index.js",
-    "testPlaywright": "mocha --inspect -r ts-node/register ./playwright/Test.ts --timeout 60000"
+    "testPlaywright": "mocha --inspect -r ts-node/register ./Test.ts --timeout 60000"
   },
   "devDependencies": {
     "@types/chai": "^4.2.22",
