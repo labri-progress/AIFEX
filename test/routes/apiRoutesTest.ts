@@ -1,7 +1,8 @@
 import chai from "chai";
 const expect = chai.expect;
 import "mocha";
-import { dropAllDatabases } from "../services/databasesService"
+import { dropAllDatabases } from "../services/databasesService";
+import fetch from "node-fetch";
 
 const API_URL = "http://localhost/api";
 
@@ -25,7 +26,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.eql("alive");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.eql("alive");
             });
     });
     
@@ -48,7 +50,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.eql("AccountCreated");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.eql("AccountCreated");
             });
     });
 
@@ -70,7 +73,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.eql("UserNameAlreadyTaken");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.eql("UserNameAlreadyTaken");
             });
     });
 
@@ -91,8 +95,9 @@ describe("API", () => {
                 return res.json();
             })
             .then((json) => {
-                expect(json.bearerToken).to.not.be.undefined;
-                token = json.bearerToken;
+                let jsonCasted = json as any;
+                expect(jsonCasted.bearerToken).to.not.be.undefined;
+                token = jsonCasted.bearerToken;
             });
     });
 
@@ -114,7 +119,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.be.eql("Unauthorized");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("Unauthorized");
             });
     });
 
@@ -132,8 +138,9 @@ describe("API", () => {
                 return res.json();
             })
             .then((account) => {
-                expect(account.username).eql("testAPI");
-                expect(account.authorizationSet.length).eql(1);
+                let accountCasted = account as any;
+                expect(accountCasted.username).eql("testAPI");
+                expect(accountCasted.authorizationSet.length).eql(1);
             });
     });
 
@@ -169,8 +176,9 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.webSiteId).to.not.be.undefined;
-                webSiteId = result.webSiteId;
+                let resultCasted = result as any;
+                expect(resultCasted.webSiteId).to.not.be.undefined;
+                webSiteId = resultCasted.webSiteId;
             });
     });
 
@@ -188,9 +196,10 @@ describe("API", () => {
                 return res.json();
             })
             .then((account) => {
-                expect(account.authorizationSet.length).eql(2);
-                expect(account.authorizationSet[1].kind).to.be.eql("WebSite");
-                expect(account.authorizationSet[1].key).to.be.eql(webSiteId);
+                let accountCasted = account as any;
+                expect(accountCasted.authorizationSet.length).eql(2);
+                expect(accountCasted.authorizationSet[1].kind).to.be.eql("WebSite");
+                expect(accountCasted.authorizationSet[1].key).to.be.eql(webSiteId);
             });
     });
 
@@ -224,7 +233,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.be.eql("WebSiteUpdated");                
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("WebSiteUpdated");                
             });
     });
 
@@ -251,8 +261,9 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.sessionId).to.be.not.undefined;
-                sessionId = result.sessionId;
+                let resultCasted = result as any;
+                expect(resultCasted.sessionId).to.be.not.undefined;
+                sessionId = resultCasted.sessionId;
             });
     });
 
@@ -271,9 +282,10 @@ describe("API", () => {
                 return res.json();
             })
             .then((account) => {
-                expect(account.authorizationSet.length).eql(3);
-                expect(account.authorizationSet[2].kind).to.be.eql("Session");
-                expect(account.authorizationSet[2].key).to.be.eql(sessionId);
+                let accountCasted = account as any;
+                expect(accountCasted.authorizationSet.length).eql(3);
+                expect(accountCasted.authorizationSet[2].kind).to.be.eql("Session");
+                expect(accountCasted.authorizationSet[2].key).to.be.eql(sessionId);
             });
     });
     
@@ -297,8 +309,9 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.modelId).to.be.not.undefined;
-                modelId = result.modelId;
+                let resultCasted = result as any;
+                expect(resultCasted.modelId).to.be.not.undefined;
+                modelId = resultCasted.modelId;
             });
     });
 
@@ -317,7 +330,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.be.eql("ModelLinkedToSession");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("ModelLinkedToSession");
             });
     });
 
@@ -344,7 +358,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.explorationNumber).to.be.eql(0);
+                let resultCasted = result as any;
+                expect(resultCasted.explorationNumber).to.be.eql(0);
             });
     });
 
@@ -367,7 +382,8 @@ describe("API", () => {
                 return res.json();
             })
             .then(resJson => {
-                const probaMap = resJson.probabilities;
+                let resJsonCasted = resJson as any;
+                const probaMap = resJsonCasted.probabilities;
                 expect(probaMap).lengthOf(1);
                 expect(probaMap[0]).lengthOf(2);
                 expect(probaMap[0][0]).to.eql("click$value");
@@ -397,7 +413,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.sessionId).to.be.eql(sessionId);
+                let resultCasted = result as any;
+                expect(resultCasted.sessionId).to.be.eql(sessionId);
             });
     });
 
@@ -415,7 +432,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.be.eql("SessionRemoved");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("SessionRemoved");
             });
     });
 
@@ -433,7 +451,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.be.eql("ModelRemoved");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("ModelRemoved");
             });
     });
 
@@ -451,7 +470,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.be.eql("WebSiteRemoved");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("WebSiteRemoved");
             });
     });
 
@@ -476,7 +496,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.be.eql("Evaluator created");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("Evaluator created");
             });
     });
 
@@ -494,9 +515,10 @@ describe("API", () => {
                 return res.json();
             })
             .then((evaluator) => {
-                expect(evaluator.id).to.not.eql(undefined);
-                expect(evaluator.description).to.eql("testing evaluator");
-                expect(evaluator.expression).to.eql("click => click");
+                let evaluatorCasted = evaluator as any;
+                expect(evaluatorCasted.id).to.not.eql(undefined);
+                expect(evaluatorCasted.description).to.eql("testing evaluator");
+                expect(evaluatorCasted.expression).to.eql("click => click");
             });
     });
 
@@ -534,9 +556,10 @@ describe("API", () => {
                 return res.json();
             })
             .then((evaluator) => {
-                expect(evaluator.id).to.not.eql(undefined);
-                expect(evaluator.description).to.eql("testing evaluator updated");
-                expect(evaluator.expression).to.eql("click => click => click");
+                let evaluatorCasted = evaluator as any;
+                expect(evaluatorCasted.id).to.not.eql(undefined);
+                expect(evaluatorCasted.description).to.eql("testing evaluator updated");
+                expect(evaluatorCasted.expression).to.eql("click => click => click");
             });
     });
 
@@ -554,7 +577,8 @@ describe("API", () => {
                 return res.json();
             })
             .then((response) => {
-                expect(response.sessionId).eql(sessionId);
+                let responseCasted = response as any;
+                expect(responseCasted.sessionId).eql(sessionId);
             });
     });
 
@@ -571,7 +595,8 @@ describe("API", () => {
                 expect(res.ok).to.be.false;
                 return res.json()
             }).then((resultData)=> {
-                expect(resultData.message).eql("No Evaluator found for session")
+                let resultDataCasted = resultData as any;
+                expect(resultDataCasted.message).eql("No Evaluator found for session")
             })
            
     });

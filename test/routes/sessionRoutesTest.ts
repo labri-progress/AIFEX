@@ -2,6 +2,7 @@ import chai from "chai";
 const expect = chai.expect;
 import "mocha";
 import { dropAllDatabases } from "../services/databasesService";
+import fetch from 'node-fetch';
 
 const SESSION_URL = "http://localhost:5001/session/";
 const WEBSITE_URL = "http://localhost:5000/website/";
@@ -34,7 +35,7 @@ describe("Infra", () => {
                     return res.json();
                 })
                 .then(id => {
-                    webSiteId = id;
+                    webSiteId = typeof id === 'string' ? id : undefined;
                 })
         });
 
@@ -63,7 +64,7 @@ describe("Infra", () => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(createdSessionId).to.not.be.null;
 
-                sessionId = createdSessionId;
+                sessionId = typeof createdSessionId === 'string' ? createdSessionId : undefined;
             });
         });
         it("should get the created session", () => {
@@ -73,9 +74,10 @@ describe("Infra", () => {
                 return res.json();
             })
             .then((session) => {
-                expect(session.webSite.name).to.equal("test");
-                expect(session.baseURL).to.equal("http://www.test.com/index.html");
-                expect(session.explorationList.length).to.equal(0);
+                let sessionCasted = session as any;
+                expect(sessionCasted.webSite.name).to.equal("test");
+                expect(sessionCasted.baseURL).to.equal("http://www.test.com/index.html");
+                expect(sessionCasted.explorationList.length).to.equal(0);
             });
         });
 
@@ -111,10 +113,11 @@ describe("Infra", () => {
                 return res.json();
             })
             .then((session) => {
-                expect(session.webSite.name).to.equal("test");
-                expect(session.baseURL).to.equal("http://www.test.com/index.html");
-                expect(session.explorationList.length).to.equal(1);
-                expect(session.explorationList[0].interactionList.length).to.equal(3);
+                let sessionCasted = session as any;
+                expect(sessionCasted.webSite.name).to.equal("test");
+                expect(sessionCasted.baseURL).to.equal("http://www.test.com/index.html");
+                expect(sessionCasted.explorationList.length).to.equal(1);
+                expect(sessionCasted.explorationList[0].interactionList.length).to.equal(3);
             });
         });
 

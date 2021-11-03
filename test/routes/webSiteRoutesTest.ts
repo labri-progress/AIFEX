@@ -3,6 +3,7 @@ import chai from "chai";
 const expect = chai.expect;
 import "mocha";
 import { dropAllDatabases } from "../services/databasesService";
+import fetch from 'node-fetch';
 
 const WEBSITE_URL = "http://localhost:5000/website/";
 
@@ -30,7 +31,7 @@ describe("website", () => {
             return res.json();
         })
         .then((webSiteId) => {
-            id = webSiteId;
+            id = typeof webSiteId === 'string' ? webSiteId : undefined;
             expect(webSiteId).to.not.be.undefined;
         });
     });
@@ -39,8 +40,9 @@ describe("website", () => {
         return fetch(url)
             .then((res) => res.json())
             .then(webSite => {
-                expect(webSite.name).to.equal("test");
-                expect(webSite.mappingList.length === 0).to.be.true;
+                let websiteCasted = webSite as any;
+                expect(websiteCasted.name).to.equal("test");
+                expect(websiteCasted.mappingList.length === 0).to.be.true;
         });
     });
 
@@ -74,7 +76,8 @@ describe("website", () => {
             })
             .then( (res) => res.json())
             .then((webSite) => {
-                expect(webSite.mappingList.length).to.equal(1);
+                let websiteCasted = webSite as any;
+                expect(websiteCasted.mappingList.length).to.equal(1);
             });
     });
 });

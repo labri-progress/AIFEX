@@ -2,6 +2,7 @@ import chai from "chai";
 const expect = chai.expect;
 import "mocha";
 import { dropAllDatabases } from "../services/databasesService";
+import fetch from 'node-fetch';
 
 const MODEL_URL = "http://localhost:5002/model/";
 const SESSION_URL = "http://localhost:5001/session/";
@@ -38,7 +39,7 @@ describe("Model", () => {
                 return res.json();
             })
             .then(id => {
-                webSiteId = id;
+                webSiteId = typeof id === 'string' ? id : undefined;
             })
     });
 
@@ -62,7 +63,7 @@ describe("Model", () => {
                 return res.json();
             })
             .then((createdSessionId) => {
-                sessionId = createdSessionId;
+                sessionId = typeof createdSessionId === 'string' ? createdSessionId : undefined;
             });
     });
 
@@ -80,7 +81,7 @@ describe("Model", () => {
         return fetch(url, option)
             .then((res) => res.json())
             .then((createdModelId) => {
-                modelId = createdModelId;
+                modelId = typeof createdModelId === 'string' ? createdModelId : undefined;
             });
     });
 
@@ -138,11 +139,11 @@ describe("Model", () => {
             }
         })
         .then(probaMap => {
-            // tslint:disable-next-line: no-magic-numbers
-            expect(probaMap).lengthOf(1);
-            expect(probaMap[0]).lengthOf(2);
-            expect(probaMap[0][0]).to.eql("click$value");
-            expect(probaMap[0][1]).to.eql(1);
+            let probaMapCasted = probaMap as any;
+            expect(probaMapCasted).lengthOf(1);
+            expect(probaMapCasted[0]).lengthOf(2);
+            expect(probaMapCasted[0][0]).to.eql("click$value");
+            expect(probaMapCasted[0][1]).to.eql(1);
 
         });
     });
@@ -187,7 +188,7 @@ describe("Model", () => {
             return res.json();
         })
         .then( (commentDistributions) => {
-            const commentDistributionList = commentDistributions;
+            const commentDistributionList = commentDistributions as any;
             expect(commentDistributionList.length).eql(1);
             const distributionsForNote = commentDistributionList[0];
             expect(distributionsForNote.note).to.eql("bug$hard");

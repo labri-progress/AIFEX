@@ -2,6 +2,7 @@ import chai from "chai";
 const expect = chai.expect;
 import "mocha";
 import { dropAllDatabases } from "../services/databasesService";
+import fetch from "node-fetch";
 
 const ACCOUNT_URL = "http://localhost:5004/account";
 
@@ -33,7 +34,8 @@ describe("Account", () => {
                 return res.json();
             })
             .then((result) => {
-                expect(result.message).to.eql("AccountCreated");
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.eql("AccountCreated");
             });
     });
 
@@ -54,8 +56,9 @@ describe("Account", () => {
                 return res.json();
             })
             .then((json) => {
-                expect(json.jwt).to.not.be.undefined;
-                token = json.jwt;
+                let jsonCasted = json as any;
+                expect(jsonCasted.jwt).to.not.be.undefined;
+                token = jsonCasted.jwt;
             });
     });
 
@@ -76,7 +79,8 @@ describe("Account", () => {
                 return res.json();
             })
             .then((json) => {
-                expect(json.message).eql("AuthorizationAdded");
+                let jsonCasted = json as any;
+                expect(jsonCasted.message).eql("AuthorizationAdded");
             });
     });
 
@@ -98,7 +102,8 @@ describe("Account", () => {
                 return res.json();
             })
             .then((json) => {
-                expect(json.message).eql("AuthorizationAdded");
+                let jsonCasted = json as any;
+                expect(jsonCasted.message).eql("AuthorizationAdded");
             });
     });
 
@@ -119,7 +124,8 @@ describe("Account", () => {
                 return res.json();
             })
             .then((json) => {
-                expect(json.message).eql('AuthorizationRemoved');
+                let jsonCasted = json as any;
+                expect(jsonCasted.message).eql('AuthorizationRemoved');
             });
     });
 
