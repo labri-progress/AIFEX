@@ -117,7 +117,7 @@ jobs:
       - name: build docker compose
         run: docker-compose -f docker-compose.yml -f docker-compose.github.yml up --build --no-start
       - name: start all but test
-        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml start mongo rabbitmq website session model dashboard account api reverseproxy
+        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml start mongo rabbitmq website session model dashboard evaluator account api reverseproxy
       - name: install test dependencies
         working-directory: ./test
         run: |
