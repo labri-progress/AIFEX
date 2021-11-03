@@ -2,7 +2,6 @@
 import chai from "chai";
 const expect = chai.expect;
 import "mocha";
-import fetch from "node-fetch";
 import { dropAllDatabases } from "../services/databasesService";
 
 const WEBSITE_URL = "http://localhost:5000/website/";
@@ -13,7 +12,7 @@ before("Dropping database", async () => {
 })
 
 describe("website", () => {
-    let id = undefined;
+    let id : string | undefined;
 
     it("should create a new website named Test", () => {
         const url = WEBSITE_URL + "create";

@@ -1,7 +1,6 @@
 import chai from "chai";
 const expect = chai.expect;
 import "mocha";
-import fetch from "node-fetch";
 import { dropAllDatabases } from "../services/databasesService";
 
 const MODEL_URL = "http://localhost:5002/model/";
@@ -16,9 +15,9 @@ before("Dropping database", async () => {
 describe("Model", () => {
 
     // tslint:disable-next-line: prefer-const
-    let webSiteId: string;
-    let sessionId: string;
-    let modelId: string;
+    let webSiteId: string | undefined;
+    let sessionId: string | undefined;
+    let modelId: string | undefined;
 
     
 

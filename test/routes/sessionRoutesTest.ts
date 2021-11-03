@@ -1,7 +1,6 @@
 import chai from "chai";
 const expect = chai.expect;
 import "mocha";
-import fetch from "node-fetch";
 import { dropAllDatabases } from "../services/databasesService";
 
 const SESSION_URL = "http://localhost:5001/session/";
@@ -13,8 +12,8 @@ before("Dropping database", async () => {
 })
 
 describe("Infra", () => {
-    let webSiteId;
-    let sessionId;
+    let webSiteId : string | undefined;
+    let sessionId : string | undefined;
 
     describe("session", () => {
 

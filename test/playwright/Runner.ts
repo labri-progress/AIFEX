@@ -49,10 +49,14 @@ import ChromeExtensionsPage from './ChromeExtensionsPage';
     await page.waitForTimeout(2000);
     console.log('id',extensionId);
 
-    const page2 = await browser.newPage();
-    const be = new BrowserExtensionPage(page2, extensionId);
-    await be.goto();
-    await page.waitForTimeout(10000);
+    if (extensionId) { 
+        const page2 = await browser.newPage();
+        const be = new BrowserExtensionPage(page2, extensionId);
+        await be.goto();
+        await page.waitForTimeout(10000);
+
+    }
+    
 
 
     await browser.close();

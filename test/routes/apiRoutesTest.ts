@@ -1,7 +1,6 @@
 import chai from "chai";
 const expect = chai.expect;
 import "mocha";
-import fetch from "node-fetch";
 import { dropAllDatabases } from "../services/databasesService"
 
 const API_URL = "http://localhost/api";
@@ -13,10 +12,10 @@ before("Dropping database", async () => {
 describe("API", () => {
 
     // tslint:disable-next-line: prefer-const
-    let token;
-    let webSiteId;
-    let sessionId;
-    let modelId;
+    let token : string | undefined;
+    let webSiteId : string | undefined;
+    let sessionId : string | undefined;
+    let modelId : string | undefined;
 
     it("should ping", () => {
         const url = `${API_URL}/ping`;
