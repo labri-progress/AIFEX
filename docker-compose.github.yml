@@ -88,18 +88,6 @@ services:
       - "model"
     restart: always
 
-  initialization:
-    build:
-      context: initialization/
-      dockerfile: ./Dockerfile
-    command: npm start
-    depends_on:
-      - "api"
-      - "account"
-      - "website"
-      - "session"
-      - "model"
-
   test:
     build:
       context: test/

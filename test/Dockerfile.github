@@ -1,5 +1,9 @@
 FROM mcr.microsoft.com/playwright:v1.8.1-focal
 
+
+ENV PLAYWRIGHT_CHROMIUM_DEBUG_PORT=9222
+ENV NODE_ENV=github
+
 # upage
 RUN apt-get update -y
 
@@ -37,7 +41,8 @@ RUN apt-get install -y \
 # same layer as npm install to keep re-chowned files from using up several hundred MBs more space
 RUN groupadd -r pluser && useradd -r -g pluser -G audio,video pluser \
   && mkdir -p /home/pluser \
-  && chown -R pluser:pluser /home/pluser 
+  && chown -R pluser:pluser /home/pluser \
+  && chown -R pluser:pluser /usr/lib
 
 
 
