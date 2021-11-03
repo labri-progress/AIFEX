@@ -1,7 +1,7 @@
 import chai from "chai";
 const expect = chai.expect;
 import "mocha";
-import { dropAllDatabases } from "../services/databasesService";
+import { dropAllDatabases } from "./databasesService";
 import fetch from "node-fetch";
 
 const ACCOUNT_URL = "http://localhost:5004/account";
