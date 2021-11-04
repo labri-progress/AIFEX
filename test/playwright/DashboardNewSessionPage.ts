@@ -13,15 +13,19 @@ export default class DashboardNewSessionPage {
         await this._page.goto(this._url + 'dashboard/session/create');
     }
 
-    async getWebSites() : Promise<string[]>{
+    async getWebSites() : Promise<{name:string, value:string}[]>{
         return await this._page.evaluate(() => {
             let webSiteId = document.getElementById('webSiteId');
             if (webSiteId && webSiteId.children) {
-                let webSites : string[]= [];
+                let webSites : {name:string, value:string}[]= [];
                 for (let i = 0; i < webSiteId.children.length; i++) {
-                    let webSite = webSiteId.children[i].textContent
-                    if ( webSite !== null) {
-                        webSites.push(webSite);
+                    let htmlOptionElement = webSiteId.children[i];
+                    if (htmlOptionElement instanceof HTMLOptionElement) {
+                        let webSiteName = htmlOptionElement.textContent;
+                        let webSiteValue = htmlOptionElement.value;
+                        if ( webSiteName !== null && webSiteValue !== null) {
+                            webSites.push({name:webSiteName, value:webSiteValue});
+                        }
                     }
                 }
                 return webSites;
@@ -36,8 +40,8 @@ export default class DashboardNewSessionPage {
         await this._page.selectOption('#webSiteId',webSite)
         await this._page.type('#description', description);
         await this._page.type('#baseURL', baseURL);
-        await this._page.selectOption('#createSessionWithEmptyAI > div:nth-child(6) > div > select', overlay);
-        await this._page.click('#createSessionWithEmptyAI > button');
+        await this._page.selectOption('#overlayType', overlay);
+        await this._page.click('#submit');
     }
 
     

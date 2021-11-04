@@ -89,15 +89,19 @@ describe("Playwright", () => {
         const page = await browser.newPage();
         const dap = new DashboardAccountPage(page, DASHBOARD_URL);
         await dap.goto();
+        let beforeSessions = await dap.getSessions();
         await dap.startNewSession();
-
+        
         const dnsp = new DashboardNewSessionPage(page, DASHBOARD_URL);
         await dnsp.goto();
         const webSites = await dnsp.getWebSites();
-        console.log(webSites);
         if (webSites.length > 0) {
-            await dnsp.createSession("test", webSites[0],"description", "http://test.fr", "rainbow");
+            await dnsp.createSession("test", webSites[0].value,"description", "http://test.fr", "rainbow");
         }
+
+        await dap.goto();
+        let afterSessions = await dap.getSessions();
+        expect(afterSessions.length).to.equal(beforeSessions.length + 1);
     })
 
 
