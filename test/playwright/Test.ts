@@ -9,6 +9,7 @@ import DashboardSignUpPage from "./DashboardSignUpPage";
 import DashboardSignInPage from "./DashboardSignInPage";
 import DashboardAccountPage from "./DashboardAccountPage";
 import path from "path";
+import DashboardNewSessionPage from "./DashboardNewSessionPage";
 
 
 describe("Playwright", () => {
@@ -89,6 +90,14 @@ describe("Playwright", () => {
         const dap = new DashboardAccountPage(page, DASHBOARD_URL);
         await dap.goto();
         await dap.startNewSession();
+
+        const dnsp = new DashboardNewSessionPage(page, DASHBOARD_URL);
+        await dnsp.goto();
+        const webSites = await dnsp.getWebSites();
+        console.log(webSites);
+        if (webSites.length > 0) {
+            await dnsp.createSession("test", webSites[0],"description", "http://test.fr", "rainbow");
+        }
     })
 
 
