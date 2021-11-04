@@ -78,24 +78,7 @@
                 console.error('stop exploration error', e);
             })
     }
-
-    // function restartExploration() {
-    //     console.log('restart exploration');
-    //     sendMessage({
-    //         kind: 'restartExploration'
-    //     })
-    //     .then(response => {
-    //         if (response.error) {
-    //             console.error('restart exploration error', response.error);
-    //         } else {
-    //             render(response)
-    //         }
-    //     })
-    //     .catch(e => {
-    //         console.error('restart exploration error', e);
-    //     })
-    // }
-
+    
     function trashExploration() {
         console.log('handle trash');
         sendMessage({

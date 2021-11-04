@@ -30,8 +30,6 @@ export default interface Interface4Popup {
 
     stopExploration(): Promise<void>;
 
-    restartExploration(): Promise<void>;
-
     removeExploration(): Promise<void>;
 
     changeTesterName(newName: string): Promise<void>;

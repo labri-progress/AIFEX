@@ -220,20 +220,6 @@ export default class HandlerOfMessageSentByPopup {
                 return true;
             }
 
-            case "restartExploration": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application
-                .restartExploration()
-                .then(() => {
-                    sendResponse(this._application.getStateForPopup());
-                })
-                .catch((error) => {
-                    logger.error("popup asks to restartExploration",error);
-                    sendResponse({error});
-                });
-                return true;
-            }
-
             case "pushComment": {
                 logger.info(`Popup asks for ${msg.kind}`);
                 const { type, value } = msg;

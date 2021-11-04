@@ -72,11 +72,7 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		this._background.changeTesterName(newName);
 		return this._background.updateNumberOfExplorationByTester();
 	}
-
-	restartExploration(): Promise<void> {
-		return this._background.restartExploration();
-	}
-
+	
 	removeExploration(): Promise<void> {
 		return this._background.removeExploration();
 	}
