@@ -39,23 +39,6 @@ function handleStop() {
     })
 }
 
-function handleRestart() {
-    console.log('restart exploration');
-    sendMessage({
-        kind: 'restartExploration'
-    })
-    .then(response => {
-        if (response.error) {
-            console.error('restart exploration error', response.error);
-        } else {
-            render(response)
-        }
-    })
-    .catch(e => {
-        console.error('restart exploration error', e);
-    })
-}
-
 function handleTrash() {
     sendMessage({
         kind: 'removeExploration'

@@ -128,7 +128,6 @@ export default class Background {
                 this._serverURL = serverURL;
                 return "LinkedToServer";
             })
-            
     }
 
     unlinkServer(): void {
@@ -202,6 +201,8 @@ export default class Background {
         this._exploration = undefined;
         this._screenshotList = [];
         this._commentsUp = [];
+        this._popupPageKind = PopupPageKind.ConnectToSession;
+
         if (this._shouldCloseWindowOnDisconnect) {
             return this._windowManager.removeConnectedWindow();
         } else {
@@ -263,7 +264,10 @@ export default class Background {
     }
 
     startExploration() : Promise<void> {
-        if (!this._isRecording) {
+        if (this._isRecording) {
+                return Promise.resolve();
+        } 
+        return this._windowManager.reloadConnectedWindow(this._sessionBaseURL).then(() => {
             this._isRecording = true;
 
             return this.createExploration()
@@ -302,10 +306,8 @@ export default class Background {
                 } else {
                     this._browserService.setExtensionIconToRecording();
                 }
-            })
-        } else {
-            return Promise.resolve();
-        }
+            })            
+        })
     }
 
     removeExploration(): Promise<void> {
@@ -519,15 +521,6 @@ export default class Background {
 
     stopExploration(): Promise<void> {
         return this.stopRecordingExploration()
-    }
-
-    restartExploration(): Promise<void> {
-        return this.stopRecordingExploration()
-            .then(() => {
-                if (!this._isRecording) {
-                    return this._windowManager.reloadConnectedWindow(this._sessionBaseURL).then(() => this.startExploration())
-                }
-            })
     }
 
     sendExploration(): Promise<void> {
