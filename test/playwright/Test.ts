@@ -104,6 +104,17 @@ describe("Playwright", () => {
         expect(afterSessions.length).to.equal(beforeSessions.length + 1);
     })
 
+    it ("should join connect to a session", async () => {
+        const page = await browser.newPage();
+        const cep = new ChromeExtensionsPage(page);
+        await cep.goto();
+        let extensionId = await cep.getAIFEXExtensionId();
+        const dap = new DashboardAccountPage(page, DASHBOARD_URL);
+        await dap.goto();
+        let beforeSessions = await dap.getSessions();
+
+    })
+
 
 
     after("closing browser", async () => {
