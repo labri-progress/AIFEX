@@ -19,11 +19,6 @@
             </div>
           </div>
 
-          <div class="form-check">
-            <input type="checkbox" name="overlayType" class="form-check-input" id="overlayType" value="shadowMode">
-            <label class="form-check-label"  for="overlayType">Hide assistant</label>
-          </div>
-
           <div class="form-group row" >
             <label for="webSiteId" class="col-sm-2 col-form-label">WebSite</label>
             <div class="col-sm-10">
@@ -58,7 +53,7 @@
           <div class="form-group row">
             <label for="overlayType" class="col-sm-2 col-form-label">Overlay</label>
             <div class="col-sm-10">
-              <select class="form-control" aria-label="Default select example" name="overlayType" form="createSessionWithEmptyAI">
+              <select class="form-control" aria-label="Default select example" name="overlayType" id="overlayType" form="createSessionWithEmptyAI">
                 <option selected value="rainbow"> Rainbow </option>
                 <option value="bluesky">Bluesky</option>
                 <option value="shadow">Shadow</option>
@@ -70,7 +65,7 @@
 
           </div>
 
-          <button type="submit" class="btn btn-primary">Create</button>
+          <button type="submit" class="btn btn-primary" id="submit">Create</button>
         </form>
       </div>
     </div>

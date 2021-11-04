@@ -55,9 +55,9 @@
           </tbody>
         </table>
         <% if (webSiteList.length > 0) { %>
-          <a role="button" class="btn btn-primary" href="/dashboard/session/create">Start New Session</a>
+          <a role="button" id="createSessionButton" class="btn btn-primary" href="/dashboard/session/create">Start New Session</a>
         <% } else { %>
-            <button class="btn btn-secondary" href="/dashboard/session/create" disabled>Start New Session</button>
+            <button id="createSessionButton" class="btn btn-secondary" href="/dashboard/session/create" disabled>Start New Session</button>
         <% } %>
         <hr class="my-4"></hr>
 
@@ -83,7 +83,7 @@
             <% }); %>
           </tbody>
         </table>
-        <a role="button" class="btn btn-primary" href="/dashboard/website/create">Create New WebSite</a>
+        <a role="button" id="createWebListButton" class="btn btn-primary" href="/dashboard/website/create">Create New WebSite</a>
         <br/>
         <hr class="my-4"></hr>
       </div>
