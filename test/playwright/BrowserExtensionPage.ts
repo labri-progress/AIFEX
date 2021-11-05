@@ -11,14 +11,44 @@ export default class BrowserExtensionPage {
 
     async goto() {
         await this._page.goto(`chrome-extension://${this._extensionId}/aifex_page/index.html`, {waitUntil:"domcontentloaded"});
+        return this.check();
+    }
+
+    async check() {
+        await this._page.waitForSelector('#container');
+        return this._page.evaluate(() => {
+            if (document.title !== 'AIFEX') {
+                return false;
+            }
+            let container = document.getElementById('container');
+            if (container){
+                if (container.children.length === 0) {
+                    return false;
+                }
+                let numberOfVisibleComponents = 0;
+                for (let index = 0; index < container.children.length; index++) {
+                    const child = container.children[index];
+                    if (child.getAttribute('style') === 'display: flex;') {
+                        numberOfVisibleComponents++;
+                    }
+                }
+                if (numberOfVisibleComponents !== 1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        })
     }
 
     async joinSession() {
         await this._page.click('#goToJoinSession');
     }
 
-    async connectSession(sessionId : string) {
-        await this._page.type('#connexionURLInput', sessionId);
+    async connectSession(url : string) {
+        await this._page.type('#connexionURLInput', url);
         await this._page.click('#connexionButton');
     }
 

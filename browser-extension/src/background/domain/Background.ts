@@ -65,6 +65,7 @@ export default class Background {
     private _recordActionByAction: boolean;
 
     constructor(aifexService: AifexService, popupService: PopupService, browserService: BrowserService, tabScriptService: TabScriptService) {
+        console.log('Creating');
         this._aifexService = aifexService;
         this._browserService = browserService;
         this._tabScriptService = tabScriptService;

@@ -1,5 +1,5 @@
 import chai from "chai";
-import { BrowserContext, chromium } from 'playwright';
+import { Browser, BrowserContext, chromium } from 'playwright';
 import BrowserExtensionPage from './BrowserExtensionPage';
 import ChromeExtensionsPage from './ChromeExtensionsPage';
 const expect = chai.expect;
@@ -14,14 +14,14 @@ import DashboardNewSessionPage from "./DashboardNewSessionPage";
 
 describe("Playwright", () => {
 
-
     let browser : BrowserContext;
     let PATH_TO_EXTENSION = path.join(__dirname, '..', '..', 'browser-extension', 'dist', "chrome");
     let DASHBOARD_URL = 'http://localhost/';
 
 
 
-    before("creating browser", async () => {        
+    before("creating browser", async () => {     
+           
         if (process.env.NODE_ENV === 'github') {
             DASHBOARD_URL = 'http://dashboard/';
             PATH_TO_EXTENSION = '/browser-extension/dist/chrome';
@@ -30,7 +30,6 @@ describe("Playwright", () => {
         console.log(PATH_TO_EXTENSION);
 
         const args = [
-            '--disable-web-security',
             `--disable-extensions-except=${PATH_TO_EXTENSION}`,
             `--load-extension=${PATH_TO_EXTENSION}`,
             '--disable-web-security',
@@ -38,11 +37,13 @@ describe("Playwright", () => {
             '--disable-dev-shm-usage',
             '--no-sandbox',
             '--disable-setuid-sandbox',
-            '--disable-gpu'
+            '--disable-gpu',
+            
         ]
+        //'--allow-http-background-page'
         const options = {
             //executablePath: 'google-chrome-unstable', // set by docker container
-            //executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+            //executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
             headless: false,
             devtools: false,
             dumpio: true,
@@ -52,12 +53,13 @@ describe("Playwright", () => {
         // if (process.env.NODE_ENV === 'github') {
         //     options.executablePath = 'google-chrome-unstable';
         // }
-        //const browser = await chromium.launch(options);
+        //browser = await chromium.launch(options);
         browser = await chromium.launchPersistentContext(path.join(__dirname,"tmp"), options);
     })
 
     it("should have one extension, aifex", async () => {
         const page = await browser.newPage();
+        //await page.waitForTimeout(40000);
         const cep = new ChromeExtensionsPage(page);
         await cep.goto();
         expect(await cep.getNumberOfExtensions()).to.equal(1);
@@ -109,9 +111,20 @@ describe("Playwright", () => {
         const cep = new ChromeExtensionsPage(page);
         await cep.goto();
         let extensionId = await cep.getAIFEXExtensionId();
-        const dap = new DashboardAccountPage(page, DASHBOARD_URL);
-        await dap.goto();
-        let beforeSessions = await dap.getSessions();
+        if (extensionId) {
+            const dap = new DashboardAccountPage(page, DASHBOARD_URL);
+            await dap.goto();
+            let sessions = await dap.getSessions();
+            if (sessions.length > 0) {
+                let url = sessions[0].url;
+                const bep = new BrowserExtensionPage(page, extensionId);
+                let isBEP = await bep.goto();
+                console.log('isBEP',isBEP);
+                await bep.joinSession();
+                await bep.connectSession(url);
+            }
+            //await page.waitForTimeout(400000);
+        }
 
     })
 

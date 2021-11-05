@@ -192,6 +192,8 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
     attachWindowCreatedHandler(handler: (windowId: number | undefined) => void): void {
+        console.log('chrome.windows', chrome.windows);
+        console.log('chrome.windows.onCreated', chrome.windows.onCreated);
         chrome.windows.onCreated.addListener((window) => {
             handler(window.id);
         })
@@ -202,6 +204,8 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
     attachTabCreatedHandler(handler: (tabId: number, windowId: number) => void): void {
+        console.log('chrome.tabs', chrome.tabs);
+        console.log('chrome.tabs.onCreated', chrome.tabs.onCreated);
         chrome.tabs.onCreated.addListener((tab) => {
             if (tab.id) {
                 handler(tab.id, tab.windowId);
