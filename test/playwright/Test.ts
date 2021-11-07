@@ -10,6 +10,7 @@ import DashboardSignInPage from "./DashboardSignInPage";
 import DashboardAccountPage from "./DashboardAccountPage";
 import path from "path";
 import DashboardNewSessionPage from "./DashboardNewSessionPage";
+import DashboardSessionPage from "./DashboardSessionPage";
 import fs from "fs";
 
 
@@ -98,7 +99,7 @@ describe("Playwright", () => {
         await dsip.signin('playwright', 'playwright');
     })
 
-    it("should create a new sesion", async () => {
+    it("should create a new private sesion", async () => {
         const page = await browser.newPage();
         const dap = new DashboardAccountPage(page, DASHBOARD_URL);
         await dap.goto();
@@ -117,6 +118,22 @@ describe("Playwright", () => {
         expect(afterSessions.length).to.equal(beforeSessions.length + 1);
     })
 
+    it("should make the last created session public", async () => {
+        const page = await browser.newPage();
+        const dap = new DashboardAccountPage(page, DASHBOARD_URL);
+        await dap.goto();
+        let sessions = await dap.getSessions();
+        if (sessions.length > 0) {
+            let tokens = sessions[0].url.split(/=|&/);
+            if (tokens.length === 4) {
+                let key = tokens[1] + '$' + tokens[3];
+                const dsp = new DashboardSessionPage(page, DASHBOARD_URL, key);
+                let goto = await dsp.goto();
+                await dsp.makeSessionPublic();
+            }
+        }
+    })
+
     it ("should join connect to a session", async () => {
         const page = await browser.newPage();
         const cep = new ChromeExtensionsPage(page);
@@ -130,9 +147,11 @@ describe("Playwright", () => {
                 let url = sessions[0].url;
                 const bep = new BrowserExtensionPage(page, extensionId);
                 let isBEP = await bep.goto();
-                console.log('isBEP',isBEP);
-                await bep.joinSession();
-                await bep.connectSession(url);
+                if (isBEP) {
+                    await bep.joinSession();
+                    await bep.connectSession(url);
+                    await page.waitForTimeout(10000);
+                }
             }
         }
 
