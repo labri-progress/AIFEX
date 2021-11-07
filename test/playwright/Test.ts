@@ -144,6 +144,9 @@ describe("Playwright", () => {
         if (browser) {
             await browser.close();
         }
+        if (fs.existsSync(path.join(__dirname, 'tmp'))) {
+            fs.rmdirSync(path.join(__dirname, 'tmp'), { recursive: true });
+        }
     });
 
 
