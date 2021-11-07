@@ -10,11 +10,13 @@ import DashboardSignInPage from "./DashboardSignInPage";
 import DashboardAccountPage from "./DashboardAccountPage";
 import path from "path";
 import DashboardNewSessionPage from "./DashboardNewSessionPage";
+import fs from "fs";
 
 
 describe("Playwright", () => {
 
     let browser : BrowserContext;
+    //let browser : BrowserContext;
     let PATH_TO_EXTENSION = path.join(__dirname, '..', '..', 'browser-extension', 'dist', "chrome");
     let DASHBOARD_URL = 'http://localhost/';
 
@@ -48,18 +50,27 @@ describe("Playwright", () => {
             devtools: false,
             dumpio: true,
             ignoreHTTPSErrors: true,
+            ignoreDefaultArgs: ['--disable-component-extensions-with-background-pages'],
             args: args
         };
         // if (process.env.NODE_ENV === 'github') {
         //     options.executablePath = 'google-chrome-unstable';
         // }
-        //browser = await chromium.launch(options);
+
+        if (fs.existsSync(path.join(__dirname, 'tmp'))) {
+            fs.rmdirSync(path.join(__dirname, 'tmp'), { recursive: true });
+        }
+
+        //let chromi = await chromium.launch(options);
+        //browser = await chromi.newContext();
         browser = await chromium.launchPersistentContext(path.join(__dirname,"tmp"), options);
+
+        
+        
     })
 
     it("should have one extension, aifex", async () => {
         const page = await browser.newPage();
-        //await page.waitForTimeout(40000);
         const cep = new ChromeExtensionsPage(page);
         await cep.goto();
         expect(await cep.getNumberOfExtensions()).to.equal(1);
@@ -123,7 +134,6 @@ describe("Playwright", () => {
                 await bep.joinSession();
                 await bep.connectSession(url);
             }
-            //await page.waitForTimeout(400000);
         }
 
     })
