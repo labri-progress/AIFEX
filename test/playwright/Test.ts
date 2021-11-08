@@ -110,7 +110,7 @@ describe("Playwright", () => {
         await dnsp.goto();
         const webSites = await dnsp.getWebSites();
         if (webSites.length > 0) {
-            await dnsp.createSession("test", webSites[0].value,"description", "http://test.fr", "rainbow");
+            await dnsp.createSession("test", webSites[webSites.length-1].value,"description", "https://www.aifex.fr/", "rainbow");
         }
 
         await dap.goto();
@@ -124,7 +124,7 @@ describe("Playwright", () => {
         await dap.goto();
         let sessions = await dap.getSessions();
         if (sessions.length > 0) {
-            let tokens = sessions[0].url.split(/=|&/);
+            let tokens = sessions[sessions.length-1].url.split(/=|&/);
             if (tokens.length === 4) {
                 let key = tokens[1] + '$' + tokens[3];
                 const dsp = new DashboardSessionPage(page, DASHBOARD_URL, key);
@@ -144,13 +144,28 @@ describe("Playwright", () => {
             await dap.goto();
             let sessions = await dap.getSessions();
             if (sessions.length > 0) {
-                let url = sessions[0].url;
-                const bep = new BrowserExtensionPage(page, extensionId);
+                let url = sessions[sessions.length-1].url;
+                let bep = new BrowserExtensionPage(page, extensionId);
                 let isBEP = await bep.goto();
                 if (isBEP) {
                     await bep.joinSession();
                     await bep.connectSession(url);
-                    await page.waitForTimeout(10000);
+                    await bep.startExploration();
+                    await page.waitForTimeout(5000);
+
+                    const pages = await browser.pages();
+                    console.log('length:',pages.length)
+                    if (pages.length === 1) {
+                        
+                        await pages[0].click("body > div > div > div:nth-child(7) > div:nth-child(1) > a");
+                        await pages[0].waitForTimeout(5000);
+                        bep = new BrowserExtensionPage(pages[0], extensionId);
+                        await bep.goto();
+                        await bep.stopExploration();
+                        await page.waitForTimeout(30000);
+
+                    }
+                    
                 }
             }
         }

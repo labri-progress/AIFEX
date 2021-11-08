@@ -74,7 +74,7 @@ export default class Background {
         this._mediaRecordManager = new MediaRecorderManager(this._browserService);
         this._windowManager = new WindowManager(browserService);
         this._windowManager.attachHandlers();
-        this._shouldCreateNewWindowsOnConnect = true;
+        this._shouldCreateNewWindowsOnConnect = false;
         this._shouldCloseWindowOnDisconnect = true;
         this._aifexPopup = new AifexPopup(this._browserService);
         this._aifexPopup.attachBrowserHandlers();
