@@ -7,14 +7,11 @@
     let configureButton = document.getElementById("configure-button");
     let homeButton = document.getElementById("home-button");
     let closeButton = document.getElementById("disconnect-button");
-    
+
     function render() {
         component.style.display = 'flex';
         configureButton.style.display = 'none';
         homeButton.style.display = 'none';
-        if (!state.url) {
-            closeButton.style.display = 'none';
-        }
         if (!state.hasBaseURL) {
             drawAttentionButton.style.display = "none";
         }
@@ -43,22 +40,6 @@
             });
     })
 
-    drawAttentionButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        sendMessage({
-            kind: "drawAttention",
-        })
-            .then(response => {
-                if (!response) {
-                    console.error(`Background does not answer`);
-                }
-                else if (response.error) {
-                    console.error(response.error);
-                } else {
-                    window.close();
-                }
-            });
-    })
 
     attachButton.addEventListener("click", (e) => {
         e.preventDefault();

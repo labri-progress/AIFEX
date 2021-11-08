@@ -202,7 +202,7 @@ export default class Background {
         this._exploration = undefined;
         this._screenshotList = [];
         this._commentsUp = [];
-        this._popupPageKind = PopupPageKind.ConnectToSession;
+        this._popupPageKind = PopupPageKind.Home;
 
         if (this._shouldCloseWindowOnDisconnect) {
             return this._windowManager.removeConnectedWindow();
