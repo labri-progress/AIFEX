@@ -17,14 +17,6 @@
     function render() {
         if (state.pageKind === 'Explore') {
             component.style.display = 'flex';
-            if (!state.popupIsDetached) {
-                getCurrentWindow()
-                    .then( currentWindow => {
-                        if (currentWindow.id !== state.managedWindowId) {
-                            component.innerHTML = 'AIFEX runs in another window';
-                        }
-                    });
-            }
         } else {
             component.style.display = 'none';
         }

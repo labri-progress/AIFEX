@@ -21,11 +21,11 @@ export default class FirefoxBrowserService implements BrowserService {
     }
 
 
-    get aifexPopupActivatedUrl(): string {
+    get aifexPopupAttachedUrl(): string {
         return browser.runtime.getURL("/aifex_page/index.html");
     }
 
-    get aifexPopupDeactivatedPage(): string {
+    get aifexPopupDetachedPage(): string {
         return chrome.runtime.getURL("/aifex_page/detached.html");
     }
 
@@ -186,11 +186,11 @@ export default class FirefoxBrowserService implements BrowserService {
     }
 
     setPopupToDetached(): void {
-        browser.browserAction.setPopup({popup: this.aifexPopupDeactivatedPage})
+        browser.browserAction.setPopup({popup: this.aifexPopupDetachedPage})
     }
 
     setPopupToAttached(): void {
-        browser.browserAction.setPopup({popup: this.aifexPopupActivatedUrl})
+        browser.browserAction.setPopup({popup: this.aifexPopupAttachedUrl})
     }
 
     attachBrowserActionClicked( handler : (windowId:number) => void): void {

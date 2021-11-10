@@ -19,7 +19,7 @@ export default class AifexPopup {
     }
 
     get aifexPageUrl(): string {
-        return this._browserService.aifexPopupActivatedUrl;
+        return this._browserService.aifexPopupAttachedUrl;
     }
 
     public toggleDetached(): Promise<void> {
@@ -34,7 +34,7 @@ export default class AifexPopup {
         this._browserService.setPopupToAttached();
     }
 
-    public displayPopupDeactivated(): void {
+    public displayPopupDetached(): void {
         this._browserService.setPopupToDetached();
     }
 
@@ -75,7 +75,7 @@ export default class AifexPopup {
                     this._aifexTab = new Tab(tabIdList[0]);
                 }
             })
-            .then(() => this.displayPopupDeactivated())
+            .then(() => this.displayPopupDetached())
         } else {
             createWindowPromise = Promise.resolve();
         }

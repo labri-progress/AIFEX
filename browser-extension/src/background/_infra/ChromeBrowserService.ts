@@ -19,12 +19,12 @@ export default class ChromeBrowserService implements BrowserService {
         this.recordedChunks = [];
     }
 
-    get aifexPopupActivatedUrl(): string {
+    get aifexPopupAttachedUrl(): string {
         return chrome.runtime.getURL("/aifex_page/index.html");
     }
 
-    get aifexPopupDeactivatedUrl(): string {
-        return chrome.runtime.getURL("/aifex_page/deactivated.html");
+    get aifexPopupDetachedUrl(): string {
+        return chrome.runtime.getURL("/aifex_page/detached.html");
     }
 
     getExtensionVesion(): string {
@@ -176,11 +176,11 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
     setPopupToDetached(): void {
-        chrome.browserAction.setPopup({ popup: this.aifexPopupDeactivatedUrl });
+        chrome.browserAction.setPopup({ popup: this.aifexPopupDetachedUrl });
     }
 
     setPopupToAttached(): void {
-        chrome.browserAction.setPopup({ popup: this.aifexPopupActivatedUrl });
+        chrome.browserAction.setPopup({ popup: this.aifexPopupAttachedUrl });
     }
 
     attachBrowserActionClicked(handler: (windowId: number) => void): void {

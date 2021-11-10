@@ -10,7 +10,23 @@ function getStateAndRender() {
         .then(newState => {
             if (newState !== undefined) {
                 state = newState;
-                renderFunctionOfComponents.forEach(renderFunction => renderFunction());
+                if (!state.popupIsDetached && state.managedWindowId) {
+                    getCurrentWindow()
+                        .then( currentWindow => {
+                            if (currentWindow.id !== state.managedWindowId) {
+                                let container = document.getElementById("container");
+                                container.innerHTML = "<div>AIFEX runs in another window</div>";
+                                let headerButtons = document.getElementById("header-buttons");
+                                headerButtons.innerHTML = "";
+                            } else {
+                                renderFunctionOfComponents.forEach(renderFunction => renderFunction());
+                            }
+                        });
+                } else {
+                    renderFunctionOfComponents.forEach(renderFunction => renderFunction());
+                }
+                
+                
             }
         });
 }

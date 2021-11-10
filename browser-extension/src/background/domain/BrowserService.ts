@@ -1,5 +1,5 @@
 export default interface BrowserService {
-    aifexPopupActivatedUrl: string;
+    aifexPopupAttachedUrl: string;
 
     getExtensionVesion():string;
 
