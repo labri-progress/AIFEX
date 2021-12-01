@@ -95,53 +95,7 @@ export default class FirefoxBrowserService implements BrowserService {
                 return updateWindowById(windowId, {drawAttention: true,focused: true});
             })
     }
-
-    setExtensionIconToDefault(): void {
-        if (this.lastInterval) {
-            clearInterval(this.lastInterval);
-        }
-        try {
-            browser.browserAction.setIcon({ path: "/images/aifex_icon.png" });
-        } catch (_) { }
-    }
-
-    setExtensionIconToRecording(): void {
-        if (this.lastInterval) {
-            clearInterval(this.lastInterval);
-        }
-        let flipFlop = false;
-        this.lastInterval = setInterval(() => {
-            try {
-                if (flipFlop) {
-                    browser.browserAction.setIcon({ path: "/images/aifex_icon.png" });
-                    flipFlop = false;
-                } else {
-                    browser.browserAction.setIcon({ path: "/images/aifex_icon_rec.png" });
-                    flipFlop = true;
-                }
-            } catch (_) { }
-        }, 1000)
-    }
     
-    setExtensionIconToReceivedNotification(): void {
-        if (this.lastInterval) {
-            clearInterval(this.lastInterval);
-        }
-        let flipFlop = false;
-        this.lastInterval = setInterval(() => {
-            try {
-                if (flipFlop) {
-                    browser.browserAction.setIcon({ path: "/images/aifex_icon_notif.png" });
-                    flipFlop = false;
-                } else {
-                    browser.browserAction.setIcon({ path: "/images/aifex_icon_rec_notif.png" });
-                    flipFlop = true;
-                }
-            } catch (_) { }
-        }, 1000)
-    }
-
-
     closeWindow(windowId: number):Promise<void> {
         return removeWindowById(windowId);
     }

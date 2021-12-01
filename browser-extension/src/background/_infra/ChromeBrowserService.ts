@@ -82,51 +82,6 @@ export default class ChromeBrowserService implements BrowserService {
 
     }
 
-    setExtensionIconToDefault(windowId: number): void {
-        if (this.lastInterval) {
-            clearInterval(this.lastInterval);
-        }
-        try {
-            chrome.browserAction.setIcon({ path: "/images/aifex_icon.png", windowId });
-        } catch (_) { }
-    }
-
-    setExtensionIconToRecording(): void {
-        if (this.lastInterval) {
-            clearInterval(this.lastInterval);
-        }
-        let flipFlop = false;
-        this.lastInterval = setInterval(() => {
-            try {
-                if (flipFlop) {
-                    chrome.browserAction.setIcon({ path: "/images/aifex_icon.png" });
-                    flipFlop = false;
-                } else {
-                    chrome.browserAction.setIcon({ path: "/images/aifex_icon_rec.png" });
-                    flipFlop = true;
-                }
-            } catch (e) {console.log(e) }
-        }, 1000)
-    }
-
-    setExtensionIconToReceivedNotification(): void {
-        if (this.lastInterval) {
-            clearInterval(this.lastInterval);
-        }
-        let flipFlop = false;
-        this.lastInterval = setInterval(() => {
-            try {
-                if (flipFlop) {
-                    chrome.browserAction.setIcon({ path: "/images/aifex_icon_notif.png" });
-                    flipFlop = false;
-                } else {
-                    chrome.browserAction.setIcon({ path: "/images/aifex_icon_rec_notif.png" });
-                    flipFlop = true;
-                }
-            } catch (e) { console.log(e) }
-        }, 1000)
-    }
-
 
     focusTab(tabId: number): Promise<void> {
         return focusTab(tabId);
