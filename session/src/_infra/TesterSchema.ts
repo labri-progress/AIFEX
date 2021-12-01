@@ -1,4 +1,4 @@
-import {model, Schema} from "mongoose";
+import {model, Schema, Document} from "mongoose";
 
 const TESTER_SCHEMA: Schema = new Schema({
     name: {type: String, required: true},
@@ -7,4 +7,10 @@ const TESTER_SCHEMA: Schema = new Schema({
     timestamps: true,
 });
 
-module.exports = model("Tester", TESTER_SCHEMA);
+export interface TesterDocument extends Document {
+    _id: string;
+    name: string;
+}
+
+export default model<TesterDocument>("Tester", TESTER_SCHEMA);
+

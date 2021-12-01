@@ -20,6 +20,7 @@ const EXPLORATION_SCHEMA: Schema = new Schema({
     timestamps: true,
 });
 export interface ExplorationDocument extends Document {
+    _id: string;
     sessionId : string,
     explorationNumber : number,
     testerName : string,

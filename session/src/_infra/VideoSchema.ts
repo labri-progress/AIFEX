@@ -9,6 +9,7 @@ const VIDEO_SCHEMA: Schema = new Schema({
 });
 
 export interface VideoDocument extends Document {
+    _id: string;
     sessionId: string;
     explorationNumber: number;
     createdAt?: Date;

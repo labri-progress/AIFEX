@@ -12,6 +12,7 @@ const SCREENSHOT_SCHEMA: Schema = new Schema({
 });
 
 export interface ScreenShotDocument extends Document {
+    _id: string;
     sessionId: string;
     explorationNumber: number;
     interactionIndex: number;
