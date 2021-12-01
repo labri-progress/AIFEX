@@ -82,12 +82,12 @@ export default class ChromeBrowserService implements BrowserService {
 
     }
 
-    setExtensionIconToDefault(): void {
+    setExtensionIconToDefault(windowId: number): void {
         if (this.lastInterval) {
             clearInterval(this.lastInterval);
         }
         try {
-            chrome.browserAction.setIcon({ path: "/images/aifex_icon.png" });
+            chrome.browserAction.setIcon({ path: "/images/aifex_icon.png", windowId });
         } catch (_) { }
     }
 
