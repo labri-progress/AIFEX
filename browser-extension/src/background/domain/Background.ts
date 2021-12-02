@@ -300,14 +300,7 @@ export default class Background {
                         this._mediaRecordManager.destroyRecording();
                         console.error(e)
                     })
-            })
-            .then(() => {
-                if (this._commentDistributions && this._commentDistributions.length > 0) {
-                    this._browserService.setExtensionIconToReceivedNotification();
-                } else {
-                    this._browserService.setExtensionIconToRecording();
-                }
-            })            
+            })        
         })
     }
 
@@ -431,11 +424,6 @@ export default class Background {
             }
             return Promise.all(promises)
                 .then(() => {
-                    if (this._commentDistributions && this._commentDistributions.length > 0) {
-                        this._browserService.setExtensionIconToReceivedNotification();
-                    } else {
-                        this._browserService.setExtensionIconToRecording();
-                    }
                     this.refreshPopup();
                 })
 
