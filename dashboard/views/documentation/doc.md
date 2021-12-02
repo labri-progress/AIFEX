@@ -18,21 +18,8 @@ The following figure shows an exploratory session with three testers. Each teste
 Quick Start
 ===========
 
-Install the Chrome extension
-----------------------------
 
-<video controls width="700">
-    <source src="/static/video/aifex-chrome-plugin.mp4" type="video/mp4">
-</video>
-
-To install the Chrome extension on your Chrome browser follow these steps:
-
-1. Download the [Chrome Extenstion](/static/dist.zip)
-2. Unpack it where you want in your computer (you should have a **dist** directory) 
-3. On a chrome browser, open the extension management chrome://extensions/. The extension management page can also be opened by clicking on the Chrome menu, hovering over Other Tools and then selecting Extensions.
-4. Activate the Developer mode by clicking on the toggle switch next to the Developer mode.
-5. Click on the **LOAD UNPACKED** button and select the **dist** directory. 
-6. Load extension
+Install the browser extension from the [download page](/download)
 
 
 Join the Demo session
@@ -46,15 +33,10 @@ A demo session is available. You can join it and perform some explorations:
 
 1. Go to [Demo session main page](/demo)
 2. Copy the **session key** 
-3. Open a new chrome window (**with only one tab**)
+3. Open a new browser window
 4. Open the AIFEX extension and connect it
-5. Set your name and restart a new exploration
 6. Interact with the marked elements 
 7. Stop your exploration so that it can be stored by the server
-
-
-
-
 
 New Session
 ===========

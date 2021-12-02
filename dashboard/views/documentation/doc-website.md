@@ -4,9 +4,7 @@ Create or Update a Website
 
 A WebSite is defined by three mandatory fields:
 * A **name** that is just a given name for the WebSite.
-* An **url** that defines the base URL of the sessions for this WebSite
 * A **mappingList** that contains a list of **mapping rules** (in JSON) that will be executed by the AIFEX chrome extension while any testers will perform some explorations.
-
 
 
 Write your own mapping rules
@@ -19,24 +17,21 @@ An executed rules then build one abstract action that will be stored by AIFEX an
 A mapping rule has three parts:
 * the  `match` part that specifies the kind of JavaScript events that can execute the rule (eg click, change, etc.) and the CSS selector of their target DOM element, 
 * the `output` part that explains how is built the AIFEX abstract action.
-* the `context` part (optionnal) that defines in which context the rule stands.
+
 
 ```json{.line-numbers}
 {
         "match": { 
             "event":"click",
-            "css":"input.btGreen.btS.jsValidForm"
+            "css":"input.btGreen"
         },
         "output": {
             "prefix":"AddToBasket"
-        },
-        "context": {
-            "xpath":"//div[@id='paContent' or @id='pa-scene']"
         }
 }
 ```     
 
-In this example, if a **click** event is performed on a taget DOM element whose CSS selector is **input.btGreen.btS.jsValidForm** in the context of **paContent** or **pa-scene** then the rule is executed.
+In this example, if a **click** event is performed on a taget DOM element whose CSS selector is **input.btGreen**.
 This rule will build an AIFEX abstract action composed by the **AddToBasket** prefix and that has no suffix.
 
 ### Match definition
@@ -46,7 +41,8 @@ The `match` part is used to specify how JavaScript events are captured:
 * event (required). We handle the following kinds: "change", "click", "input", "scroll", "submit", "keypress", "keyup", "keydown", "reset", "drag", "drop", "mousedown", "mouseup"
 * css or xpath (required). A CSS or XPath selector used to identify the target of the event.
 * code (optional): If the event is "keypress", "keyup" or "keydown", this field specifies the code of the key. This is the physical key that was pressed, and not the character. For example, the key Enter from the numpad has a different code than the standard Enter key.
-* key (optional): If the event is "keypress", "keyup" or "keydown",This field is related to the character that was typed. For example, if the key attribute is set to Enter, both numpad Enter and standard Enter will me matched by the rule.  
+* key (optional): If the event is "keypress", "keyup" or "keydown",This field is related to the character that was typed. For example, if the key attribute is set to Enter, both numpad Enter and standard Enter will me matched by the rule. 
+* attributeName (optional): The target must have the specified attribute defined in order to be selected. 
 
 ### Output definition
 
@@ -58,11 +54,17 @@ The `output` part defines how events are translated into AIFEX abstract actions.
     *   **index** The suffix will correspond to the index of the target element if the `match.selector` returns a list of elements.
     *   **innerText** The suffix will contain the innerText of the target element.
     *   **cssSelector** The suffix will contain the CSS Selector of the target element (automatically generated)
+    *   **attributeValue** The suffix will contain the value of the specified attribute for the target element. This suffix requires that the **attributeName** is defined in the match part
 
-### Context
+### Context (optional)
 
 The `context` part defines the context where the rule can be executed. A context can be defined by a CSS or XPath selector or an URL
 * css or xpath or url. A CSS or XPath selector or an URL used to identify the context.
+
+*   **context**: 
+    *   **url** The rule only applies if the current page url starts with the specified value.
+    *   **css** The rule only applies on the elements that are children of the elements captured by the specified css selector.
+    *   **xpath** The rule only applies on the elements that are children of the elements captured by the specified xpath selector.
 
 ### Example 1
 
@@ -74,11 +76,14 @@ The `context` part defines the context where the rule can be executed. A context
     },
     "output": {
         "prefix":"BasketButtonClicked"
+    },
+    "context": {
+        "url":"https://www.cdiscount.com/"
     }
 }
 ```      
 
-This rule is executed if a click is performed on the element with id = hBskt
+This rule is executed if a click is performed on the cdiscount homepage, on the element with id = hBskt
 The AIFEX action will be BasketButtonClicked.
 
 ### Example 2
