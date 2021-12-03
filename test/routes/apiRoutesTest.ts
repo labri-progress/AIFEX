@@ -418,6 +418,25 @@ describe("API", () => {
             });
     });
 
+    it("should get the session", () => {
+        const url = `${API_URL}/sessions/${sessionId}`;
+        return fetch(url, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((session) => {                
+                expect(session.name).to.be.eql("MySession");
+            })
+    });
+
+
     it("should remove the session", () => {
         const url = `${API_URL}/sessions/${sessionId}`;
         return fetch(url, {
@@ -434,8 +453,27 @@ describe("API", () => {
             .then((result) => {
                 let resultCasted = result as any;
                 expect(resultCasted.message).to.be.eql("SessionRemoved");
-            });
+            })
     });
+
+    it("should fail get the removed session", () => {
+        const url = `${API_URL}/sessions/${sessionId}`;
+        return fetch(url, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((session) => {                
+                expect(session).to.not.have.property("name");
+            })
+    });
+
 
     it("should remove the model", () => {
         const url = `${API_URL}/models/${modelId}`;

@@ -24,4 +24,5 @@ describe("Account constructor", () => {
         account.removeAuthorization(new Authorization(Kind.Model, "key"));
         expect(account.authorizationSet.length).to.be.equal(0);
     })
+    
 });

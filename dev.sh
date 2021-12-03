@@ -11,10 +11,10 @@ export TOKEN_SECRET="changeme"
 
 npm run development
 cd dist/firefox
-zip -r ../../firefoxExtension .
+zip -qr ../../firefoxExtension .
 cd ..
 rm -fr firefox
-zip -r ../chromeExtension ./chrome
+zip -qr ../chromeExtension ./chrome
 cd ..
 mv -f chromeExtension.zip ../dashboard/public
 mv -f firefoxExtension.zip ../dashboard/public

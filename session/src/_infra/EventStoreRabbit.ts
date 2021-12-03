@@ -14,6 +14,12 @@ export default class EventStoreRabbit implements EventStore {
     private channel : amqp.Channel | undefined;
 
     constructor() {
+        this.connect()
+    }
+
+    connect() {
+        logger.debug(`Starting Rabbit MQ connection : amqp://${config.rabbitmq}`);
+
         amqp.connect(`amqp://${config.rabbitmq}`)
             .then((conn) => {
                 this.connection = conn;
@@ -22,6 +28,10 @@ export default class EventStoreRabbit implements EventStore {
             .then((channel) => {
                 this.channel = channel;
                 return channel.assertQueue(QUEUE_NAME, { durable: false });
+            })
+            .catch(error => {
+                logger.error(error);
+                setTimeout(this.connect.bind(this), 5000)
             })
     }
 
