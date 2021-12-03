@@ -66,6 +66,14 @@ module.exports = function attachRoutes(app, config) {
             .then(() => {
                 connectionCode = `${sessionId}$${modelId}`;
                 logger.debug('session and model are created, a the link between them has been setted');
+                return makeConnexionCodePublic(req.session.jwt, sessionId, modelId, webSiteId)
+                .catch(e => {
+                    logger.error(e.message);
+                    let message = 'Failed to make Session public';
+                    res.json({message: message});
+                });
+            })
+            .then(() => {
                 res.redirect(`/dashboard/session/view/${connectionCode}`);
             })
             .catch(e => {

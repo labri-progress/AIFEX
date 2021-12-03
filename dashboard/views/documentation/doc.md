@@ -11,34 +11,28 @@ AIFEX consists of two main elements:
 * A central server that stores all interactions performed by testers, integrates them into an AI and returns predictions calculated by the AI indicating future interactions that should be performed by testers.
 * A chrome plugin that listens to all interactions performed by testers, transmits them to the server, requests predictions for future interactions and visually highlights the expected interaction.
 
-The following figure shows an exploratory session with three testers. Each tester uses a (chrome) browser to perform certain tests. The server receives all interactions performed by the testers and forms an AI. The server then gives predictions to the testers, advising them to perform new or poorly explored interactions.
+The following figure shows an exploratory session with three testers. Each tester participate to the same Exploratory Testing session. They use the AIFEX browser extension to send their tests, called explorations, to the AIFEX server. The server receives all interactions performed by the testers and train an AI. The server then gives predictions to the testers, advising them to perform new or poorly explored interactions.
 
-![Image](/static/images/connexion.png){.mx-auto .d-block width=50%} 
+![Image](/static/images/aifex_doc1.png){.mx-auto .d-block width=100%} 
 
 Quick Start
 ===========
 
+Install the browser extension
+-----------------------
 
 Install the browser extension from the [download page](/download)
 
+To test existing configurations, you can login to the anonymous account
 
-Join the Demo session
------------------------
 
-<video controls width="700">
-    <source src="/static/video/aifex-user-guide-eng.mp4" type="video/mp4">
-</video>
+```properties
+id : anonymous
+password : anonymous
+```  
 
-A demo session is available. You can join it and perform some explorations:
 
-1. Go to [Demo session main page](/demo)
-2. Copy the **session key** 
-3. Open a new browser window
-4. Open the AIFEX extension and connect it
-6. Interact with the marked elements 
-7. Stop your exploration so that it can be stored by the server
-
-New Session
+Session
 ===========
 
 To start a new session:

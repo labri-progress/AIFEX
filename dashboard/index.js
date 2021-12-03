@@ -46,6 +46,7 @@ app.locals.markdown = (filename) => {
 
 app.use(forms.array()); 
 app.use('/static', express.static('public'));
+app.use('/static/video', express.static('public/video'));
 
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Credentials', true);
