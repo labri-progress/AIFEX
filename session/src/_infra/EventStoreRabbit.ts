@@ -1,4 +1,3 @@
-
 import amqp = require('amqplib');
 import EventStore from "../application/EventStore";
 import config from "./config";
@@ -12,7 +11,6 @@ const QUEUE_NAME = 'aifex-session';
 export default class EventStoreRabbit implements EventStore {
     private connection: amqp.Connection | undefined;
     private channel : amqp.Channel | undefined;
-    private queue: amqp.Replies.AssertQueue | undefined;
 
     constructor() {
         amqp.connect(`amqp://${config.rabbitmq}`)
