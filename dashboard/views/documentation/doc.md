@@ -13,41 +13,57 @@ AIFEX consists of two main elements:
 
 The following figure shows an exploratory session with three testers. Each tester participate to the same Exploratory Testing session. They use the AIFEX browser extension to send their tests, called explorations, to the AIFEX server. The server receives all interactions performed by the testers and train an AI. The server then gives predictions to the testers, advising them to perform new or poorly explored interactions.
 
-![Image](/static/images/aifex_doc1.png){.mx-auto .d-block width=100%} 
+![Image](/static/images/doc/aifex_doc1.png){.mx-auto .d-block width=100%} 
 
-Quick Start
+Trying AIFEX
 ===========
 
-Install the browser extension
+Log in
 -----------------------
 
-Install the browser extension from the [download page](/download)
-
-To test existing configurations, you can login to the anonymous account
-
+You can create your own account, or connect to the anonymous account, in order to test already prepared configurations.
 
 ```properties
 id : anonymous
 password : anonymous
 ```  
 
+Join a pre-made session
+-----------
 
-Session
+**STEP 1**: Log in to anonymous account.
+
+**STEP 2**: Install the AIFEX plugin via the [download](/download) page.
+
+**STEP 3**: Open the [dashboard](/account/account).
+
+**STEP 4**: Copy a Connection URL ![Image](/static/images/doc/sessionDashboardConnection.png){.mx-auto .d-block width=75%}.
+
+**STEP 5**: Open the plugin and connect to the session ![Image](/static/images/doc/connectPlugin.png){.mx-auto .d-block width=75%}.
+
+**STEP 6**: Click on Start Exploration to start you first test.
+
+
+Join a pre-made session
+-----------
+
+Create your own session
 ===========
 
 To start a new session:
 
 **STEP 1**: Go to the New Session page.
 
-![Image](/static/images/session/NewSession.png){.mx-auto .d-block width=50%}
+![Image](/static/images/doc/createSession.png){.mx-auto .d-block width=75%}
 
-**STEP 2**: Select a **website** that defines which parts of the web site are under test. Set the **baseURL** of the session that will be used as a starting point for all test cases. The **depth** defines the maximum length of sequence of actions that are used by the AI. The **interpolation** defines if long sequences are more important that short ones.
+**STEP 2**: Select a **Website** that defines which parts of the web site are under test. Set the **baseURL** of the session that will be used as a starting point for all new exploration.
 
-![Image](/static/images/session/NewSessionPage.png){.mx-auto .d-block width=50%}
+![Image](/static/images/doc/createSessionForm.png){.mx-auto .d-block width=75%}
 
-**STEP 3:** Create the session. The dashboard gives you a connection code. Share this code among all testers, so that they can join the test session.
-
-![Image](/static/images/session/NewSessionDashboard.png){.mx-auto .d-block width=50%}
+**STEP 3:** Create the session. The dashboard gives you a connection URL. Share this URL among all testers, so that they can join the test session.
+The URL.
+It is also this URL that allows testers to connect to the session on the browser extension.
+![Image](/static/images/doc/connexionURL.png){.mx-auto .d-block width=50%}
 
 
 New Website

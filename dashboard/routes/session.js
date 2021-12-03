@@ -33,14 +33,9 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.post('/dashboard/session/create', (req, res) => {
-        let { webSiteId, name, baseURL, interpolationfactor, depth, description, overlayType } = req.body;
+        let { webSiteId, name, baseURL, interpolationfactor, depth, description } = req.body;
         let recordingMode = "byexploration"
-        if (overlayType === "shadowMode") {
-            overlayType = "shadow"
-        }
-        else {
-            overlayType = "rainbow"
-        }
+        let overlayType = "rainbow"
         
         logger.info(`POST create session for WebSite (id = ${webSiteId})`);
         let connectionCode;
