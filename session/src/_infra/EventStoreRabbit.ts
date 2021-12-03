@@ -5,6 +5,7 @@ import ActionInteraction from "../domain/ActionInteraction";
 import AnswerInteraction from "../domain/AnswerInteraction";
 import CommentInteraction from "../domain/CommentInteraction";
 import Exploration from "../domain/Exploration";
+import { logger } from '../logger';
 
 const QUEUE_NAME = 'aifex-session';
 
@@ -63,7 +64,9 @@ export default class EventStoreRabbit implements EventStore {
             testerName: exploration.tester.name,
         };
 
+        logger.debug(`Notifying session ${sessionId} of exploration ${exploration.explorationNumber}`);
         if (this.channel) {
+            logger.debug(`Publishing message ${JSON.stringify(msg)}`);
             this.channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(msg)));   
         }
 

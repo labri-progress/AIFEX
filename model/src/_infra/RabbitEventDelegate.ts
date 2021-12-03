@@ -4,6 +4,7 @@ import config from "./config";
 import Note from "../domain/Note";
 import Sequence from "../domain/Sequence";
 import Stimulus from "../domain/Stimulus";
+import { logger } from '../logger';
 
 const QUEUE_NAME = 'aifex-session';
 
@@ -27,7 +28,9 @@ export default class RabbitDelegate {
             .then((ok) => {
                 if (this.channel) {
                     this.channel.consume(QUEUE_NAME, message => {
+                        logger.debug(`Received message`);
                         if (message !== null) {
+                            logger.debug(`Message: ${message.content.toString()}`);
                             this.subscribers.forEach((subscriber) => {
                                 try {
                                     const data = JSON.parse(message.content.toString());
@@ -47,6 +50,7 @@ export default class RabbitDelegate {
                                                     seq.addNote(new Note(value));
                                                 }
                                             });
+                                            logger.debug(`Received sequence: ${JSON.stringify(seq)}`);
                                             subscriber.hasNewSequence(data.sessionId, seq);
                                             break;
                                         }

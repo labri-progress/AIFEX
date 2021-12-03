@@ -130,7 +130,19 @@ describe("Model", () => {
             body:    JSON.stringify(body),
             headers: { "Content-Type": "application/json" },
         };
-        return fetch(url, option)
+        
+        //wait 10 seconds
+        let wait10Seconds : Promise<boolean> = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(true);
+            }, 10000);
+        });        
+
+
+        return wait10Seconds
+        .then(()=> {
+            return fetch(url, option);
+        })
         .then((res) => {
             if (res.ok) {
                 return res.json();
