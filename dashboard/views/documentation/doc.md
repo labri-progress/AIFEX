@@ -39,13 +39,19 @@ Join a pre-made session
 
 **STEP 4**: Copy a Connection URL ![Image](/static/images/doc/sessionDashboardConnection.png){.mx-auto .d-block width=75%}.
 
-**STEP 5**: Open the plugin and connect to the session ![Image](/static/images/doc/connectPlugin.png){.mx-auto .d-block width=75%}.
+**STEP 5**: Open the plugin and join to the session with the Connection URL ![Image](/static/images/doc/connectPlugin.png){.mx-auto .d-block width=75%}.
 
 **STEP 6**: Click on Start Exploration to start you first test.
 
 
-Join a pre-made session
+Use the plugin
 -----------
+
+Stop / Save : Stop your exploration and send it to the server.
+
+Trash : Stop and delete the current exploration, without sending the data to the server.
+
+Add a new comment to your exploration : Adds a comment to your exploration, which will be available in the dashboard. You can add a screenshot to your comment by checking the corresponding checkbox.
 
 Create your own session
 ===========
