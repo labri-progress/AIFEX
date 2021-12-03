@@ -1,5 +1,5 @@
 
-import * as Amqp from "amqp-ts";
+import amqp = require('amqplib');
 import EventStore from "../application/EventStore";
 import config from "./config";
 import ActionInteraction from "../domain/ActionInteraction";
@@ -7,16 +7,23 @@ import AnswerInteraction from "../domain/AnswerInteraction";
 import CommentInteraction from "../domain/CommentInteraction";
 import Exploration from "../domain/Exploration";
 
+const QUEUE_NAME = 'aifex-session';
+
 export default class EventStoreRabbit implements EventStore {
-    private readonly connection: Amqp.Connection;
-    private readonly exchange: Amqp.Exchange;
-    private readonly queue: Amqp.Queue;
+    private connection: amqp.Connection | undefined;
+    private channel : amqp.Channel | undefined;
+    private queue: amqp.Replies.AssertQueue | undefined;
 
     constructor() {
-        this.connection = new Amqp.Connection(`amqp://${config.rabbitmq}`);
-        this.exchange = this.connection.declareExchange("aifex");
-        this.queue = this.connection.declareQueue("session");
-        this.queue.bind(this.exchange);
+        amqp.connect(`amqp://${config.rabbitmq}`)
+            .then((conn) => {
+                this.connection = conn;
+                return this.connection.createChannel();
+            })
+            .then((channel) => {
+                this.channel = channel;
+                return channel.assertQueue(QUEUE_NAME, { durable: false });
+            })
     }
 
     public notifySessionExploration(sessionId: string, exploration: Exploration): Promise<void> {
@@ -50,15 +57,17 @@ export default class EventStoreRabbit implements EventStore {
             }
         });
 
-        const msg: Amqp.Message = new Amqp.Message({
+        const msg = {
             exploration: sequence,
             kind: "exploration",
             sessionId,
             explorationNumber: exploration.explorationNumber,
             testerName: exploration.tester.name,
-        });
+        };
 
-        this.exchange.send(msg);
+        if (this.channel) {
+            this.channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(msg)));   
+        }
 
         return Promise.resolve();
     }
