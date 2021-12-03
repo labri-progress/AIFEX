@@ -41,4 +41,8 @@
     "winston-elasticsearch": "^0.12.3"
   },
   "dependencies": {}
+  ,
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
+  }
 }

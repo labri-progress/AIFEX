@@ -15,27 +15,25 @@
             <hr class="my-4"></hr>
             <% if (session.name) { %>
                 <h3>
-                    Dashboard for session : <%= session.name%> <a href="/account/account">(Go back to your dashboard)</a>
+                    Session : <%= session.name%> 
                 </h3>
             <% } else { %>
-                <h3>Dashboard for session : unamed <a href="/account/account">(Go back to your dashboard)</a></h3>
+                <h3>Session : unamed <a href="/account/account">(Go back to your dashboard)</a></h3>
             <% } %>
 
             <div>
                 <input type="checkbox" id="isPublicCheckbox" <% if (isSessionPublic) { %> checked <% } %> >
-                <label for="isPublicCheckbox">is public</label>
+                <label for="isPublicCheckbox">public</label>
             </div>
 
             <div>
-                Target WebSite : <span><a href="<%= session.baseURL%>"> <%= session.webSite.name%></span></a>
+                WebSite : <span><a href="<%= session.baseURL%>"> <%= session.webSite.name%></span></a>
             </div>
             <div>
-                Testers : <span><%= session.participants.length %></a>
+                Number of participants : <span><%= session.participants.length %></a>
             </div>
-            <div>
-                Overlay : <span><%= session.overlayType%></span>
-            </div>
-                <div>
+
+                <!-- <div>
                     Evaluator :  
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <% if (evaluator) { %>
@@ -47,11 +45,11 @@
                     </div>
                 </div>
                 <div>
-                </div>
+                </div> -->
 
-            <div>
+            <!-- <div>
                 Automated Script : <a href="/dashboard/session/<%=connectionCode %>/print"><i class="fas fa-file"></i></a>
-            </div>
+            </div> -->
             <div>
                  URL : <input type="text" id="serverURL" class="inputSessionURL" value="<%=serverURL %>" readonly> </input><i id="copy" title="Copy in clipboard" data-toggle="tooltip" data-placement="right" onclick="copy(this)" class="fas fa-copy copy-icon"></i>
             </div>

@@ -40,5 +40,8 @@
     "typescript": "^3.9.10",
     "winston": "^3.3.3",
     "winston-elasticsearch": "^0.12.3"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
   }
 }
