@@ -99,7 +99,7 @@ describe("Playwright", () => {
         await dsip.signin('playwright', 'playwright');
     })
 
-    it("should create a new private sesion", async () => {
+    it("should create a new public sesion", async () => {
         const page = await browser.newPage();
         const dap = new DashboardAccountPage(page, DASHBOARD_URL);
         await dap.goto();
@@ -110,7 +110,7 @@ describe("Playwright", () => {
         await dnsp.goto();
         const webSites = await dnsp.getWebSites();
         if (webSites.length > 0) {
-            await dnsp.createSession("test", webSites[webSites.length-1].value,"description", "https://www.aifex.fr/", "rainbow");
+            await dnsp.createSession("test", webSites[webSites.length-1].value,"description", "https://www.aifex.fr/");
         }
 
         await dap.goto();
@@ -118,21 +118,21 @@ describe("Playwright", () => {
         expect(afterSessions.length).to.equal(beforeSessions.length + 1);
     })
 
-    it("should make the last created session public", async () => {
-        const page = await browser.newPage();
-        const dap = new DashboardAccountPage(page, DASHBOARD_URL);
-        await dap.goto();
-        let sessions = await dap.getSessions();
-        if (sessions.length > 0) {
-            let tokens = sessions[sessions.length-1].url.split(/=|&/);
-            if (tokens.length === 4) {
-                let key = tokens[1] + '$' + tokens[3];
-                const dsp = new DashboardSessionPage(page, DASHBOARD_URL, key);
-                let goto = await dsp.goto();
-                await dsp.makeSessionPublic();
-            }
-        }
-    })
+    // it("should make the last created session public", async () => {
+    //     const page = await browser.newPage();
+    //     const dap = new DashboardAccountPage(page, DASHBOARD_URL);
+    //     await dap.goto();
+    //     let sessions = await dap.getSessions();
+    //     if (sessions.length > 0) {
+    //         let tokens = sessions[sessions.length-1].url.split(/=|&/);
+    //         if (tokens.length === 4) {
+    //             let key = tokens[1] + '$' + tokens[3];
+    //             const dsp = new DashboardSessionPage(page, DASHBOARD_URL, key);
+    //             let goto = await dsp.goto();
+    //             await dsp.makeSessionPublic();
+    //         }
+    //     }
+    // })
 
     it ("should join connect to a session", async () => {
         const page = await browser.newPage();

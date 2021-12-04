@@ -35,12 +35,11 @@ export default class DashboardNewSessionPage {
         });
     }
 
-    async createSession(name: string, webSite: string, description: string, baseURL: string, overlay: string) {
+    async createSession(name: string, webSite: string, description: string, baseURL: string) {
         await this._page.type('#name', name);
         await this._page.selectOption('#webSiteId',webSite)
         await this._page.type('#description', description);
         await this._page.type('#baseURL', baseURL);
-        await this._page.selectOption('#overlayType', overlay);
         await this._page.click('#submit');
     }
 
