@@ -93,7 +93,7 @@ export default class AccountService {
                     let addResult = foundAccount.addAuthorization(authorization);
                     if (addResult === "AuthorizationAdded") {
                         logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
-                        return this._accountRepository.updateAccount(foundAccount)
+                        return this._accountRepository.updateAccountByAddingAuthorizationAndInvitation(foundAccount)
                             .then(() => {
                                 logger.debug(`account repository updated`);
                                 return "AuthorizationAdded";
@@ -113,7 +113,7 @@ export default class AccountService {
                 } else {
                     const removeResult = foundAccount.removeAuthorization(authorization);
                     if (removeResult === "AuthorizationRemoved") {
-                        return this._accountRepository.updateAccount(foundAccount)
+                        return this._accountRepository.updateAccountByRemovingAuthorization(foundAccount, authorization)
                             .then(() => {
                                 return "AuthorizationRemoved";
                             })
@@ -136,7 +136,7 @@ export default class AccountService {
                         const invitation = new Invitation(fromUsername, toUsername, new Authorization(kind, key));
                         fromAccount.addSentInvitation(invitation);
                         toAccount.addReceivedInvitation(invitation);
-                        return Promise.all([this._accountRepository.updateAccount(fromAccount), this._accountRepository.updateAccount(toAccount)])
+                        return Promise.all([this._accountRepository.updateAccountByAddingAuthorizationAndInvitation(fromAccount), this._accountRepository.updateAccountByAddingAuthorizationAndInvitation(toAccount)])
                             .then(() => {
                                 return "InvitationIsAdded";
                             });
@@ -157,7 +157,7 @@ export default class AccountService {
                         const invitation = new Invitation(fromUsername, toUsername, new Authorization(kind, key));
                         fromAccount.removeSentInvitation(invitation);
                         toAccount.removeReceivedInvitation(invitation);
-                        return Promise.all([this._accountRepository.updateAccount(fromAccount), this._accountRepository.updateAccount(toAccount)])
+                        return Promise.all([this._accountRepository.updateAccountByRemovingSentInvitation(fromAccount,invitation), this._accountRepository.updateAccountByRemovingReceivedInvitation(toAccount, invitation)])
                             .then(() => {
                                 return "InvitationIsRemoved";
                             });

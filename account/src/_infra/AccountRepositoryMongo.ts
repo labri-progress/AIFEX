@@ -24,8 +24,8 @@ export default class AccountRepositoryMongo implements AccountRepository {
 
     }
 
-    public updateAccount(account: Account): Promise<"AccountUpdated"> {
-        logger.debug("updateAccount:"+JSON.stringify(account));
+    public updateAccountByAddingAuthorizationAndInvitation(account: Account): Promise<"AccountUpdated"> {
+        logger.debug("updateAccountByAddingAuthorizationAndInvitation:"+JSON.stringify(account));
         const username = account.username;
         const authorizationSet = account.authorizationSet.map((authorization) => {
             return {
@@ -60,6 +60,37 @@ export default class AccountRepositoryMongo implements AccountRepository {
                 return "AccountUpdated";
             });
     }
+
+    updateAccountByRemovingAuthorization(account : Account, authorization : Authorization) : Promise<"AccountUpdated"> {
+        logger.debug("updateAccountByRemovingAuthorization:"+JSON.stringify(account));
+        const username = account.username;
+        return AccountModel.updateOne({ username }, { $pull: { authorizationSet: { kind: authorization.kind, key: authorization.key } } })
+            .exec()
+            .then(() => {
+                return "AccountUpdated";
+            });
+    }
+
+    updateAccountByRemovingReceivedInvitation(account : Account, invitation : Invitation) : Promise<"AccountUpdated"> {
+        logger.debug("updateAccountByRemovingReceivedInvitation:"+JSON.stringify(account));
+        const username = account.username;
+        return AccountModel.updateOne({ username }, { $pull: { receivedInvitationSet: { fromUsername: invitation.fromUsername, toUsername: invitation.toUsername } } })
+            .exec()
+            .then(() => {
+                return "AccountUpdated";
+            });
+    }
+
+    updateAccountByRemovingSentInvitation(account : Account, invitation : Invitation) : Promise<"AccountUpdated"> {
+        logger.debug("updateAccountByRemovingSentInvitation:"+JSON.stringify(account));
+        const username = account.username;
+        return AccountModel.updateOne({ username }, { $pull: { sentInvitationSet: { fromUsername: invitation.fromUsername, toUsername: invitation.toUsername } } })
+            .exec()
+            .then(() => {
+                return "AccountUpdated";
+            });
+    }
+
 
     public findAccountByUserName(username: string): Promise<Account | undefined> {
         return AccountModel.findOne({ username }).exec()
