@@ -466,11 +466,8 @@ describe("API", () => {
             }})
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
-                expect(res.ok).to.be.true;
-                return res.json();
-            })
-            .then((session) => {                
-                expect(session).to.not.have.property("name");
+                const FORBIDDEN_STATUS = 403;
+                expect(res.status).to.be.eql(FORBIDDEN_STATUS);
             })
     });
 
