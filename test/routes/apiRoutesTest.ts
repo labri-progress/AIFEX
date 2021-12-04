@@ -436,80 +436,6 @@ describe("API", () => {
             })
     });
 
-
-    it("should remove the session", () => {
-        const url = `${API_URL}/sessions/${sessionId}`;
-        return fetch(url, {
-            method: "DELETE",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }})
-            .then(res => {
-                // tslint:disable-next-line: no-unused-expression
-                expect(res.ok).to.be.true;
-                return res.json();
-            })
-            .then((result) => {
-                let resultCasted = result as any;
-                expect(resultCasted.message).to.be.eql("SessionRemoved");
-            })
-    });
-
-    it("should fail get the removed session", () => {
-        const url = `${API_URL}/sessions/${sessionId}`;
-        return fetch(url, {
-            method: "GET",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }})
-            .then(res => {
-                // tslint:disable-next-line: no-unused-expression
-                const FORBIDDEN_STATUS = 403;
-                expect(res.status).to.be.eql(FORBIDDEN_STATUS);
-            })
-    });
-
-
-    it("should remove the model", () => {
-        const url = `${API_URL}/models/${modelId}`;
-        return fetch(url, {
-            method: "DELETE",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }})
-            .then(res => {
-                // tslint:disable-next-line: no-unused-expression
-                expect(res.ok).to.be.true;
-                return res.json();
-            })
-            .then((result) => {
-                let resultCasted = result as any;
-                expect(resultCasted.message).to.be.eql("ModelRemoved");
-            });
-    });
-
-    it("should remove the webSite", () => {
-        const url = `${API_URL}/websites/${webSiteId}`;
-        return fetch(url, {
-            method: "DELETE",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }})
-            .then(res => {
-                // tslint:disable-next-line: no-unused-expression
-                expect(res.ok).to.be.true;
-                return res.json();
-            })
-            .then((result) => {
-                let resultCasted = result as any;
-                expect(resultCasted.message).to.be.eql("WebSiteRemoved");
-            });
-    });
-
     it("should create an evaluator for the session", () => {
         const url = `${API_URL}/evaluator/`;
         const body = {
@@ -598,6 +524,80 @@ describe("API", () => {
             });
     });
 
+    it("should remove the session", () => {
+        const url = `${API_URL}/sessions/${sessionId}`;
+        return fetch(url, {
+            method: "DELETE",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("SessionRemoved");
+            })
+    });
+
+    it("should fail get the removed session", () => {
+        const url = `${API_URL}/sessions/${sessionId}`;
+        return fetch(url, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                const FORBIDDEN_STATUS = 403;
+                expect(res.status).to.be.eql(FORBIDDEN_STATUS);
+            })
+    });
+
+
+    it("should remove the model", () => {
+        const url = `${API_URL}/models/${modelId}`;
+        return fetch(url, {
+            method: "DELETE",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("ModelRemoved");
+            });
+    });
+
+    it("should remove the webSite", () => {
+        const url = `${API_URL}/websites/${webSiteId}`;
+        return fetch(url, {
+            method: "DELETE",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                let resultCasted = result as any;
+                expect(resultCasted.message).to.be.eql("WebSiteRemoved");
+            });
+    });
+
+
     it("should remove the evaluator of the session", () => {
         const url = `${API_URL}/evaluator/${sessionId}`;
         return fetch(url, {
@@ -627,11 +627,8 @@ describe("API", () => {
             }})
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
-                expect(res.ok).to.be.false;
-                return res.json()
-            }).then((resultData)=> {
-                let resultDataCasted = resultData as any;
-                expect(resultDataCasted.message).eql("No Evaluator found for session")
+                const FORBIDDEN_STATUS = 403;
+                expect(res.status).to.be.eql(FORBIDDEN_STATUS);
             })
            
     });
