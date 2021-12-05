@@ -72,7 +72,7 @@ services:
     environment:
       - NODE_ENV=github
       - PROTOCOL=http
-      - HOST_ADDR=dashboard
+      - HOST_ADDR=reverseproxy
       - PLUGIN_INFO=
       - TOKEN_SECRET=verysecret
     volumes:

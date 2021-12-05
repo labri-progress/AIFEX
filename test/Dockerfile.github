@@ -19,7 +19,8 @@ RUN apt-get upgrade -y && apt-get install -y --no-install-recommends \
   make \
   python \
   zstd \
-  libpcap-dev 
+  libpcap-dev \
+  iputils-ping
 
 
 RUN apt-get install -y \
