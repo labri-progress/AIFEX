@@ -25,8 +25,6 @@ function getStateAndRender() {
                 } else {
                     renderFunctionOfComponents.forEach(renderFunction => renderFunction());
                 }
-                
-                
             }
         });
 }

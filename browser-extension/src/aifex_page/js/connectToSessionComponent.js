@@ -11,12 +11,13 @@
     }
 
     function handleConnexion(e) {
+        e.preventDefault();
+
         console.log('connect');
         if (e.type === "keydown" && e.key !== "Enter") {
             return;
         }
-        e.preventDefault();
-
+        
         const INPUT_URL = document.getElementById("connexionURLInput").value;
         try {
             new URL(INPUT_URL);

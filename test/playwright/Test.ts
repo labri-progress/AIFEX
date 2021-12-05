@@ -66,6 +66,46 @@ describe("Playwright", () => {
         //browser = await chromi.newContext();
         browser = await chromium.launchPersistentContext(path.join(__dirname,"tmp"), options);
 
+        browser.on('request', (req) => {
+            if (!req.url().includes('chrome')) {
+                if (!req.url().includes('https')) {
+                    console.log('sent:',req.url());
+                }
+            }
+        });
+
+        browser.on('backgroundpage', async (page) => {
+            console.log('backgroundpage:', page.url());
+            page.on('console', (msg) => { 
+                console.log('background msg:', msg.text());
+            });
+            let backPages = await browser.backgroundPages();
+            console.log('background pages:', backPages.length);
+            backPages.forEach((page) => {
+                console.log('there is an extension page');
+                page.on('console', (msg) => {
+                    console.log('background console:', msg.text());
+                });
+            });
+        })
+
+        browser.on('response', (res) => {
+            if (!res.url().includes('chrome')) {
+                if (!res.url().includes('https')) {
+                    console.log('received:',res.url());
+                }
+            }
+        });
+
+        // let backPages = await browser.backgroundPages();
+        // console.log('background pages:', backPages.length);
+        // backPages.forEach((page) => {
+        //     console.log('there is an extension page');
+        //     page.on('console', (msg) => {
+        //         console.log('background console:', msg.text());
+        //     });
+        // });
+
         
         
     })
@@ -145,12 +185,23 @@ describe("Playwright", () => {
             let sessions = await dap.getSessions();
             if (sessions.length > 0) {
                 let url = sessions[sessions.length-1].url;
+                page.on('console', msg => {console.log('console:',msg.text())});
                 let bep = new BrowserExtensionPage(page, extensionId);
                 let isBEP = await bep.goto();
                 if (isBEP) {
                     await bep.joinSession();
+                    console.log('url:',url);
+                    
+                    let content = await page.content();
+                    console.log('content:',content);
+                    
                     await bep.connectSession(url);
+                    console.log('connected');
+                    await page.waitForTimeout(2000);
+                    content = await page.content();
+                    console.log('content:',content);
                     await bep.startExploration();
+                    console.log('start');
                     await page.waitForTimeout(5000);
 
                     const pages = await browser.pages();
