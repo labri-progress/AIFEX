@@ -6,7 +6,6 @@ import { generate } from "shortid";
 
 const MAX_DEPTH = 10;
 
-
 export default abstract class Model {
 
     constructor(depth: number, id?: string) {

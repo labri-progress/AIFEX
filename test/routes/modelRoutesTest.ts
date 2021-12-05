@@ -20,8 +20,6 @@ describe("Model", () => {
     let sessionId: string | undefined;
     let modelId: string | undefined;
 
-    
-
     before(() => {
         const url = WEBSITE_URL + "create";
         const body = {
@@ -218,22 +216,6 @@ describe("Model", () => {
         });
     });
 
-    it("should get the cross entropy evolution of the model", () => {
-        const url = MODEL_URL + "cross_entropy_evolution";
-        const body = {
-            depth: 3,
-            interpolationfactor: 2,
-            sessionId_list: [sessionId],
-        };
-        return fetch(url, {
-            method: "POST",
-            body:    JSON.stringify(body),
-            headers: { "Content-Type": "application/json" },
-        }).then((response) => {
-            expect(response.ok).to.eql(true);
 
-            return response.json();
-        });
-    });
 
 });

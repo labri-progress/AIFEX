@@ -1,4 +1,4 @@
-const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId} = require('../service/apiService');
+const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId, getCrossEntropyBySession} = require('../service/apiService');
 const logger = require('../logger');
 const buildInvitation = require("../invitations").buildInvitation;
 
@@ -84,9 +84,17 @@ module.exports = function attachRoutes(app, config) {
 
         logger.info(`GET view session (sessionId = ${sessionId}), (modelId = ${modelId})`);
 
-        Promise.all([getSessionById(req.session.jwt,sessionId), getModelById(req.session.jwt, modelId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId), isAuthorizationPublic("Session",sessionId), getEvaluatorBySessionId(req.session.jwt, sessionId)])
-            .then(([session, model, screenshot, video, isSessionPublic, evaluator]) => {
-                logger.debug(`screenshot:${JSON.stringify(screenshot)}`);
+        Promise.all([
+            getSessionById(req.session.jwt,sessionId), 
+            getModelById(req.session.jwt, modelId), 
+            getScreenshotsBySessionId(req.session.jwt,sessionId), 
+            getVideosBySessionId(req.session.jwt,sessionId), 
+            isAuthorizationPublic("Session",sessionId), 
+            getEvaluatorBySessionId(req.session.jwt, sessionId), 
+            getCrossEntropyBySession(req.session.jwt, sessionId)
+        ])
+            .then(([session, model, screenshot, video, isSessionPublic, evaluator, crossEntropy]) => {
+                console.log("crossEntropy", crossEntropy)
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
                 res.render('session/view.ejs', {
@@ -98,7 +106,8 @@ module.exports = function attachRoutes(app, config) {
                     connectionCode,
                     screenshot,
                     video,
-                    isSessionPublic
+                    isSessionPublic,
+                    crossEntropy
                 });
             })
             .catch(e => {
@@ -237,40 +246,6 @@ module.exports = function attachRoutes(app, config) {
 
         res.redirect(`/dashboard/session/profile_coverage/${connectionCode}/${connectionCodeProfile}`);
     })
-
-    app.get("/dashboard/session/profile_coverage/:connectionCode/:connectionCodeProfile", (req, res) => {
-        const { connectionCode, connectionCodeProfile } = req.params;
-
-        logger.info(`GET view profile coverage`);
-
-        const modelId = connectionCode.split('$')[1]
-        const modelIdProfile = connectionCodeProfile.split('$')[1]
-
-        const modelURL = `http://${config.model.host}:${config.model.port}/model/profile_coverage/${modelId}/${modelIdProfile}`
-        fetch(modelURL).then(response => {
-            if (response.ok) {
-                return response.json()
-            }
-        })
-            .then((data) => {
-                if (data) {
-                    res.render('session/coverage.ejs', {
-                        account: req.session,
-                        coverage: data.coverage,
-                        connectionCode,
-                        connectionCodeProfile
-                    })
-                } else {
-                    res.render('error.ejs', { message, account: req.session, error: 'no coverage' });
-                }
-
-            })
-            .catch(e => {
-                logger.error(e);
-                let message = 'Failed to compute coverage';
-                res.render('error.ejs', { message, account: req.session, error: e });
-            })
-    });
 
     app.get('/dashboard/session/remove/:connectionCode', (req, res) => {
         const { connectionCode } = req.params;

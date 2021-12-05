@@ -83,13 +83,7 @@ export default class ModelService {
             })
     }
 
-    public addModelInCache(model: Model): Model {
-        if (this.mountedModelList.length >= CACHE_SIZE) {
-            this.mountedModelList.shift();
-        }
-        this.mountedModelList[this.mountedModelList.length] = model;
-        return model;
-    }
+
 
     public learn(modelId: string, sequence: Sequence): Promise<void> {
         return this.mountModel(modelId)
@@ -105,8 +99,6 @@ export default class ModelService {
             return model.getLinkedSessionIdList().includes(sessionId);
         });
         if (modelInCache) {
-            const crossEntropy = modelInCache.crossEntropy(sequence.getContext());
-            this.notifyCrossEntropy(crossEntropy, modelInCache.id);
             modelInCache.learnSequence(sequence);
         }
     }
@@ -165,39 +157,49 @@ export default class ModelService {
             })
     }
 
-    public getCrossEntropyEvolutionForSessions(sessionIdList: string[], depth : number, interpolationfactor : number): Promise<{sessionId : string, crossEntropy: number, explorationKey : string}[]> {
-        const sessionsDataPromises = sessionIdList.map((sessionId) => {
-            return this.sessionRepository.fetchSequenceListOfSession(sessionId);
-        });
-        const model = new CSPModel(depth, interpolationfactor);
-        const result : {sessionId : string, crossEntropy: number, explorationKey : string}[] = [];
-        return Promise.all(sessionsDataPromises)
-            .then((sessionsData) => {
-                sessionsData.forEach((sessionData) => {
-                    sessionData.forEach((sequenceData) => {
-                        const sequence = sequenceData.sequence;
+    public getCrossEntropyEvolutionForSession(sessionId: string, depth : number, interpolationfactor : number, predictionType: string): Promise<{crossEntropy: number, explorationNumber : string}[]> {
+        let model: Model;
+        switch (predictionType) {
+            case "CSP":
+                model = new CSPModel(depth, interpolationfactor);
+                break;
+            case "SP":
+                model = new SPModel(depth);
+                break;
+            case "FIS":
+                model = new FISModel(depth);
+                break;
+            default:
+                throw new Error(`Invalid type of model : ${predictionType}`);
+        }
+        const result : {crossEntropy: number, explorationNumber : string}[] = [];
+        return this.sessionRepository.fetchSequenceListOfSession(sessionId)
+          .then(sessionData => {
+                sessionData.forEach((sequenceData: {
+                    sequence: Sequence;
+                    sessionId: string;
+                    explorationKey: string;
+                }) => {
+                    const sequence = sequenceData.sequence;
 
-                        const crossEntropy = model.crossEntropy(sequence.getContext());
-                        result.push({
-                            sessionId: sequenceData.sessionId,
-                            explorationKey: sequenceData.explorationKey,
-                            crossEntropy,
-                        });
-                        model.learnSequence(sequence);
+                    const crossEntropy = model.crossEntropy(sequence.getContext());
+                    result.push({
+                        explorationNumber: sequenceData.explorationKey,
+                        crossEntropy,
                     });
+                    model.learnSequence(sequence);
                 });
                 return result;
             });
     }
 
-    public addCrossEntropyObserver(observer : {notifyCrossEntropy : (corssEntropy : number, modelId : string) => void}): void {
-        this.crossEntropyObservers.push(observer);
-    }
 
-    private notifyCrossEntropy(crossEntropy: number, modelId : string): void {
-        this.crossEntropyObservers.forEach((observer) => {
-            observer.notifyCrossEntropy(crossEntropy, modelId);
-        });
-    }
 
+    private addModelInCache(model: Model): Model {
+        if (this.mountedModelList.length >= CACHE_SIZE) {
+            this.mountedModelList.shift();
+        }
+        this.mountedModelList[this.mountedModelList.length] = model;
+        return model;
+    }
 }

@@ -223,20 +223,19 @@ export default function attachRoutes(app: Express, modelService: ModelService): 
             });
     });
 
-    app.post("/model/cross_entropy_evolution", (req, res) => {
-        const { sessionId_list, depth, interpolationfactor } = req.body;
+    app.post("/model/cross_entropy/session/:sessionId", (req, res) => {
+        const { sessionId } = req.params;
+
+        const { depth, interpolationfactor, predictionType } = req.body;
         logger.info(`cross_entropy_evolution`);
-        if (sessionId_list === undefined) {
-            logger.warn(`cross_entropy_evolution no sessionId_list`);
+        if (sessionId === undefined) {
+            logger.warn(`cross_entropy_evolution no sessionId`);
             return res.status(INVALID_PARAMETERS_STATUS).send("sessionId_list parameter is required");
-        } else if (!Array.isArray(sessionId_list)) {
-            logger.warn(`cross_entropy_evolution no sessionId_list`);
-            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId_list must be an array of session id");
         } else {
-            modelService.getCrossEntropyEvolutionForSessions(sessionId_list, depth, interpolationfactor)
-                .then((crossEntropies) => {
-                    logger.debug(`cross_entropy_evolution ok`);
-                    res.send(crossEntropies);
+            modelService.getCrossEntropyEvolutionForSession(sessionId, depth, interpolationfactor, predictionType)
+                .then((crossEntropy) => {
+                    logger.debug(`cross_entropy_evolution computed`);
+                    res.send(crossEntropy);
                 }).catch((e) => {
                     logger.error(`cross_entropy_evolution error ${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send(e);
