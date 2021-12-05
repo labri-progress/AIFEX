@@ -26,6 +26,7 @@ import { logger } from "../logger";
 
 export default class APIApplication {
 
+
     private _accountService: AccountService;
     private _webSiteService: WebSiteService;
     private _sessionService: SessionService;
@@ -455,6 +456,24 @@ export default class APIApplication {
                 }
             });
     }
+
+    getCrossEntropy(sessionId: string, depth: number, predictionType: string, interpolationfactor: number, token: Token | undefined): Promise<"Unauthorized" | {explorationNumber: number, crossEntropy: number}[]> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._modelService.computeCrossEntropy(sessionId, depth, predictionType, interpolationfactor)
+                        .then((result: {explorationNumber: number, crossEntropy: number}[]) => result);
+                } else {
+                    return "Unauthorized";
+                }
+            });    }
 
     computeProbabilities(modelId: string, interactionList: (Action | Comment)[], token?: Token): Promise<"Unauthorized" | Map<string,number>> {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Model, modelId), this.getAccount(token)])

@@ -764,6 +764,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
   /models/{modelId}/link/{sessionId}:
     post:
       description: link the model to a session
@@ -845,6 +846,45 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
+  /models/cross_entropy/session/{sessionId}:
+    post:
+      description: get crossentropy evolution of the explorations of a session
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Model'
+      responses:
+        '200':
+          description: The computed cross entropy for each exploration
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    explorationNumber: 
+                      type: number
+                    crossEntropy: 
+                      type: number
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+
   /models/{modelId}/comment-distributions:
     post:
       description: get distributions of the comment for a given interaction list

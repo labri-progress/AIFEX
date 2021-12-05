@@ -418,6 +418,27 @@ describe("API", () => {
             });
     });
 
+    it("should get the cross entropy of the session", () => {
+
+        const url = `${API_URL}/models/cross_entropy/session/${sessionId}`;
+        const body = {
+            depth: 3,
+            interpolationfactor: 2,
+            predictionType: "CSP",
+        };
+        return fetch(url, {
+            method: "POST",
+            body:    JSON.stringify(body),
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+        },
+        }).then((response) => {
+            expect(response.ok).to.eql(true);
+            return response.json();
+        });
+    });
+
     it("should get the session", () => {
         const url = `${API_URL}/sessions/${sessionId}`;
         return fetch(url, {
@@ -428,7 +449,7 @@ describe("API", () => {
             }})
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
-                expect(res.ok).to.be.true;
+                expect(res.ok).to.eql(true);
                 return res.json();
             })
             .then((session) => {                

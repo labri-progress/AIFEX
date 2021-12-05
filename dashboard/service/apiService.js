@@ -335,6 +335,30 @@ module.exports.getSessions = function (token) {
         });
 }
 
+module.exports.getCrossEntropyBySession = function (token, sessionId) {
+    const SESSION_URL = `http://${config.api.host}:${config.api.port}/models/cross_entropy/session/${sessionId}`;
+    const body = {
+        depth: 8,
+        interpolationfactor: 1,
+        predictionType: "CSP"
+    }
+
+    return fetch(SESSION_URL, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(`Failed to compute Cross Entropy : ${e.statusText}`)
+        }
+    })
+    .catch(e => {
+        return [];
+    })        
+}
+
 module.exports.addScreenshots = function (token, sessionId, screenshotList) {
     const apiAddScreenshotsURL = 'http://' + config.api.host + ':' + config.api.port + '/sessions/' + sessionId + '/screenshots';
     let bodyAddScreenshots = {
@@ -502,6 +526,8 @@ module.exports.isAuthorizationPublic = function (kind, key) {
             }
         })
 }
+
+
 
 module.exports.makeConnexionCodePublic = function(token, sessionId, modelId, webSiteId) {
     let makePublicAuthorizationURL = 'http://' + config.api.host + ':' + config.api.port + '/public/authorizations';

@@ -645,6 +645,39 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     });
 
+    app.post("/models/cross_entropy/session/:sessionId", (req, res) => {
+        const {sessionId} = req.params;
+        const {depth, predictionType, interpolationfactor} = req.body;
+        logger.info(`get cross entropy for session ${sessionId}`);
+        if (sessionId === undefined) {
+            logger.warn(`sessionId is undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"sessionId is undefined"});
+        }
+        else if (depth === undefined ) {
+            logger.warn(`depth is undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"depth is undefined"});
+        }
+        else if (!["CSP", "FIS", "SP"].includes(predictionType)) {
+            logger.warn(`Invalid type of prediction model`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"Invalid type of prediction model"});
+        } else {
+            api.getCrossEntropy(sessionId, depth, predictionType, interpolationfactor, req.token)
+                .then(response => {
+                    if (response === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("CrossEntropy computed");
+                        res.json(response);
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
+        }
+
+    });
+
     app.get("/models/:modelId/ngrams", (req, res) => {
         const modelId = req.params.modelId;
         logger.info(`get all ngram`);

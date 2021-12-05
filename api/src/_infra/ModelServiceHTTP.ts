@@ -6,6 +6,7 @@ import ModelService from "../domain/ModelService";
 import Ngram from "../domain/Ngram";
 import config from "./config";
 import fetch from "node-fetch";
+import { logger } from "../logger";
 
 
 const MODEL_URL: string = `http://${config.model.host}:${config.model.port}/model/`;
@@ -93,6 +94,33 @@ export default class ModelServiceHTTP implements ModelService {
                 }
             })
     }
+
+    computeCrossEntropy(sessionId: string, depth: number, predictionType: string, interpolationfactor: number): Promise<{ explorationNumber: number; crossEntropy: number; }[]> {
+        const crossEntropyURL = `${MODEL_URL}cross_entropy/session/${sessionId}`;
+        let optionRequest = {
+            method: 'POST',
+            body:    JSON.stringify({
+                depth,
+                predictionType,
+                interpolationfactor
+            }),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        console.log(crossEntropyURL)
+        return fetch(crossEntropyURL, optionRequest)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                        .then(json => {
+                            return json;
+                        });
+                } else {
+                    throw new Error("Error : " + response.statusText);
+                }
+            })
+
+    }
+
 
     getCommentDistributions(modelId: string, interactionList: Interaction[]): Promise<Map<string,CommentDistribution[]>> {
         const ModelComputeURL = MODEL_URL + modelId + '/getcommentdistributions';

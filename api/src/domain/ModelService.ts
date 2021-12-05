@@ -6,6 +6,7 @@ import CommentDistribution from "./CommentDistribution";
 import Ngram from "./Ngram";
 
 export default interface ModelService {
+    computeCrossEntropy(sessionId: string, depth: number, predictionType: string, interpolationfactor: number): Promise<{explorationNumber: number, crossEntropy: number}[]>;
 
     ping(): Promise<boolean>;
 
