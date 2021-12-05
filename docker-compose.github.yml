@@ -6,7 +6,7 @@ services:
       context: website/
       dockerfile: ./Dockerfile.prod
     environment:
-      -  NODE_ENV=github
+      - NODE_ENV=github
     depends_on:
       - "mongo"
     ports:
@@ -17,7 +17,7 @@ services:
       context: session/
       dockerfile: ./Dockerfile.prod
     environment:
-      -  NODE_ENV=github
+      - NODE_ENV=github
     depends_on:
       - "mongo"
       - "website"
@@ -33,7 +33,7 @@ services:
       context: model/
       dockerfile: ./Dockerfile.prod
     environment:
-      -  NODE_ENV=github
+      - NODE_ENV=github
     depends_on:
       - "mongo"
       - "session"
@@ -46,7 +46,8 @@ services:
       context: account/
       dockerfile: ./Dockerfile.prod
     environment:
-      -  NODE_ENV=github
+      - NODE_ENV=github
+      - TOKEN_SECRET=verysecret
     depends_on:
       - "mongo"
     ports:
@@ -69,7 +70,11 @@ services:
       context: dashboard/
       dockerfile: ./Dockerfile.prod
     environment:
-      -  NODE_ENV=github
+      - NODE_ENV=github
+      - PROTOCOL=http
+      - HOST_ADDR=dashboard
+      - PLUGIN_INFO=
+      - TOKEN_SECRET=verysecret
     volumes:
       - screenshot:/app/public/screenshot
       - video:/app/public/video
@@ -79,8 +84,8 @@ services:
       context: api/
       dockerfile: ./Dockerfile.prod
     environment:
-      - NODE_ENV=${NODE_ENV}
-      - TOKEN_SECRET=${TOKEN_SECRET}
+      - NODE_ENV=github
+      - TOKEN_SECRET=verysecret
     depends_on:
       - "account"
       - "website"
