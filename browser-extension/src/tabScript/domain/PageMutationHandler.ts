@@ -31,10 +31,8 @@ export default class PageMutationHandler {
                 }
             }
             if (watchedPageHasMutated) {
-                logger.debug('mutation');
                 if (! this.beRefreshing) {
                     this.beRefreshing = true;
-                    logger.debug('refresh just after a mutation');
                     this.onPageMutation();
                     setTimeout(() => {
                         this.beRefreshing = false;
@@ -46,7 +44,6 @@ export default class PageMutationHandler {
 
                         setTimeout(() => {
                             this.beRefreshing = true;
-                            logger.debug('refresh later after a mutation');
                             this.onPageMutation();
                             setTimeout(() => {
                                 this.beRefreshing = false;

@@ -12,11 +12,11 @@
 
             if (Array.isArray(crossEntropyData)) {
                 crossEntropyData = crossEntropyData.map(line => [line.explorationNumber, line.crossEntropy])
-                google.charts.setOnLoadCallback(drawCrosshairs);
+                google.charts.setOnLoadCallback(drawChart);
             }
         }
 
-        function drawCrosshairs() {
+        function drawChart() {
             var data = new google.visualization.DataTable();
             data.addColumn('number', 'X');
             data.addColumn('number', 'Y');

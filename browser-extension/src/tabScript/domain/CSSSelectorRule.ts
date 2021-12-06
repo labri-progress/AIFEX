@@ -10,9 +10,7 @@ export default class CSSSelectorRule extends Rule {
     }
 
     makeAction(event : Event): Action | undefined {
-        logger.debug(`makeAction with prefix = ${this.prefix}`);
         if (event.target) {
-            logger.debug(`${event.target}`);
             let suffix;
             try {
                 suffix = getCssSelector(event.target, {selectors: ['id', 'class', 'tag']});
