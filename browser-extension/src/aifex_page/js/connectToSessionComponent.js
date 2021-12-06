@@ -3,10 +3,14 @@
     let connexionMessage = document.getElementById('connexionMessage');
 
     function render() {
-        if (state.pageKind === 'ConnectToSession') {
-            component.style.display = 'flex';
-        } else {
+        if (state.showConfig) {
             component.style.display = 'none';
+        } else {
+            if (state.pageKind === 'ConnectToSession') {
+                component.style.display = 'flex';
+            } else {
+                component.style.display = 'none';
+            }
         }
     }
 

@@ -50,6 +50,7 @@ export default class Background {
     private _commentsUp: Comment[];
 
     private _popupPageKind: PopupPageKind;
+    private _popupShowConfig: boolean;
     private _isRecording: boolean;
     private _popupCommentPosition: { x: string, y: string };
     private _screenshotList: Screenshot[];
@@ -83,6 +84,7 @@ export default class Background {
         this._testerName = "anonymous";
         this._numberOfExplorationsMadeByTester = 0;
         this._popupPageKind = PopupPageKind.Home;
+        this._popupShowConfig = false;
 
         this._overlayType = "rainbow";
 
@@ -606,6 +608,7 @@ export default class Background {
             state.interactionList = this._exploration.actions.map(interaction => interaction.toPrintableText());
         }
         state.isPreparedToRecordMedia = this._mediaRecordManager.isPreparedToRecordMedia;
+        state.showConfig = this._popupShowConfig;
         state.shouldCreateNewWindowsOnConnect = this._shouldCreateNewWindowsOnConnect;
         state.shouldCloseWindowOnDisconnect = this._shouldCloseWindowOnDisconnect;
         state.popupIsDetached = this._aifexPopup.isDetached;
@@ -675,5 +678,20 @@ export default class Background {
                 console.error("Failed to toggle Popup detach", error.message);
             })
     }
+
+    showConfig(): void {
+		this._popupShowConfig = true;
+	}
+
+	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean): void {
+        this._testerName = testerName;
+        this._shouldCloseWindowOnDisconnect = shouldCloseWindowOnDisconnect;
+        this._shouldCreateNewWindowsOnConnect = shouldCreateNewWindowsOnConnect;
+        this._popupShowConfig = false;
+	}
+	
+	cancelConfig(): void {
+		this._popupShowConfig = false;
+	}
 
 }

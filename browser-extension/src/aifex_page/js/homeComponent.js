@@ -2,11 +2,16 @@
     let component = document.getElementById('homeComponent');
 
     function render() {
-        if (state.pageKind === 'Home') {
-            component.style.display = 'flex';
-        } else {
+        if (state.showConfig) {
             component.style.display = 'none';
+        } else {
+            if (state.pageKind === 'Home') {
+                component.style.display = 'flex';
+            } else {
+                component.style.display = 'none';
+            }
         }
+        
     }
 
     function join(e) {

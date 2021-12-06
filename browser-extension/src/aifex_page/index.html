@@ -13,7 +13,7 @@
     <script src="./js/popup.js" defer></script>
     <script src="./js/headerComponent.js" defer></script>
     <script src="./js/homeComponent.js" defer></script>
-    <!--<script src="./js/configureComponent.js" defer></script>-->
+    <script src="./js/configComponent.js" defer></script>
     <script src="./js/connectToSessionComponent.js" defer></script>
     <script src="./js/makeExplorationsComponent.js" defer></script>
 </head>
@@ -22,6 +22,7 @@
     <header>
         <h2>AIFEX</h2>
         <div id="header-buttons" class="btn-group" role="group" aria-label="windowButtons">
+            <span id="config-button" class="fa fa-cog fa-lg"></span>
             <span id="attach-button" class="fa fa-window-minimize fa-lg"></span>
             <span id="detach-button" class="fa fa-window-maximize fa-lg"></span>
             <span id="disconnect-button" class="fa fa-close fa-lg"></span>
@@ -36,35 +37,25 @@
             <button id="goToCreateSession" class="button create btn_marg"> Create </button>
         </div>
 
-        <!-- <div id="configureComponent">
-            <p>Changing the AIFEX server</p>
-            <form id="linkToServerForm">
+        <div id="configureComponent">
+            <h3>General Configuration</h3>
+            <form id="configForm">
                 <div class="form-group ">
-                    <label id="linkToServerMessage"> You are not connected.</label>
-                    <div class="input-group ">
-                        <input id="serverURLInput" class="form-control" type="text" placeholder="https://www.aifex.fr"
-                            required />
-                        <a id="linkToServerButton" class="btn btn-default input-group-addon"><i
-                                class="fa fa-sign-in"></i></a>
-                    </div>
+                    <label for="testerName">TesterName</label>
+                    <input id="testerName" class="form-control" type="text" placeholder="Anonymous"/>
                 </div>
-            </form>
-            <p>Sign In</p>
-            <form id="signinForm">
-                <div class="form-group ">
-                    <label id="signinMessage"> You are not logged.</label>
-                    <div class="input-group">
-                        <label htmlFor="username">Username</label>
-                        <input id="username" class="form-control" type="text" required />
-                    </div>
-                    <div class="input-group">
-                        <label htmlFor="username">Password</label>
-                        <input id="password" class="form-control" type="password" required />
-                    </div>
-                    <a id="signinButton" class="btn btn-default input-group-addon"><i class="fa fa-sign-in"></i></a>
+                <div class="form-group" id="shouldCreateNewWindowsOnConnectDiv">
+                    <input type="checkbox" id="shouldCreateNewWindowsOnConnect" name="shouldCreateNewWindowsOnConnect" >
+                    <label for="shouldCreateNewWindowsOnConnect">Open a new window when joining a session ?</label>
                 </div>
+                <div class="form-group" id="shouldCloseWindowOnDisconnectDiv">
+                    <input type="checkbox" id="shouldCloseWindowOnDisconnect" name="shouldCloseWindowOnDisconnect" >
+                    <label for="shouldCloseWindowOnDisconnect">Close window when disconnecting a session ?</label>
+                </div>
+                <button id="submitConfig" type="submit" >Ok</button>
+                <button id="cancelConfig">Cancel</button>
             </form>
-        </div> -->
+        </div>
 
 
         <div id="connectToSessionComponent">

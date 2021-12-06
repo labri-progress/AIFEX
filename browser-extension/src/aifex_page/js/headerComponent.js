@@ -3,14 +3,11 @@
     let detachButton = document.getElementById("detach-button");
     let attachButton = document.getElementById("attach-button");
     let closeButton = document.getElementById("disconnect-button");
-
-    //let configureButton = document.getElementById("configure-button");
+    let configButton = document.getElementById("config-button");
 
 
     function render() {
         component.style.display = 'flex';
-        //configureButton.style.display = 'none';
-        //homeButton.style.display = 'none';
         if (state.popupIsDetached) {
             detachButton.style.display = 'none';
         } else {
@@ -69,27 +66,14 @@
             });
     })
 
-    // configureButton.addEventListener("click", (e) => {
-    //     e.preventDefault();
-    //     sendMessage({
-    //         kind: "changePopupPageKind",
-    //         popupPageKind: "Configure",
-    //     })
-    //         .then(() => {
-    //             getStateAndRender();
-    //         });
-    // })
-
-    // homeButton.addEventListener("click", (e) => {
-    //     e.preventDefault();
-    //     sendMessage({
-    //         kind: "changePopupPageKind",
-    //         popupPageKind: "Home",
-    //     })
-    //         .then(() => {
-    //             getStateAndRender();
-    //         });
-    // })
+    configButton.addEventListener("click", (e) => {
+        sendMessage({
+            kind: "showConfig",
+        })
+            .then(() => {
+                getStateAndRender();
+            });
+    })
 
 
     addComponentToPopup(render);

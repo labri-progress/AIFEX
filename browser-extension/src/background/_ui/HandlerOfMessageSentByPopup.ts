@@ -275,6 +275,27 @@ export default class HandlerOfMessageSentByPopup {
                 return true;
             }
 
+            case "showConfig": {
+                logger.info(`Popup asks for ${msg.kind}`);
+                this._application.showConfig();
+                sendResponse("ok");
+                return true;
+            }
+
+            case "submitConfig": {
+                logger.info(`Popup asks for ${msg.kind}`);
+                this._application.submitConfig(msg.testerName, msg.shouldCreateNewWindowsOnConnect, msg.shouldCloseWindowOnDisconnect);
+                sendResponse("ok");
+                return true;
+            }
+
+            case "cancelConfig": {
+                logger.info(`Popup asks for ${msg.kind}`);
+                this._application.cancelConfig();
+                sendResponse("ok");
+                return true;
+            }
+
             default : {
                 //logger.debug(`${msg.kind} is not considered to come from popup`);
                 return true;

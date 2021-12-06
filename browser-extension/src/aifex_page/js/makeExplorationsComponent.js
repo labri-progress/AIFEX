@@ -15,30 +15,34 @@
     let addCommentIsVisible = false;
 
     function render() {
-        if (state.pageKind === 'Explore') {
-            component.style.display = 'flex';
-        } else {
+        if (state.showConfig) {
             component.style.display = 'none';
-        }
-        if (state.isRecording) {
-            makeExplorationTitle.innerHTML = 'Stop/Save your exploration or Trash it';
-            playButton.style.display = 'none';
-            stopButton.style.display = 'flex';
-            trashButton.style.display = 'flex';
-            commentSubComponent.style.display = 'flex';
-            commentForm.style.display = 'none';
-            if (state.commentDistributionList && state.commentDistributionList.length > 0) {
-                readCommentButton.style.display = 'flex';
-            } else {
-                readCommentButton.style.display = 'none';
-            }
-
         } else {
-            makeExplorationTitle.innerHTML = 'Start a new exploration';
-            playButton.style.display = 'flex';
-            stopButton.style.display = 'none';
-            trashButton.style.display = 'none';
-            commentSubComponent.style.display = 'none';
+            if (state.pageKind === 'Explore') {
+                component.style.display = 'flex';
+            } else {
+                component.style.display = 'none';
+            }
+            if (state.isRecording) {
+                makeExplorationTitle.innerHTML = 'Stop/Save your exploration or Trash it';
+                playButton.style.display = 'none';
+                stopButton.style.display = 'flex';
+                trashButton.style.display = 'flex';
+                commentSubComponent.style.display = 'flex';
+                commentForm.style.display = 'none';
+                if (state.commentDistributionList && state.commentDistributionList.length > 0) {
+                    readCommentButton.style.display = 'flex';
+                } else {
+                    readCommentButton.style.display = 'none';
+                }
+
+            } else {
+                makeExplorationTitle.innerHTML = 'Start a new exploration';
+                playButton.style.display = 'flex';
+                stopButton.style.display = 'none';
+                trashButton.style.display = 'none';
+                commentSubComponent.style.display = 'none';
+            }
         }
     }
 

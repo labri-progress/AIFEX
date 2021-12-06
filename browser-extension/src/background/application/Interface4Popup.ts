@@ -46,4 +46,10 @@ export default interface Interface4Popup {
 
     upComment(type: string, value: string): void;
 
+    showConfig(): void;
+
+    submitConfig(testerName: string, shouldCreateNewWindowsOnConnect : boolean, shouldCloseWindowOnDisconnect: boolean): void;
+
+    cancelConfig(): void;
+
 }
