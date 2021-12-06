@@ -20,7 +20,6 @@
     }
 
     closeButton.addEventListener("click", (e) => {
-        e.preventDefault();
         sendMessage({
             kind: "disconnect",
         })
@@ -38,7 +37,6 @@
 
 
     attachButton.addEventListener("click", (e) => {
-        e.preventDefault();
         sendMessage({
             kind: "toggleDetachPopup",
         })
@@ -56,7 +54,6 @@
 
 
     detachButton.addEventListener("click", (e) => {
-        e.preventDefault();
         sendMessage({
             kind: "toggleDetachPopup",
         })

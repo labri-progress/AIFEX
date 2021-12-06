@@ -11,17 +11,14 @@
     }
 
     function handleConnexion(e) {
-        console.log('connect');
         if (e.type === "keydown" && e.key !== "Enter") {
             return;
         }
         
         const INPUT_URL = document.getElementById("connexionURLInput").value;
-        console.log('INPUT_URL:',INPUT_URL);
         try {
             new URL(INPUT_URL);
         } catch (e) {
-            console.log(e);
             connexionMessage.innerHTML = 'Incorrect URL, please enter a correct URL.';
             return;
         }
@@ -35,7 +32,6 @@
                         url: INPUT_URL
                     })
                         .then((response) => {
-                            console.log(response);
                             if (response === "Connected") {
                                 getStateAndRender();
                             } else {

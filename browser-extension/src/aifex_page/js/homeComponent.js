@@ -10,7 +10,6 @@
     }
 
     function join(e) {
-        e.preventDefault();
         state.pageKind = 'ConnectToSession';
         sendMessage({ kind: "changePopupPageKind", popupPageKind: 'ConnectToSession' })
             .then(() => {
@@ -19,7 +18,6 @@
     }
 
     function create(e) {
-        e.preventDefault();
         state.pageKind = 'CreateSession';
         sendMessage({ kind: "changePopupPageKind", popupPageKind: 'CreateSession' })
             .then(() => {

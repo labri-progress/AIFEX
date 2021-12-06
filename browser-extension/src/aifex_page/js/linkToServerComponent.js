@@ -13,7 +13,6 @@ function handleServerLink(e) {
         console.log("key",e.key);
         return;
     }
-    e.preventDefault();
     
     const INPUT_URL = document.getElementById("serverURLInput").value;
     try {

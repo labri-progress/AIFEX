@@ -99,8 +99,8 @@
     }
 
     function submitComment(e) {
-        console.log('submit comment');
         e.preventDefault();
+        console.log('submit comment');
 
         const type = document.getElementById('commentType').value;
         const value = document.getElementById('commentDescription').value;
