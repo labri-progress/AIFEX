@@ -482,7 +482,7 @@ export default class Background {
                         const MIN_NUMBER_OF_ACTIONS = 3; //start + end
                         const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length >= MIN_NUMBER_OF_ACTIONS;
                         if (HAS_MORE_THAN_START_END_ACTIONS) {
-                            return this._aifexService.createFullExploration(this._serverURL, this._sessionId, this._testerName, this._exploration)
+                            return this.sendExploration()
                         }
                     }
                 })
@@ -514,11 +514,6 @@ export default class Background {
 
     sendExploration(): Promise<void> {
         if (this._serverURL && this._exploration && this._sessionId) {
-            const EXPLORATION_CONTAINS_START_ONLY = this._exploration.actions.length === 1;
-
-            if (EXPLORATION_CONTAINS_START_ONLY) {
-                return Promise.resolve();
-            }
             let createExplorationPromise;
             if (this._recordActionByAction) {
                 createExplorationPromise = Promise.resolve(this._exploration.explorationNumber);
@@ -532,6 +527,8 @@ export default class Background {
             }
             return createExplorationPromise
             .then((explorationNumber: number) => {
+                console.log("shoud send screenshots screenshots, ", this._serverURL, this._sessionId, this._screenshotList.length)
+
                 if (this._serverURL && this._sessionId && this._screenshotList.length > 0) {
                     this._aifexService.addScreenshotList(
                         this._serverURL,
@@ -634,11 +631,13 @@ export default class Background {
     }
 
     takeScreenShot(): Promise<void> {
+
         let windowId = this._windowManager.getConnectedWindowId();
         if (windowId && this._exploration) {
             let exploration = this._exploration;
             return this._browserService.takeScreenshot(windowId)
                 .then(image => {
+                    console.log("Take Screenshot ", image)
                     this._screenshotList.push(new Screenshot(image, exploration.length - 1));
                 })
         } else {

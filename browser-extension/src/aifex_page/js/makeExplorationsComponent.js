@@ -118,7 +118,7 @@
                 if (screenshot) {
                     sendMessage({
                         kind: "takeScreenshot"
-                    });
+                    })
                 }
                 document.getElementById("commentSuccessul").style.display = 'block'
                 document.getElementById('commentDescription').value = "";
