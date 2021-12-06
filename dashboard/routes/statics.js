@@ -57,11 +57,7 @@ module.exports = function attachRoutes(app, config) {
 
     app.get('/', (req, res) => {
         if (req.session.jwt) {
-            getWebSites(req.session.jwt)
-            .then(webSiteList => {
-                let sessionList = getSessions(req.session.jwt);
-                res.render('index.ejs', { account: req.session , webSiteList, sessionList});    
-            })
+            res.redirect('/account/account');
         } else {
             res.render('index.ejs', { account: req.session , webSiteList: []});
         }
