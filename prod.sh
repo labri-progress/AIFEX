@@ -20,7 +20,7 @@ export PLUGIN_INFO="$(node -e 'console.log(JSON.stringify(require("./src/manifes
 
 echo "PLUGIN_INFO = $PLUGIN_INFO"
 
-npm run production 
+npm run production
 cd dist/firefox
 zip -r ../../firefoxExtension .
 cd ..
