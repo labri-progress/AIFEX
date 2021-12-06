@@ -42,6 +42,16 @@ export default class BrowserExtensionPage {
             }
         })
     }
+    
+    async createNewWindowsOnConnect(shouldCreate: boolean) {
+        await this._page.click('#config-button');
+        if (shouldCreate) {
+            await this._page.check('#shouldCreateNewWindowsOnConnect');
+        } else {
+            await this._page.uncheck('#shouldCreateNewWindowsOnConnect');
+        }
+        await this._page.click('#submitConfig');
+    }
 
     async joinSession() {
         await this._page.click('#goToJoinSession');

@@ -131,6 +131,7 @@ describe("Playwright", () => {
                 let bep = new BrowserExtensionPage(page, extensionId);
                 let isBEP = await bep.goto();
                 if (isBEP) {
+                    await bep.createNewWindowsOnConnect(false);
                     await bep.joinSession();                    
                     await bep.connectSession(url);
                     await page.waitForTimeout(2000);;
