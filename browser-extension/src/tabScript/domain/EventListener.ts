@@ -45,14 +45,11 @@ export default class EventListener {
     }
 
     private exploratoryListener(event: Event): void {
-        logger.info('exploratoryListener');
         let unsafeEvent: any = event;
         if (unsafeEvent.isTrusted) {
             if (!unsafeEvent.explored) {
-                logger.info('event was unexplored');
                 unsafeEvent.explored = true;
                 const rule = this._ruleService.getMatchingRule(event);
-                logger.info(`rule:${rule}`);
                 if (rule) {
                     const action = rule.makeAction(event);
                     if (action) {
