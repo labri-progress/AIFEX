@@ -20,7 +20,7 @@ services:
   account:
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      
+
   api:
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
@@ -63,10 +63,10 @@ services:
         soft: -1
         hard: -1
 
-  kibana:
-    image: kibana:7.12.1
-    environment:
-      - "SERVER_BASEPATH=/kibana"
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
+  # kibana:
+  #   image: kibana:7.12.1
+  #   environment:
+  #     - "SERVER_BASEPATH=/kibana"
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #     - ELASTICSEARCH_USERNAME=elastic
+  #     - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
