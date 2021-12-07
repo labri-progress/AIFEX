@@ -141,27 +141,25 @@ describe("Playwright", () => {
                     await bep.joinSession();                    
                     await bep.connectSession(url);
                     await bep.startExploration();
-
+                    await page.waitForTimeout(2000);
                     const pages = await browser.pages();
-                    if (pages.length === 1) {
-                        await pages[0].click("body > div > div > div:nth-child(7) > div:nth-child(1) > a");
-                        bep = new BrowserExtensionPage(pages[0], extensionId);
-                        await bep.goto();
-                        await bep.stopExploration();
-                        page = await browser.newPage();
-                        dap = new DashboardAccountPage(page, DASHBOARD_URL);
-                        await dap.goto();
-                        sessions = await dap.getSessions();
-                        let newNumberOfExplorations = parseInt(sessions[sessions.length-1].numberOfExplorations);
-                        expect(newNumberOfExplorations).to.equal(numberOfExplorations + 1);
-                    }
+                    await pages[0].click("body > div > div > div:nth-child(7) > div:nth-child(1) > a");
+                    bep = new BrowserExtensionPage(pages[0], extensionId);
+                    await bep.goto();
+                    await bep.stopExploration();
+                    page = await browser.newPage();
+                    dap = new DashboardAccountPage(page, DASHBOARD_URL);
+                    await dap.goto();
+                    sessions = await dap.getSessions();
+                    let newNumberOfExplorations = parseInt(sessions[sessions.length-1].numberOfExplorations);
+                    expect(newNumberOfExplorations).to.equal(numberOfExplorations + 1);
                 }
             }
         }
         await page.close();
     })
 
-    it ("should set the testerName and create an exploration with ", async () => {
+    it ("should set the testerName and create an exploration ", async () => {
         let page = await browser.newPage();
         const cep = new ChromeExtensionsPage(page);
         await cep.goto();
@@ -171,29 +169,27 @@ describe("Playwright", () => {
             await dap.goto();
             let sessions = await dap.getSessions();
             if (sessions.length > 0) {
-                let url = sessions[sessions.length-1].url;
                 let numberOfExplorations = parseInt(sessions[sessions.length-1].numberOfExplorations);
                 let bep = new BrowserExtensionPage(page, extensionId);
                 let isBEP = await bep.goto();
                 if (isBEP) {
-                    await bep.createNewWindowsOnConnect(false);
-                    await bep.joinSession();                    
-                    await bep.connectSession(url);
+                    await bep.setTesterName("playwright");
                     await bep.startExploration();
+                    await page.waitForTimeout(2000);
 
                     const pages = await browser.pages();
-                    if (pages.length === 1) {
-                        await pages[0].click("body > div > div > div:nth-child(7) > div:nth-child(1) > a");
-                        bep = new BrowserExtensionPage(pages[0], extensionId);
-                        await bep.goto();
-                        await bep.stopExploration();
-                        page = await browser.newPage();
-                        dap = new DashboardAccountPage(page, DASHBOARD_URL);
-                        await dap.goto();
-                        sessions = await dap.getSessions();
-                        let newNumberOfExplorations = parseInt(sessions[sessions.length-1].numberOfExplorations);
-                        expect(newNumberOfExplorations).to.equal(numberOfExplorations + 1);
-                    }
+                    
+                    await pages[0].click("body > div > div > div:nth-child(7) > div:nth-child(1) > a");
+                    bep = new BrowserExtensionPage(pages[0], extensionId);
+                    await bep.goto();
+                    await bep.stopExploration();
+                    page = await browser.newPage();
+                    dap = new DashboardAccountPage(page, DASHBOARD_URL);
+                    await dap.goto();
+                    sessions = await dap.getSessions();
+                    let newNumberOfExplorations = parseInt(sessions[sessions.length-1].numberOfExplorations);
+                    expect(newNumberOfExplorations).to.equal(numberOfExplorations + 1);
+                    
                 }
             }
         }
