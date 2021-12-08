@@ -13,14 +13,7 @@ function sendMessage(message) {
         })
     } else {
         //console.log('firefox');
-        return browser.runtime.sendMessage(message)
-        .then(
-            (response) => {
-                return response;
-            })
-        .catch((error) => {
-            console.error("catching", error)
-        })
+        return browser.runtime.sendMessage(message);
     }
 }
 

@@ -29,6 +29,9 @@ function getStateAndRender() {
                     renderFunctionOfComponents.forEach(renderFunction => renderFunction());
                 }
             }
+        })
+        .catch(error => {
+            console.log("error while getStateAndRender:", JSON.stringify(error));
         });
 }
 

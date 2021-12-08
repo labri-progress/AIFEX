@@ -53,6 +53,12 @@ export default class BrowserExtensionPage {
         await this._page.click('#submitConfig');
     }
 
+    async setTesterName(name : string) {
+        await this._page.click('#config-button');
+        await this._page.type('#testerName', name);
+        await this._page.click('#submitConfig');
+    }
+
     async joinSession() {
         await this._page.click('#goToJoinSession');
     }
