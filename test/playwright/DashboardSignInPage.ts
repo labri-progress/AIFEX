@@ -15,8 +15,8 @@ export default class DashboardSignInPage {
     }
 
     async signin(login: string, password: string) {
-        await this._page.type('#user', login);
-        await this._page.type('#password', password);
+        await this._page.fill('#user', login);
+        await this._page.fill('#password', password);
         await this._page.click('#signin > button');
     }
 

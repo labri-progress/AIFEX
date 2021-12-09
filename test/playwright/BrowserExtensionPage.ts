@@ -55,7 +55,7 @@ export default class BrowserExtensionPage {
 
     async setTesterName(name : string) {
         await this._page.click('#config-button');
-        await this._page.type('#testerName', name);
+        await this._page.fill('#testerName', name);
         await this._page.click('#submitConfig');
     }
 
@@ -64,7 +64,7 @@ export default class BrowserExtensionPage {
     }
 
     async connectSession(url : string) {
-        await this._page.type('#connexionURLInput', url);
+        await this._page.fill('#connexionURLInput', url);
         await this._page.click('#connexionButton');
     }
 

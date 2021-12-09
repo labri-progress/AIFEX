@@ -679,7 +679,7 @@ export default class Background {
     }
 
     showConfig(): void {
-		this._popupShowConfig = true;
+        this._popupShowConfig = !this._popupShowConfig;
 	}
 
 	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean): void {
