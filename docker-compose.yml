@@ -112,6 +112,15 @@ services:
       - db-data:/data/db
     command: --quiet --logpath /data/db/mongod.log
     
+  forwardproxy:
+    image:
+      mitmproxy/mitmproxy
+    command: mitmdump --set block_global=false
+    restart: always
+    volumes:
+      - ./certificates:/home/mitmproxy/.mitmproxy
+    ports:
+      - 8000:8080
 
 volumes:
   screenshot:
