@@ -71,14 +71,4 @@
       </div>
     </div>
   </body>
-  <script>
-
-    let input = document.getElementById('webSiteId');
-    let text = document.getElementById('baseURL');
-    text.value = JSON.parse(text.getAttribute("urls"))[input.selectedIndex];
-    input.onclick = (e) => {
-      text.value = JSON.parse(text.getAttribute("urls"))[input.selectedIndex];
-    };
-
-  </script>
 </html>

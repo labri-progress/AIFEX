@@ -89,6 +89,8 @@ module.exports = function attachRoutes(app, config) {
                 if (webSiteList.length > 0) {
                     let sessionWebSite = webSiteList.find(webSite => webSite.id === session.webSite.id);
 
+                    logger.debug(session);
+
                     res.render('session/update.ejs', {
                         session,
                         account:req.session, 

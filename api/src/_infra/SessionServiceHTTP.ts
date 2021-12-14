@@ -25,7 +25,7 @@ export default class SessionServiceHTTP implements SessionService {
         return fetch(sessionGetURL).then(response => {
             if (response.ok) {
                 return response.json().then(sesRes => {
-                    return new Session(sesRes.id, sesRes.baseURL, sesRes.webSite, sesRes.name, sesRes.desription,  sesRes.createdAt, sesRes.overlayType, sesRes.recordingMode, sesRes.explorationList);
+                    return new Session(sesRes.id, sesRes.baseURL, sesRes.webSite, sesRes.name, sesRes.description,  sesRes.createdAt, sesRes.overlayType, sesRes.recordingMode, sesRes.explorationList);
                 })
             } else {
                 return undefined;
