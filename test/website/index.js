@@ -4,7 +4,7 @@ const app = express();
 
   
 //app.use(bodyParser.json({limit:'50mb'}));
-app.use(express.static('./website/static'));
+app.use(express.static('./static'));
 //app.use(fileUpload());
 
 app.use(function(req, res, next) {

@@ -60,6 +60,34 @@ export default class SessionServiceHTTP implements SessionService {
             })
     }
 
+    updateSession(sessionId: string, webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<Session> {
+        let session = {
+            sessionId,
+            webSiteId,
+            baseURL,
+            name,
+            description,
+            overlayType : overlayType.toString(),
+            recordingMode : recordingMode.toString()
+        }
+        const SessionUpdateURL = 'http://' + config.session.host + ':' + config.session.port + '/session/update';
+        let optionSessionUpdate = {
+            method: 'POST',
+            body:    JSON.stringify(session),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(SessionUpdateURL, optionSessionUpdate)
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+
+                    throw new Error("Error"+response.statusText);
+                }
+            })
+
+    }
+
 
     addExploration(sessionId: string, testerName: string, interactionList : Interaction[], startDate?: Date, stopDate?: Date) : Promise<number> {
         let exploration = {

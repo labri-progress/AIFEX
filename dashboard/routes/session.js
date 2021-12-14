@@ -78,6 +78,83 @@ module.exports = function attachRoutes(app, config) {
             })
     })
 
+
+    app.get('/dashboard/session/update', (req, res) => {
+        let sessionId = req.query.sessionId;
+        logger.info(`get session update page for sessionId (id = ${sessionId})`);
+
+         
+
+        Promise.all([getSessionById(req.session.jwt,sessionId),getWebSites(req.session.jwt)])
+            .then(([session, webSiteList]) => {
+                if (webSiteList.length > 0) {
+                    res.render('session/update.ejs', {
+                        session,
+                        account:req.session, 
+                        defaultWebSiteName: webSiteName, 
+                        webSiteList: JSON.stringify(webSiteList),
+                        webSiteURLList: JSON.stringify(webSiteList.map(site => site.url))
+                    });
+                } else {
+                    let message = 'Cannot update a session without any WebSite. ';
+                    res.render('error.ejs', { message, error: undefined, account: req.session });
+                }
+            })
+            .catch(error => {
+                logger.error(error);
+                let message = 'Error when fetching WebSite from Security Token';
+                res.render('error.ejs', { message, error: e, account: req.session });
+            })
+    });
+
+
+    // app.post('/dashboard/session/update', (req, res) => {
+    //     let { sessionId, webSiteId, name, baseURL, interpolationfactor, depth, description } = req.body;
+    //     let recordingMode = "byexploration"
+    //     let overlayType = "rainbow"
+        
+    //     logger.info(`POST update session (id = ${sessionId})`);
+    //     let connectionCode;
+    //     if (interpolationfactor === undefined) {
+    //         interpolationfactor = DEFAULT_INTERPOLATION_FACTOR;
+    //     }
+    //     if (depth === undefined) {
+    //         depth = DEFAULT_DEPTH;
+    //     }
+
+    //     let sessionId;
+    //     let modelId;
+
+    //     let createSessionPromise = createSession(req.session.jwt, webSiteId, name, baseURL, description, overlayType, recordingMode)
+    //     let createModelPromise = createModel(req.session.jwt, depth, interpolationfactor, "CSP")
+    //     return Promise.all([createSessionPromise, createModelPromise])
+    //         .then(([createdSessionId, createdModelId]) => {
+    //             sessionId = createdSessionId;
+    //             modelId = createdModelId;
+    //             logger.debug(`Session created (id = ${sessionId}), Model created (id = ${modelId})`);
+    //             return linkModelToSession(req.session.jwt, modelId, sessionId)
+    //         })
+    //         .then(() => {
+    //             connectionCode = `${sessionId}$${modelId}`;
+    //             logger.debug('session and model are created, a the link between them has been setted');
+    //             return makeConnexionCodePublic(req.session.jwt, sessionId, modelId, webSiteId)
+    //             .catch(e => {
+    //                 logger.error(e.message);
+    //                 let message = 'Failed to make Session public';
+    //                 res.json({message: message});
+    //             });
+    //         })
+    //         .then(() => {
+    //             res.redirect(`/dashboard/session/view/${connectionCode}`);
+    //         })
+    //         .catch(e => {
+    //             logger.error('Error while creating session, model and setting a link between them: '+e);
+    //             let message = 'Cannot create the session';
+    //             res.render('error.ejs', { message, account: req.session, error: e });
+    //         })
+    // })
+
+
     app.get('/dashboard/session/view/:connectionCode', (req, res) => {
         const { connectionCode } = req.params;
         const [sessionId, modelId] = connectionCode.split('$');

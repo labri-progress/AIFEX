@@ -145,6 +145,62 @@ export default function attachRoutes(app: Express, sessionService: SessionServic
             });
     });
 
+
+    app.post("/session/update", (req, res) => {
+        const { sessionId, webSiteId, baseURL, name, description, overlayType, recordingMode } = req.body;
+        logger.info(`update session sessionId ${sessionId}, webSiteId ${webSiteId}, baseURL ${baseURL}, name ${name}, description ${description}, overlayType ${overlayType}, recordingMode ${recordingMode}`);
+        if (sessionId === undefined) {
+            logger.warn(`sessionId must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("sessionId is undefined");
+            return;
+        }
+        if (webSiteId === undefined) {
+            logger.warn(`webSiteId must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("webSiteId is undefined");
+            return;
+        }
+        if (baseURL === undefined) {
+            logger.warn(`baseURL must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("baseURL is undefined");
+            return;
+        }
+
+        if (name === undefined) {
+            logger.warn(`name must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("name is undefined");
+            return;
+        }
+
+        if (description === undefined) {
+            logger.warn(`description must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("description is undefined");
+            return;
+        }
+
+        if (recordingMode !== undefined && !Session.getRecordingModes().includes(recordingMode)) {
+            logger.warn(`recordingMode must be byexploration or byinteraction`);
+            res.status(INVALID_PARAMETERS_STATUS).send("recordingMode is undefined");
+            return;
+        }
+
+        if (overlayType !== undefined && !Session.getOverlayTypes().includes(overlayType)) {
+            logger.warn(`overlayType must be rainbow, bluesky, shadow`);
+            res.status(INVALID_PARAMETERS_STATUS).send("Invalid overlayType");
+            return;
+        }
+
+
+        sessionService.updateSession(sessionId, name, webSiteId, baseURL, description, overlayType, recordingMode)
+            .then(() => {
+                logger.debug(`session updated : ${sessionId}`);
+                res.json(sessionId);
+            })
+            .catch((e) => {
+                logger.error(`session create error ${e}`);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send(e);
+            });
+    });
+
     app.post("/session/:sessionId/exploration/start", (req, res) => {
         const { sessionId } = req.params;
         logger.info(`start a new exploration sessionId ${sessionId}`);

@@ -236,6 +236,33 @@ export default class APIApplication {
             });
     }
 
+    // updateSession(sessionId: string, webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode, token: Token): Promise<Session | "Unauthorized"> {
+    //     return this.getAccount(token)
+    //         .then((result) => {
+    //             if (result === "Unauthorized") {
+    //                 return "Unauthorized";
+    //             } else {
+    //                 const account: Account = result;
+    //                 return this.findWebSiteById(webSiteId, token)
+    //                     .then((findResult) => {
+    //                         if (findResult === undefined || findResult === "Unauthorized") {
+    //                             return "Unauthorized";
+    //                         } else {
+    //                             const webSite: WebSite = findResult;
+    //                             return this._sessionService.updateSession(sessionId, baseURL, name, description, overlayType, recordingMode)
+    //                                 .then((result) => {
+    //                                     if (result === "IncorrectSessionId") {
+    //                                         return "Unauthorized";
+    //                                     } else {
+    //                                         return new Session(sessionId, baseURL, webSite, name, description, new Date(), overlayType, recordingMode, []);
+    //                                     }
+    //                                 });
+    //                         }
+    //                     });
+    //             }
+    //         }
+    // }
+
     removeSession(sessionId: string, token: Token): Promise<"Unauthorized" | "SessionRemoved"> {
         return this.getAccount(token)
             .then((result) => {

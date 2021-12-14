@@ -88,12 +88,28 @@ export default class Session {
         return ["byexploration", "byinteraction"]
     }
 
+    public changeBaseURL(baseURL: string): void {
+        this._baseURL = baseURL;
+    }
+
     public changeName(name : string) {
         this._name = name;
     }
 
     public changeDescription(description : string) {
         this._description = description;
+    }
+
+    public changeOverlayType(overlayType: SessionOverlayType) {
+        this._overlayType = overlayType;
+    }
+
+    public changeRecordingMode(recordingMode: RecordingMode) {
+        this._explorationRecordingMode = recordingMode;
+    }
+
+    public changeWebSite(webSite: WebSite) {
+        this._webSite = webSite;
     }
 
     public startExploration(tester: Tester, startDate?:Date): number {

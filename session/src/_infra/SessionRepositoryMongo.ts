@@ -36,6 +36,11 @@ export default class SessionRepositoryMongo implements SessionRepository {
             return session.id;
         });
     }
+    updateSession(sessionId: string, name: string, webSiteId: string, baseURL: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<void> {
+        return SessionSchema.updateOne({_id: sessionId}, {$set: {name, webSiteId, baseURL, description, overlayType, recordingMode}})
+        .exec().then(() => {});
+    }
+    
 
     changeDescription(sessionId: string, description: string): Promise<void> {
         return SessionSchema.updateOne({_id: sessionId}, {$set: {description}})

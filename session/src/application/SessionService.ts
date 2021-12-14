@@ -84,6 +84,24 @@ export default class SessionService {
         this.mountedSessionList[this.mountedSessionList.length] = session;
     }
 
+    public updateSession(sessionId: string, name: string, webSiteId: string, baseURL: string,  description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<void> {
+        return Promise.all([this.mountSession(sessionId), this.webSiteRepository.findWebSiteById(webSiteId)])
+            .then(([mountSession, webSite]) => {
+                if (mountSession && webSite) {
+                    mountSession.changeName(name);
+                    mountSession.changeWebSite(webSite);
+                    mountSession.changeBaseURL(baseURL);
+                    mountSession.changeDescription(description);
+                    mountSession.changeOverlayType(overlayType);
+                    mountSession.changeRecordingMode(recordingMode);
+                    return this.sessionRepository.updateSession(sessionId, name, webSite.id, baseURL, description, overlayType, recordingMode)
+                } else {
+                    throw new Error('wrong sessionId or wrong webSiteId');
+                }
+            });
+
+    }
+
     public changeDescription(sessionId: string, description: string): Promise<void> {
         return this.mountSession(sessionId)
             .then((mountSession) => {
