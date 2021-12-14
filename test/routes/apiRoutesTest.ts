@@ -288,6 +288,35 @@ describe("API", () => {
                 expect(accountCasted.authorizationSet[2].key).to.be.eql(sessionId);
             });
     });
+
+
+    it("should update the session", () => {
+        const url = `${API_URL}/sessions`;
+        return fetch(url, {
+            method: "PATCH",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                sessionId,
+                webSiteId: webSiteId,
+                baseURL: "http://mywebsite.com",
+                name: "MySessionUpdated",
+                description: "MySessionDescription",
+                overlayType: "shadow",
+                recordingMode: "byexploration"
+            })})
+            .then(res => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                let resultCasted = result as any;
+                expect(resultCasted.sessionId).to.be.not.undefined;
+            });
+    });
     
 
     it("should create a new model", () => {
@@ -453,7 +482,7 @@ describe("API", () => {
                 return res.json();
             })
             .then((session) => {                
-                expect(session.name).to.be.eql("MySession");
+                expect(session.name).to.be.eql("MySessionUpdated");
             })
     });
 

@@ -309,7 +309,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/Message'
       security:
-        - bearerAuth: []        
+        - bearerAuth: []
+    patch:
+      description: update an existing session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Session'
+      responses:
+        '200':
+          description: The Session id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []  
         
   /sessions/{sessionId}:
     get:

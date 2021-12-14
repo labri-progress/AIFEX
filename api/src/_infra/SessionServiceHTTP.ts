@@ -54,7 +54,6 @@ export default class SessionServiceHTTP implements SessionService {
                 if (response.ok) {
                     return response.json()
                 } else {
-
                     throw new Error("Error"+response.statusText);
                 }
             })
@@ -81,7 +80,6 @@ export default class SessionServiceHTTP implements SessionService {
                 if (response.ok) {
                     return response.json()
                 } else {
-
                     throw new Error("Error"+response.statusText);
                 }
             })
