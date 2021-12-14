@@ -30,7 +30,8 @@
                 <th scope="col" align="center">Connection URL</th>
                 <th scope="col" align="center"># Exploration</th>
                 <th scope="col" align="center">WebSite</th>
-                <th scope="col" align="center">Overlay</th>
+                <th scope="col" align="center">Analyze</th>
+                <th scope="col" align="center">Update</th>
                 <th scope="col" align="center">Download</th>
                 <th scope="col" align="center">Remove</th>
             </tr>
@@ -45,10 +46,11 @@
                   <td><a href="/dashboard/session/view/<%=connectionCode %>">Unamed</a></td>
                 <% } %>
                 <td><input class="inputSessionURL" type="text" value="<%= serveurURLList[i] %>" readonly> </input><i title="Copy in clipboard" data-toggle="tooltip" data-placement="right" onclick="copy(this)" class="fas fa-copy copy-icon"></i></td>
-                <td><%= sessionList[i].explorationList.length %></td>
-                <td><%= sessionList[i].webSite.name %></td>
-                <td><%= sessionList[i].overlayType %></td>
-                <td class="download-session" sessionId="<%= connectionCode %>"><a href="/" ><i class="fas fa-download"></i></a></td>
+                <td><a href="/dashboard/session/view/<%=connectionCode %>"><%= sessionList[i].explorationList.length %></a></td>
+                <td><a href="/dashboard/website/update/<%=sessionList[i].webSite.id %>"><%= sessionList[i].webSite.name %></a></td>
+                <td><a href="/dashboard/session/view/<%=connectionCode %>" ><i class="fas fa-brain"></i></a></td>
+                <td><a href="/dashboard/session/update/<%=connectionCode %>" ><i class="fas fa-wrench"></i></a></td>
+                <td class="download-session" sessionId="<%=connectionCode %>"><a href="/" ><i class="fas fa-download"></i></a></td>
                 <td><a href="/dashboard/session/remove/<%=connectionCode %>" ><i class="fas fa-trash-alt"></i></a></td>
               </tr>
             <%}); %>

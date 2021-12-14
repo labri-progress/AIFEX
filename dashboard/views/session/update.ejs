@@ -11,18 +11,19 @@
         <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
         <hr class="my-4"></hr>
         <h2>Update Session</h2>
-        <form name="sessionForm" action="/dashboard/session/update" method="post" id="createSessionWithEmptyAI">
+        <form name="sessionForm" action="/dashboard/session/update" method="post" id="updateSessionWithEmptyAI">
+          <input type="hidden" name="sessionId" value="<%= session.id %>">
           <div class="form-group row">
-            <label for="webSiteId" class="col-sm-2 col-form-label">Name</label>
+            <label for="name" class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" form="createSessionWithEmptyAI" name="name" id="name" value="MySession">
+              <input type="text" class="form-control" form="updateSessionWithEmptyAI" name="name" id="name" value="<%=session.name%>">
             </div>
           </div>
 
           <div class="form-group row" >
             <label for="webSiteId" class="col-sm-2 col-form-label">Configuration</label>
             <div class="col-sm-10">
-              <select name="webSiteId" id="webSiteId" class="form-control" form="createSessionWithEmptyAI">
+              <select name="webSiteId" id="webSiteId" class="form-control" form="updateSessionWithEmptyAI">
                 <% JSON.parse(webSiteList).forEach(function(webSite) { %>
                   <%if (webSite.name === defaultWebSiteName) { %>
                       <option value="<%=webSite.id %>" selected="selected"> <%=webSite.name %> </option>
@@ -37,7 +38,7 @@
           <div class="form-group row">
             <label for="baseURL" class="col-sm-2 col-form-label">Exploration starting URL</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" form="createSessionWithEmptyAI" name="baseURL" id="baseURL" urls="<%=webSiteURLList%>" >
+              <input type="text" class="form-control" form="updateSessionWithEmptyAI" name="baseURL" id="baseURL" value="<%=session.baseURL%>" >
               <small id="urlHelper" class="form-text text-muted">The testers' starting point.</small>
             </div>
           </div>
@@ -45,15 +46,15 @@
           <div class="form-group row">
             <label class="form-label col-sm-2" for="description" >Description</label>
             <div class="col-sm-10">
-              <textarea name="description" rows="7" cols="33" id="description">Describe the session here !</textarea>
+              <textarea name="description" rows="7" cols="33" id="description" placeholder="Describe the session here !"><%=session.description%></textarea>
             </div>
 
           </div>
 
-          <div class="form-group row">
+          <!--<div class="form-group row">
             <label for="overlayType" class="col-sm-2 col-form-label">Overlay</label>
             <div class="col-sm-10">
-              <select class="form-control" aria-label="Default select example" name="overlayType" form="createSessionWithEmptyAI">
+              <select class="form-control" aria-label="Default select example" name="overlayType" form="updateSessionWithEmptyAI">
                 <option selected value="rainbow"> Rainbow </option>
                 <option value="bluesky">Bluesky</option>
                 <option value="shadow">Shadow</option>
@@ -63,9 +64,9 @@
               <small class="form-text text-muted"> <b>Shadow</b>, does not show any color, but actions are still recorded.</small>
             </div>
 
-          </div>
+          </div>-->
 
-          <button type="submit" class="btn btn-primary">Create</button>
+          <button type="submit" class="btn btn-primary">Update</button>
         </form>
       </div>
     </div>

@@ -307,6 +307,34 @@ module.exports.createSession = function (token, webSiteId, name, baseURL, descri
 }
 
 
+module.exports.updateSession = function (token, sessionId, webSiteId, name, baseURL, description, overlayType, recordingMode) {
+    const apiUpdateSessionURL = 'http://' + config.api.host + ':' + config.api.port + '/sessions';
+    let bodyUpdateSession = {
+        sessionId,
+        name,
+        webSiteId,
+        baseURL,
+        description,
+        overlayType,
+        recordingMode
+    };
+    let optionUpdateSession = {
+        method: 'PATCH',
+        body: JSON.stringify(bodyUpdateSession),
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+    }
+    logger.info("calling route session update")
+    return fetch(apiUpdateSessionURL, optionUpdateSession)
+        .then(response => {
+            if (response.ok) {
+                return response.json().then(json => json.sessionId);
+            } else {
+                throw new Error('cannot create session');
+            }
+        })
+}
+
+
 module.exports.getSessions = function (token) {
     return module.exports.getAccount(token)
         .then(account => {
