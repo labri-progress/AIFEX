@@ -15,22 +15,11 @@
                 <hr class="my-4"></hr>
                 <% if (session.name) { %>
                     <h3>
-                        All comments of <%= session.name%> (<a href="/dashboard/session/view/<%=connectionCode %>">Back to Session Dashboard</a>)
+                        Comments of <a href="/dashboard/session/view/<%=connectionCode %>" ><%= session.name%></a>
                     </h3>
                 <% } else { %>
-                    <h3>All comments of unamed session (<a href="/dashboard/session/view/<%=connectionCode %>">Back to Session Dashboard</a>)</h3>
+                    <h3>Comments of <a href="/dashboard/session/view/<%=connectionCode %>" >unamed session</a></h3>
                 <% } %>
-    
-    
-                <div>
-                    Target WebSite : <span><a href="<%= session.baseURL%>"> <%= session.webSite.name%></span></a>
-                </div>
-                <div>
-                    Overlay : <span><%= session.overlayType%></span>
-                </div>
-                <div>
-                    URL : <input type="text" id="serverURL" value="<%=serverURL %>" readonly></input><button id="copy" class="btn btn-primary">copy</button>
-                </div>
     
                 <br></br>
 

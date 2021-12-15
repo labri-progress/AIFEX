@@ -77,7 +77,7 @@
           <tbody>
             <% webSiteList.forEach((webSite,i) => { %>
               <tr>
-                <td><%= webSite.name %> </td>
+                <td><a href="/dashboard/website/update/<%=webSite.id %>"><%= webSite.name %></a> </td>
                 <td><a href="/dashboard/website/update/<%=webSite.id %>"><i class="fas fa-wrench"></i></a></td>
                 <td class="mapping-rule" name="<%= webSite.name %>"><a href="/" ><i class="fas fa-download"></i></a><span hidden><%= JSON.stringify(webSite.mappingList)%></span></td>
                 <td><a href="/dashboard/website/remove/<%=webSite.id %>" onclick="return confirm('Are you sure you want to remove this WebSite?');"><i class="fas fa-trash-alt"></i></a></td>
