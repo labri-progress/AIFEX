@@ -14,6 +14,8 @@ export default interface SessionService {
 
     createSession(webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<string>;
 
+    updateSession(sessionId: string, webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<Session>;
+
     addExploration(sessionId: string, testerName: string, interactionList: (Action | Comment)[], startDate?: Date, stopDate?: Date): Promise<number>;
 
     addScreenshots(screenshots: Screenshot[]): Promise<"ScreenshotsAdded">;

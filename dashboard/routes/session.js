@@ -1,4 +1,4 @@
-const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId, getCrossEntropyBySession} = require('../service/apiService');
+const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId, getCrossEntropyBySession, updateSession} = require('../service/apiService');
 const logger = require('../logger');
 const buildInvitation = require("../invitations").buildInvitation;
 
@@ -77,6 +77,65 @@ module.exports = function attachRoutes(app, config) {
                 res.render('error.ejs', { message, account: req.session, error: e });
             })
     })
+
+
+    app.get('/dashboard/session/update/:connectionCode', (req, res) => {
+        const { connectionCode } = req.params;
+        const [sessionId, modelId] = connectionCode.split('$');
+        logger.info(`get session update page for sessionId (id = ${sessionId})`);
+
+        Promise.all([getSessionById(req.session.jwt,sessionId),getWebSites(req.session.jwt)])
+            .then(([session, webSiteList]) => {
+                if (webSiteList.length > 0) {
+                    let sessionWebSite = webSiteList.find(webSite => webSite.id === session.webSite.id);
+
+                    logger.debug(session);
+
+                    res.render('session/update.ejs', {
+                        session,
+                        account:req.session, 
+                        defaultWebSiteName: sessionWebSite.name, 
+                        webSiteList: JSON.stringify(webSiteList),
+                        webSiteURLList: JSON.stringify(webSiteList.map(site => site.url))
+                    });
+                } else {
+                    let message = 'Cannot update a session without any WebSite. ';
+                    res.render('error.ejs', { message, error: undefined, account: req.session });
+                }
+            })
+            .catch(error => {
+                logger.error(error);
+                let message = 'Error when fetching WebSite from Security Token';
+                res.render('error.ejs', { message, error: undefined, account: req.session });
+            })
+    });
+
+
+    app.post('/dashboard/session/update', (req, res) => {
+        let { sessionId, webSiteId, name, baseURL, interpolationfactor, depth, description } = req.body;
+        let recordingMode = "byexploration"
+        let overlayType = "rainbow"
+        
+        logger.info(`POST update session (id = ${sessionId})`);
+        let connectionCode;
+        if (interpolationfactor === undefined) {
+            interpolationfactor = DEFAULT_INTERPOLATION_FACTOR;
+        }
+        if (depth === undefined) {
+            depth = DEFAULT_DEPTH;
+        }
+
+        return updateSession(req.session.jwt, sessionId, webSiteId, name, baseURL, description, overlayType, recordingMode)
+            .then(() => {
+                res.redirect(`/account/account`);
+            })
+            .catch(e => {
+                logger.error('Error while creating session, model and setting a link between them: '+e);
+                let message = 'Cannot create the session';
+                res.render('error.ejs', { message, account: req.session, error: e });
+            })
+    })
+
 
     app.get('/dashboard/session/view/:connectionCode', (req, res) => {
         const { connectionCode } = req.params;

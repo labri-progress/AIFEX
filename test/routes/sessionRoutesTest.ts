@@ -81,6 +81,34 @@ describe("Infra", () => {
             });
         });
 
+        it("should update the session", () => {
+            const url = SESSION_URL + "update";
+            const body = {
+                sessionId: sessionId,
+                webSiteId: webSiteId,
+                baseURL: "http://www.test.com/index.html",
+                name:"testsessionupdated",
+                description: "test updated",
+                overlayType: "shadow",
+                recordingMode: "byexploration"
+            };
+            const option = {
+                method: "POST",
+                body:    JSON.stringify(body),
+                headers: { "Content-Type": "application/json" },
+            };
+            return fetch(url, option)
+            .then((res) => {
+                return res.json();
+            })
+            .then((updatedSessionId) => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(updatedSessionId).to.not.be.undefined;
+                // tslint:disable-next-line: no-unused-expression
+                expect(updatedSessionId).to.not.be.null;
+            });
+        });
+
         it("should add an exploration to the session", () => {
             const url = SESSION_URL + sessionId + "/exploration/add";
             const body = {

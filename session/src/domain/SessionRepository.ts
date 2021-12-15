@@ -1,11 +1,15 @@
 import Session from "../domain/Session";
 import Interaction from "./Interaction";
+import { RecordingMode } from "./RecordingMode";
+import { SessionOverlayType } from "./SessionOverlyaType";
 import Tester from "./Tester";
-export default interface ISessionRepository {
+export default interface SessionRepository {
 
     addSession(session: Session): Promise<string>;
 
     addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date, submissionAttempt: number): Promise<number>;
+
+    updateSession(sessionId: string, name: string, webSiteId: string, baseURL: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<void>;
 
     changeDescription(sessionId: string, description: string): Promise<void>;
 

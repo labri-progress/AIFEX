@@ -25,7 +25,7 @@ export default class SessionServiceHTTP implements SessionService {
         return fetch(sessionGetURL).then(response => {
             if (response.ok) {
                 return response.json().then(sesRes => {
-                    return new Session(sesRes.id, sesRes.baseURL, sesRes.webSite, sesRes.name, sesRes.desription,  sesRes.createdAt, sesRes.overlayType, sesRes.recordingMode, sesRes.explorationList);
+                    return new Session(sesRes.id, sesRes.baseURL, sesRes.webSite, sesRes.name, sesRes.description,  sesRes.createdAt, sesRes.overlayType, sesRes.recordingMode, sesRes.explorationList);
                 })
             } else {
                 return undefined;
@@ -54,10 +54,36 @@ export default class SessionServiceHTTP implements SessionService {
                 if (response.ok) {
                     return response.json()
                 } else {
-
                     throw new Error("Error"+response.statusText);
                 }
             })
+    }
+
+    updateSession(sessionId: string, webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<Session> {
+        let session = {
+            sessionId,
+            webSiteId,
+            baseURL,
+            name,
+            description,
+            overlayType : overlayType.toString(),
+            recordingMode : recordingMode.toString()
+        }
+        const SessionUpdateURL = 'http://' + config.session.host + ':' + config.session.port + '/session/update';
+        let optionSessionUpdate = {
+            method: 'POST',
+            body:    JSON.stringify(session),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(SessionUpdateURL, optionSessionUpdate)
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
+            })
+
     }
 
 

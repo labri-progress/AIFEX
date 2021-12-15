@@ -366,6 +366,35 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
+    app.patch("/sessions", (req, res) => {
+        logger.info(`update session`);
+        const { sessionId, webSiteId, baseURL, name, description, overlayType, recordingMode } = req.body;
+        if (req.token === undefined) {
+            logger.warn(`no token`);
+            res.status(FORBIDDEN_STATUS).json({message:"No token"});
+        } else {
+            const token: Token = req.token;
+            if (sessionId === undefined || baseURL === undefined || name === undefined || overlayType === undefined || webSiteId === undefined || description === undefined || recordingMode === undefined) {
+                logger.info("invalid parameters for updating a session")
+                return res.status(INVALID_PARAMETERS_STATUS).json({message:"invalid parameter"});
+            } else {
+                api.updateSession(sessionId, webSiteId, baseURL, name, description, overlayType, recordingMode, token)
+                    .then(updateResult => {
+                        if (updateResult === "Unauthorized") {
+                            res.status(FORBIDDEN_STATUS).json({message:updateResult});
+                        } else {
+                            logger.info("session is updated:", updateResult.id);
+                            res.json({sessionId:updateResult.id});
+                        }
+                    })
+                    .catch((e) => {
+                        logger.error(`error:${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                    });
+            }
+        }
+    });
+
 
     app.post("/sessions/:sessionId/explorations", (req, res) => {
         const sessionId = req.params.sessionId;
