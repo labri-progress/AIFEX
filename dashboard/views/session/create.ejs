@@ -49,7 +49,7 @@
             </div>
 
           </div>
-<!-- 
+
           <div class="form-group row">
             <label for="overlayType" class="col-sm-2 col-form-label">Overlay</label>
             <div class="col-sm-10">
@@ -58,12 +58,23 @@
                 <option value="bluesky">Bluesky</option>
                 <option value="shadow">Shadow</option>
               </select>
-              <small class="form-text text-muted"> <b>Rainbow</b>, recorded actions are blue, green, orange or red to help you to improve the diversity.</small>
-              <small class="form-text text-muted"> <b>Bluesky</b>, recorded actions are blue.</small>
-              <small class="form-text text-muted"> <b>Shadow</b>, does not show any color, but actions are still recorded.</small>
+              <small class="form-text text-muted"> <b>Rainbow</b>, AIFEX extension highlights with colors the elements that have been touched to help the testers to improve the diversity.</small>
+              <small class="form-text text-muted"> <b>Bluesky</b>, AIFEX extension highlights in blue all the elements that have been touched as well as the ones that are targets of the configuration.</small>
+              <small class="form-text text-muted"> <b>Shadow</b>, AIFEX extension does not highlight elements.</small>
             </div>
+          </div> 
 
-          </div> -->
+          <div class="form-group row">
+            <label for="recordingMode" class="col-sm-2 col-form-label">Recording Mode</label>
+            <div class="col-sm-10">
+              <select class="form-control" aria-label="Default select example" name="recordingMode" id="recordingMode" form="createSessionWithEmptyAI">
+                <option selected value="byexploration"> By Exploration </option>
+                <option value="byinteraction">By Interaction</option>
+              </select>
+              <small class="form-text text-muted"> <b>By Exploration</b>, the exploration is recorded (sent to the server) once the "stop" button of the AIFEX extension has been clicked.</small>
+              <small class="form-text text-muted"> <b>By Interaction</b>, the exploration is always recorded, each new interaction is recorded.</small>
+            </div>
+          </div> 
 
           <button type="submit" class="btn btn-primary" id="submit">Create</button>
         </form>

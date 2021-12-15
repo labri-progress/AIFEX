@@ -20,7 +20,7 @@ describe("Playwright", () => {
     //let browser : BrowserContext;
     let PATH_TO_EXTENSION = path.join(__dirname, '..', '..', 'browser-extension', 'dist', "chrome");
     let DASHBOARD_URL = 'https://aifexpreprod.ovh/';
-    let TARGET_URL = 'http://localhost:8080/';
+    let TARGET_URL = 'http://localhost:8090/';
 
 
 

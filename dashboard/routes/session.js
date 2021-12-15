@@ -33,9 +33,7 @@ module.exports = function attachRoutes(app, config) {
     });
 
     app.post('/dashboard/session/create', (req, res) => {
-        let { webSiteId, name, baseURL, interpolationfactor, depth, description } = req.body;
-        let recordingMode = "byexploration"
-        let overlayType = "rainbow"
+        let { webSiteId, name, baseURL, interpolationfactor, depth, description, overlayType, recordingMode } = req.body;
         
         logger.info(`POST create session for WebSite (id = ${webSiteId})`);
         let connectionCode;
@@ -49,8 +47,8 @@ module.exports = function attachRoutes(app, config) {
         let sessionId;
         let modelId;
 
-        let createSessionPromise = createSession(req.session.jwt, webSiteId, name, baseURL, description, overlayType, recordingMode)
-        let createModelPromise = createModel(req.session.jwt, depth, interpolationfactor, "CSP")
+        let createSessionPromise = createSession(req.session.jwt, webSiteId, name, baseURL, description, overlayType, recordingMode);
+        let createModelPromise = createModel(req.session.jwt, depth, interpolationfactor, "CSP");
         return Promise.all([createSessionPromise, createModelPromise])
             .then(([createdSessionId, createdModelId]) => {
                 sessionId = createdSessionId;
@@ -112,11 +110,10 @@ module.exports = function attachRoutes(app, config) {
 
 
     app.post('/dashboard/session/update', (req, res) => {
-        let { sessionId, webSiteId, name, baseURL, interpolationfactor, depth, description } = req.body;
-        let recordingMode = "byexploration"
-        let overlayType = "rainbow"
+        let { sessionId, webSiteId, name, baseURL, interpolationfactor, depth, description, overlayType, recordingMode } = req.body;
         
         logger.info(`POST update session (id = ${sessionId})`);
+        logger.debug(`recordingMode = ${recordingMode}`);
         let connectionCode;
         if (interpolationfactor === undefined) {
             interpolationfactor = DEFAULT_INTERPOLATION_FACTOR;
@@ -130,7 +127,7 @@ module.exports = function attachRoutes(app, config) {
                 res.redirect(`/account/account`);
             })
             .catch(e => {
-                logger.error('Error while creating session, model and setting a link between them: '+e);
+                logger.error('Error while updating the session'+e);
                 let message = 'Cannot create the session';
                 res.render('error.ejs', { message, account: req.session, error: e });
             })
