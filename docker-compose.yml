@@ -97,7 +97,6 @@ services:
       - "website"
       - "session"
       - "dashboard"
-      - "forwardproxy"
     ports:
       - 80:80
    
