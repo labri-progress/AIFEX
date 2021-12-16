@@ -100,8 +100,7 @@ services:
       - "forwardproxy"
     ports:
       - 80:80
-    volumes:
-      - ./forwardproxy/certificates:/www/data/certificates
+   
       
   rabbitmq:
     image: rabbitmq:3.8.5
@@ -115,18 +114,6 @@ services:
       - db-data:/data/db
     command: --quiet --logpath /data/db/mongod.log
     
-  forwardproxy:
-    build:
-      context: forwardproxy
-      dockerfile: ./Dockerfile
-    restart: always
-    environment:
-      - SCRIPT_LOCATION=http://localhost/static/test.js
-    volumes:
-      - ./forwardproxy/certificates:/root/.mitmproxy
-    ports:
-      - 8000:8000
-
 volumes:
   screenshot:
   video:
