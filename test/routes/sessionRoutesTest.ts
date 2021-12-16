@@ -13,10 +13,11 @@ before("Dropping database", async () => {
 })
 
 describe("Infra", () => {
-    let webSiteId : string | undefined;
-    let sessionId : string | undefined;
+   
 
-    describe("session", () => {
+    describe("session - record by exploration", () => {
+        let webSiteId : string | undefined;
+        let sessionId : string | undefined;
 
         before(() => {
             const url = WEBSITE_URL + "create";
@@ -149,5 +150,130 @@ describe("Infra", () => {
             });
         });
 
+    });
+
+    describe("session - record by exploration", () => {
+        let webSiteId : string | undefined;
+        let sessionId : string | undefined;
+        before(() => {
+            const url = WEBSITE_URL + "create";
+            const body = {
+                name: "test",
+                url:"https://www.test.test",
+                mappingList: [],
+            };
+            const option = {
+                method: "POST",
+                body:    JSON.stringify(body),
+                headers: { "Content-Type": "application/json" },
+            };
+            return fetch(url, option)
+                .then(res => {
+                    return res.json();
+                })
+                .then(id => {
+                    webSiteId = typeof id === 'string' ? id : undefined;
+                })
+        });
+
+        it("should create an new session", () => {
+            const url = SESSION_URL + "create";
+            const body = {
+                webSiteId: webSiteId,
+                baseURL: "http://www.test.com/index.html",
+                name:"testsession",
+                description: "test",
+                overlayType: "rainbow",
+                recordingMode: "byinteraction"
+            };
+            const option = {
+                method: "POST",
+                body:    JSON.stringify(body),
+                headers: { "Content-Type": "application/json" },
+            };
+            return fetch(url, option)
+            .then((res) => {
+                return res.json();
+            })
+            .then((createdSessionId) => {
+                // tslint:disable-next-line: no-unused-expression
+                expect(createdSessionId).to.not.be.undefined;
+                // tslint:disable-next-line: no-unused-expression
+                expect(createdSessionId).to.not.be.null;
+
+                sessionId = typeof createdSessionId === 'string' ? createdSessionId : undefined;
+            });
+        });
+
+        it("should get the created session", () => {
+            const url = SESSION_URL + sessionId;
+            return fetch(url, {})
+            .then((res) => {
+                return res.json();
+            })
+            .then((session) => {
+                let sessionCasted = session as any;
+                expect(sessionCasted.webSite.name).to.equal("test");
+                expect(sessionCasted.baseURL).to.equal("http://www.test.com/index.html");
+                expect(sessionCasted.explorationList.length).to.equal(0);
+            });
+        });
+
+        it("should add an empty exploration to the session", () => {
+            const url = SESSION_URL + sessionId + "/exploration/add";
+            const body = {
+                testerName: "superTester",
+                interactionList: [
+                ],
+            };
+            const option = {
+                method: "POST",
+                body:    JSON.stringify(body),
+                headers: { "Content-Type": "application/json" },
+            };
+            return fetch(url, option)
+            .then((res) => {
+                return res.json();
+            })
+            .then( (explorationNumber) => {
+                expect(explorationNumber).to.equal(0);
+            });
+
+        });
+
+        it("should add new actions to the exploration", () => {
+            const AddInteractionsURL = `${SESSION_URL}${sessionId}/exploration/${0}/pushActionList`;
+            const interactionList = [
+                {index: 0, concreteType: "Action", kind: "add", value: "5"},
+                {index: 1, concreteType: "Comment", kind: "bug", value: "important"},
+                {index: 2, concreteType: "Action", kind: "remove", value: "3"},
+            ];
+            let option = {
+                method: 'POST',
+                body:    JSON.stringify({interactionList}),
+                headers: { 'Content-Type': 'application/json' },
+            }
+
+            return fetch(AddInteractionsURL, option)
+            .then((res) => {                
+                expect(res.ok).to.eql(true)
+            })
+
+        });
+
+        it("should get the created exploration", () => {
+            const url = SESSION_URL + sessionId;
+            return fetch(url, {})
+            .then((res) => {
+                return res.json();
+            })
+            .then((session) => {
+                let sessionCasted = session as any;
+                expect(sessionCasted.webSite.name).to.equal("test");
+                expect(sessionCasted.baseURL).to.equal("http://www.test.com/index.html");
+                expect(sessionCasted.explorationList.length).to.equal(1);
+                expect(sessionCasted.explorationList[0].interactionList.length).to.equal(3);
+            });
+        });
     });
 });

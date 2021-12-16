@@ -21,9 +21,6 @@ import EventStore from "./EventStore";
 const CACHE_SIZE: number = 5;
 
 export default class SessionService {
-
-
-
     private readonly sessionRepository: SessionRepository;
     private readonly webSiteRepository: WebSiteRepository;
     private readonly eventStore: EventStore;
@@ -99,7 +96,6 @@ export default class SessionService {
                     throw new Error('wrong sessionId or wrong webSiteId');
                 }
             });
-
     }
 
     public changeDescription(sessionId: string, description: string): Promise<void> {

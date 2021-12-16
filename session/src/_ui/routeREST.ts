@@ -6,7 +6,6 @@ import CommentInteraction from "../domain/CommentInteraction";
 import { Express, Request } from "express";
 import { logger } from "../logger";
 import Session from "../domain/Session";
-import { SessionOverlayType } from "../domain/SessionOverlyaType";
 
 const SUCCESS_STATUS = 200;
 const NOT_FOUND_STATUS = 404;

@@ -1,6 +1,4 @@
 import { generate } from "shortid";
-import Comment from "../domain/Comment";
-import Action from "./Action";
 import Exploration from "./Exploration";
 import { RecordingMode } from "./RecordingMode";
 import Interaction from "./Interaction";
@@ -126,31 +124,9 @@ export default class Session {
         this._explorationList[explorationNumber].stop(stopDate);
     }
 
-    public addActionToExploration(explorationNumber: number, action: Action): void {
-        if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
-            throw new Error("cannot add action to exploration, wrong explorationNumber.");
-        }
-        if (this._explorationRecordingMode !== "byexploration") {
-            throw new Error("cannot add action to exploration, wrong explorationRecordingMode.");
-        }
-        const exploration = this._explorationList[explorationNumber];
-        exploration.addAction(action);
-    }
-
-    public addCommentToExploration(explorationNumber: number, comment: Comment): void {
-        if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
-            throw new Error("cannot add comment to exploration, wrong explorationNumber.");
-        }
-        const exploration = this._explorationList[explorationNumber];
-        exploration.addComment(comment);
-    }
-
     public addInteractionListToExploration(explorationNumber: number, interactionList: Interaction[]): void {
         if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
             throw new Error("cannot add interaction to exploration, wrong explorationNumber.");
-        }
-        if (this._explorationRecordingMode !== "byexploration") {
-            throw new Error("cannot add interaction to exploration, wrong explorationRecordingMode.");
         }
         const exploration = this._explorationList[explorationNumber];
         exploration.addInteractionList(interactionList);
