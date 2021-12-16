@@ -38,7 +38,7 @@ describe("Domain - Session", () => {
         });
         describe("Adding actions in an exploration", () => {
             const session = new Session(undefined, webSite, BASE_URL, "MySession", "do it", undefined, undefined );
-            const action = new Action("clickButton");
+            const action = new ActionInteraction(0, new Action("clickButton"), new Date());
 
             let explorationNumber;
 
@@ -46,11 +46,11 @@ describe("Domain - Session", () => {
                 session.startExploration(anonymousTester);
                 try {
                     // tslint:disable-next-line: no-magic-numbers
-                    session.addActionToExploration(99, action);
+                    session.addInteractionListToExploration(99, [action]);
                     expect.fail("should have failed");
                 } catch (e) {
                     if (e instanceof Error) {
-                        expect(e.message).to.eql("cannot add action to exploration, wrong explorationNumber.");
+                        expect(e.message).to.eql("cannot add interaction to exploration, wrong explorationNumber.");
                     } else {
                         expect.fail("incorrect error");
                     }
@@ -59,7 +59,7 @@ describe("Domain - Session", () => {
 
             it("should add an action with no suffix to an exploration", () => {
                 explorationNumber = session.startExploration(anonymousTester);
-                session.addActionToExploration(explorationNumber, action);
+                session.addInteractionListToExploration(explorationNumber, [action]);
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
                 // tslint:disable-next-line: no-magic-numbers
                 expect(interactionList.length).to.equal(1);
@@ -70,7 +70,7 @@ describe("Domain - Session", () => {
 
             it("should add an action with suffix to an exploration", () => {
                 explorationNumber = session.startExploration(anonymousTester);
-                session.addActionToExploration(explorationNumber,  new Action("clickButton", "toto"));
+                session.addInteractionListToExploration(explorationNumber, [new ActionInteraction(1, new Action("clickButton", "toto"), new Date())]);
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
                 // tslint:disable-next-line: no-magic-numbers
                 expect(interactionList.length).to.equal(1);
@@ -82,14 +82,14 @@ describe("Domain - Session", () => {
 
         describe("Adding comment in an exploration", () => {
             const session = new Session(undefined, webSite, BASE_URL, "MySession", "do it", undefined, undefined );
-            const action1 = new Action("action1");
-            const action2 = new Action("action2");
+            const action1 = new ActionInteraction(1,new Action("action1"));
+            const action2 = new ActionInteraction(2,new Action("action2"));
             const comment1 = new Comment("bug", "first");
             const comment2 = new Comment("bug", "second");
             const comment3 = new Comment("bug", "third");
 
             const explorationNumber = session.startExploration(anonymousTester);
-            session.addActionToExploration(explorationNumber, action1);
+            session.addInteractionListToExploration(explorationNumber, [ action1]);
 
             it("should add a comment to an exploration", () => {
                 session.addCommentToExploration(explorationNumber, comment1);
@@ -107,7 +107,7 @@ describe("Domain - Session", () => {
             });
 
             it("should add a comment on a new action", () => {
-                session.addActionToExploration(explorationNumber, action2);
+                session.addInteractionListToExploration(explorationNumber, [action2]);
                 session.addCommentToExploration(explorationNumber, comment3);
 
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
