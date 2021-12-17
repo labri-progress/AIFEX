@@ -16,7 +16,6 @@ import Screenshot from "./Screenshot";
 import Comment from "./Comment"
 import CommentDistribution from "./CommentDistribution";
 import { OverlayType } from "./Session";
-import configuration from "../../../configuration.json";
 import { PopupPageKind } from "./PopupPageKind";
 import Token from "./Token";
 import { logger } from "../Logger";
@@ -95,7 +94,7 @@ export default class Background {
         this._popupCommentPosition = { x: "75%", y: "75%" };
         this._screenshotList = [];
         this._explorationEvaluation = undefined;
-        this._rejectIncorrectExplorations = configuration.rejectIncorrectExplorations;
+        this._rejectIncorrectExplorations = true;
     }
 
     private initialize(): void {
