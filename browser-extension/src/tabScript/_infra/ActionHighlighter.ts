@@ -3,11 +3,11 @@ import {makeCSS} from "./cssStyle";
 import ActionsAndElements from '../domain/ActionsAndElements';
 import Rule from '../domain/Rule';
 import HighlighterCanvas from './HighlighterCanvas';
-import configuration from "../../../configuration.json";
 
 const WARM_COLOR_THRESHOLD = 0.6;
 const MEDIUM_COLOL_THRESHOLD = 0.3;
 const COLD_COLOR_THRESHOLD = 0.01;
+const displayNeverUsedAction = true;
 
 let oftenColor = "#ff0000";
 let sometimesColor = "#FFA500";
@@ -72,7 +72,7 @@ export default class ActionHighlighter {
                 } else {
                     if (!htmlElement.hasAttribute("aifex_frequency")) {
                         htmlElement.setAttribute("aifex_frequency", "never")
-                        if (configuration.displayNeverUsedAction) {
+                        if (displayNeverUsedAction) {
                             this._highlighterCanvas.highlightElement(htmlElement, neverColor)
                         }
                     }

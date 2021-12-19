@@ -1,7 +1,6 @@
 import { querySelectorAllDeep } from 'query-selector-shadow-dom';
 import Action from "../domain/Action";
 import ActionState from '../domain/ActionsAndElements';
-import configuration from "../../../configuration.json";
 
 const PROBABILITY_POPUP = "AIFEX_probabilityPopup";
 const MAX_DISPLAYED_LINES = 9;
@@ -15,9 +14,6 @@ export default class ActionsPopupView {
     }
 
     show(actionState: ActionState): void {
-        if (!configuration.displayProbabilityPopup) {
-            return;
-        }
         if (!this.probabilityPopup) {
             this.probabilityPopup = document.createElement("div");
             this.probabilityPopup.setAttribute("id", PROBABILITY_POPUP);

@@ -5,7 +5,6 @@ import ActionsAndElements from "./ActionsAndElements";
 import ExplorationEvaluation from "./ExplorationEvaluation";
 import Rule from "./Rule";
 import HighlighterCanvas from "../_infra/HighlighterCanvas";
-import configuration from "../../../configuration.json";
 
 
 export default class Highlighter {
@@ -36,9 +35,7 @@ export default class Highlighter {
             this.elementRules = elementRules;
             this.actionsAndElements = actionsAndElements;
             this.evaluation = evaluation;
-            if (configuration.displayCanvas) {
-                this._highlighterCanvas.reset()
-            }
+            this._highlighterCanvas.reset()
             this.display();
             resolve();
         })
@@ -52,18 +49,14 @@ export default class Highlighter {
         if (this.evaluation) {
             this._evaluationActionsBorderView.show(this.evaluation);
         }
-        if (configuration.displayCanvas) {
-            this._highlighterCanvas.show();
-        }
+        this._highlighterCanvas.show();
     }
 
     hide(): Promise<void> {
         this._actionPopup.hide();
         this._actionHighlighter.hide();
         this._evaluationActionsBorderView.hide();
-        if (configuration.displayCanvas) {
-            this._highlighterCanvas.hide();
-        }
+        this._highlighterCanvas.hide();
         return Promise.resolve();
     }
 

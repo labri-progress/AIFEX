@@ -44,12 +44,9 @@ export default class TabScript {
     }
 
     refresh(): Promise<void> {
-        if (this._highlighter == undefined) {
-            return Promise.resolve();
-        } 
         return this._backgroundService.getState()
         .then((state: State) => {
-            if (!state.isActive) {
+            if (!state.isActive || state.overlayType === "shadow") {
                 return this._highlighter.hide()
             } else  {
                 return Promise.all([
