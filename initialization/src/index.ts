@@ -96,6 +96,7 @@ async function createDefaultWebSite(token) {
             mappingList = mappingList.concat(mapping);
         }
         let id = await createSite(token, site.name, site.url, mappingList);
+        logger.debug(id);
         site._id = id;
     }
     return siteList;
@@ -137,7 +138,10 @@ function createSite(token, name, url, mappingList) {
             })
         })
         .then(() => {
-            return result;
+            logger.debug(result);
+            logger.debug(result.webSiteId);
+
+            return result.webSiteId;
         })
     })
 
