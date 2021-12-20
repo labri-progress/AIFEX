@@ -113,7 +113,7 @@ export default class HandlerOfMessageSentByPopup {
                             })
                             .catch((error: string) => {
                                 logger.error("Connection failed", new Error(error))
-                                sendResponse({error})
+                                sendResponse({error:"Connection failed"})
                         });
                     } catch(error) {
                         logger.error("Invalid URL", new Error("url"))
