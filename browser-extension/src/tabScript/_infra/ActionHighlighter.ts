@@ -2,20 +2,18 @@ import { querySelectorAllDeep } from 'query-selector-shadow-dom';
 import {makeCSS} from "./cssStyle";
 import ActionsAndElements from '../domain/ActionsAndElements';
 import Rule from '../domain/Rule';
-import highlighterConfig from "../../../configuration.json";
 import HighlighterCanvas from './HighlighterCanvas';
-import { CategoryConfiguration } from 'typescript-logging';
-import configuration from "../../../configuration.json";
 
 const WARM_COLOR_THRESHOLD = 0.6;
 const MEDIUM_COLOL_THRESHOLD = 0.3;
 const COLD_COLOR_THRESHOLD = 0.01;
+const displayNeverUsedAction = true;
 
-let oftenColor = highlighterConfig.oftenColor;
-let sometimesColor = highlighterConfig.sometimesColor;
-let rarelyColor = highlighterConfig.rarelyColor;
-let neverColor = highlighterConfig.neverColor;
-let mappedColor = highlighterConfig.mappedColor;
+let oftenColor = "#ff0000";
+let sometimesColor = "#FFA500";
+let rarelyColor = "#9ACD32";
+let neverColor = "#2196F3";
+let mappedColor = "#2196F3";
 
 export default class ActionHighlighter {
 
@@ -74,7 +72,7 @@ export default class ActionHighlighter {
                 } else {
                     if (!htmlElement.hasAttribute("aifex_frequency")) {
                         htmlElement.setAttribute("aifex_frequency", "never")
-                        if (configuration.displayNeverUsedAction) {
+                        if (displayNeverUsedAction) {
                             this._highlighterCanvas.highlightElement(htmlElement, neverColor)
                         }
                     }

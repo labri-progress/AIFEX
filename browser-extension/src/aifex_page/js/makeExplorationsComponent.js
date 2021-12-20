@@ -95,6 +95,7 @@
     function openCommentView() {
         if (!addCommentIsVisible) {
             commentForm.style.display = 'block';
+            document.getElementById("commentSuccessul").style.display = 'none';
             addCommentIsVisible = true;
         } else {
             commentForm.style.display = 'none';
@@ -104,7 +105,7 @@
 
     function submitComment(e) {
         e.preventDefault();
-        console.log('submit comment');
+        console.log('submit bug report');
 
         const type = document.getElementById('commentType').value;
         const value = document.getElementById('commentDescription').value;
@@ -117,15 +118,17 @@
                 if (response.error) {
                     console.error(response.error)
                     return;
+                } else {
+                    const screenshot = document.getElementById('commentScreenshot').checked;
+                    if (screenshot) {
+                        sendMessage({
+                            kind: "takeScreenshot"
+                        })
+                    }
+                    document.getElementById("commentSuccessul").style.display = 'block';
+                    document.getElementById('commentDescription').value = "";
                 }
-                const screenshot = document.getElementById('commentScreenshot').checked;
-                if (screenshot) {
-                    sendMessage({
-                        kind: "takeScreenshot"
-                    })
-                }
-                document.getElementById("commentSuccessul").style.display = 'block'
-                document.getElementById('commentDescription').value = "";
+                
             });
     }
 

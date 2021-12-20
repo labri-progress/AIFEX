@@ -1,9 +1,7 @@
-import configuration from "../../../configuration.json";
-
 export default class HighlighterCanvas {
 
     private _canvasMap: Map<number, HTMLCanvasElement>;
-    private actionBorderSize = configuration.actionBorderSize; 
+    private actionBorderSize = 5; 
     private elementsToHighlight: Map<HTMLElement| SVGElement, string>;
     private elementsToHighlightAnimated: Set<HTMLElement| SVGElement>;
     private elementToZindex: Map<HTMLElement| SVGElement, number>;
@@ -22,9 +20,7 @@ export default class HighlighterCanvas {
         this.lastTime = 0;
         window.addEventListener("resize", this.resizeCanvas.bind(this))
         window.addEventListener("scroll", this.moveCanvas.bind(this))
-        if (configuration.displayCanvas) {
-            window.requestAnimationFrame(this.draw.bind(this));
-        }
+        window.requestAnimationFrame(this.draw.bind(this));
     }
 
     private resizeCanvas() {
@@ -77,9 +73,7 @@ export default class HighlighterCanvas {
 
     public show() {
         this.isStopped = false;
-        if (configuration.displayCanvas) {
-            window.requestAnimationFrame(this.draw.bind(this));
-        }
+        window.requestAnimationFrame(this.draw.bind(this));
     }
 
     public hide() {

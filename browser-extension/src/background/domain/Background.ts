@@ -16,9 +16,9 @@ import Screenshot from "./Screenshot";
 import Comment from "./Comment"
 import CommentDistribution from "./CommentDistribution";
 import { OverlayType } from "./Session";
-import configuration from "../../../configuration.json";
 import { PopupPageKind } from "./PopupPageKind";
 import Token from "./Token";
+import { logger } from "../Logger";
 
 export default class Background {
 
@@ -63,7 +63,7 @@ export default class Background {
     private _aifexPopup: AifexPopup;
     private _overlayType: OverlayType;
     
-    private _recordActionByAction: boolean;
+    private _recordActionByAction: boolean | undefined;
 
     constructor(aifexService: AifexService, popupService: PopupService, browserService: BrowserService, tabScriptService: TabScriptService) {
         console.log('Creating');
@@ -94,8 +94,7 @@ export default class Background {
         this._popupCommentPosition = { x: "75%", y: "75%" };
         this._screenshotList = [];
         this._explorationEvaluation = undefined;
-        this._rejectIncorrectExplorations = configuration.rejectIncorrectExplorations;
-        this._recordActionByAction = configuration.recordActionByAction;
+        this._rejectIncorrectExplorations = true;
     }
 
     private initialize(): void {
@@ -163,6 +162,8 @@ export default class Background {
                 } else if (modelResult === false || sessionResult === undefined) {
                     return "NotFound";
                 } else {
+                    this._recordActionByAction = sessionResult.recordingMode === "byinteraction";
+                    logger.debug("Recording mode: " + this._recordActionByAction);
                     this._sessionBaseURL = sessionResult.baseURL;
                     this._overlayType = sessionResult.overlayType as OverlayType;
                     return this._aifexService.getWebSite(serverURL, sessionResult.webSiteId, this._token)
