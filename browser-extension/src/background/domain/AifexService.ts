@@ -8,6 +8,7 @@ import Screenshot from "./Screenshot";
 import CommentDistribution from "./CommentDistribution";
 import Token from "./Token";
 import Action from "./Action";
+import Comment from "./Comment";
 
 export default interface AifexService {
 	ping(serverURL: string): Promise<void>;
@@ -39,7 +40,7 @@ export default interface AifexService {
 
 	createEmptyExploration(serverURL: string, sessionId: string, testerName :string): Promise<number>;
 
-	pushActionList(serverURL: string, sessionId: string, explorationNumber: number, actionList: Action[]): Promise<void>;
+	pushActionOrCommentList(serverURL: string, sessionId: string, explorationNumber: number, actionOrCommentList: (Action|Comment)[]): Promise<void>;
 
 	notifySubmissionAttempt(serverURL: string, sessionId: string, explorationNumber: number): Promise<void>;
 

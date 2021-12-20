@@ -424,7 +424,7 @@ export default class Background {
                 }
                 const actionList = this._exploration.actions;
                 const lastAction = actionList[actionList.length-1];
-                const pushActionListPromise = this._aifexService.pushActionList(
+                const pushActionListPromise = this._aifexService.pushActionOrCommentList(
                     this._serverURL, 
                     this._sessionId, 
                     this._exploration.explorationNumber, 
@@ -445,6 +445,20 @@ export default class Background {
     addCommentToExploration(comment: Comment): void {
         if (this._isRecording && this._exploration) {
             this._exploration.addComment(comment);
+            if (this._recordActionByAction) {
+                if (!this._serverURL ||  !this._sessionId) {
+                    throw new Error("Not connected to a session")
+                }
+                if (this._exploration.explorationNumber === undefined) {
+                    throw new Error("The exploration has not been correctly started")
+                }
+                this._aifexService.pushActionOrCommentList(
+                    this._serverURL, 
+                    this._sessionId, 
+                    this._exploration.explorationNumber, 
+                    [comment])
+
+            }
             this.refreshPopup()
         }
     }
@@ -642,7 +656,6 @@ export default class Background {
     }
 
     takeScreenShot(): Promise<void> {
-
         let windowId = this._windowManager.getConnectedWindowId();
         if (windowId && this._exploration) {
             let exploration = this._exploration;
@@ -650,6 +663,14 @@ export default class Background {
                 .then(image => {
                     console.log("Take Screenshot ", image)
                     this._screenshotList.push(new Screenshot(image, exploration.length - 1));
+                    if (this._recordActionByAction && this._serverURL && this._sessionId && this._exploration) {
+                        this._aifexService.addScreenshotList(
+                            this._serverURL,
+                            this._sessionId,
+                            this._exploration.explorationNumber,
+                            this._screenshotList
+                        );
+                    }
                 })
         } else {
             return Promise.resolve();
