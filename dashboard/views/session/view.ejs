@@ -41,10 +41,10 @@
                         <div class="card">
                             <canvas id="explorationChart"></canvas>
                             <script>
-                                const ctx = document.getElementById('explorationChart');
-                                const numbOfExplorationWithBugReport = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.concreteType !== 'Action')).reduce((prev,cur) => cur?prev++:prev,0) %>;
+                                const explorationChartCanvas = document.getElementById('explorationChart');
+                                const numbOfExplorationWithBugReport = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.concreteType !== 'Action')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
                                 const numbOfExplorationWithoutBugReport = <%= session.explorationList.length %> - numbOfExplorationWithBugReport;
-                                const explorationChart = new Chart(ctx, {
+                                const explorationChart = new Chart(explorationChartCanvas, {
                                     type: 'doughnut',
                                     data: {                    
                                         labels: [
@@ -52,7 +52,7 @@
                                             'Red'
                                         ],
                                         datasets: [{
-                                            label: 'My First Dataset',
+                                            label: 'Explorations',
                                             data: [numbOfExplorationWithoutBugReport, numbOfExplorationWithBugReport],
                                             backgroundColor: [
                                             'rgb(0, 204, 0)',
@@ -74,16 +74,16 @@
                         <div class="card" >
                             <canvas id="bugReportChart"></canvas>
                             <script>
-                                const ctx = document.getElementById('bugReportChart');
-                                const numbOfEnhancement = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Enhancement')).reduce((prev,cur) => cur?prev++:prev,0) %>;
-                                const numbOfLow = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Low')).reduce((prev,cur) => cur?prev++:prev,0) %>;
-                                const numbOfMinor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Minor')).reduce((prev,cur) => cur?prev++:prev,0) %>;
-                                const numbOfMajor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Major')).reduce((prev,cur) => cur?prev++:prev,0) %>;
-                                const numbOfCritical = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Critical')).reduce((prev,cur) => cur?prev++:prev,0) %>;
-                                const numbOfBlocker = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Blocker')).reduce((prev,cur) => cur?prev++:prev,0) %>;
+                                const bugReportChartCanvas = document.getElementById('bugReportChart');
+                                const numbOfEnhancement = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Enhancement')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                const numbOfLow = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Low')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                const numbOfMinor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Minor')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                const numbOfMajor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Major')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                const numbOfCritical = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Critical')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                const numbOfBlocker = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Blocker')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
 
                                 
-                                const bugReportChart = new Chart(ctx, {
+                                const bugReportChart = new Chart(bugReportChartCanvas, {
                                     type: 'doughnut',
                                     data: {                    
                                         labels: [
@@ -96,7 +96,7 @@
                                             
                                         ],
                                         datasets: [{
-                                            label: 'My First Dataset',
+                                            label: 'Bug Severity',
                                             data: [numbOfEnhancement, numbOfLow, numbOfMinor, numbOfMajor, numbOfCritical, numbOfBlocker],
                                             backgroundColor: [
                                             'rgb(204, 204, 0)',
