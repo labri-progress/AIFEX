@@ -80,27 +80,27 @@
 
 
             <div id="commentSubComponent">
-                <h3>Comments in your exploration <span id="read-comment-button"><i class="fa fa-commenting"
-                            title="Read Comment"></i> Read existing comments !</span></h3>
+                <h3>Post a Bug Report <span id="read-comment-button"><i class="fa fa-commenting"
+                            title="Read Comment"></i> Read existing bug reports !</span></h3>
 
                 <div id="comment-list"></div>
 
                 <button id="comment-button">
-                    <i class="fa fa-comment" title="Add a Comment"></i> <span>Add a new comment to your
-                        exploration</span>
+                    <i class="fa fa-comment" title="Add a Comment"></i> <span>Add a new bug report</span>
                 </button>
                 <div id="commentForm">
-                    <div id="commentSuccessul" class="alert-success" role="alert">
-                        Comment registered
+                    <div id="commentSuccessul" class="comment-success" role="alert">
+                        Bug Report registered
                     </div>
                     <div class="form-group">
-                        <label htmlFor="commentType">Type</label>
+                        <label htmlFor="commentType">Severity</label>
                         <select class="custom-select" id="commentType">
-                            <option value="Question">Question</option>
-                            <option value="Follow up">Follow up</option>
-                            <option value="Assumption">Assumption</option>
-                            <option value="Assumption">Bug</option>
-                            <option value="Idea">Idea</option>
+                            <option value="Blocker">Blocker</option>
+                            <option value="Critical">Critical</option>
+                            <option value="Major">Major</option>
+                            <option value="Minor">Minor</option>
+                            <option value="Trivial">Trivial</option>
+                            <option value="Enhancement">Enhancement</option>
                         </select>
                     </div>
                     <div class="form-group">
