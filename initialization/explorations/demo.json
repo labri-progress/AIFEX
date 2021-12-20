@@ -2182,7 +2182,7 @@
                 {
                     "concreteType": "Comment",
                     "index": 3,
-                    "kind": "Bug",
+                    "kind": "Minor",
                     "value": "résultat de la recherche \"volat ps 4 trustmaster 150 pro\" approximatifs"
                 },
                 {
@@ -2235,7 +2235,7 @@
                 {
                     "concreteType": "Comment",
                     "index": 3,
-                    "kind": "Bug",
+                    "kind": "Minor",
                     "value": "résultat de la recherche \"volat ps 4 trustmaster 150 pro\" approximatifs"
                 },
                 {
@@ -2270,7 +2270,7 @@
                 {
                     "concreteType": "Comment",
                     "index": 3,
-                    "kind": "Bug",
+                    "kind": "Minor",
                     "value": "résultat de la recherche \"volat ps 4 trustmaster 150 pro\" approximatifs"
                 },
                 {
@@ -2319,7 +2319,7 @@
                 {
                     "concreteType": "Comment",
                     "index": 4,
-                    "kind": "Simple",
+                    "kind": "Low",
                     "value": "ca rame"
                 },
                 {
