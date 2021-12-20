@@ -135,8 +135,12 @@ function createSite(token, name, url, mappingList) {
                 kind: "WebSite",
                 key: webSiteId,
             })
-        });
+        })
+        .then(() => {
+            return result;
+        })
     })
+
 }
 
 function createAnonymousAccount() {
@@ -226,6 +230,8 @@ function createSessionAndModel(token, webSiteId) {
             "Authorization": `Bearer ${token}`
         }
     }
+    logger.debug(`create session`);
+
     return fetch(sessionCreateURL, optionSessionCreate)
     .then( resSession => {
         if (resSession.ok) {
@@ -238,6 +244,10 @@ function createSessionAndModel(token, webSiteId) {
         }
     })
     .then(sessionId => {
+        logger.debug(`Making session public session`);
+
+        logger.debug(`sessionId is : ${sessionId}`);
+
         return fetch(`${API_URL}/public/authorizations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
