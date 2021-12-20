@@ -3,6 +3,7 @@
 
 <head>
     <% include ../partials/head %>
+    <script src="/static/chart.min.js"></script>
 </head>
 
 <body>
@@ -28,26 +29,93 @@
             
             <br></br>
 
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="card" style="width: 18rem;">
-                        <img src="/static/images/icons/noun_exploration_2617799.png" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title"><%= session.explorationList.length %> Explorations</h5>
-                            <a href="/dashboard/session/<%=connectionCode %>/explorations" class="btn btn-primary">See all explorations</a>
+            <%if (session.explorationList.length === 0) { %>
+                <div class="alert alert-warning" role="alert">
+                    <strong>Warning!</strong> No exploration has been added to this session.
+                </div>
+            <% } else { %>
+
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <canvas id="explorationChart"></canvas>
+                            <script>
+                                const ctx = document.getElementById('explorationChart');
+                                const numbOfExplorationWithBugReport = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.concreteType !== 'Action')).reduce((prev,cur) => cur?prev++:prev,0) %>;
+                                const numbOfExplorationWithoutBugReport = <%= session.explorationList.length %> - numbOfExplorationWithBugReport;
+                                const explorationChart = new Chart(ctx, {
+                                    type: 'doughnut',
+                                    data: {                    
+                                        labels: [
+                                            'Green',
+                                            'Red'
+                                        ],
+                                        datasets: [{
+                                            label: 'My First Dataset',
+                                            data: [numbOfExplorationWithoutBugReport, numbOfExplorationWithBugReport],
+                                            backgroundColor: [
+                                            'rgb(0, 204, 0)',
+                                            'rgb(204, 0, 0)',
+                                            ],
+                                            hoverOffset: 4
+                                        }]
+                                    }
+                                });
+                            </script>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= session.explorationList.length %> Explorations</h5>
+                                <a href="/dashboard/session/<%=connectionCode %>/explorations" class="btn btn-primary">See all explorations</a>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="card" >
+                            <canvas id="bugReportChart"></canvas>
+                            <script>
+                                const ctx = document.getElementById('bugReportChart');
+                                
+                                const bugReportChart = new Chart(ctx, {
+                                    type: 'doughnut',
+                                    data: {                    
+                                        labels: [
+                                            'Low',
+                                            'Minor',
+                                            'Major',
+                                            'Critical',
+                                            'Blocker'
+                                        ],
+                                        datasets: [{
+                                            label: 'My First Dataset',
+                                            data: [1, 1, 1, 1, 1],
+                                            backgroundColor: [
+                                            'rgb(0, 204, 0)',
+                                            'rgb(0, 128, 255)',
+                                            'rgb(255, 128, 0)',
+                                            'rgb(255, 51, 51)',
+                                            'rgb(204, 0, 0)',
+                                            ],
+                                            hoverOffset: 4
+                                        }]
+                                    }
+                                });
+                            </script>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= session.explorationList.map(explo => explo.interactionList.filter(interaction => interaction.concreteType === "Comment")).reduce((acc, curr) => acc+curr.length, 0) %> Bug Reports</h5>
+                                <a href="/dashboard/session/<%=connectionCode %>/comments" class="btn btn-primary">See all Bug Reports</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12 d-flex justify-content-center">
+                        <% include ./crossEntropy %>
                     </div>
                 </div>
 
-                <div class="col-sm-4">
-                    <div class="card" style="width: 18rem;">
-                        <img src="/static/images/icons/noun_comment_1117425.png" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title"><%= session.explorationList.map(explo => explo.interactionList.filter(interaction => interaction.concreteType === "Comment")).reduce((acc, curr) => acc+curr.length, 0) %> Comments</h5>
-                            <a href="/dashboard/session/<%=connectionCode %>/comments" class="btn btn-primary">See all comments</a>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="col-sm-4">
                     <div class="card" style="width: 18rem;">
@@ -58,16 +126,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-12 d-flex justify-content-center">
-                    <% include ./crossEntropy %>
-                </div>
-            </div>
-
-
-            
+            <% } %>
 
 
             
