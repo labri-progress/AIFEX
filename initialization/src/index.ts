@@ -96,6 +96,7 @@ async function createDefaultWebSite(token) {
             mappingList = mappingList.concat(mapping);
         }
         let id = await createSite(token, site.name, site.url, mappingList);
+        logger.debug(id);
         site._id = id;
     }
     return siteList;
@@ -135,8 +136,15 @@ function createSite(token, name, url, mappingList) {
                 kind: "WebSite",
                 key: webSiteId,
             })
-        });
+        })
+        .then(() => {
+            logger.debug(result);
+            logger.debug(result.webSiteId);
+
+            return result.webSiteId;
+        })
     })
+
 }
 
 function createAnonymousAccount() {
@@ -226,6 +234,8 @@ function createSessionAndModel(token, webSiteId) {
             "Authorization": `Bearer ${token}`
         }
     }
+    logger.debug(`create session`);
+
     return fetch(sessionCreateURL, optionSessionCreate)
     .then( resSession => {
         if (resSession.ok) {
@@ -238,6 +248,10 @@ function createSessionAndModel(token, webSiteId) {
         }
     })
     .then(sessionId => {
+        logger.debug(`Making session public session`);
+
+        logger.debug(`sessionId is : ${sessionId}`);
+
         return fetch(`${API_URL}/public/authorizations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
