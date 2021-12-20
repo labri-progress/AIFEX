@@ -127,7 +127,15 @@ function createSite(token, name, url, mappingList) {
         }
     })
     .then((result) => {
-        return result.webSiteId;
+         const webSiteId = result.webSiteId;
+         return fetch(`${API_URL}/public/authorizations`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({
+                kind: "WebSite",
+                key: webSiteId,
+            })
+        });
     })
 }
 
@@ -218,7 +226,6 @@ function createSessionAndModel(token, webSiteId) {
             "Authorization": `Bearer ${token}`
         }
     }
-
     return fetch(sessionCreateURL, optionSessionCreate)
     .then( resSession => {
         if (resSession.ok) {
@@ -231,6 +238,16 @@ function createSessionAndModel(token, webSiteId) {
         }
     })
     .then(sessionId => {
+        return fetch(`${API_URL}/public/authorizations`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({
+                kind: "Session",
+                key: sessionId,
+            })
+        });
+    })
+    .then(() => {
         return fetch(modelCreateURL, optionModelCreate)
     })
     .then( resModel => {
@@ -238,6 +255,14 @@ function createSessionAndModel(token, webSiteId) {
             return resModel.json().then(json => {
                 modelId = json.modelId;
                 logger.info(`modelId: ${modelId}`);
+                fetch(`${API_URL}/public/authorizations`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+                    body: JSON.stringify({
+                        kind: "Model",
+                        key: modelId,
+                    })
+                });
             });
         } else {
             throw new Error('model cannot be created');
