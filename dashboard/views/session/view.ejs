@@ -75,21 +75,31 @@
                             <canvas id="bugReportChart"></canvas>
                             <script>
                                 const ctx = document.getElementById('bugReportChart');
+                                const numbOfEnhancement = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Enhancement')).reduce((prev,cur) => cur?prev++:prev,0) %>;
+                                const numbOfLow = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Low')).reduce((prev,cur) => cur?prev++:prev,0) %>;
+                                const numbOfMinor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Minor')).reduce((prev,cur) => cur?prev++:prev,0) %>;
+                                const numbOfMajor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Major')).reduce((prev,cur) => cur?prev++:prev,0) %>;
+                                const numbOfCritical = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Critical')).reduce((prev,cur) => cur?prev++:prev,0) %>;
+                                const numbOfBlocker = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Blocker')).reduce((prev,cur) => cur?prev++:prev,0) %>;
+
                                 
                                 const bugReportChart = new Chart(ctx, {
                                     type: 'doughnut',
                                     data: {                    
                                         labels: [
+                                            'Enhancement',
                                             'Low',
                                             'Minor',
                                             'Major',
                                             'Critical',
-                                            'Blocker'
+                                            'Blocker',
+                                            
                                         ],
                                         datasets: [{
                                             label: 'My First Dataset',
-                                            data: [1, 1, 1, 1, 1],
+                                            data: [numbOfEnhancement, numbOfLow, numbOfMinor, numbOfMajor, numbOfCritical, numbOfBlocker],
                                             backgroundColor: [
+                                            'rgb(204, 204, 0)',
                                             'rgb(0, 204, 0)',
                                             'rgb(0, 128, 255)',
                                             'rgb(255, 128, 0)',
