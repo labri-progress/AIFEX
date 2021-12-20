@@ -31,7 +31,7 @@
 
             <%if (session.explorationList.length === 0) { %>
                 <div class="alert alert-warning" role="alert">
-                    <strong>Warning!</strong> No exploration has been added to this session.
+                    <strong>Warning!</strong> No exploration performed yet.
                 </div>
             <% } else { %>
 
@@ -39,81 +39,107 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="card">
-                            <canvas id="explorationChart"></canvas>
-                            <script>
-                                const explorationChartCanvas = document.getElementById('explorationChart');
-                                const numbOfExplorationWithBugReport = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.concreteType !== 'Action')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
-                                const numbOfExplorationWithoutBugReport = <%= session.explorationList.length %> - numbOfExplorationWithBugReport;
-                                const explorationChart = new Chart(explorationChartCanvas, {
-                                    type: 'doughnut',
-                                    data: {                    
-                                        labels: [
-                                            'Pass',
-                                            'Fail'
-                                        ],
-                                        datasets: [{
-                                            label: 'Explorations',
-                                            data: [numbOfExplorationWithoutBugReport, numbOfExplorationWithBugReport],
-                                            backgroundColor: [
-                                            'rgb(0, 204, 0)',
-                                            'rgb(204, 0, 0)',
-                                            ],
-                                            hoverOffset: 4
-                                        }]
-                                    }
-                                });
-                            </script>
                             <div class="card-body">
-                                <h5 class="card-title"><%= session.explorationList.length %> Explorations</h5>
-                                <a href="/dashboard/session/<%=connectionCode %>/explorations" class="btn btn-primary">See all explorations</a>
+                                <a href="/dashboard/session/<%=connectionCode %>/explorations"><canvas id="explorationChart"></canvas></a>
+                                <script>
+                                    const explorationChartCanvas = document.getElementById('explorationChart');
+                                    const numbOfExplorationWithBugReport = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.concreteType !== 'Action')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                    const numbOfExplorationWithoutBugReport = <%= session.explorationList.length %> - numbOfExplorationWithBugReport;
+                                    const explorationChart = new Chart(explorationChartCanvas, {
+                                        type: 'doughnut',
+                                        data: {                    
+                                            labels: [
+                                                'Pass',
+                                                'Fail'
+                                            ],
+                                            datasets: [{
+                                                label: 'Explorations',
+                                                data: [numbOfExplorationWithoutBugReport, numbOfExplorationWithBugReport],
+                                                backgroundColor: [
+                                                'rgb(0, 204, 0)',
+                                                'rgb(204, 0, 0)',
+                                                ],
+                                                hoverOffset: 4
+                                            }]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            plugins: {
+                                                legend: {
+                                                    position: 'top'
+                                                },
+                                                title: {
+                                                    display: true,
+                                                    text: '<%= session.explorationList.length %> Explorations',
+                                                    font: {
+                                                        size: 26
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                </script>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="card" >
-                            <canvas id="bugReportChart"></canvas>
-                            <script>
-                                const bugReportChartCanvas = document.getElementById('bugReportChart');
-                                const numbOfEnhancement = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Enhancement')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
-                                const numbOfLow = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Low')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
-                                const numbOfMinor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Minor')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
-                                const numbOfMajor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Major')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
-                                const numbOfCritical = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Critical')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
-                                const numbOfBlocker = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Blocker')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
-
-                                
-                                const bugReportChart = new Chart(bugReportChartCanvas, {
-                                    type: 'doughnut',
-                                    data: {                    
-                                        labels: [
-                                            'Enhancement',
-                                            'Low',
-                                            'Minor',
-                                            'Major',
-                                            'Critical',
-                                            'Blocker',
-                                            
-                                        ],
-                                        datasets: [{
-                                            label: 'Bug Severity',
-                                            data: [numbOfEnhancement, numbOfLow, numbOfMinor, numbOfMajor, numbOfCritical, numbOfBlocker],
-                                            backgroundColor: [
-                                            'rgb(204, 204, 0)',
-                                            'rgb(0, 204, 0)',
-                                            'rgb(0, 128, 255)',
-                                            'rgb(255, 128, 0)',
-                                            'rgb(255, 51, 51)',
-                                            'rgb(204, 0, 0)',
-                                            ],
-                                            hoverOffset: 4
-                                        }]
-                                    }
-                                });
-                            </script>
                             <div class="card-body">
-                                <h5 class="card-title"><%= session.explorationList.map(explo => explo.interactionList.filter(interaction => interaction.concreteType === "Comment")).reduce((acc, curr) => acc+curr.length, 0) %> Bug Reports</h5>
-                                <a href="/dashboard/session/<%=connectionCode %>/comments" class="btn btn-primary">See all Bug Reports</a>
+                                <a href="/dashboard/session/<%=connectionCode %>/comments"><canvas id="bugReportChart"></canvas></a>
+                                <script>
+                                    const bugReportChartCanvas = document.getElementById('bugReportChart');
+                                    const numbOfEnhancement = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Enhancement')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                    const numbOfLow = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Low')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                    const numbOfMinor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Minor')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                    const numbOfMajor = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Major')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                    const numbOfCritical = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Critical')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                    const numbOfBlocker = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Blocker')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+
+                                    
+                                    const bugReportChart = new Chart(bugReportChartCanvas, {
+                                        type: 'doughnut',
+                                        data: {                    
+                                            labels: [
+                                                'Enhancement',
+                                                'Low',
+                                                'Minor',
+                                                'Major',
+                                                'Critical',
+                                                'Blocker',
+                                                
+                                            ],
+                                            datasets: [{
+                                                label: 'Bug Severity',
+                                                data: [numbOfEnhancement, numbOfLow, numbOfMinor, numbOfMajor, numbOfCritical, numbOfBlocker],
+                                                backgroundColor: [
+                                                'rgb(204, 204, 0)',
+                                                'rgb(0, 204, 0)',
+                                                'rgb(0, 128, 255)',
+                                                'rgb(255, 128, 0)',
+                                                'rgb(255, 51, 51)',
+                                                'rgb(204, 0, 0)',
+                                                ],
+                                                hoverOffset: 4
+                                            }]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            plugins: {
+                                                legend: {
+                                                    position: 'top'
+                                                },
+                                                title: {
+                                                    display: true,
+                                                    text: '<%= session.explorationList.map(explo => explo.interactionList.filter(interaction => interaction.concreteType === "Comment")).reduce((acc, curr) => acc+curr.length, 0) %> Bug Reports',
+                                                    font: {
+                                                        size: 26
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                </script>
                             </div>
                         </div>
                     </div>
