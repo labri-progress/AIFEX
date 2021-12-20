@@ -4,20 +4,24 @@ export default class Action {
 
     public prefix: string;
     public suffix: string | undefined;
-    public probability: number;
     public ruleList: Rule[];
     public htmlElementList: (HTMLElement|SVGElement)[];
+    public date: Date;
 
     constructor(prefix: string, suffix?: string, ruleList: Rule[] = [], htmlElementList: HTMLElement[]= []) {
         this.prefix = prefix;
         this.suffix = suffix;
-        this.probability = 0;
         this.ruleList = ruleList;
         this.htmlElementList = htmlElementList;
+        this.date = new Date();
     }
 
     public setRuleList(ruleList: Rule[]): void {
         this.ruleList = ruleList;
+    }
+
+    public getConcreteType(): string {
+        return "Action";
     }
 
     public toString(): string {

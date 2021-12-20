@@ -1,7 +1,7 @@
 import Action from './Action';
 import Rule from './Rule';
-import getCssSelector from 'css-selector-generator';
 import {logger} from "../framework/Logger";
+import getCssSelector from 'css-selector-generator';
 
 export default class CSSSelectorRule extends Rule {
     constructor(prefix: string, suffix: string | undefined, event: string, css: string | undefined, xpath: string | undefined,

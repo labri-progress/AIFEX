@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "strict": true,
+        "outDir": "dist",
+        "sourceMap": true,
+        "allowJs": true,
+        "target": "ES6",
+        "resolveJsonModule": true,
+        "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"]
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "types": [
+        "chrome"
+    ]
+  }
