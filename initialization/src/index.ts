@@ -247,9 +247,11 @@ function createSessionAndModel(token, webSiteId) {
             throw new Error('session cannot be created');
         }
     })
-    .then(sessionId => {
+    .then(() => {
+        if (!sessionId) {
+            throw new Error('session id is undefined');
+        }
         logger.debug(`Making session public session`);
-
         logger.debug(`sessionId is : ${sessionId}`);
 
         return fetch(`${API_URL}/public/authorizations`, {
