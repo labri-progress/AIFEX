@@ -153,6 +153,7 @@ module.exports = function attachRoutes(app, config) {
                 console.log("crossEntropy", crossEntropy)
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
+                console.log(session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Major')).reduce((prev,cur) => cur?prev+1:prev,0));
                 res.render('session/view.ejs', {
                     account: req.session,
                     serverURL: buildInvitation(model.id, session.id),
