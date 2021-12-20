@@ -1,59 +1,45 @@
-<div >
-    <div id="chart_div" style="width: 100%" data='<%= JSON.stringify(crossEntropy) %>'>
-    <h5 class="card-title">Diversity Evolution</h5>
-    </div>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load('current', {packages: ['corechart', 'line']});
 
-        let crossEntropyData = document.getElementById("chart_div").getAttribute("data");
-        if (crossEntropyData) {
-            crossEntropyData = JSON.parse(crossEntropyData);
-
-            if (Array.isArray(crossEntropyData)) {
-                crossEntropyData = crossEntropyData.map(line => [line.explorationNumber, line.crossEntropy])
-                google.charts.setOnLoadCallback(drawChart);
+<canvas id="crossEntropyCanvas"></canvas>
+<script>
+    const crossEntropyCanvas = document.getElementById('crossEntropyCanvas');
+    const dataJSON = '<%= JSON.stringify(crossEntropy.map((item) => parseInt(item.crossEntropy))) %>';
+    const dataNumber = JSON.parse(dataJSON);
+    const crossEntropyChar = new Chart(crossEntropyCanvas, {
+        type: 'line',
+        data: {
+            labels: dataNumber.map((item, index) => `expl_${index+1}`),
+            datasets: [{
+                label: 'Cross Entropy',
+                data: dataNumber,
+                borderColor: 'rgb(75, 192, 192)',
+                fill: false,
+                tension: 0.1
+            }, {
+                label: 'Weak Exploration',
+                data: dataNumber.map((item) => 3),
+                borderColor: 'rgb(255, 0, 0)',
+                fill: true,
+                borderDash: [10, 10],
+                pointBorderWidth: 0,
+                pointRadius: 0,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'Efficiency of the explorations',
+                    font: {
+                        size: 26
+                    }
+                }
             }
         }
+    });
 
-        function drawChart() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('number', 'X');
-            data.addColumn('number', 'Y');
-
-            data.addRows(crossEntropyData);
-
-            var options = {
-                title:'Evolution of the Diversity over the Session.',
-                legend: "none",
-                hAxis: {
-                title: 'Exploration'
-                },
-                vAxis: {
-                title: 'Diversity'
-                },
-                width: 1200, 
-                height: 600,
-                color: '#003f5c',
-
-                trendlines: {
-                    0: {
-                    type: 'linear',
-                    color: '#ff6361',
-                    lineWidth: 3,
-                    opacity: 0.9,
-                    showR2: true,
-                    visibleInLegend: true
-                    }
-                },
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-
-            chart.draw(data, options);
-            chart.setSelection([{row: 38, column: 1}]);
-
-            }
-    </script>
-
-</div>
+</script>
