@@ -95,6 +95,12 @@ export default class Background {
         this._screenshotList = [];
         this._explorationEvaluation = undefined;
         this._rejectIncorrectExplorations = true;
+
+        this._windowManager.addOnWindowRemovedListener((windowId) => {
+            if (this._windowManager.getConnectedWindowId() === windowId){
+                this.disconnect();
+            }
+        });
     }
 
     private initialize(): void {
@@ -155,6 +161,7 @@ export default class Background {
 
     connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
         this.initialize();
+        logger.debug("exploration size : " + this._exploration);
         return Promise.all([this._aifexService.hasModel(serverURL, modelId, this._token), this._aifexService.getSession(serverURL, sessionId, this._token)])
             .then(([modelResult, sessionResult]) => {
                 if (modelResult === "Unauthorized" || sessionResult === "Unauthorized") { 
@@ -191,7 +198,7 @@ export default class Background {
                             }
                         });
                 } 
-            });
+            })
     }
 
     disconnect(): Promise<void> {
