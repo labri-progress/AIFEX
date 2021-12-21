@@ -106,7 +106,6 @@ export default class ModelServiceHTTP implements ModelService {
             }),
             headers: { 'Content-Type': 'application/json' },
         }
-        console.log(crossEntropyURL)
         return fetch(crossEntropyURL, optionRequest)
             .then(response => {
                 if (response.ok) {

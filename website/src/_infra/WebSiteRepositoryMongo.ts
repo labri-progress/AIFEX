@@ -9,11 +9,6 @@ const DUPLICATE_KEY_ERROR_CODE_BIS = 11000;
 export default class WebSiteRepositoryMongo implements WebSiteRepository {
 
     public add(webSite: WebSite): Promise<string> {
-        webSite.mappingList.forEach(mapping => {
-            if (!mapping.output.prefix) {
-                console.log(mapping)
-            }
-        })
         return WebSiteSchema.create({
             _id: webSite.id,
             name: webSite.name,
@@ -21,7 +16,7 @@ export default class WebSiteRepositoryMongo implements WebSiteRepository {
         })
             .then(() => {
                 return webSite.id;
-            }).catch((error) => {
+            }).catch((error: {code: number, message: string, keyValue: string}) => {
                 if (error.code === DUPLICATE_KEY_ERROR_CODE || error.code === DUPLICATE_KEY_ERROR_CODE_BIS) {
                     throw new Error(`Website ${JSON.stringify(error.keyValue)} is already used`);
                 } else {

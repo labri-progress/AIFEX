@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install python make gcc g++ -y
 # Create app directory
 WORKDIR /app
 
+RUN mkdir logs
+
 COPY ./package.json /app/package.json
 RUN npm install
 

@@ -6,6 +6,9 @@ RUN apt-get update
 # Create app directory
 WORKDIR /app
 
+RUN mkdir logs
+
+
 COPY ./package.json /app/package.json
 RUN npm install
 

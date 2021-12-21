@@ -21,6 +21,7 @@ FROM node
 WORKDIR /app
 
 # create a directory for screenshot
+RUN mkdir logs
 RUN mkdir screenshot
 RUN mkdir video
 

@@ -1,5 +1,6 @@
 version: "3.3"
 services:
+
   website:
     build:
       context: website/
@@ -10,6 +11,7 @@ services:
       - 5000:80
     volumes:
       - ./website/src/:/app/src
+      - ./.logs/:/app/logs
 
   session:
     build:
@@ -21,6 +23,8 @@ services:
       - 5001:80
     volumes:
       - ./session/src/:/app/src
+      - ./.logs/:/app/logs
+
 
   model:
     build:
@@ -32,6 +36,8 @@ services:
       - 5002:80
     volumes:
       - ./model/src/:/app/src
+      - ./.logs/:/app/logs
+
 
   evaluator:
     build:
@@ -43,6 +49,7 @@ services:
       - 5005:80
     volumes:
       - ./evaluator/src/:/app/src
+      - ./.logs/:/app/logs
 
   account:
     build:
@@ -54,6 +61,8 @@ services:
       - 5004:80
     volumes:
       - ./account/src/:/app/src
+      - ./.logs/:/app/logs
+
 
   dashboard:
     build:
@@ -66,6 +75,8 @@ services:
       - ./dashboard/routes:/app/routes
       - ./dashboard/views:/app/views
       - ./dashboard/service:/app/service
+      - ./.logs/:/app/logs
+
   api:
     build:
       context: api/
@@ -76,6 +87,8 @@ services:
       - 8080:80
     volumes:
       - ./api/src/:/app/src
+      - ./.logs/:/app/logs
+
 
   mongo:
     ports:
@@ -99,3 +112,5 @@ services:
     depends_on:
       - "website"
       - "account"
+      - "session"
+      - "model"

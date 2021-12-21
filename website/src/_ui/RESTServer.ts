@@ -3,10 +3,13 @@ import sourceMapSupport from "source-map-support";
 import WebSiteService from "../application/WebSiteService";
 import IdGeneratorService from "../_infra/IdGeneratorServiceWithShortId";
 import routes from "./routeREST";
-import bodyParser from "body-parser";
-import { Express, Request, Response, NextFunction, RequestHandler } from 'express';
+import { Express, Request, Response, NextFunction } from 'express';
 import express from "express";
 import {logger} from "../logger";
+import fs from "fs";
+import path from "path";
+import morgan from "morgan";
+
 
 export default class RESTServer {
 
@@ -29,7 +32,20 @@ export default class RESTServer {
         // logger
         if (process.env.NODE_ENV === "development") {
             sourceMapSupport.install();
+
+            morgan.token('body', function(req: Request) {
+                if (req.method === "POST") {
+                    return JSON.stringify(req.body)
+                }
+            });
+
+            // create a write stream (in append mode)
+            var devLogStream = fs.createWriteStream(path.join( __dirname,"..", "..","logs", "combined.log"), { flags: 'a' })
+            const morganLogger = morgan('Website   - [:date[clf]] ":method :url HTTP/:http-version" :status :body', {stream: devLogStream})
+            app.use(morganLogger);
+            app.use(morgan("dev"));
         }
+
 
         // attach routes
         app.use((req: Request, res: Response, next: NextFunction) => {
@@ -41,9 +57,8 @@ export default class RESTServer {
         });
 
         // request parser
-        app.use(bodyParser.json({limit:'50MB'}));
-
-        app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(express.json({limit:'50MB'}));
+        app.use(express.urlencoded({ extended: true }));
 
         // WebSite route
         routes(app, this.webSiteService, this.idGeneratorService);

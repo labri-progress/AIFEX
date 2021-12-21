@@ -6,8 +6,12 @@ const markdown = require('markdown-it')({html: true})
                     .use(require('markdown-it-attrs'));
 const multer = require('multer');
 const logger = require('./logger');
+const morgan = require("morgan");
+const fs = require("fs");
+const path = require("path");
 
 const ONE_HOUR = 3600000;
+
 
 
 const app = express();
@@ -17,7 +21,24 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
 
-console.log("Start")
+// logger
+if (process.env.NODE_ENV === "development") {
+    // create a write stream (in append mode)
+    
+    var devLogStream = fs.createWriteStream(path.join( __dirname,"logs", "combined.log"), { flags: 'a' })
+
+    morgan.token('body', function(req) {
+        if (req.method === "POST") {
+            return JSON.stringify(req.body)
+        }
+    });
+
+    const morganLogger = morgan('Dashboard - [:date[clf]] ":method :url HTTP/:http-version" :status :body', {stream: devLogStream})
+    app.use(morganLogger);
+    app.use(morgan("dev"));
+}
+
+console.log("Dashboard start")
 const sessionMiddleware = session({
     secret: 'AIFEX super secret',
     cookie: {
