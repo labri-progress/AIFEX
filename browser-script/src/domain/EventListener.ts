@@ -11,11 +11,9 @@ export default class EventListener {
         this._handledEvents = [];
         this._newActionCallbacks = [];
     }
-    
-    public listen(): void {
-        const events = this._ruleService.getEventsToHandle()
-        this._handledEvents = events;
 
+    start() {
+        this._handledEvents = this._ruleService.getEventsToHandle();
         this._handledEvents.forEach((handledEvent) => {
             document.addEventListener(handledEvent, this.exploratoryListener.bind(this), true)
         });
@@ -30,16 +28,19 @@ export default class EventListener {
                 if (rule) {
                     const action = rule.makeAction(event);
                     if (action) {
-                        this._newActionCallbacks.forEach(callback => callback(action));
+                        logger.info(`action : ${action.toString()}`);
+                        this._backgroundService.sendAction(action)
+                            .then(() => {
+                                this._newActionCallbacks.forEach(callback => callback(action));
+                            })
+                            .catch((error) => {
+                                logger.error('Error while Listener pushed action ', error);
+                            })
                     }
                 }
             }
         }
     }
 
-    public onNewUserAction(callback : (action : Action) => void): void {
-        if (typeof callback === "function") {
-            this._newActionCallbacks.push(callback)
-        }
-    }
+    
 }

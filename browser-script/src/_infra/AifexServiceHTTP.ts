@@ -3,28 +3,16 @@ import AifexService from "../domain/AifexService";
 import Token from "../domain/Token";
 import WebSite from "../domain/Website";
 import Session from "../domain/Session";
+import AifexPluginInfo from "../domain/AifexPluginInfo";
 const OK_STATUS = 200;
 const INVALID_PARAMETERS_STATUS = 400;
 const FORBIDDEN_STATUS = 403;
 const NOT_FOUND_STATUS = 404;
 const INTERNAL_SERVER_ERROR_STATUS = 500;
-
-
-
 export default class AifexServiceHTTP implements AifexService {
 
-	serverURL: string;
-	sessionId: string;
-	websiteId: string;
-	token: Token;
-
-	constructor(serverURL: string, token: Token) {
-		this.serverURL = serverURL;
-		this.token = this.token
-	}
-
 	ping(serverURL: string): Promise<void> {
-		return fetch(`${serverURL}/api/ping`,{
+		return fetch(`${serverURL}/api/ping`, {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 		})
@@ -40,8 +28,26 @@ export default class AifexServiceHTTP implements AifexService {
 			})
 	}
 
-	getSession(token?: Token): Promise<Session | undefined | "Unauthorized"> {
-		const SESSION_URL = this.serverURL + '/api/sessions/' + this.sessionId;
+	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> {
+		const option = {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+		};
+		return fetch(`${serverURL}/api/plugin-info`, option)
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(response.statusText);
+				}
+				return response.json();
+			})
+			.then(details => {
+				details.url = `${serverURL}/download`
+				return new AifexPluginInfo(details.version, details.name, details.description, details.url);
+			})
+	}
+
+	getSession(serverURL: string, sessionId: string, token: Token | undefined): Promise<Session | undefined | "Unauthorized"> {
+		const SESSION_URL = serverURL + '/api/sessions/' + sessionId;
 		return fetch(SESSION_URL, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
@@ -53,13 +59,14 @@ export default class AifexServiceHTTP implements AifexService {
 						.then((session: {
 							id: string,
 							webSite: { id: string },
-							overlayType: "rainbow" | "bluesky" | "shadow",
-							useTestScenario: boolean,
 							baseURL: string,
+							name: string,
+							description: string,
+							overlayType: "rainbow" | "bluesky" | "shadow",
 							recordingMode: "byexploration" | "byinteraction"
 
 						}) => {
-							return new Session(session.id, session.webSite.id, session.overlayType, session.recordingMode, session.baseURL);
+							return new Session(session.id, session.webSite.id, session.baseURL, session.name, session.description, session.overlayType, session.recordingMode);
 						});
 				}
 				if (response.status === INVALID_PARAMETERS_STATUS) {
@@ -77,8 +84,8 @@ export default class AifexServiceHTTP implements AifexService {
 			})
 	}
 
-	getWebSite(webSiteId: string, token?: Token): Promise<WebSite | undefined | "Unauthorized"> {
-		return fetch(`${this.serverURL}/api/websites/${webSiteId}`, {
+	getWebSite(serverURL: string, webSiteId: string, token: Token | undefined): Promise<WebSite | undefined | "Unauthorized"> {
+		return fetch(`${serverURL}/api/websites/${webSiteId}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
 		})
@@ -100,9 +107,10 @@ export default class AifexServiceHTTP implements AifexService {
 					return Promise.reject(`server error`);
 				}
 			})
+
 	}
 
-	createEmptyExploration(testerName :string): Promise<number> {
+	createEmptyExploration(testerName: string, serverURL: string, sessionId: string): Promise<number> {
 		const body = {
 			testerName,
 			interactionList: [],
@@ -113,35 +121,37 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { "Content-Type": "application/json" },
 		};
 		return fetch(
-			`${this.serverURL}/api/sessions/${this.sessionId}/explorations`,
+			`${serverURL}/api/sessions/${sessionId}/explorations`,
 			option
 		)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return response.json().then(data => {
-					return data.explorationNumber
-				})
-			}
-			if (response.status === NOT_FOUND_STATUS) {
-				return Promise.reject(new Error(`no session not found for Id`));
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(new Error(`server error`));
-			}
-		})
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response.json().then(data => {
+						return data.explorationNumber
+					})
+				}
+				if (response.status === NOT_FOUND_STATUS) {
+					return Promise.reject(new Error(`no session not found for Id`));
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(new Error(`server error`));
+				}
+			})
+
 	}
 
-	sendAction(explorationNumber: number, actionList: Action[]): Promise<void> {
+	sendAction(explorationNumber: number, action: Action, serverURL: string, sessionId: string): Promise<void> {
+
 		const body = {
-			interactionList: actionList.map((action: Action) => ({
+			interactionList: [{
 				concreteType: action.getConcreteType(),
 				kind: action.prefix,
 				value: action.suffix,
 				date: action.date
-			}))
+			}]
 		}
 		const option = {
 			method: "POST",
@@ -149,24 +159,25 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { "Content-Type": "application/json" },
 		};
 		return fetch(
-			`${this.serverURL}/api/sessions/${this.sessionId}/explorations/${explorationNumber}/interactions`,
+			`${serverURL}/api/sessions/${sessionId}/explorations/${explorationNumber}/interactions`,
 			option)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return;
-			}
-			if (response.status === NOT_FOUND_STATUS) {
-				return Promise.reject(new Error(`sessionId not found`));
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(new Error(`server error`));
-			}
-		}).catch(error => {
-			console.error(error);
-			throw new Error("Service Failed to push new action");
-		})
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return;
+				}
+				if (response.status === NOT_FOUND_STATUS) {
+					return Promise.reject(new Error(`sessionId not found`));
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(new Error(`server error`));
+				}
+			}).catch(error => {
+				console.error(error);
+				throw new Error("Service Failed to push new action");
+			})
+
 	}
 }
