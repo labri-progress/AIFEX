@@ -1,4 +1,4 @@
-const { getWebSites, createWebSite, removeWebSite, updateWebSite } = require('../service/apiService');
+const { getWebSites, createWebSite, removeWebSite, updateWebSite, getWebSiteById } = require('../service/apiService');
 const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
@@ -64,7 +64,6 @@ module.exports = function attachRoutes(app, config) {
     app.post('/dashboard/website/update', (req, res) => {
         let { id, name, mappingList } = req.body;
         logger.info(`Update WebSite (id: ${id}, name : ${name})`)
-        logger.debug(`mapping rules : ${JSON.stringify(mappingList)}`)
         let renderOption = {
             account: req.session,
             webSite: {
@@ -102,6 +101,37 @@ module.exports = function attachRoutes(app, config) {
                 renderOption.errorMessage = "update failed.";
                 res.render('website/update.ejs', renderOption);
             })
+    });
+
+    app.get('/dashboard/website/duplicate/:webSiteId', (req, res) => {
+        let { webSiteId } = req.params;
+        logger.info(`Duplicate WebSite with (id: ${webSiteId})`)
+       return getWebSiteById(req.session.jwt, webSiteId)
+        .then((webSite) => {
+            logger.info(`Create new WebSite from (id: ${webSiteId})`)
+            return createWebSite(req.session.jwt, webSite.name + "-copy", webSite.mappingList)
+        })
+        .then((createdWebSiteId) => {
+            logger.info(`WebSite duplicated`);
+            return getWebSiteById(req.session.jwt, createdWebSiteId)
+        })
+        .then(duplicatedWebsite => {
+            let renderOption = {
+                account: req.session,
+                webSite: {
+                    id: duplicatedWebsite.id,
+                    name: duplicatedWebsite.name,
+                    mappingList: duplicatedWebsite.mappingList
+                },
+                successMessage: undefined,
+                errorMessage: undefined
+            }
+            return res.render('website/update.ejs', renderOption);            
+        })
+        .catch(e => {
+            logger.error("Failed to dupplicate webSite");
+            res.render('error.ejs', { account: req.session, message: e, error: undefined });
+        })
     });
 
     app.get('/dashboard/website/update/:webSiteId', (req, res) => {

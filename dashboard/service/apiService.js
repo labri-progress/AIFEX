@@ -72,7 +72,7 @@ module.exports.getWebSiteById = function (token, webSiteId) {
                 return response.json();
             } else {
 
-                throw new Error("Failed to get Website for session id " + webSiteId);
+                throw new Error("Failed to get Website for id " + webSiteId);
             }
         })
 }
