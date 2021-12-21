@@ -85,13 +85,14 @@ export default class AifexServiceHTTP implements AifexService {
 						.then((session: {
 							id: string,
 							webSite: { id: string },
-							overlayType: "rainbow" | "bluesky" | "shadow",
-							useTestScenario: boolean,
 							baseURL: string,
+							name : string,
+							description : string,
+							overlayType: "rainbow" | "bluesky" | "shadow",
 							recordingMode: "byexploration" | "byinteraction"
 
 						}) => {
-							return new Session(session.id, session.webSite.id, session.overlayType, session.recordingMode, session.baseURL);
+							return new Session(session.id, session.webSite.id, session.baseURL, session.name, session.description, session.overlayType, session.recordingMode);
 						});
 				}
 				if (response.status === INVALID_PARAMETERS_STATUS) {

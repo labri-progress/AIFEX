@@ -31,6 +31,7 @@ export default class StateForPopup {
         validated: boolean
         nextActionList: Action[]
     } | undefined;
+    public sessionDescription: string | undefined;
 
     constructor() {
         this.pageKind = PopupPageKind.Home;

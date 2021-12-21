@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="./css/popup.css">
     <link rel="stylesheet" href="./css/font-awesome.min.css">
 
+    <script src="./js/showdown.min.js"></script>
+
     <script src="./js/browserAPI.js" defer></script>
 
     <!-- Components Render Function-->
@@ -14,6 +16,7 @@
     <script src="./js/headerComponent.js" defer></script>
     <script src="./js/homeComponent.js" defer></script>
     <script src="./js/configComponent.js" defer></script>
+    <script src="./js/sessionDescriptionComponent.js" defer></script>
     <script src="./js/connectToSessionComponent.js" defer></script>
     <script src="./js/makeExplorationsComponent.js" defer></script>
 </head>
@@ -68,6 +71,11 @@
                 <button id="connexionButton" type="submit">Join</button>
             </form>
 
+        </div>
+
+        <div id="descriptionOfTheSession">
+            <div id="sessionDescription"></div>
+            <button id="sessionDescriptionButton">OK</button>
         </div>
 
         <div id="makeExplorationComponent">

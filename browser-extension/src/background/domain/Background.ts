@@ -30,6 +30,7 @@ export default class Background {
     private _windowManager: WindowManager;
 
     private _sessionId: string | undefined;
+    private _sessionDescription: string | undefined;
     private _modelId: string | undefined;
     private _serverURL: string | undefined;
     private _webSite: WebSite | undefined;
@@ -172,6 +173,7 @@ export default class Background {
                     this._recordActionByAction = sessionResult.recordingMode === "byinteraction";
                     logger.debug("Recording mode: " + this._recordActionByAction);
                     this._sessionBaseURL = sessionResult.baseURL;
+                    this._sessionDescription = sessionResult.description;
                     this._overlayType = sessionResult.overlayType as OverlayType;
                     return this._aifexService.getWebSite(serverURL, sessionResult.webSiteId, this._token)
                         .then((webSiteResult) => {
@@ -192,7 +194,7 @@ export default class Background {
                                 }
                                 return windowManagement
                                     .then(() => {
-                                        this._popupPageKind = PopupPageKind.Explore;
+                                        this._popupPageKind = PopupPageKind.ReadSessionDescription;
                                         return "Connected";
                                     })
                             }
@@ -615,9 +617,9 @@ export default class Background {
 
         if (this._serverURL && this._sessionId && this._modelId) {
             state.url = `${this._serverURL}/join?sessionId=${this._sessionId}&modelId=${this._modelId}`;
-
         }
 
+        state.sessionDescription = this._sessionDescription;
         state.numberOfExplorationsMadeByTester = this._numberOfExplorationsMadeByTester;
         state.isRecording = this._isRecording;
         state.testerName = this._testerName;

@@ -19,7 +19,8 @@ describe("Playwright", () => {
     let browser : BrowserContext;
     //let browser : BrowserContext;
     let PATH_TO_EXTENSION = path.join(__dirname, '..', '..', 'browser-extension', 'dist', "chrome");
-    let DASHBOARD_URL = 'https://aifexpreprod.ovh/';
+    //let DASHBOARD_URL = 'https://aifexpreprod.ovh/';
+    let DASHBOARD_URL = 'http://localhost/';
     let TARGET_URL = 'http://localhost:8090/';
 
 
@@ -118,8 +119,11 @@ describe("Playwright", () => {
                     const pages = await browser.pages();
                     //pages[0].on('console', (msg) => console.log('BROWSER LOG:', msg.text()));
                     await pages[0].click("#gotoB");
+                    await pages[0].click("#name");
                     await pages[0].fill("#name", "mynameis");
+                    await pages[0].keyboard.press("Tab");
                     await pages[0].fill("#email", "myemails");
+                    await pages[0].click("body");
                     await pages[0].click("#submit");
                     //end scenario
 
