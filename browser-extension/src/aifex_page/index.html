@@ -60,9 +60,14 @@
 
         <div id="connectToSessionComponent">
             <h3>Join a session</h3>
-            <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
-            <input id="connexionURLInput" type="text" placeholder="Connection URL" />
-            <button id="connexionButton">Join</button>
+            <form id="connectionForm">
+                <div>
+                    <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
+                    <input id="connexionURLInput" name="connexionURL" type="text" placeholder="Connection URL" />
+                </div>
+                <button id="connexionButton" type="submit">Join</button>
+            </form>
+
         </div>
 
         <div id="makeExplorationComponent">
