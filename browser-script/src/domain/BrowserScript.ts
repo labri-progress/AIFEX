@@ -28,6 +28,7 @@ export default class TabScript {
             this._ruleService = new RuleService();
             this._eventListener = new EventListener(this._ruleService);
             this._aifexService = aifexService;
+            
 		} catch (e) {
 			console.error('wrong connectionURL !!! Won\'t listen to any action');
 		}
