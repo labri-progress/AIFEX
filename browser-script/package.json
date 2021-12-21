@@ -1,7 +1,8 @@
 {
   "scripts": {
     "dev": "webpack --config ./webpack/webpack.dev.js",
-    "prod": "webpack --config ./webpack/webpack.prod.js"
+    "prod": "webpack --config ./webpack/webpack.prod.js",
+    "compile": "tsc"
   },
   "devDependencies": {
     "ts-loader": "^9.2.6",
