@@ -24,8 +24,9 @@ FROM node:16
 
 # Set the working directory to /app
 WORKDIR /app
-CMD mkdir video
-CMD mkdir screenshot
+RUN mkdir logs
+RUN mkdir video
+RUN mkdir screenshot
 
 # Install any needed packages specified in requirements.txt=
 

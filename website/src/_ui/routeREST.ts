@@ -19,7 +19,6 @@ export default function attachRoutes(app : Express, webSiteService: WebSiteServi
     app.get("/website/:id", (req, res) => {
         const id = req.params.id;
         logger.info(`get website ${id}`);
-        // console.log("WebSite GET: ",id);
         if (id === undefined) {
             logger.warn(`id must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("id is undefined");

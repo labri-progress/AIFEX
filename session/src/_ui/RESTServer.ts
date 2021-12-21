@@ -1,10 +1,13 @@
 import bodyParser from "body-parser";
-import express from "express";
+import express, { Request } from "express";
 import http from "http";
 import sourceMapSupport from "source-map-support";
 import SessionService from "../application/SessionService";
 import routeRest from "./routeREST";
 import {logger} from "../logger";
+import morgan from "morgan";
+import fs from "fs";
+import path from "path";
 
 export default class RESTServer {
 
@@ -31,6 +34,18 @@ export default class RESTServer {
         // logger
         if (process.env.NODE_ENV === "development") {
             sourceMapSupport.install();
+
+            morgan.token('body', function(req: Request) {
+                if (req.method === "POST") {
+                    return JSON.stringify(req.body)
+                }
+            });
+
+            // create a write stream (in append mode)
+            var devLogStream = fs.createWriteStream(path.join( __dirname,"..", "..","logs", "combined.log"), { flags: 'a' })
+            const morganLogger = morgan('Session   - [:date[clf]] ":method :url HTTP/:http-version" :status :body', {stream: devLogStream})
+            app.use(morganLogger);
+            app.use(morgan("dev"));
         }
 
         // attach routes

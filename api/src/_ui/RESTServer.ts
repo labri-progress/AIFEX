@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request} from "express";
 import http from "http";
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
@@ -11,6 +11,8 @@ import Token from "../domain/Token";
 import config from "../_infra/config";
 import APIApplication from "../application/APIApplication";
 import { logger } from "../logger";
+import fs from "fs";
+import path from "path";
 
 
 export default class RESTServer {
@@ -29,11 +31,23 @@ export default class RESTServer {
         const server = http.createServer(app);
 
         app.use(cors());
+        app.use(express.urlencoded({ limit: '50mb', extended: true }));
+        app.use(express.json({limit: '50mb'}));
 
         // logger
-        if (process.env.NODE_ENV === "dev") {
-            app.use(morgan("combined"));
+        if (process.env.NODE_ENV === "development") {
             sourceMapSupport.install();
+            morgan.token('body', function(req: Request) {
+                if (req.method === "POST") {
+                    return JSON.stringify(req.body)
+                }
+            });
+
+            // create a write stream (in append mode)
+            var devLogStream = fs.createWriteStream(path.join( __dirname,"..", "..","logs", "combined.log"), { flags: 'a' })
+            const morganLogger = morgan('API       - [:date[clf]] ":method :url HTTP/:http-version" :status :body', {stream: devLogStream})
+            app.use(morganLogger);
+            app.use(morgan("dev"));
         }
 
         app.use((req, res, next) => {
@@ -45,9 +59,7 @@ export default class RESTServer {
             next();
         });
 
-        // request parser
-        app.use(express.urlencoded({ limit: '50mb', extended: true }));
-        app.use(express.json({limit: '50mb'}));
+
 
         // bearer token
         app.use((req, res, next) => {

@@ -9,6 +9,8 @@ export NODE_ENV="development"
 export ELASTIC_PASSWORD="el@st!c"
 export TOKEN_SECRET="changeme"
 
+
+
 npm run development
 cd dist/firefox
 zip -qr ../../firefoxExtension .
@@ -27,6 +29,9 @@ export PLUGIN_INFO="$(node -e 'console.log(JSON.stringify(require("./src/manifes
 cd ..
 
 echo "PLUGIN_INFO = $PLUGIN_INFO"
+
+rm -rf .logs
+mkdir .logs
 
 echo ========================== CONTAINER DOWN ==================================
 
