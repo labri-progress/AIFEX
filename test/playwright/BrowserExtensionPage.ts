@@ -42,6 +42,10 @@ export default class BrowserExtensionPage {
             }
         })
     }
+
+    async closeDescription() {
+        await this._page.click("#sessionDescriptionButton");
+    }
     
     async createNewWindowsOnConnect(shouldCreate: boolean) {
         await this._page.click('#config-button');

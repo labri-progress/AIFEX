@@ -36,8 +36,8 @@
     <div id="container">
         <div id="homeComponent">
             <h3>Join a session or create a new one ?</h3>
-            <button id="goToJoinSession" class="button btn_marg"> Join </button>
-            <button id="goToCreateSession" class="button create btn_marg"> Create </button>
+            <button id="goToJoinSession" > Join </button>
+            <button id="goToCreateSession" > Create </button>
         </div>
 
         <div id="configureComponent">
@@ -64,11 +64,11 @@
         <div id="connectToSessionComponent">
             <h3>Join a session</h3>
             <form id="connectionForm">
-                <div>
+                <div class="form-group ">
                     <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
-                    <input id="connexionURLInput" name="connexionURL" type="text" placeholder="Connection URL" />
+                    <input class="form-control" id="connexionURLInput" name="connexionURL" type="text" placeholder="Connection URL" />
                 </div>
-                <button id="connexionButton" type="submit">Join</button>
+                <button  id="connexionButton" type="submit">Join</button>
             </form>
 
         </div>
