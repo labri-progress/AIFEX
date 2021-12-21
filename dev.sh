@@ -1,4 +1,22 @@
 #!/bin/bash
+build=true
+removeVolumes=false
+
+echo $build
+echo $removeVolumes
+echo \
+
+while getopts ":b|v" option; do
+   case $option in
+      b) # display Help
+        build=false ;;
+      v) 
+        removeVolumes=true ;;
+   esac
+done
+
+echo $build
+echo $removeVolumes
 
 echo ========================== PLUGIN COMPILATION ==================================
 cd browser-extension/ 
@@ -8,8 +26,6 @@ export PROTOCOL="http"
 export NODE_ENV="development"
 export ELASTIC_PASSWORD="el@st!c"
 export TOKEN_SECRET="changeme"
-
-
 
 npm run development
 cd dist/firefox
@@ -28,27 +44,25 @@ cd browser-extension/
 export PLUGIN_INFO="$(node -e 'console.log(JSON.stringify(require("./src/manifest.chrome.json")))')"
 cd ..
 
-echo "PLUGIN_INFO = $PLUGIN_INFO"
-
 rm -rf .logs
 mkdir .logs
 
 echo ========================== CONTAINER DOWN ==================================
-
-docker-compose -f docker-compose.yml -f docker-compose.development.yml down -v --remove-orphans
-
-echo ========================== CONTAINER BUILDING ==================================
-
-cmd="docker-compose -f docker-compose.yml -f docker-compose.development.yml up"
-
-
-if [ $# -eq 1 ] && [ $1 == "--no-build" ]
+if [ $removeVolumes = true ]
 then
-    echo "up containers withour building images"
+    echo removing volumes
+    docker-compose -f docker-compose.yml -f docker-compose.development.yml down -v --remove-orphans
 else
-    echo "Build images and up containers"
-    cmd="$cmd --build"
+    echo not removing volumes
+    docker-compose -f docker-compose.yml -f docker-compose.development.yml down --remove-orphans
 fi
 
-
-$cmd
+echo ========================== CONTAINER BUILDING ==================================
+if [ $build = true ]
+then
+    echo Building images
+    docker-compose -f docker-compose.yml -f docker-compose.development.yml up --build
+else
+    echo No Build of images
+    docker-compose -f docker-compose.yml -f docker-compose.development.yml up
+fi
