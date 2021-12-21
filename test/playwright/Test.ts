@@ -140,6 +140,7 @@ describe("Playwright", () => {
                     await bep.createNewWindowsOnConnect(false);
                     await bep.joinSession();                    
                     await bep.connectSession(url);
+                    await bep.closeDescription();
                     await bep.startExploration();
                     await page.waitForTimeout(2000);
                     const pages = await browser.pages();

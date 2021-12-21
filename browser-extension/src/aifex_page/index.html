@@ -34,73 +34,76 @@
     </header>
 
     <div id="container">
-        <div id="homeComponent">
+        <div class="aifex_component" id="homeComponent">
             <h3>Join a session or create a new one ?</h3>
-            <button id="goToJoinSession" class="button btn_marg"> Join </button>
-            <button id="goToCreateSession" class="button create btn_marg"> Create </button>
+            <button id="goToJoinSession" class="aifex_large_button" > Join </button>
+            <button id="goToCreateSession" class="aifex_large_button"> Create </button>
         </div>
 
-        <div id="configureComponent">
+        <div class="aifex_component" id="configureComponent">
             <h3>General Configuration</h3>
             <form id="configForm">
-                <div class="form-group ">
+                <div class="aifex_form_element">
                     <label for="testerName">TesterName</label>
                     <input id="testerName" class="form-control" type="text" placeholder="Anonymous"/>
                 </div>
-                <div class="form-group" id="shouldCreateNewWindowsOnConnectDiv">
+                <div class="aifex_check_element" id="shouldCreateNewWindowsOnConnectDiv">
                     <input type="checkbox" id="shouldCreateNewWindowsOnConnect" name="shouldCreateNewWindowsOnConnect" >
                     <label for="shouldCreateNewWindowsOnConnect">Open a new window when joining a session ?</label>
                 </div>
-                <div class="form-group" id="shouldCloseWindowOnDisconnectDiv">
+                <div class="aifex_check_element" id="shouldCloseWindowOnDisconnectDiv">
                     <input type="checkbox" id="shouldCloseWindowOnDisconnect" name="shouldCloseWindowOnDisconnect" >
                     <label for="shouldCloseWindowOnDisconnect">Close window when disconnecting a session ?</label>
                 </div>
-                <button id="submitConfig" type="submit" >Ok</button>
-                <button id="cancelConfig">Cancel</button>
+                <button id="submitConfig" class="aifex_button" type="submit" >Ok</button>
+                <button id="cancelConfig" class="aifex_button">Cancel</button>
             </form>
         </div>
 
 
-        <div id="connectToSessionComponent">
+        <div class="aifex_component" id="connectToSessionComponent">
             <h3>Join a session</h3>
-            <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
-            <input id="connexionURLInput" type="text" placeholder="Connection URL" />
-            <button id="connexionButton">Join</button>
+            <form id="connectionForm">
+                <div class="aifex_form_element">
+                    <input id="connexionURLInput" name="connexionURL" type="text" placeholder="Connection URL" />
+                    <label id="connexionMessage" for="connectionURLInput"> You are currently not connected.</label>
+                </div>
+                <button id="connexionButton" class="aifex_large_button" type="submit">Join</button>
+            </form>
+
         </div>
 
-        <div id="descriptionOfTheSession">
+        <div class="aifex_component" id="descriptionOfTheSession">
             <div id="sessionDescription"></div>
-            <button id="sessionDescriptionButton">OK</button>
+            <button id="sessionDescriptionButton" class="aifex_button">OK</button>
         </div>
 
-        <div id="makeExplorationComponent">
+        <div class="aifex_component" id="makeExplorationComponent">
             <h3 id="makeExplorationTitle">Make Some Explorations</h3>
 
-            <button id="play-button">
+            <button id="play-button" class="aifex_large_button">
                 <i class="fa fa-play" title="Play"></i> <span>Start</span>
             </button>
-            <button id="stop-button">
+            <button id="stop-button" class="aifex_large_button" class="aifex_button">
                 <i class="fa fa-stop" title="Stop"></i> <span>Stop/Save</span>
             </button>
-            <button id="trash-button">
+            <button id="trash-button" class="aifex_large_button">
                 <i class="fa fa-trash" title="Trash"></i> <span>Trash</span>
             </button>
 
 
-            <div id="commentSubComponent">
+            <div class="aifex_component" id="commentSubComponent">
                 <h3>Post a Bug Report <span id="read-comment-button"><i class="fa fa-commenting"
                             title="Read Comment"></i> Read existing bug reports !</span></h3>
 
                 <div id="comment-list"></div>
 
-                <button id="comment-button">
+                <button id="comment-button" class="aifex_large_button">
                     <i class="fa fa-comment" title="Add a Comment"></i> <span>Add a new bug report</span>
                 </button>
-                <div id="commentForm">
-                    <div id="commentSuccessul" class="comment-success" role="alert">
-                        Bug Report registered
-                    </div>
-                    <div class="form-group">
+                <form id="commentForm">
+
+                    <div class="aifex_form_element">
                         <label htmlFor="commentType">Severity</label>
                         <select class="custom-select" id="commentType">
                             <option value="Blocker">Blocker</option>
@@ -111,22 +114,23 @@
                             <option value="Enhancement">Enhancement</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="aifex_form_element">
                         <label htmlFor="commentDescription">Description</label>
                         <textarea class="form-control" rows="4" placeholder="Comment's description"
                             id="commentDescription"></textarea>
                     </div>
-                    <div class="form-check">
+                    <div class="aifex_check_element">
                         <input class="form-check-input" type="checkbox" id="commentScreenshot" name="commentScreenshot" checked>
                         <label htmlFor="commentScreenshot" class="form-check-label">Attach Screenshot</label>
                     </div>
-                    <div class="form-group">
-                        <div class="btn-group">
-                            <button type="submit" id="submit-comment" class="btn btn-primary">Submit</button>
-                            <button id="clearComment" class="btn btn-secondary"> Clear</button>
-                        </div>
+                    <div id="commentSuccessul" class="aifex_alert_success">
+                        Bug Report registered
                     </div>
-                </div>
+                    <div class="aifex_button_group">
+                        <button type="submit" id="submit-comment" class="aifex_button">Submit</button>
+                        <button id="clearComment" class="aifex_button"> Clear</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -1,6 +1,8 @@
 (() => {
     let component = document.getElementById('connectToSessionComponent');
+    let connectionForm = document.getElementById("connectionForm");
     let connexionMessage = document.getElementById('connexionMessage');
+    
 
     function render() {
         if (state.showConfig) {
@@ -15,11 +17,9 @@
     }
 
     function handleConnexion(e) {
-        if (e.type === "keydown" && e.key !== "Enter") {
-            return;
-        }
-        
-        const INPUT_URL = document.getElementById("connexionURLInput").value;
+        e.preventDefault();
+        const data = new FormData(connectionForm)
+        const INPUT_URL = data.get("connexionURL");
         try {
             new URL(INPUT_URL);
         } catch (e) {
@@ -52,11 +52,8 @@
                 }
             })
     }
-
-    document.getElementById("connexionButton").addEventListener("click", handleConnexion);
-    document.getElementById("connexionURLInput").addEventListener("keydown", handleConnexion);
-
     addComponentToPopup(render);
+    connectionForm.addEventListener("submit", handleConnexion);
 
     console.log('ConnectToSession Component has been launched');
 
