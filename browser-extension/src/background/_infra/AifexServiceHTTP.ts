@@ -5,6 +5,7 @@ import Session from "../domain/Session";
 import AifexPluginInfo from "../domain/AifexPluginInfo";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import Action from "../domain/Action";
+import Comment from "../domain/Comment";
 import Evaluator from "../domain/Evaluator";
 import Screenshot from "../domain/Screenshot";
 import CommentDistribution from "../domain/CommentDistribution";
@@ -264,14 +265,14 @@ export default class AifexServiceHTTP implements AifexService {
 			});
 	}
 
-	pushActionList(serverURL: string, sessionId: string, explorationNumber: number, actionList: Action[]): Promise<void> {
+	pushActionOrCommentList(serverURL: string, sessionId: string, explorationNumber: number, actionOrCommentList: (Action|Comment)[]): Promise<void> {
 		const body = {
-			interactionList: actionList.map((action: Action) => ({
-				index: action.index,
-				concreteType: action.getConcreteType(),
-				kind: action.kind,
-				value: action.value,
-				date: action.date
+			interactionList: actionOrCommentList.map((actionOrComment: Action | Comment) => ({
+				index: actionOrComment.index,
+				concreteType: actionOrComment.getConcreteType(),
+				kind: actionOrComment.kind,
+				value: actionOrComment.value,
+				date: actionOrComment.date
 			}))
 		}
 		const option = {
@@ -297,7 +298,7 @@ export default class AifexServiceHTTP implements AifexService {
 			}
 		}).catch(error => {
 			console.error(error);
-			throw new Error("Service Failed to push new action");
+			throw new Error("Service Failed to push new action or new comment");
 		})
 	}
 
