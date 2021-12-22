@@ -15,7 +15,6 @@ header {
 .aifex_button_group {
     display: flex;
     justify-content: flex-start;
-    width: 60px;
 }
 
 .aifex_button {
@@ -44,3 +43,6 @@ header {
     font-weight: bold;
 }
 
+.aifex_checked_text {
+    width: 120px;
+}

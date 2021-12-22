@@ -30,12 +30,26 @@
                 trashButton.style.display = 'flex';
                 commentSubComponent.style.display = 'flex';
                 commentForm.style.display = 'none';
+
+                if (state.lastInteractionComment) {
+                    document.getElementById("commentType").value = state.lastInteractionComment.kind;
+                    document.getElementById("commentDescription").value = state.lastInteractionComment.value;
+                    document.getElementById("commentIsSubmitted").style.display = 'flex'
+                    document.getElementById("submit-comment").style.display = 'none'
+                    document.getElementById("commentType").disabled = true;
+                    document.getElementById('commentDescription').disabled = true;
+                    document.getElementById('clearComment').style.display = "none";
+
+                } else {
+                    document.getElementById("commentIsSubmitted").style.display = 'none'
+                    document.getElementById("submit-comment").style.display = 'flex'
+                }
+
                 if (state.commentDistributionList && state.commentDistributionList.length > 0) {
                     readCommentButton.style.display = 'flex';
                 } else {
                     readCommentButton.style.display = 'none';
                 }
-
             } else {
                 makeExplorationTitle.innerHTML = 'Start a new exploration';
                 playButton.style.display = 'flex';
@@ -125,8 +139,11 @@
                             kind: "takeScreenshot"
                         })
                     }
-                    document.getElementById("commentSuccessul").style.display = 'block';
-                    document.getElementById('commentDescription').value = "";
+                    document.getElementById("commentIsSubmitted").style.display = 'flex'
+                    document.getElementById("submit-comment").style.display = 'none'
+                    document.getElementById("commentType").disabled = true;
+                    document.getElementById('commentDescription').disabled = true;
+                    document.getElementById('clearComment').style.display = "none";
                 }
                 
             });

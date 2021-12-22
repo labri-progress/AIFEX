@@ -32,6 +32,7 @@ export default class StateForPopup {
         nextActionList: Action[]
     } | undefined;
     public sessionDescription: string | undefined;
+    public lastInteractionComment: Comment | undefined;
 
     constructor() {
         this.pageKind = PopupPageKind.Home;
@@ -48,6 +49,7 @@ export default class StateForPopup {
         this.numberOfExplorationsMadeByTester = 0;
         this.commentDistributionList = [];
         this.commentUpList = [];
+        this.lastInteractionComment = undefined;
     }
 
     public readEvaluation(evaluation: ExplorationEvaluation, webSite: WebSite): void {

@@ -129,15 +129,6 @@ export default class SessionRepositoryMongo implements SessionRepository {
             .exec().then(() => {});
     }
 
-    public setSubmissionAttempt(sessionId: string, explorationNumber: number, submissionAttempt: number): Promise<void> {
-        return ExplorationSchema.updateOne({sessionId, explorationNumber},
-            {
-                $set : {
-                    submissionAttempt
-                },
-            })
-            .exec().then(() => {});
-    }
 
     public findSessionById(sessionId: string): Promise<Session | undefined> {
         let id: string;

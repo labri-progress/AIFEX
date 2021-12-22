@@ -49,6 +49,7 @@ export default class Background {
     private _probabilityMap: Map<string, number>;
     private _commentDistributions: CommentDistribution[] | undefined;
     private _commentsUp: Comment[];
+    private _lastInteractionComment: Comment | undefined;
 
     private _popupPageKind: PopupPageKind;
     private _popupShowConfig: boolean;
@@ -67,7 +68,6 @@ export default class Background {
     private _recordActionByAction: boolean | undefined;
 
     constructor(aifexService: AifexService, popupService: PopupService, browserService: BrowserService, tabScriptService: TabScriptService) {
-        console.log('Creating');
         this._aifexService = aifexService;
         this._browserService = browserService;
         this._tabScriptService = tabScriptService;
@@ -92,6 +92,7 @@ export default class Background {
         this._probabilityMap = new Map();
         this._commentDistributions = [];
         this._commentsUp = [];
+        this._lastInteractionComment = undefined;
         this._popupCommentPosition = { x: "75%", y: "75%" };
         this._screenshotList = [];
         this._explorationEvaluation = undefined;
@@ -410,7 +411,7 @@ export default class Background {
         if (this._isRecording && this._exploration) {
             this._exploration.addAction(prefix, suffix);
             this._commentsUp = [];
-
+            this._lastInteractionComment = undefined
             const promises = [
                 this.fetchComments(),
                 this.evaluateExploration(),
@@ -447,6 +448,7 @@ export default class Background {
     addCommentToExploration(comment: Comment): void {
         if (this._isRecording && this._exploration) {
             this._exploration.addComment(comment);
+            this._lastInteractionComment = comment;
             if (this._recordActionByAction) {
                 if (!this._serverURL ||  !this._sessionId) {
                     throw new Error("Not connected to a session")
@@ -635,6 +637,7 @@ export default class Background {
         state.popupIsDetached = this._aifexPopup.isDetached;
 
         state.commentUpList = this._commentsUp;
+        state.lastInteractionComment = this._lastInteractionComment;
         state.commentDistributionList = this._commentDistributions || [];
 
         if (this._evaluator) {

@@ -137,7 +137,7 @@ export default class SessionService {
                     }
                     const tester: Tester = new Tester(testerName);
                     explorationNumber = session.startExploration(tester, startDate);
-                    return this.sessionRepository.addExploration(sessionId, explorationNumber, tester, startDate, 0)
+                    return this.sessionRepository.addExploration(sessionId, explorationNumber, tester, startDate)
                         .then(() => {
                             return explorationNumber
                         });
@@ -166,7 +166,6 @@ export default class SessionService {
     public addExploration(sessionId: string,
                           testerName: string | undefined,
                           interactionListData: Array<{index: number, concreteType: string, kind: string, value: string, date?: Date}>,
-                          submissionAttempt: number,
                           startDate?:Date,
                           stopDate?:Date,
                           ): Promise<number> {
@@ -218,7 +217,7 @@ export default class SessionService {
                         this.eventStore.notifySessionExploration(sessionId, session.explorationList[explorationNumber]);
                     }
 
-                    return this.sessionRepository.addExploration(sessionId, explorationNumber, tester, explorationStartDate, submissionAttempt)
+                    return this.sessionRepository.addExploration(sessionId, explorationNumber, tester, explorationStartDate)
                         .then( () => {
                             const interactionList = session.explorationList[explorationNumber].interactionList;
                             return this.sessionRepository.updateInteractionListOfExploration(sessionId, explorationNumber, interactionList);

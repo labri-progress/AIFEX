@@ -7,7 +7,7 @@ export default interface SessionRepository {
 
     addSession(session: Session): Promise<string>;
 
-    addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date, submissionAttempt: number): Promise<number>;
+    addExploration(sessionId: string, explorationNumber: number, tester: Tester, startDate: Date): Promise<number>;
 
     updateSession(sessionId: string, name: string, webSiteId: string, baseURL: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<void>;
 
@@ -20,7 +20,5 @@ export default interface SessionRepository {
     updateExplorationIsStopped(sessionId: string, explorationNumber: number, stopDate: Date): Promise<void>;
 
     findSessionById(sessionId: string): Promise<Session | undefined>;
-
-    setSubmissionAttempt(sessionId: string, explorationNumber: number, submissionAttempt: number): Promise<void>;
 
 }

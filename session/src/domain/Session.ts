@@ -114,7 +114,7 @@ export default class Session {
 
     public startExploration(tester: Tester, startDate?:Date): number {
         const explorationNumber = this._explorationList.length;
-        const exploration: Exploration = new Exploration(tester, explorationNumber, 0, startDate);
+        const exploration: Exploration = new Exploration(tester, explorationNumber, startDate);
         this._explorationList.push(exploration);
         return explorationNumber;
     }

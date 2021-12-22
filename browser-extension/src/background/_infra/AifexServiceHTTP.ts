@@ -240,7 +240,6 @@ export default class AifexServiceHTTP implements AifexService {
 			interactionList: exploration.interactionsToJSON(),
 			startDate: exploration.startDate,
 			stopDate: exploration.stopDate,
-			submissionAttempt: exploration.submissionAttempt,
 		};
 		const option = {
 			method: "POST",
