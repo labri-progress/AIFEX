@@ -2,10 +2,6 @@
 build=true
 removeVolumes=false
 
-echo $build
-echo $removeVolumes
-echo \
-
 while getopts ":b|v" option; do
    case $option in
       b) # display Help
