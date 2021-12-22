@@ -2,7 +2,11 @@ const path = require("path");
 
 module.exports = {
 	context: path.resolve(__dirname, ".."),
-	devtool: "inline-source-map",
+	entry: "./src/index.ts",
+	output: {
+		path: path.resolve(__dirname, "../dist"),
+		filename: "AIFEXScript.js",
+	},
 	resolve: {
 		extensions: [".js", ".tsx", ".ts"],
 	},

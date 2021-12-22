@@ -1,7 +1,31 @@
-import BrowserScriptService from "./application/BrowserScriptService";
-
+import BrowserScript from "./domain/BrowserScript";
 import {logger} from "./framework/Logger";
+import AifexServiceHTTP from "./_infra/AifexServiceHTTP";
+import BrowserServiceLocalStorage from "./_infra/BrowserServiceLocalStorage";
+import BrowserServiceSessionStorage from "./_infra/BrowserServiceSessionStorage";
 
-logger.info("AIFEX script is running.")
+logger.info("AIFEX script is running.");
 
-const application = new BrowserScriptService();
+const AIFEX_SCRIPT = document.getElementById("AIFEX");
+if (AIFEX_SCRIPT) {
+    logger.info("AIFEX SCRIPT Element is found.");
+    const CONNEXION_URL = AIFEX_SCRIPT.getAttribute("connexion-url");
+    if (CONNEXION_URL) {
+        logger.info("AIFEX connexion-url Element is found.");
+        try {
+            const AIFEX_URL = new URL(CONNEXION_URL);
+			let sessionId = AIFEX_URL.searchParams.get('sessionId');
+			if (sessionId) {
+                logger.info("AIFEX sessionId is found.");
+                const AIFEX_SERVICE = new AifexServiceHTTP();
+                const BROWSER_SERVICE = new BrowserServiceSessionStorage();
+                const BROWSER_SCRIPT = new BrowserScript(AIFEX_URL.origin, sessionId, undefined, AIFEX_SERVICE, BROWSER_SERVICE);
+                BROWSER_SCRIPT.start();	
+			}
+        } catch (e) {
+            logger.error("Invalid connexion URL", new Error("Invalid connexion URL"));
+        }
+    }
+}
+
+// <script id="AIFEX" connexion-url="https://aifex.com/aifex/connexion?sessionId=a1b2c3d4e5f6g7h8i9j0" src="https://aifex.com/aifex/script/aifex.js"></script>

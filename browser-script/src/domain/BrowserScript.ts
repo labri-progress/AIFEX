@@ -1,90 +1,84 @@
+import { logger } from "../framework/Logger";
 import Action from "./Action";
 import AifexService from "./AifexService";
+import BrowserService from "./BrowserService";
 import EventListener from "./EventListener";
+import PageMutationHandler from "./PageMutationHandler";
 import RuleService from "./RuleService";
 import Token from "./Token";
 
 
-export default class TabScript {
+export default class BrowserScript {
 
-    private _serverURL: string | undefined;
-	private _sessionId: string | undefined;
+    private _serverURL: string;
+	private _sessionId: string;
 	private _webSiteId: string | undefined;
 	private _token: Token | undefined;
-    private _ruleService : RuleService | undefined;
-    private _eventListener : EventListener | undefined;
-    private _aifexService : AifexService | undefined;
+    private _ruleService : RuleService;
+    private _eventListener : EventListener;
+    private _aifexService : AifexService;
+    private _browserService : BrowserService;
+    private _pageMutationHandler : PageMutationHandler;
+    private _explorationNumber: number | undefined;
 
     
-    constructor(connectionURL: string, token: Token | undefined, aifexService: AifexService) {
-        try {
-			const CONNECTION_URL = new URL(connectionURL);
-			let sessionId = CONNECTION_URL.searchParams.get('sessionId');
-			if (sessionId) {
-				this._sessionId = sessionId;
-			}
-			this._serverURL = CONNECTION_URL.origin;
-			this._token = token;
-            this._ruleService = new RuleService();
-            this._eventListener = new EventListener(this._ruleService);
-            this._aifexService = aifexService;
-            
-		} catch (e) {
-			console.error('wrong connectionURL !!! Won\'t listen to any action');
-		}
-        
+    constructor(serverURL: string, sessionId: string, token: Token | undefined, aifexService: AifexService, browserService: BrowserService) {
+        this._serverURL = serverURL;
+        this._sessionId = sessionId;
+        this._token = token;
+        this._aifexService = aifexService;
+        this._browserService = browserService;
+        this._ruleService = new RuleService();
+        this._eventListener = new EventListener(this._ruleService);
+        this._eventListener.addObserver(this.processNewAction.bind(this));
+
+        this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
+        this._pageMutationHandler.init();
     }
 
-    synchronizeWithBackground() : Promise<void> {
-        return this._backgroundService.getState()
-        .then(state => {
-            const rules = state.webSite.mappingList.map((ru : any) => this._ruleService.createRule(ru));
-            this._ruleService.loadRules(rules);
-            this._ruleService.mapRulesToElements();
-            if (state.isActive) {
-                this.explorationStarted();
-            } else {
-                this._highlighter.hide();
-            }
-        })
+    start() : Promise<void> {
+        return this._aifexService.getSession(this._serverURL, this._sessionId, undefined)
+            .then((sessionResult) => {
+                if (sessionResult && sessionResult !== "Unauthorized") {
+                    this._webSiteId = sessionResult.webSiteId;
+                    this._aifexService.getWebSite(this._serverURL, this._webSiteId, undefined)
+                        .then((webSiteResult) => {
+                            if (webSiteResult && webSiteResult !== 'Unauthorized') {
+                                const rules = webSiteResult.mappingList.map((ru : any) => this._ruleService.createRule(ru));
+                                this._ruleService.loadRules(rules);
+                                this._ruleService.mapRulesToElements();
+                                logger.debug(`Rules loaded : ${rules.length}`);
+                                this._eventListener.start();
+                            }
+                        })
+                        .then(() => {
+                            const currentExplorationNumber = this._browserService.getExplorationNumber();
+                            if (currentExplorationNumber !== undefined) {
+                                this._explorationNumber = currentExplorationNumber;
+                            } else {
+                                this._aifexService.createEmptyExploration("BROWSER_SCRIPT", this._serverURL, this._sessionId)
+                                .then((explorationNumber) => {
+                                    this._explorationNumber = explorationNumber;
+                                    this._browserService.saveExplorationNumber(this._explorationNumber);
+                                })
+                                .then(() => {
+                                    this.processNewAction(new Action("start", undefined));
+                                })
+                            }
+                        })
+                }
+            })
     }
 
-    processNewAction(prefix: string, suffix?: string): Promise<void> {
-        if (this._isRecording && this._exploration) {
-            this._exploration.addAction(prefix, suffix);
-            this._commentsUp = [];
-
-            const promises = [
-                this.fetchComments(),
-                this.evaluateExploration(),
-                this.fetchProbabilityMap()
-            ];
-
-            if (this._recordActionByAction) {
-                if (!this._serverURL ||  !this._sessionId) {
-                    throw new Error("Not connected to a session")
-                }
-                if (this._exploration.explorationNumber === undefined) {
-                    throw new Error("The exploration has not been correctly started")
-                }
-                const actionList = this._exploration.actions;
-                const lastAction = actionList[actionList.length-1];
-                const pushActionListPromise = this._aifexService.pushActionOrCommentList(
-                    this._serverURL, 
-                    this._sessionId, 
-                    this._exploration.explorationNumber, 
-                    [lastAction])
-
-                promises.push(pushActionListPromise);
-            }
-            return Promise.all(promises)
-                .then(() => {
-                    this.refreshPopup();
-                })
-
-        } else {
-            return Promise.resolve();
+    processNewAction(action: Action): void {
+        if (this._explorationNumber === undefined) {
+            throw new Error("The exploration has not been correctly started")
         }
+        this._aifexService.sendAction(this._explorationNumber, action, this._serverURL, this._sessionId);
+    }
+
+    private onMutation() :void{
+        this._ruleService.mapRulesToElements();
     }
 
 }

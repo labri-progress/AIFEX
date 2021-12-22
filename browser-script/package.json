@@ -1,13 +1,14 @@
 {
   "scripts": {
-    "dev": "webpack --config ./webpack/webpack.dev.js",
-    "prod": "webpack --config ./webpack/webpack.prod.js",
+    "dev": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/webpack.dev.js",
+    "prod": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/webpack.prod.js",
     "compile": "tsc"
   },
   "devDependencies": {
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.4",
     "typescript-logging": "^1.0.0",
+    "webpack": "^5.58.1",
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.6.0",
     "webpack-merge": "^5.8.0",
