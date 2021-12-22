@@ -11,9 +11,6 @@ while getopts ":b|v" option; do
    esac
 done
 
-echo $build
-echo $removeVolumes
-
 echo ========================== PLUGIN COMPILATION ==================================
 cd browser-extension/ 
 npm install
