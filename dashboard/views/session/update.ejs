@@ -16,14 +16,14 @@
           <div class="form-group row">
             <label for="name" class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" form="updateSessionWithEmptyAI" name="name" id="name" value="<%=session.name%>">
+              <input type="text" class="form-control" form="updateSessionWithEmptyAI" name="name" id="name" value="<%=session.name%>" required>
             </div>
           </div>
 
           <div class="form-group row" >
             <label for="webSiteId" class="col-sm-2 col-form-label">Configuration</label>
             <div class="col-sm-10">
-              <select name="webSiteId" id="webSiteId" class="form-control" form="updateSessionWithEmptyAI">
+              <select name="webSiteId" id="webSiteId" class="form-control" form="updateSessionWithEmptyAI" required>
                 <% JSON.parse(webSiteList).forEach(function(webSite) { %>
                   <%if (webSite.name === defaultWebSiteName) { %>
                       <option value="<%=webSite.id %>" selected="selected"> <%=webSite.name %> </option>
@@ -38,7 +38,7 @@
           <div class="form-group row">
             <label for="baseURL" class="col-sm-2 col-form-label">Exploration starting URL</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" form="updateSessionWithEmptyAI" name="baseURL" id="baseURL" value="<%=session.baseURL%>" >
+              <input type="url" class="form-control" form="updateSessionWithEmptyAI" name="baseURL" id="baseURL" value="<%=session.baseURL%>" required>
               <small id="urlHelper" class="form-text text-muted">The testers' starting point.</small>
             </div>
           </div>
@@ -54,7 +54,7 @@
           <div class="form-group row">
             <label for="overlayType" class="col-sm-2 col-form-label">Overlay</label>
             <div class="col-sm-10">
-              <select class="form-control" aria-label="Default select example" name="overlayType" form="updateSessionWithEmptyAI">
+              <select class="form-control" aria-label="Default select example" name="overlayType" form="updateSessionWithEmptyAI" required>
                 <option value="rainbow" <%= session.overlayType == "rainbow" ? 'selected' : '' %> > Rainbow </option>
                 <option value="shadow" <%= session.overlayType == "shadow" ? 'selected' : '' %> > Shadow</option>
               </select>
@@ -66,7 +66,7 @@
           <div class="form-group row">
             <label for="recordingMode" class="col-sm-2 col-form-label">Recording Mode</label>
             <div class="col-sm-10">
-              <select class="form-control" aria-label="Default select example" name="recordingMode" id="recordingMode" form="updateSessionWithEmptyAI">
+              <select class="form-control" aria-label="Default select example" name="recordingMode" id="recordingMode" form="updateSessionWithEmptyAI" required>
                 <option value="byexploration" <%= session.recordingMode == "byexploration" ? 'selected' : '' %>> By Exploration </option>
                 <option value="byinteraction" <%= session.recordingMode == "byinteraction" ? 'selected' : '' %>>By Interaction</option>
               </select>
@@ -80,4 +80,16 @@
       </div>
     </div>
   </body>
+  <script>
+    window.addEventListener('load', function() {
+      var form = document.getElementsByTagName('form')[0];
+      form.addEventListener("submit",(e) => {
+        if (form.checkValidity() === false) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      })
+      form.classList.add('was-validated');
+    }, false);
+  </script>
 </html>
