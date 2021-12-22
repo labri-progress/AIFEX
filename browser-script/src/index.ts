@@ -26,6 +26,8 @@ if (AIFEX_SCRIPT) {
             logger.error("Invalid connexion URL", new Error("Invalid connexion URL"));
         }
     }
+} else {
+    logger.error("AIFEX SCRIPT Element is not found.", new Error("AIFEX SCRIPT Element is not found."));
 }
 
 // <script id="AIFEX" connexion-url="https://aifex.com/aifex/connexion?sessionId=a1b2c3d4e5f6g7h8i9j0" src="https://aifex.com/aifex/script/aifex.js"></script>
