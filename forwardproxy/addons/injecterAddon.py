@@ -24,7 +24,7 @@ class JSInjector:
             del flow.response.headers["Content-Security-Policy"]
 
         if html.body and ('text/html' in flow.response.headers["content-type"]):
-            scriptTag = BeautifulSoup('<script src="{script}" defer></script>'.format(script=ctx.options.scriptlocation))
+            scriptTag = BeautifulSoup('<script id="AIFEX" src="{script}" connexion-url="http://localhost/join?sessionId=UHox4EEqW&modelId=zPkie4N4V" defer></script>'.format(script=ctx.options.scriptlocation))
 
             html.body.insert(len(html.body.contents), scriptTag)
             flow.response.text = str(html)
