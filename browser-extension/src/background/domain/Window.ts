@@ -3,17 +3,27 @@ import Tab from "./Tab";
 export default class Window {
     private _id : number;
     private _tabs : Tab[];
+    private _isPrivate: boolean;
 
-    constructor(id : number) {
+    constructor(id : number, isPrivate: boolean) {
         if (id === null || id === undefined || isNaN(id)) {
             throw new Error('cannot create ManagedWindow without id')
         }
         this._id = id;
         this._tabs = [];
+        this._isPrivate = isPrivate;
     }
 
     get id() : number {
         return this._id;
+    }
+
+    get isPrivate(): boolean {
+        return this._isPrivate;
+    }
+
+    get tabs(): Tab[] {
+        return this._tabs;
     }
 
     hasTab(tabId : number) : boolean {

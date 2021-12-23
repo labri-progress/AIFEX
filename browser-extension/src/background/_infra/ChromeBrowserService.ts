@@ -3,6 +3,7 @@ import BrowserService from "../domain/BrowserService";
 import { captureStreamOnWindow, getWindowById, updateWindowById, createWindow, getCurrentWindow, removeWindowById, executeTabScript, removeTabs, createTab, takeScreenshot, getTabIdListOfWindow, getTabById, focusTab } from "./ChromePromise";
 import WindowOption from "./WindowOption";
 import { logger } from "../Logger";
+import Window from "../domain/Window";
 const DEFAULT_WINDOW_OPTIONS = { url: 'https://www.aifex.fr' };
 const DEFAULT_TAB_OPTIONS = {};
 
@@ -31,12 +32,30 @@ export default class ChromeBrowserService implements BrowserService {
         return chrome.runtime.getManifest().version
     }
 
-    createWindow(url?: string): Promise<number | undefined> {
-        const options = Object.assign(DEFAULT_WINDOW_OPTIONS, { url });
+    createWindow(isPrivateNavigation: boolean, url?: string): Promise<Window> {
+        const options = Object.assign(DEFAULT_WINDOW_OPTIONS, { 
+            url,
+            incognito: isPrivateNavigation
+        });
         const chromeOptions = new WindowOption(options);
+        let createdWindow: Window;
         return createWindow(chromeOptions)
-            .then(window => {
-                return window.id;
+            .then((window: chrome.windows.Window) => {
+                if (!window.id) {
+                    throw new Error("Window is created without an id");
+                } else {
+                    return new Window(window.id, window.incognito);
+                }
+            })
+            .then((newWindow: Window) => {
+                createdWindow = newWindow;
+                return getTabIdListOfWindow(createdWindow.id)  
+            })
+            .then((tabIdList) => {
+                if (tabIdList) {
+                    tabIdList.forEach(tabId => createdWindow.addTab(tabId));
+                }
+                return createdWindow;
             })
     }
 
@@ -49,19 +68,20 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
 
-    getCurrentWindow(): Promise<{ windowId: number, tabsId?: number[] }> {
+    getCurrentWindow(): Promise<Window> {
         return getCurrentWindow()
-            .then((window) => {
+            .then((window: chrome.windows.Window) => {
                 if (window && window.id) {
                     let windowId: number = window.id;
                     let tabsId: number[] | undefined;
                     if (window.tabs) {
                         tabsId = window.tabs.map(tab => tab.id).filter((id: number | undefined): id is number => id !== undefined);
                     }
-                    return {
-                        windowId,
-                        tabsId
-                    }
+                    let currentWindow = new Window(windowId, window.incognito);
+                    tabsId?.forEach(tabId => {
+                        currentWindow.addTab(tabId);
+                    })
+                    return currentWindow
                 } else {
                     return Promise.reject(`no current window`);
                 }
@@ -146,11 +166,15 @@ export default class ChromeBrowserService implements BrowserService {
         });
     }
 
-    attachWindowCreatedHandler(handler: (windowId: number | undefined) => void): void {
+    attachWindowCreatedHandler(handler: (window: Window) => void): void {
         console.log('chrome.windows', chrome.windows);
         console.log('chrome.windows.onCreated', chrome.windows.onCreated);
         chrome.windows.onCreated.addListener((window) => {
-            handler(window.id);
+            if (window.id) {
+                handler(new Window(window.id, window.incognito));
+            } else {
+                logger.debug("Skipped created window without id")
+            }
         })
     }
 

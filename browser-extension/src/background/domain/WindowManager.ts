@@ -1,5 +1,7 @@
 import { logger } from "../Logger";
+import { getWindowById } from "../_infra/ChromePromise";
 import BrowserService from "./BrowserService";
+import Tab from "./Tab";
 import Window from "./Window";
 
 
@@ -20,24 +22,11 @@ export default class WindowManager {
         this._onWindowRemovedListener.push(listener);
     }
 
-    createConnectedWindow(url?:string) : Promise<void> {
-        return this._browserService.createWindow(url)
-        .then((id) => {
-            if (id === undefined) {
-                throw new Error("Window id is undefined");
-            }
-            if (this._lastCreatedWindow?.id !== id) {
-                let connectedWindow = new Window(id);
-                this._connectedWindow = connectedWindow;
-                this._browserService.getTabIdListOfWindow(this._connectedWindow.id)
-                .then((tabIdList) => {
-                    if (tabIdList) {
-                        tabIdList.forEach(tabId => connectedWindow.addTab(tabId));
-                    }
-                })
-                .catch((e) => {
-                    console.error(e)
-                })
+    createConnectedWindow(privateWindow: boolean, url?:string) : Promise<void> {
+        return this._browserService.createWindow(privateWindow, url)
+        .then((window: Window) => {
+            if (this._lastCreatedWindow?.id !== window.id) {
+                this._connectedWindow = window;
             } else {
                 this._connectedWindow = this._lastCreatedWindow;
             }
@@ -46,16 +35,14 @@ export default class WindowManager {
 
     connectToExistingWindow() : Promise<void> {
         return this._browserService.getCurrentWindow()
-            .then(({windowId,tabsId}) => {
-                if (this._connectedWindow && this._connectedWindow.id === windowId) {
+            .then((window: Window) => {
+                if (this._connectedWindow && this._connectedWindow.id === window.id) {
                     return;
                 }
-                let connectedWindow = new Window(windowId);
-                this._connectedWindow = connectedWindow ;
-                if (tabsId) {
-                    tabsId.forEach(tabId => {
-                        connectedWindow.addTab(tabId);
-                        this.connectTab(tabId);
+                this._connectedWindow = window ;
+                if (window.tabs) {
+                    window.tabs.forEach(tab => {
+                        this.connectTab(tab.id);
                     });
                 }
             })
@@ -67,20 +54,18 @@ export default class WindowManager {
     removeConnectedWindow() : Promise<void> {
         const connectedWindowId = this.getConnectedWindowId();
         if (connectedWindowId) {
+            this._connectedWindow = undefined;
             return this._browserService.closeWindow(connectedWindowId)
-                .then((_) => {
-                    this._connectedWindow = undefined;
-                })
-                .catch(error => {
-                    console.error("Failed to remove connected window : ", error.message);
-                })
+            .catch(error => {
+                console.error("Failed to remove connected window : ", error.message);
+            })
         } else {
             return Promise.resolve();
         }
     }
 
     reloadConnectedWindow(url?:string) : Promise<void> {
-        if (this._connectedWindow) {
+        if (this._connectedWindow && this._connectedWindow.id) {
             return this._browserService.restartWindow(this._connectedWindow.id, url)
             .catch(error => {
                 console.error("Failed to reload connected window : ", error.message);
@@ -133,18 +118,17 @@ export default class WindowManager {
     }
 
 
-
-    private onWindowCreated(createdWindowId: number | undefined) : void{
-        if (this._connectedWindow === undefined && createdWindowId!== undefined) {
-            this._lastCreatedWindow = new Window(createdWindowId);
-            const window = this._lastCreatedWindow;
-            const id = this._lastCreatedWindow.id;
+    private onWindowCreated(createdWindow: Window) : void{
+        if (this._connectedWindow === undefined && createdWindow.id!== undefined) {
             this._browserService.getCurrentWindow()
-            .then(({windowId, tabsId}) => {
-                if (windowId === id) {
-                    if (tabsId) {
-                        tabsId.forEach(tabId => window.addTab(tabId));
-                    }
+            .then((currentWindow: Window) => {
+                this._lastCreatedWindow = createdWindow;
+                if (currentWindow.id === this._lastCreatedWindow.id) {
+                    currentWindow.tabs.forEach((tab: Tab) => {
+                        if (this._lastCreatedWindow !== undefined) {
+                            this._lastCreatedWindow.addTab(tab.id)
+                        }
+                    });
                 }
             })
             .catch((e) => {
@@ -158,8 +142,8 @@ export default class WindowManager {
             return;
         }
         if (windowId === this._connectedWindow?.id) {
-            this._onWindowRemovedListener.forEach(listener => listener(windowId));
             this._connectedWindow = undefined;
+            this._onWindowRemovedListener.forEach(listener => listener(windowId));
         } else {
             if (windowId === this._lastCreatedWindow?.id) {
                 this._lastCreatedWindow = undefined;

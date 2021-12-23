@@ -1,15 +1,17 @@
+import Window from "./Window";
+
 export default interface BrowserService {
     aifexPopupAttachedUrl: string;
 
     getExtensionVesion():string;
 
-    createWindow(url?: string): Promise<number | undefined>;
+    createWindow(isPrivateNavigation: boolean,url?: string): Promise<Window>;
 
     createTab(windowId: number, url: string): Promise<number | undefined>;
 
     focusTab(tabId: number): Promise<void>;
 
-    getCurrentWindow() : Promise<{windowId:number, tabsId?:number[]}>;
+    getCurrentWindow() : Promise<Window>;
 
     getTabIdListOfWindow(windowId: number): Promise<number[]>;
 
@@ -35,7 +37,7 @@ export default interface BrowserService {
 
     attachBrowserActionClicked( handler : (tabId:number ) => void): void;
     
-    attachWindowCreatedHandler(handler: (windowId: number | undefined) => void): void;
+    attachWindowCreatedHandler(handler: (window: Window) => void): void;
 
     attachWindowRemovedHandler( handler : (windowId:number) => void): void;
 

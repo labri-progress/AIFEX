@@ -54,13 +54,13 @@ export default class Background {
     private _popupPageKind: PopupPageKind;
     private _popupShowConfig: boolean;
     private _isRecording: boolean;
-    private _popupCommentPosition: { x: string, y: string };
     private _screenshotList: Screenshot[];
 
     private _mediaRecordManager: MediaRecorderManager;
 
     private _shouldCreateNewWindowsOnConnect: boolean;
     private _shouldCloseWindowOnDisconnect: boolean;
+    private _shouldOpenPrivateWindows: boolean;
 
     private _aifexPopup: AifexPopup;
     private _overlayType: OverlayType;
@@ -78,6 +78,7 @@ export default class Background {
         this._windowManager.attachHandlers();
         this._shouldCreateNewWindowsOnConnect = true;
         this._shouldCloseWindowOnDisconnect = true;
+        this._shouldOpenPrivateWindows = false;
         this._aifexPopup = new AifexPopup(this._browserService);
         this._aifexPopup.attachBrowserHandlers();
 
@@ -93,7 +94,6 @@ export default class Background {
         this._commentDistributions = [];
         this._commentsUp = [];
         this._lastInteractionComment = undefined;
-        this._popupCommentPosition = { x: "75%", y: "75%" };
         this._screenshotList = [];
         this._explorationEvaluation = undefined;
         this._rejectIncorrectExplorations = true;
@@ -114,7 +114,6 @@ export default class Background {
         this._probabilityMap = new Map();
         this._commentDistributions = [];
         this._commentsUp = [];
-        this._popupCommentPosition = { x: "75%", y: "75%" };
         this._screenshotList = [];
         this._explorationEvaluation = undefined;
         this._isRecording = false;
@@ -189,7 +188,7 @@ export default class Background {
                                 this._serverURL = serverURL;
                                 let windowManagement;
                                 if (this._shouldCreateNewWindowsOnConnect) {
-                                    windowManagement = this._windowManager.createConnectedWindow(this._sessionBaseURL);
+                                    windowManagement = this._windowManager.createConnectedWindow(this._shouldOpenPrivateWindows, this._sessionBaseURL);
                                 } else {
                                     windowManagement = this._windowManager.connectToExistingWindow();
                                 }
@@ -224,8 +223,6 @@ export default class Background {
         }
     }
 
-
-
     isConnected(): boolean {
         return this._sessionId !== undefined;
     }
@@ -255,7 +252,7 @@ export default class Background {
         }
         else {
             console.log("Reload")
-            return this._windowManager.createConnectedWindow(this._sessionBaseURL)
+            return this._windowManager.createConnectedWindow(this._shouldOpenPrivateWindows, this._sessionBaseURL)
         }
     }
 
@@ -607,10 +604,6 @@ export default class Background {
         }
     }
 
-    setPopupCommentPosition(position: { x: string, y: string }): void {
-        this._popupCommentPosition = position;
-    }
-
     getStateForPopup(): StateForPopup {
         const state = new StateForPopup();
         state.pageKind = this._popupPageKind;
@@ -634,6 +627,9 @@ export default class Background {
         state.showConfig = this._popupShowConfig;
         state.shouldCreateNewWindowsOnConnect = this._shouldCreateNewWindowsOnConnect;
         state.shouldCloseWindowOnDisconnect = this._shouldCloseWindowOnDisconnect;
+        state.shouldOpenPrivateWindows = this._shouldOpenPrivateWindows;
+        logger.debug("state.shouldOpenPrivateWindows" + state.shouldOpenPrivateWindows + " / this._shouldOpenPrivateWindows" + this._shouldOpenPrivateWindows)
+
         state.popupIsDetached = this._aifexPopup.isDetached;
 
         state.commentUpList = this._commentsUp;
@@ -654,7 +650,6 @@ export default class Background {
         const state = new StateForTabScript();
         state.isRecording = this._isRecording;
         state.webSite = this._webSite;
-        state.popupCommentPosition = this._popupCommentPosition;
         state.overlayType = this._overlayType;
         state.exploration = this._exploration;
         return state;
@@ -705,6 +700,10 @@ export default class Background {
         this._shouldCloseWindowOnDisconnect = shouldCloseWindowOnDisconnect;
     }
 
+    setShouldOpenPrivateWindow(shouldOpenPrivateWindows: boolean): void {
+        this._shouldOpenPrivateWindows = shouldOpenPrivateWindows;
+    }
+
     toggleDetachPopup(): Promise<void> {
         return this._aifexPopup.toggleDetached()
             .catch((error) => {
@@ -716,10 +715,12 @@ export default class Background {
         this._popupShowConfig = !this._popupShowConfig;
 	}
 
-	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean): void {
+	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindows: boolean): void {
         this._testerName = testerName;
         this._shouldCloseWindowOnDisconnect = shouldCloseWindowOnDisconnect;
         this._shouldCreateNewWindowsOnConnect = shouldCreateNewWindowsOnConnect;
+        this._shouldOpenPrivateWindows = shouldOpenPrivateWindows;
+        logger.debug("this._shouldOpenPrivateWindows" + this._shouldOpenPrivateWindows)
         this._popupShowConfig = false;
 	}
 	

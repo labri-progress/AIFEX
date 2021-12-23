@@ -220,6 +220,14 @@ export default class HandlerOfMessageSentByPopup {
                 return true;
             }
 
+            case "setOpenPrivateWindow": {
+                logger.info(`Popup asks for ${msg.kind}`);            
+                this._application.setShouldOpenPrivateWindow(msg.shouldOpenPrivateWindows);
+                sendResponse(this._application.getStateForPopup());
+                return true;
+            }
+
+
             case "pushComment": {
                 logger.info(`Popup asks for ${msg.kind}`);
                 const { type, value } = msg;
@@ -284,7 +292,7 @@ export default class HandlerOfMessageSentByPopup {
 
             case "submitConfig": {
                 logger.info(`Popup asks for ${msg.kind}`);
-                this._application.submitConfig(msg.testerName, msg.shouldCreateNewWindowsOnConnect, msg.shouldCloseWindowOnDisconnect);
+                this._application.submitConfig(msg.testerName, msg.shouldCreateNewWindowsOnConnect, msg.shouldCloseWindowOnDisconnect, msg.shouldOpenPrivateWindows);
                 sendResponse("ok");
                 return true;
             }

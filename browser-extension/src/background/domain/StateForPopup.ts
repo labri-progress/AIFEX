@@ -23,6 +23,7 @@ export default class StateForPopup {
     public isPreparedToRecordMedia : boolean;
     public shouldCreateNewWindowsOnConnect : boolean;
     public shouldCloseWindowOnDisconnect : boolean;
+    public shouldOpenPrivateWindows : boolean;
     public popupIsDetached: boolean;
     public evaluatorScenario: string | undefined;
     public commentDistributionList: CommentDistribution[];
@@ -44,6 +45,7 @@ export default class StateForPopup {
         this.testerName = "MyTesterName";
         this.shouldCreateNewWindowsOnConnect = false;
         this.shouldCloseWindowOnDisconnect = false;
+        this.shouldOpenPrivateWindows = false;
         this.isPreparedToRecordMedia = false;
         this.popupIsDetached = false;
         this.numberOfExplorationsMadeByTester = 0;

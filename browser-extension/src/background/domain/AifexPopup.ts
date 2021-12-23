@@ -60,13 +60,10 @@ export default class AifexPopup {
     public detachInNewWindow(): Promise<void> {
         let createWindowPromise;
         if (!this._aifexWindow) {
-            createWindowPromise = this._browserService.createWindow(this.aifexPageUrl)
-            .then((windowId : number | undefined) => {
-                if (windowId === undefined) {
-                    throw new Error("Window id is undefined");
-                }
-                this._aifexWindow = new Window(windowId);
-                return this._browserService.getTabIdListOfWindow(windowId)
+            createWindowPromise = this._browserService.createWindow(false, this.aifexPageUrl)
+            .then((window: Window) => {
+                this._aifexWindow = window;
+                return this._browserService.getTabIdListOfWindow(window.id)
             })
             .then((tabIdList) => {
                 if (tabIdList.length === 0) {
@@ -108,7 +105,7 @@ export default class AifexPopup {
 
     private tabAttachedHandler(tabId: number, windowId: number): void {
         if (tabId === this._aifexTab?.id) {
-            this._aifexWindow = new Window(windowId);
+            this._aifexWindow = new Window(windowId, false);
         }
     }
 
