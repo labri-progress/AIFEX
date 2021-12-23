@@ -1,5 +1,4 @@
 import { querySelectorAllDeep } from 'query-selector-shadow-dom';
-import {makeCSS} from "./cssStyle";
 import ActionsAndElements from '../domain/ActionsAndElements';
 import Rule from '../domain/Rule';
 import HighlighterCanvas from './HighlighterCanvas';
@@ -31,7 +30,6 @@ export default class ActionHighlighter {
             element.removeAttribute("aifex_frequency");
             element.removeAttribute("aifex_style");
         })
-        this.attachStyleSheet(document.head);
 
         for (const domElement of elementListMatchedByRule) {
             domElement.setAttribute("aifex_style", "true");
@@ -45,10 +43,7 @@ export default class ActionHighlighter {
 
         for (const action of actionAndElements.actionList) {
             for (const htmlElement of action.htmlElementList) {
-                const rootNode = htmlElement.getRootNode();
-                if (rootNode instanceof HTMLElement || rootNode instanceof SVGElement) {
-                    this.attachStyleSheet(rootNode);
-                }
+
                 this._lastElementWithAIFEXStyle.add(htmlElement);
 
                 for (const rule of action.ruleList) {
@@ -87,24 +82,6 @@ export default class ActionHighlighter {
         for (const domElement of domElements) {
             domElement.removeAttribute("aifex_frequency");
             domElement.removeAttribute("aifex_style");
-        }
-    }
-
-    private attachStyleSheet(parentNode : HTMLElement | SVGElement): void {
-        const nodeChilds: Element[] = Array.from(parentNode.children);
-        if (nodeChilds.some(node => node.hasAttribute("aifex_stylesheet"))) {
-            return;
-        }
-        if (this.stylesheetElement) {
-            parentNode.appendChild(this.stylesheetElement.cloneNode(true));
-        } else {
-            this.stylesheetElement = document.createElement("style");
-            this.stylesheetElement.setAttribute("type", "text/css");
-            this.stylesheetElement.setAttribute("aifex_stylesheet", "true");
-
-            const cssNode = document.createTextNode(makeCSS());
-            this.stylesheetElement.appendChild(cssNode);
-            parentNode.appendChild(this.stylesheetElement);
         }
     }
 
