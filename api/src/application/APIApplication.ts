@@ -605,7 +605,8 @@ export default class APIApplication {
         mappings.push(new Mapping({event:"click",css:"body"},{prefix:"ClickOn",suffix:"cssSelector"}));
         mappings.push(new Mapping({event:"keydown",key:"Enter",css:"body"},{prefix:"EnterKeyOn",suffix:"cssSelector"}));
         mappings.push(new Mapping({event:"keydown",key:"Tab",css:"body"},{prefix:"TabKeyOn",suffix:"cssSelector"}));
-        return this._webSiteService.createWebSite("RecordClicksAndEnterTabKeys",mappings)
+        mappings.push(new Mapping({event:"css-class-added",css:"body"},{prefix:"HoverOn",suffix:"cssSelector"}));
+        return this._webSiteService.createWebSite("UserInteractions",mappings)
         .then((webSiteId) => {
             return this._accountService.addWebSite(username,webSiteId)
         })
