@@ -1,5 +1,4 @@
 import ActionsAndElements from "./ActionsAndElements";
-import Comment from "./Comment";
 import ExplorationEvaluation from "./ExplorationEvaluation";
 import Rule from "./Rule";
 

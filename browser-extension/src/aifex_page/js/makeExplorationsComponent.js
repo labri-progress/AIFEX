@@ -109,7 +109,9 @@
     function openCommentView() {
         if (!addCommentIsVisible) {
             commentForm.style.display = 'block';
-            document.getElementById("commentSuccessul").style.display = 'none';
+            if (document.getElementById("commentSuccessul")) {
+                document.getElementById("commentSuccessul").style.display = 'none';
+            }
             addCommentIsVisible = true;
         } else {
             commentForm.style.display = 'none';

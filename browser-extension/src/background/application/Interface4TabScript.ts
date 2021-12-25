@@ -12,8 +12,6 @@ export default interface Interface4TabScript {
 
   processNewAction(kind: string, value: string): Promise<void>;
 
-  setPopupCommentPosition(position : {x: string, y: string}): void;
-
   getExplorationEvaluation(): ExplorationEvaluation | undefined;
 
 }

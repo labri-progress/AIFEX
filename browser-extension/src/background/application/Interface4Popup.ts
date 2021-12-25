@@ -3,7 +3,7 @@ import { PopupPageKind } from "../domain/PopupPageKind";
 import StateForPopup from "../domain/StateForPopup";
 
 export default interface Interface4Popup {
-
+    
     changePopupPageKind(popupPageKind: PopupPageKind): void;
 
     toggleDetachPopup(): Promise<void>;
@@ -44,11 +44,13 @@ export default interface Interface4Popup {
 
     setShouldCloseWindowOnDisconnect(shouldCloseWindowOnDisconnect: boolean): void;
 
+    setShouldOpenPrivateWindow(shouldCreatePrivateWindow: boolean): void;
+
     upComment(type: string, value: string): void;
 
     showConfig(): void;
 
-    submitConfig(testerName: string, shouldCreateNewWindowsOnConnect : boolean, shouldCloseWindowOnDisconnect: boolean): void;
+	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindow: boolean): void;
 
     cancelConfig(): void;
 

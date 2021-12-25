@@ -71,13 +71,6 @@ export default class HandlerOfMessageSentByTabScript {
                 return true;
             }
 
-            case "setPopupCommentPosition": {
-                logger.info(`TabScript asks for ${msg.kind}`);
-                this._application.setPopupCommentPosition(msg.popupCommentPosition);
-                sendResponse("ok");
-                return true;
-            }
-
             default : {
                 //logger.debug(`${msg.kind} is not considered to come from tabscript`);
                 return true;

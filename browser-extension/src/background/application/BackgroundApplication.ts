@@ -20,6 +20,7 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		this._background = new Background(aifexService, popupService, browserService, tabScriptService);
 	}
 
+
 	/************************/
 	/* For Popup        */
 	/************************/
@@ -102,6 +103,10 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		this._background.setShouldCloseWindowOnDisconnect(shouldCloseWindowOnDisconnect);
 	}
 
+	setShouldOpenPrivateWindow(shouldOpenPrivateWindow: boolean): void {
+		this._background.setShouldOpenPrivateWindow(shouldOpenPrivateWindow);
+	}
+
 	toggleDetachPopup(): Promise<void> {
 		return this._background.toggleDetachPopup();
 	}
@@ -110,8 +115,8 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.showConfig();
 	}
 
-	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean): void {
-		return this._background.submitConfig(testerName, shouldCreateNewWindowsOnConnect, shouldCloseWindowOnDisconnect);
+	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindow: boolean): void {
+		return this._background.submitConfig(testerName, shouldCreateNewWindowsOnConnect, shouldCloseWindowOnDisconnect, shouldOpenPrivateWindow);
 	}
 
 	cancelConfig(): void {
@@ -141,10 +146,6 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 
 	upComment(kind: string, value: string): void {
 		return this._background.upComment(new Comment(kind, value));
-	}
-
-	setPopupCommentPosition(position: {x: string, y: string}): void{
-		return this._background.setPopupCommentPosition(position);
 	}
 
 	getExplorationEvaluation(): ExplorationEvaluation | undefined {

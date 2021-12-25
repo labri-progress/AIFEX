@@ -3,6 +3,7 @@
     let testerNameInput = document.getElementById('testerName');
     let shouldCreateNewWindowsOnConnect = document.getElementById('shouldCreateNewWindowsOnConnect');
     let shouldCloseWindowOnDisconnect = document.getElementById('shouldCloseWindowOnDisconnect');
+    let shouldOpenPrivateWindows = document.getElementById("shouldOpenPrivateWindows");
     let submitConfig = document.getElementById('submitConfig');
     let cancelConfig = document.getElementById('cancelConfig');
     let configForm = document.getElementById('configForm');
@@ -14,6 +15,7 @@
             testerNameInput.value = state.testerName;
             shouldCreateNewWindowsOnConnect.checked = state.shouldCreateNewWindowsOnConnect;
             shouldCloseWindowOnDisconnect.checked = state.shouldCloseWindowOnDisconnect;
+            shouldOpenPrivateWindows.checked = state.shouldOpenPrivateWindows;
             component.style.display = 'none';
         }
     }
@@ -24,7 +26,8 @@
             kind: "submitConfig", 
             testerName: testerNameInput.value, 
             shouldCreateNewWindowsOnConnect: shouldCreateNewWindowsOnConnect.checked, 
-            shouldCloseWindowOnDisconnect: shouldCloseWindowOnDisconnect.checked
+            shouldCloseWindowOnDisconnect: shouldCloseWindowOnDisconnect.checked,
+            shouldOpenPrivateWindows: shouldOpenPrivateWindows.checked
         };
         console.log(msg);
         sendMessage(msg)
