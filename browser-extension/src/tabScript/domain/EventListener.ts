@@ -34,6 +34,7 @@ export default class EventListener {
         this._handledEvents = events;
 
         this._handledEvents.forEach((handledEvent) => {
+            logger.debug(`listening to ${handledEvent}`);
             document.addEventListener(handledEvent, this.exploratoryListener.bind(this), true)
         });
     }
@@ -46,7 +47,7 @@ export default class EventListener {
 
     private exploratoryListener(event: Event): void {
         let unsafeEvent: any = event;
-        if (unsafeEvent.isTrusted) {
+        if (unsafeEvent.isTrusted || unsafeEvent.type === 'css-class-added') {
             if (!unsafeEvent.explored) {
                 unsafeEvent.explored = true;
                 const rule = this._ruleService.getMatchingRule(event);

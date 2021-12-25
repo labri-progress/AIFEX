@@ -7,6 +7,7 @@ import RuleService from "./RuleService";
 import State from "./State";
 import ActionsAndElements from "./ActionsAndElements";
 import Highlighter from "./Highlighter";
+import ClassMutationHandler from "./ClassMutationHandler";
 
 export default class TabScript {
 
@@ -23,6 +24,8 @@ export default class TabScript {
 
         this._eventListener = new EventListener(this._ruleService, this._backgroundService);
         this._eventListener.onNewUserAction(this.onNewUserAction.bind(this));
+
+        new ClassMutationHandler();
 
         this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
         this._pageMutationHandler.init();
