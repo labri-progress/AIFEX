@@ -7,6 +7,8 @@ import Video from "../domain/Video";
 import fetch from "node-fetch";
 import { SessionOverlayType } from "../domain/SessionOverlayType";
 import { RecordingMode } from "../domain/RecordingMode";
+import FormData from "form-data";
+import { logger } from "../logger";
 
 const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;
 
@@ -157,7 +159,22 @@ export default class SessionServiceHTTP implements SessionService {
     }
 
     addVideo(video: Video): Promise<"VideoAdded"> {
-        throw new Error("Method not implemented.");
+        const AddVideoURL = `http://${config.session.host}:${config.session.port}/session/addvideo/${video.sessionId}/${video.explorationNumber}`;
+        const formData = new FormData();
+        logger.debug('video length:', video.buffer.length);
+        formData.append('video', new Blob([new Uint8Array(video.buffer)]));
+        let optionAddVideo = {
+            method: 'POST',
+            body: formData,
+        }
+        return fetch(AddVideoURL, optionAddVideo)
+            .then(response => {
+                if (response.ok) {
+                    return "VideoAdded"
+                } else {
+                    throw new Error("Error"+response.statusText);
+                }
+            })
     }
 
     findVideosBySessionId(sessionId: string): Promise<Video[]> {

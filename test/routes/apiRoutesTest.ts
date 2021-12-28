@@ -1,8 +1,10 @@
 import chai from "chai";
+import fs from "fs";
 const expect = chai.expect;
 import "mocha";
 import { dropAllDatabases } from "./databasesService";
 import fetch from "node-fetch";
+import FormData from "form-data";
 
 const API_URL = "http://localhost/api";
 
@@ -13,10 +15,10 @@ before("Dropping database", async () => {
 describe("API", () => {
 
     // tslint:disable-next-line: prefer-const
-    let token : string | undefined;
-    let webSiteId : string | undefined;
-    let sessionId : string | undefined;
-    let modelId : string | undefined;
+    let token: string | undefined;
+    let webSiteId: string | undefined;
+    let sessionId: string | undefined;
+    let modelId: string | undefined;
 
     it("should ping", () => {
         const url = `${API_URL}/ping`;
@@ -30,18 +32,18 @@ describe("API", () => {
                 expect(resultCasted.message).to.eql("alive");
             });
     });
-    
+
 
     it("should signup", () => {
         const url = `${API_URL}/signup`;
         const body = {
-            username:"testAPI",
-            email:"test@test.com",
+            username: "testAPI",
+            email: "test@test.com",
             password: "test"
         };
         const option = {
             method: "POST",
-            body:    JSON.stringify(body),
+            body: JSON.stringify(body),
             headers: { "Content-Type": "application/json" }
         };
         return fetch(url, option)
@@ -58,13 +60,13 @@ describe("API", () => {
     it("should not signup twice", () => {
         const url = `${API_URL}/signup`;
         const body = {
-            username:"testAPI",
-            email:"test@test.com",
+            username: "testAPI",
+            email: "test@test.com",
             password: "test"
         };
         const option = {
             method: "POST",
-            body:    JSON.stringify(body),
+            body: JSON.stringify(body),
             headers: { "Content-Type": "application/json" }
         };
         return fetch(url, option)
@@ -128,10 +130,11 @@ describe("API", () => {
         const url = `${API_URL}/account`;
         return fetch(url, {
             method: "GET",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`}
-            })
+                "Authorization": `Bearer ${token}`
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -165,11 +168,11 @@ describe("API", () => {
         return fetch(url, {
             method: "POST",
             body: JSON.stringify(body),
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             }
-            })
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -186,10 +189,11 @@ describe("API", () => {
         const url = `${API_URL}/account`;
         return fetch(url, {
             method: "GET",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`}
-            })
+                "Authorization": `Bearer ${token}`
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -225,8 +229,9 @@ describe("API", () => {
             body: JSON.stringify(body),
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`}
-            })
+                "Authorization": `Bearer ${token}`
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -234,7 +239,7 @@ describe("API", () => {
             })
             .then((result) => {
                 let resultCasted = result as any;
-                expect(resultCasted.message).to.be.eql("WebSiteUpdated");                
+                expect(resultCasted.message).to.be.eql("WebSiteUpdated");
             });
     });
 
@@ -243,7 +248,7 @@ describe("API", () => {
         const url = `${API_URL}/sessions`;
         return fetch(url, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
@@ -254,7 +259,8 @@ describe("API", () => {
                 description: "MySessionDescription",
                 overlayType: "shadow",
                 recordingMode: "byexploration"
-            })})
+            })
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -272,10 +278,11 @@ describe("API", () => {
         const url = `${API_URL}/account`;
         return fetch(url, {
             method: "GET",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`}
-            })
+                "Authorization": `Bearer ${token}`
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -294,7 +301,7 @@ describe("API", () => {
         const url = `${API_URL}/sessions`;
         return fetch(url, {
             method: "PATCH",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
@@ -306,7 +313,8 @@ describe("API", () => {
                 description: "MySessionDescription",
                 overlayType: "shadow",
                 recordingMode: "byexploration"
-            })})
+            })
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -317,13 +325,13 @@ describe("API", () => {
                 expect(resultCasted.sessionId).to.be.not.undefined;
             });
     });
-    
+
 
     it("should create a new model", () => {
         const url = `${API_URL}/models`;
         return fetch(url, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
@@ -331,7 +339,8 @@ describe("API", () => {
                 depth: 3,
                 interpolationfactor: 2,
                 predictionType: "CSP"
-            })})
+            })
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -349,10 +358,11 @@ describe("API", () => {
         const url = `${API_URL}/models/${modelId}/link/${sessionId}`;
         return fetch(url, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -364,23 +374,24 @@ describe("API", () => {
             });
     });
 
-    it("should add an exploration to the session",() => {
+    it("should add an exploration to the session", () => {
         const url = `${API_URL}/sessions/${sessionId}/explorations`;
         const body = {
             testerName: "testAPI",
             interactionList: [
-                {index: 0, concreteType: "Action", kind: "start"},
-                {index: 1, concreteType: "Action", kind: "click", value: "value"},
-                {index: 2, concreteType: "Action", kind: "click", value: "value"},
+                { index: 0, concreteType: "Action", kind: "start" },
+                { index: 1, concreteType: "Action", kind: "click", value: "value" },
+                { index: 2, concreteType: "Action", kind: "click", value: "value" },
             ]
         };
         return fetch(url, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(body)})
+            body: JSON.stringify(body)
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -396,16 +407,17 @@ describe("API", () => {
         const url = `${API_URL}/models/${modelId}/probabilities`;
         const body = {
             interactionList: [
-                {index: 0, concreteType: "Action", kind: "start"},
+                { index: 0, concreteType: "Action", kind: "start" },
             ]
         }
         return fetch(url, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(body)})
+            body: JSON.stringify(body)
+        })
             .then(res => {
                 expect(res.ok).to.be.true;
                 return res.json();
@@ -417,25 +429,26 @@ describe("API", () => {
                 expect(probaMap[0]).lengthOf(2);
                 expect(probaMap[0][0]).to.eql("click$value");
                 expect(probaMap[0][1]).to.eql(1);
-    
+
             });
     });
 
-    it("should add interactions to the exploration",() => {
+    it("should add interactions to the exploration", () => {
         const url = `${API_URL}/sessions/${sessionId}/explorations/${0}/interactions`;
         const body = {
             testerName: "testAPI",
             interactionList: [
-                {index: 3, concreteType: "Action", kind: "type", value: "value"},
+                { index: 3, concreteType: "Action", kind: "type", value: "value" },
             ]
         };
         return fetch(url, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(body)})
+            body: JSON.stringify(body)
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -447,6 +460,30 @@ describe("API", () => {
             });
     });
 
+    it("should add a video to the exploration", () => {
+        const url = `${API_URL}/sessions/${sessionId}/exploration/${0}/video`;
+        const formData = new FormData();
+        
+        formData.append("video", fs.createReadStream('./video/test.mp4'));
+        console.log(formData.getHeaders());
+        return fetch(url, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+            body: formData
+        })
+        .then(res => {
+            // tslint:disable-next-line: no-unused-expression
+            expect(res.ok).to.be.true;
+            return res.json();
+        })
+        .then((result) => {
+            let resultCasted = result as any;
+            expect(resultCasted.sessionId).to.be.eql(sessionId);
+        });
+    })
+
     it("should get the cross entropy of the session", () => {
 
         const url = `${API_URL}/models/cross_entropy/session/${sessionId}`;
@@ -457,11 +494,11 @@ describe("API", () => {
         };
         return fetch(url, {
             method: "POST",
-            body:    JSON.stringify(body),
-            headers: { 
-                "Content-Type": "application/json" ,
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-        },
+            },
         }).then((response) => {
             expect(response.ok).to.eql(true);
             return response.json();
@@ -472,16 +509,17 @@ describe("API", () => {
         const url = `${API_URL}/sessions/${sessionId}`;
         return fetch(url, {
             method: "GET",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.eql(true);
                 return res.json();
             })
-            .then((session) => {                
+            .then((session) => {
                 expect(session.name).to.be.eql("MySessionUpdated");
             })
     });
@@ -495,12 +533,13 @@ describe("API", () => {
         };
         return fetch(url, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-                
-            }, 
-            body: JSON.stringify(body)})
+
+            },
+            body: JSON.stringify(body)
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -516,10 +555,11 @@ describe("API", () => {
         const url = `${API_URL}/evaluator/${sessionId}`;
         return fetch(url, {
             method: "GET",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -541,11 +581,12 @@ describe("API", () => {
         };
         return fetch(url, {
             method: "PATCH",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(body)})
+            body: JSON.stringify(body)
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -557,10 +598,11 @@ describe("API", () => {
         const url = `${API_URL}/evaluator/${sessionId}`;
         return fetch(url, {
             method: "GET",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -578,10 +620,11 @@ describe("API", () => {
         const url = `${API_URL}/sessions/${sessionId}`;
         return fetch(url, {
             method: "DELETE",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -597,10 +640,11 @@ describe("API", () => {
         const url = `${API_URL}/sessions/${sessionId}`;
         return fetch(url, {
             method: "GET",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 const FORBIDDEN_STATUS = 403;
@@ -613,10 +657,11 @@ describe("API", () => {
         const url = `${API_URL}/models/${modelId}`;
         return fetch(url, {
             method: "DELETE",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -632,10 +677,11 @@ describe("API", () => {
         const url = `${API_URL}/websites/${webSiteId}`;
         return fetch(url, {
             method: "DELETE",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -652,10 +698,11 @@ describe("API", () => {
         const url = `${API_URL}/evaluator/${sessionId}`;
         return fetch(url, {
             method: "DELETE",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
@@ -671,15 +718,16 @@ describe("API", () => {
         const url = `${API_URL}/evaluator/${sessionId}`;
         return fetch(url, {
             method: "GET",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            }})
+            }
+        })
             .then(res => {
                 // tslint:disable-next-line: no-unused-expression
                 const FORBIDDEN_STATUS = 403;
                 expect(res.status).to.be.eql(FORBIDDEN_STATUS);
             })
-           
+
     });
 });

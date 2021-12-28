@@ -14,6 +14,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+
   /plugin-info:
     get:
       responses:
@@ -30,6 +31,7 @@ paths:
                     type: string
                   description:
                     type: string
+
   /signup:
     description: Create a new account
     post:
@@ -58,6 +60,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+
   /signin:
     description: signin and get a bearer token (JWT)
     post:
@@ -87,6 +90,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+
   /account:
     get:
       responses:
@@ -104,6 +108,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
   /invitations:
     post:
       description: Create an invitation
@@ -165,6 +170,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
   /websites:
     post:
       description: add a new WebSite
@@ -191,6 +197,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
   /websites/{webSiteId}:
     get:
       description: return WebSite 
@@ -284,6 +291,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
   /sessions:
     post:
       description: add a new session
@@ -505,198 +513,6 @@ paths:
       security:
         - bearerAuth: []
 
-  /evaluator/:
-    post:
-      description: create evaluator for a session
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Evaluator'
-      responses:
-        '200':
-          description: The evaluator of the session
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sessionId:
-                    type: string
-        '403':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message'
-        '404':
-          description: NotFound
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message'
-      security:
-        - bearerAuth: []
-
-  /evaluator/{sessionId}:
-    patch:
-        description: patch evaluator of a session
-        parameters:
-          - in: path
-            name: sessionId
-            schema:
-              type: string
-            required: true
-            description: Id of the session
-        requestBody:
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-        responses:
-         '200':
-            description: The evaluator of the session
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    sessionId:
-                      type: string
-         '403':
-            description: Unauthorized
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Message'
-         '404':
-            description: NotFound
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Message'
-        security:
-          - bearerAuth: []
-    delete:
-      description: delete evaluator of a session
-      parameters:
-        - in: path
-          name: sessionId
-          schema:
-            type: string
-          required: true
-          description: Id of the session
-      responses:
-        '200':
-          description: The evaluator is deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sessionId:
-                    type: string
-        '403':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message'
-        '404':
-          description: NotFound
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message'
-      security:
-        - bearerAuth: []
-
-  /evaluator/evaluate:
-    post:
-        description: evaluate an expression
-        parameters:
-          - in: path
-            name: sessionId
-            schema:
-              type: string
-            required: true
-            description: Id of the session
-        requestBody:
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-        responses:
-         '200':
-            description: The evaluator of the session
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    sessionId:
-                      type: string
-         '403':
-            description: Unauthorized
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Message'
-         '404':
-            description: NotFound
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Message'
-        security:
-          - bearerAuth: []
-
-  /evaluator/expressionToDot:
-    post:
-      description: get a dotfile from an expression
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                expression:
-                  type: string   
-      responses:
-        '200':
-          description: returns a dotfile content
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  expressionIsValid:
-                    type: boolean   
-                  dot:
-                    type: string
-        '400':
-          description: Invalid parameter
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message'
-        '403':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message'
-
   /sessions/{sessionId}/screenshots:
     post:
       description: add new screenshots
@@ -763,6 +579,57 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
+  /sessions/{sessionId}/exploration/{explorationNumber}/video:
+    post:
+      description: add a new video
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+        - in: path
+          name: explorationNumber
+          schema:
+            type: number
+          required: true
+          description: Number of the exploration
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                video:
+                  type: array
+                  items:
+                    format: binary
+                    type: string
+                  description: video file
+      responses:
+        '200':
+          description: Screenshot have been added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+
   /models:
     post:
       description: add a new model
@@ -953,6 +820,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
   /models/{modelId}/ngrams:
     get:
       description: get all ngrams 
@@ -1008,6 +876,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
   /models/{modelId}:
     get:
       description: returns Model 
@@ -1069,6 +938,7 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
   /public/authorizations:
     get:
       description: check that an authorization is public
@@ -1149,6 +1019,199 @@ paths:
                 $ref: '#/components/schemas/Message'
       security:
         - bearerAuth: []
+
+  /evaluator/:
+    post:
+      description: create evaluator for a session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Evaluator'
+      responses:
+        '200':
+          description: The evaluator of the session
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+
+  /evaluator/{sessionId}:
+    patch:
+        description: patch evaluator of a session
+        parameters:
+          - in: path
+            name: sessionId
+            schema:
+              type: string
+            required: true
+            description: Id of the session
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  description:
+                    type: string
+                  expression:
+                    type: string
+        responses:
+         '200':
+            description: The evaluator of the session
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    sessionId:
+                      type: string
+         '403':
+            description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Message'
+         '404':
+            description: NotFound
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Message'
+        security:
+          - bearerAuth: []
+    delete:
+      description: delete evaluator of a session
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+      responses:
+        '200':
+          description: The evaluator is deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+
+  /evaluator/{sessionId}/evaluate:
+    post:
+        description: evaluate an expression
+        parameters:
+          - in: path
+            name: sessionId
+            schema:
+              type: string
+            required: true
+            description: Id of the session
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  description:
+                    type: string
+                  expression:
+                    type: string
+        responses:
+         '200':
+            description: The evaluator of the session
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    sessionId:
+                      type: string
+         '403':
+            description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Message'
+         '404':
+            description: NotFound
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Message'
+        security:
+          - bearerAuth: []
+
+  /evaluator/expressionToDot:
+    post:
+      description: get a dotfile from an expression
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expression:
+                  type: string   
+      responses:
+        '200':
+          description: returns a dotfile content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  expressionIsValid:
+                    type: boolean   
+                  dot:
+                    type: string
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
 components:
   schemas:
     Message:

@@ -1,3 +1,4 @@
+import multer from "multer";
 import { Application } from 'express';
 import { logger } from "../logger";
 import Token from "../domain/Token";
@@ -5,11 +6,14 @@ import APIApplication from '../application/APIApplication';
 import { Kind } from '../domain/Kind';
 import Evaluation from '../domain/Evaluation';
 import Action from '../domain/Action';
+import Video from "../domain/Video";
+import { type } from "os";
 
 const INVALID_PARAMETERS_STATUS = 400;
 const FORBIDDEN_STATUS = 403;
 const NOT_FOUND_STATUS = 404;
 const INTERNAL_SERVER_ERROR_STATUS = 500;
+
 
 export default function attachRoutes(app: Application, api: APIApplication) {
 
@@ -502,6 +506,81 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     logger.error(`error:${e}`);
                     res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                 });
+        }
+        
+    });
+
+    app.post("/sessions/:sessionId/exploration/:explorationNumber/video", multer().single("video"), (req, res) => {
+        const { sessionId, explorationNumber } = req.params;
+        logger.info(`addvideo sessionId ${sessionId}, explorationNumber ${explorationNumber}`);
+        if (sessionId === undefined) {
+            logger.warn(`sessionId must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("sessionId must not be undefined");
+            return;
+        }
+        if (explorationNumber === undefined) {
+            logger.warn(`explorationNumber must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("explorationNumber must not be undefined");
+            return;
+        }
+        if (req.file === undefined) {
+            logger.warn(`file must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("file must not be undefined");
+            return;
+        }
+
+        const explorationNumberAsNumber = parseInt(explorationNumber);
+        if (isNaN(explorationNumberAsNumber)) {
+            logger.error(`sessionId/explorationNumber error ${explorationNumber} is NaN`);
+            res.status(INVALID_PARAMETERS_STATUS).send("wrong exploration number");
+            return;
+        }
+
+        //logger.debug(req.file);
+
+        let o = req.file as any;
+        Object.getOwnPropertyNames(o).forEach(function(key) {
+            if (key && key !=="buffer") {
+                logger.debug(typeof key);
+                logger.debug(`${key}: value ${o[key]}`);
+                logger.debug(Object.getOwnPropertyDescriptor(o,key));
+            }
+        });
+         
+                
+        logger.debug(Object.getOwnPropertyNames(req.file));
+        
+        if (req.file.size === undefined) {
+            logger.debug('undefined');
+        } else {
+            logger.debug('not undefined');
+            logger.debug(req.file.size);
+        }
+        logger.debug('req.file Size: '+ req.file["size"]);
+        logger.debug('o["size"]: '+ o["size"]);
+        let sizeKey = "size";
+        logger.debug('o["size"]: '+ o[sizeKey]);
+        logger.debug('o.size: '+ o.size);
+        let fileBuffer: Buffer = req.file.buffer;
+        logger.debug('fileBuffer Size: '+ fileBuffer.length);
+        logger.debug('fileBuffer ByteLength: '+ fileBuffer.byteLength);
+
+        if (req.file.buffer !== undefined) {
+
+            logger.debug('not undefined buffer');
+         
+
+        const video = new Video(sessionId, explorationNumberAsNumber, req.file.buffer);
+        api.addVideo(video, req.token)
+            .then(() => {
+                logger.debug(`video is added`);
+                res.json({message:"VideoAdded"});
+            })
+            .catch((e) => {
+                logger.error(`sessionId/explorationNumber add video error ${e}`);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send(e);
+            });
+
         }
         
     });
