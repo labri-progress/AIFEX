@@ -1,22 +1,19 @@
 export default class Video {
     readonly sessionId: string;
     readonly explorationNumber: number;
-    readonly buffer : Buffer;
+    readonly buffer : Buffer | undefined;
 
-    constructor(sessionId: string, explorationNumber: number, buffer:Buffer) {
+    constructor(sessionId: string, explorationNumber: number, buffer:Buffer|undefined) {
         if (sessionId === null || sessionId === undefined) {
-            throw new Error("cannot create screenshot, sessionId is null or undefined");
+            throw new Error("cannot create video, sessionId is null or undefined");
         }
         this.sessionId = sessionId;
 
         if (explorationNumber === null || explorationNumber === undefined) {
-            throw new Error("cannot create screenshot, explorationNumber is null or undefined");
+            throw new Error("cannot create video, explorationNumber is null or undefined");
         }
         this.explorationNumber = explorationNumber;
 
-        if (buffer === null || buffer === undefined) {
-            throw new Error("cannot create video, buffer is null or undefined");
-        }
         this.buffer = buffer;
     }
 }

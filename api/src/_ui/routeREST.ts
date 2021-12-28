@@ -551,7 +551,31 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     res.status(INTERNAL_SERVER_ERROR_STATUS).send(e);
                 });
         }
-        
+    });
+
+    app.get("/session/:sessionId/videos", (req, res) => {
+        logger.info(`get videos`);
+        const sessionId = req.params.sessionId;
+
+        if (sessionId === undefined) {
+            logger.warn(`sessionId must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("sessionId must not be undefined");
+            return;
+        }
+
+        api.findVideosBySessionId(sessionId, req.token)
+            .then(videoResult => {
+                if (videoResult === "Unauthorized") {
+                    res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                } else {
+                    logger.info("Videos are returned");
+                    res.json({videoList:videoResult});
+                }
+            })
+            .catch((e) => {
+                logger.error(`error:${e}`);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+            });
     });
 
 

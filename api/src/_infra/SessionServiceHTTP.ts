@@ -178,7 +178,18 @@ export default class SessionServiceHTTP implements SessionService {
     }
 
     findVideosBySessionId(sessionId: string): Promise<Video[]> {
-        throw new Error("Method not implemented.");
+        const GetVideosURL = `http://${config.session.host}:${config.session.port}/session/${sessionId}/videolist`;
+        return fetch(GetVideosURL)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                        .then((json) => {
+                            return json.videoList.map((video : any) => new Video(sessionId, video.explorationNumber, undefined));
+                        });
+                } else {
+                    return [];
+                }
+            })
     }
 
 }
