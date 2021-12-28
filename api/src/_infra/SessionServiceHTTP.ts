@@ -177,14 +177,14 @@ export default class SessionServiceHTTP implements SessionService {
             })
     }
 
-    findVideosBySessionId(sessionId: string): Promise<Video[]> {
+    findExplorationsWithVideo(sessionId: string): Promise<number[]> {
         const GetVideosURL = `http://${config.session.host}:${config.session.port}/session/${sessionId}/videolist`;
         return fetch(GetVideosURL)
             .then(response => {
                 if (response.ok) {
                     return response.json()
                         .then((json) => {
-                            return json.videoList.map((video : any) => new Video(sessionId, video.explorationNumber, undefined));
+                            return json.videoList.map((video : any) => parseInt(video.explorationNumber));
                         });
                 } else {
                     return [];

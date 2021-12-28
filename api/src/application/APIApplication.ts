@@ -402,7 +402,7 @@ export default class APIApplication {
             });
     }
 
-    findVideosBySessionId(sessionId: string, token?: Token): Promise<Video[] | "Unauthorized"> {
+    findExplorationsWithVideo(sessionId: string, token?: Token): Promise<number[] | "Unauthorized"> {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])   
             .then(([isPublic, maybeAccount]) => {
                 let authorized = false;
@@ -413,7 +413,7 @@ export default class APIApplication {
                     invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
                 }
                 if (isPublic || authorized || invited) {
-                    return this._sessionService.findVideosBySessionId(sessionId).then(result => result);
+                    return this._sessionService.findExplorationsWithVideo(sessionId).then(result => result);
                 } else {
                     return "Unauthorized";
                 }

@@ -553,8 +553,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     });
 
-    app.get("/session/:sessionId/videos", (req, res) => {
-        logger.info(`get videos`);
+    app.get("/session/:sessionId/explorations-with-video", (req, res) => {
+        logger.info(`get exploration with video`);
         const sessionId = req.params.sessionId;
 
         if (sessionId === undefined) {
@@ -563,13 +563,13 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             return;
         }
 
-        api.findVideosBySessionId(sessionId, req.token)
+        api.findExplorationsWithVideo(sessionId, req.token)
             .then(videoResult => {
                 if (videoResult === "Unauthorized") {
                     res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                 } else {
                     logger.info("Videos are returned");
-                    res.json({videoList:videoResult});
+                    res.json({explorationNumbers:videoResult});
                 }
             })
             .catch((e) => {
