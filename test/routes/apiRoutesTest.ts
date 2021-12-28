@@ -465,7 +465,6 @@ describe("API", () => {
         const formData = new FormData();
         
         formData.append("video", fs.createReadStream('./video/test.mp4'));
-        console.log(formData.getHeaders());
         return fetch(url, {
             method: "POST",
             headers: {
@@ -480,7 +479,7 @@ describe("API", () => {
         })
         .then((result) => {
             let resultCasted = result as any;
-            expect(resultCasted.sessionId).to.be.eql(sessionId);
+            expect(resultCasted.message).to.be.eql("VideoAdded");
         });
     })
 

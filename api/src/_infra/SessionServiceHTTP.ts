@@ -161,8 +161,8 @@ export default class SessionServiceHTTP implements SessionService {
     addVideo(video: Video): Promise<"VideoAdded"> {
         const AddVideoURL = `http://${config.session.host}:${config.session.port}/session/addvideo/${video.sessionId}/${video.explorationNumber}`;
         const formData = new FormData();
-        logger.debug('video length:', video.buffer.length);
-        formData.append('video', new Blob([new Uint8Array(video.buffer)]));
+        logger.debug('video length:'+ video.buffer.length);
+        formData.append('video', video.buffer, {filename: video.sessionId+'_'+video.explorationNumber+'.mp4'});
         let optionAddVideo = {
             method: 'POST',
             body: formData,
