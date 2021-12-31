@@ -481,6 +481,12 @@ export default class Background {
         if (this._exploration === undefined) {
             return Promise.resolve();
         }
+        if (!(this._serverURL && this._sessionId)) {
+            throw new Error("Not connected to a session")
+        }
+        if (!this._exploration) {
+            throw new Error("Exploration is required")
+        }
         let exploration: Exploration = this._exploration;
         return this.evaluateExploration()
         .then(() => {
@@ -492,20 +498,10 @@ export default class Background {
             else {
                 return this.processNewAction("end")
                 .then(() => {
-                    logger.debug("stopRecording");
-                    return this._mediaRecordManager.stopRecording()
-                })
-                .then(() => {
                     this._isRecording = false;
                     exploration.setStopDate();
                     if (!this._recordActionByAction) {
-                        if (!(this._serverURL && this._sessionId)) {
-                            throw new Error("Not connected to a session")
-                        }
-                        if (!this._exploration) {
-                            throw new Error("Exploration is required")
-                        }
-                        const MIN_NUMBER_OF_ACTIONS = 3; //start + end
+                        const MIN_NUMBER_OF_ACTIONS = 3; //start + oneUserAction + end
                         const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length >= MIN_NUMBER_OF_ACTIONS;
                         if (HAS_MORE_THAN_START_END_ACTIONS) {
                             return this.sendExploration()
@@ -513,6 +509,14 @@ export default class Background {
                     }
                 })
                 .then(() => {
+                    logger.debug("stopRecording Video and sendScreenshotsAndVideo");
+                    return this._mediaRecordManager.stopRecording()
+                    .then(() => {
+                        this.sendScreenshotsAndVideo();
+                    });
+                })
+                .then(() => {
+                    logger.debug("ask tabs to stop recording the exploration");
                     this._exploration = undefined;
                     this._screenshotList = [];
                     this._commentsUp = [];
@@ -536,48 +540,46 @@ export default class Background {
     }
 
     sendExploration(): Promise<void> {
-        if (this._serverURL && this._exploration && this._sessionId) {
-            let createExplorationPromise;
-            if (this._recordActionByAction) {
-                createExplorationPromise = Promise.resolve(this._exploration.explorationNumber);
-            } else {
-                createExplorationPromise = this._aifexService.createFullExploration(
-                    this._serverURL,
-                    this._sessionId,
-                    this._testerName,
-                    this._exploration
-                )
-            }
-            return createExplorationPromise
-            .then((explorationNumber: number) => {
-                logger.debug(`shoud send screenshots and video, serverURL:${this._serverURL}, sessionId: ${this._sessionId}, screenshots:${this._screenshotList.length}, video: ${this._mediaRecordManager.isPreparedToRecordMedia}`)
-
-                if (this._serverURL && this._sessionId && this._screenshotList.length > 0) {
-                    this._aifexService.addScreenshotList(
-                        this._serverURL,
-                        this._sessionId,
-                        explorationNumber,
-                        this._screenshotList
-                    );
-                }
-
-                if (this._serverURL && this._sessionId && this._mediaRecordManager.isPreparedToRecordMedia) {
-                    const video = this._mediaRecordManager.getRecordedChunks();
-                    logger.debug(`video size: ${video?.size}`);
-                    if (video) {
-                        this._aifexService.addVideo(
-                            this._serverURL,
-                            this._sessionId,
-                            explorationNumber,
-                            video
-                        )
-                    }
-                }
-                return this.updateNumberOfExplorationByTester();
-            })
+        if (this._serverURL && this._exploration && this._sessionId && this._recordActionByAction) {
+            return this._aifexService.createFullExploration(
+                this._serverURL,
+                this._sessionId,
+                this._testerName,
+                this._exploration
+            ).then(()=>{})
         } else {
             return Promise.resolve();
         }
+    }
+
+    sendScreenshotsAndVideo(): Promise<void> {       
+        logger.debug(`shoud send screenshots and video, serverURL:${this._serverURL}, sessionId: ${this._sessionId}, screenshots:${this._screenshotList.length}, video: ${this._mediaRecordManager.isPreparedToRecordMedia}`);
+
+        let addScreenshots : Promise<void> = Promise.resolve();
+        if (this._serverURL && this._sessionId && this._exploration && this._screenshotList.length > 0) {
+            addScreenshots = this._aifexService.addScreenshotList(
+                this._serverURL,
+                this._sessionId,
+                this._exploration.explorationNumber,
+                this._screenshotList
+            );
+        }
+
+        let addVideo : Promise<void> = Promise.resolve();
+        if (this._serverURL && this._sessionId && this._exploration && this._mediaRecordManager.isPreparedToRecordMedia) {
+            const video = this._mediaRecordManager.getRecordedChunks();
+            logger.debug(`video size: ${video?.size}`);
+            if (video) {
+                addVideo = this._aifexService.addVideo(
+                    this._serverURL,
+                    this._sessionId,
+                    this._exploration.explorationNumber,
+                    video
+                )
+            }
+        }
+
+        return Promise.all([addScreenshots, addVideo]).then(() => {});
     }
 
     displayInvalidExploration(): Promise<void> {
