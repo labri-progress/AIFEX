@@ -84,8 +84,8 @@ export function takeScreenshot(windowId : number): Promise<string> {
 }
 
 
-export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: number}> {
-    console.log("firefox captureStreamOnWindow")
+export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: number} | "Canceled"> {
+    logger.info("firefox captureStreamOnWindow")
 
     return new Promise((resolve, reject) => {
 
@@ -97,14 +97,14 @@ export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: num
             audio: false
         })
         .then((stream: MediaStream)=> {
-            console.log("stream", stream)
+            logger.debug("stream:"+ stream)
             resolve({
                 stream,
                 id: parseInt(stream.id, 10)
             })
         })
         .catch((error: Error) => {
-            console.error(error)
+            logger.error(error.message, new Error(error.message));
             reject(error)
         })
     })

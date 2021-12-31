@@ -397,7 +397,7 @@ export default class AifexServiceHTTP implements AifexService {
 			method: "POST",
 			body: fd
 		};
-		return fetch(`${this.getSessionURL(serverURL)}/session/addVideo/${sessionId}/${explorationNumber}`, option)
+		return fetch(`${serverURL}/api/sessions/${sessionId}/exploration/${explorationNumber}/video`, option)
 			.then((response) => {
 				if (response.status === OK_STATUS) {
 					return;

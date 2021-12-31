@@ -264,7 +264,7 @@ export default class HandlerOfMessageSentByPopup {
                     sendResponse("ok");
                 })
                 .catch( (error: Error) => {
-                    logger.error("Failed to set media record", error);
+                    logger.error("Failed to set media record", new Error("Failed to set media record"));
                     sendResponse({error});
                 })
                 return true;

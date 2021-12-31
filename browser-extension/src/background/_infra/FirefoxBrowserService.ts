@@ -148,7 +148,7 @@ export default class FirefoxBrowserService implements BrowserService {
     }
 
 
-    captureStreamOnWindow(): Promise<{stream:MediaStream, id: number}> {
+    captureStreamOnWindow(): Promise<{stream:MediaStream, id: number} | "Canceled"> {
         return captureStreamOnWindow();
     }
 

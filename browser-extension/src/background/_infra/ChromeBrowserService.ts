@@ -142,7 +142,7 @@ export default class ChromeBrowserService implements BrowserService {
         return takeScreenshot(windowsId);
     }
 
-    captureStreamOnWindow(): Promise<{ stream: MediaStream, id: number }> {
+    captureStreamOnWindow(): Promise<{ stream: MediaStream, id: number } | "Canceled" > {
         return captureStreamOnWindow();
     }
 

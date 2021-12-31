@@ -7,15 +7,17 @@
     let submitConfig = document.getElementById('submitConfig');
     let cancelConfig = document.getElementById('cancelConfig');
     let configForm = document.getElementById('configForm');
+    let recordMediaStatus = document.getElementById('recordMediaStatus');
 
     function render() {
+        testerNameInput.value = state.testerName;
+        shouldCreateNewWindowsOnConnect.checked = state.shouldCreateNewWindowsOnConnect;
+        shouldCloseWindowOnDisconnect.checked = state.shouldCloseWindowOnDisconnect;
+        shouldOpenPrivateWindows.checked = state.shouldOpenPrivateWindows;
+        recordMediaStatus.checked = state.isPreparedToRecordMedia;
         if (state.showConfig) {
             component.style.display = 'block';
         } else {
-            testerNameInput.value = state.testerName;
-            shouldCreateNewWindowsOnConnect.checked = state.shouldCreateNewWindowsOnConnect;
-            shouldCloseWindowOnDisconnect.checked = state.shouldCloseWindowOnDisconnect;
-            shouldOpenPrivateWindows.checked = state.shouldOpenPrivateWindows;
             component.style.display = 'none';
         }
     }
@@ -39,6 +41,14 @@
     cancelConfig.addEventListener('click', (event) => {
         event.preventDefault();
         sendMessage({ kind: "cancelConfig" })
+            .then(() => {
+                getStateAndRender();
+            })
+    });
+
+    recordMediaStatus.addEventListener('change', (event) => {
+        event.preventDefault();
+        sendMessage({ kind: "setRecordMediaStatus", recordMediaStatus: recordMediaStatus.checked })
             .then(() => {
                 getStateAndRender();
             })

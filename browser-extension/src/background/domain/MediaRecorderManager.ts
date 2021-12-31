@@ -18,11 +18,13 @@ export default class MediaRecorderManager {
         return this._isPreparedToRecordMedia;
     }
 
-    prepareRecording() : Promise<void>{
+    prepareRecording() : Promise<"PreparedToRecordMedia" | "Canceled">{
         this._recordedChunks = [];
         return this._browserService.captureStreamOnWindow()
         .then((capturedStream) => {
-            if (capturedStream.stream !== null) {
+            if (capturedStream === "Canceled") {
+                return "Canceled";
+            } else if (capturedStream.stream !== null) {
                 logger.debug(`id:${capturedStream.id}`);
                 capturedStream.stream.getVideoTracks()[0].onended = () => {
                     logger.debug('ended');
@@ -39,9 +41,12 @@ export default class MediaRecorderManager {
                         }
                     };
                 this._recorder.onerror = (error) => {
-                    logger.error('error while recording',null);
-                }
+                        logger.error('error while recording',new Error('error while recording'));
+                    }
                 this._isPreparedToRecordMedia = true;
+                return "PreparedToRecordMedia";
+            } else {
+                throw new Error('capturedStream.stream is null');
             }
         })
     }
@@ -64,13 +69,14 @@ export default class MediaRecorderManager {
 
     startRecording() : Promise<void> {
         return new Promise((resolve, reject) => {
-            logger.debug("start");
+            logger.debug("startRecording");
             if (!this._isPreparedToRecordMedia) {
                 resolve();
             } else {
                 if (this._recorder) {
                     this._recordedChunks = [];
                     this._recorder.onstart = () => {
+                        logger.debug("recorder has started");
                         resolve();
                     }
                     try {
@@ -91,7 +97,7 @@ export default class MediaRecorderManager {
                 resolve();
             } else {
                 if (this._recorder) {
-                    this._recordedChunks = [];
+                    //this._recordedChunks = [];
                     this._recorder.onstop = () => {
                         resolve();
                     }

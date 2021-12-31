@@ -216,7 +216,7 @@ export function takeScreenshot(windowId : number): Promise<string> {
     })
 }
 
-export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: number}> {
+export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: number} | "Canceled"> {
     return new Promise((resolve, reject) => {
         const id = chrome.desktopCapture.chooseDesktopMedia(["window"], (streamId)=> {
             const chromeError = chrome.runtime.lastError;
@@ -224,7 +224,7 @@ export function captureStreamOnWindow() : Promise<{stream : MediaStream, id: num
                 reject(chromeError);
             } else {
                 if (!streamId) {
-                    reject("canceled");
+                    resolve("Canceled");
                 } else {
                     const n = navigator as any;
                     n.webkitGetUserMedia({

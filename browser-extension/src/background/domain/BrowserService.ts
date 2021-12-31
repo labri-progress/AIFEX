@@ -27,7 +27,7 @@ export default interface BrowserService {
 
     takeScreenshot(windowId : number): Promise<string> ;
 
-    captureStreamOnWindow(): Promise<{stream:MediaStream, id: number}> ;
+    captureStreamOnWindow(): Promise<{stream:MediaStream, id: number} | "Canceled" > ;
 
     hideCapture(id: number) : void ;
 

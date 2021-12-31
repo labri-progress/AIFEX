@@ -297,9 +297,6 @@ export default class Background {
                 throw new Error(e);
             })
             .then(() => {
-                return this._mediaRecordManager.startRecording()
-            })
-            .then(() => {
                 if (this._evaluator) {
                     this.evaluateExploration();
                 }
@@ -495,6 +492,10 @@ export default class Background {
             else {
                 return this.processNewAction("end")
                 .then(() => {
+                    logger.debug("stopRecording");
+                    return this._mediaRecordManager.stopRecording()
+                })
+                .then(() => {
                     this._isRecording = false;
                     exploration.setStopDate();
                     if (!this._recordActionByAction) {
@@ -510,9 +511,6 @@ export default class Background {
                             return this.sendExploration()
                         }
                     }
-                })
-                .then(() => {
-                    return this._mediaRecordManager.stopRecording()
                 })
                 .then(() => {
                     this._exploration = undefined;
@@ -552,7 +550,7 @@ export default class Background {
             }
             return createExplorationPromise
             .then((explorationNumber: number) => {
-                console.log("shoud send screenshots screenshots, ", this._serverURL, this._sessionId, this._screenshotList.length)
+                logger.debug(`shoud send screenshots and video, serverURL:${this._serverURL}, sessionId: ${this._sessionId}, screenshots:${this._screenshotList.length}, video: ${this._mediaRecordManager.isPreparedToRecordMedia}`)
 
                 if (this._serverURL && this._sessionId && this._screenshotList.length > 0) {
                     this._aifexService.addScreenshotList(
@@ -565,6 +563,7 @@ export default class Background {
 
                 if (this._serverURL && this._sessionId && this._mediaRecordManager.isPreparedToRecordMedia) {
                     const video = this._mediaRecordManager.getRecordedChunks();
+                    logger.debug(`video size: ${video?.size}`);
                     if (video) {
                         this._aifexService.addVideo(
                             this._serverURL,
@@ -678,6 +677,7 @@ export default class Background {
     }
 
     setRecordMedia(recordMedia: boolean): Promise<void> {
+        logger.debug('setRecordMedia:'+ recordMedia);
         if (recordMedia) {
             if (this._isRecording) {
                 return this._mediaRecordManager.prepareRecording()
@@ -685,7 +685,11 @@ export default class Background {
                         return this._mediaRecordManager.startRecording();
                     })
             } else {
-                return this._mediaRecordManager.prepareRecording();
+                if (!this._mediaRecordManager.isPreparedToRecordMedia) {
+                    return this._mediaRecordManager.prepareRecording().then(()=>{});
+                } else {
+                    return Promise.resolve();
+                }
             }
         } else {
             return this._mediaRecordManager.destroyRecording();
