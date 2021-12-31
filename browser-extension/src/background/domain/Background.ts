@@ -260,18 +260,10 @@ export default class Background {
         if (this._serverURL === undefined || this._sessionId === undefined) {
             throw new Error("Not connected to a session")
         }
-        if (this._recordActionByAction) {
-            return this._aifexService.createEmptyExploration(this._serverURL, this._sessionId, this._testerName)
-                .then(explorationNumber => {
-                    this._exploration = new Exploration(explorationNumber);
-
-                })
-        } else {
-            return new Promise((resolve) => {
-                this._exploration = new Exploration(NaN); 
-                resolve();
-            });
-        }
+        return this._aifexService.createEmptyExploration(this._serverURL, this._sessionId, this._testerName)
+            .then(explorationNumber => {
+                this._exploration = new Exploration(explorationNumber);
+            })
     }
 
     startExploration() : Promise<void> {
@@ -505,6 +497,9 @@ export default class Background {
                         const HAS_MORE_THAN_START_END_ACTIONS = exploration.actions.length >= MIN_NUMBER_OF_ACTIONS;
                         if (HAS_MORE_THAN_START_END_ACTIONS) {
                             return this.sendExploration()
+                        } else {
+                            //remove exploration
+                            return this.removeExploration();
                         }
                     }
                 })
@@ -540,12 +535,12 @@ export default class Background {
     }
 
     sendExploration(): Promise<void> {
-        if (this._serverURL && this._exploration && this._sessionId && this._recordActionByAction) {
-            return this._aifexService.createFullExploration(
+        if (this._serverURL && this._exploration && this._sessionId && !this._recordActionByAction) {
+            return this._aifexService.pushActionOrCommentList(
                 this._serverURL,
                 this._sessionId,
-                this._testerName,
-                this._exploration
+                this._exploration.explorationNumber,
+                this._exploration.actionsAndComments
             ).then(()=>{})
         } else {
             return Promise.resolve();

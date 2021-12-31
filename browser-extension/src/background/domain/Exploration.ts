@@ -28,9 +28,12 @@ export default class Exploration {
         return this._actions.filter(interaction => interaction instanceof Action) as Action[];
     }
 
+    get actionsAndComments(): (Action | Comment)[] {
+        return this._actions;
+    }
+
     get evaluableInteractions(): (Action)[] {
         return this._actions.filter(interaction => interaction instanceof Action) as (Action)[];
-
     }
 
     get length(): number {

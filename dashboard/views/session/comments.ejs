@@ -86,7 +86,7 @@
                                     <%})%>
                                 </td>
                                 <td>
-                                    <% if (video.videoList.find(vi=> vi.explorationNumber == exploration.explorationNumber)) { %>
+                                    <% if (video.videoList.some(vi=> vi == exploration.explorationNumber)) { %>
                                         <a href="/static/video/<%=session.id%>_<%=exploration.explorationNumber%>.webm"><i class="fas fa-video" style="color:red"></i></a>
                                     <% } else { %>
                                         <i class="fas fa-video-slash"></i>

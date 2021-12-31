@@ -483,6 +483,22 @@ describe("API", () => {
         });
     })
 
+    it("should get one video in the session", () => {
+        const url = `${API_URL}/session/${sessionId}/explorations-with-video`;
+        return fetch(url, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+            .then(res => {
+                expect(res.ok).to.be.true;
+                return res.json();
+            })
+            .then((result) => {
+                expect(result.explorationNumbers.length).to.be.eql(1);
+            });
+    });
+
     it("should get the cross entropy of the session", () => {
 
         const url = `${API_URL}/models/cross_entropy/session/${sessionId}`;

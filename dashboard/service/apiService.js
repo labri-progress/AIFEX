@@ -423,7 +423,20 @@ module.exports.getScreenshotsBySessionId = function (token, sessionId) {
 }
 
 module.exports.getVideosBySessionId = function (token, sessionId) {
-    return Promise.resolve({ videoList: [] });
+    const apiGetVideosURL = 'http://' + config.api.host + ':' + config.api.port + '/session/' + sessionId + '/explorations-with-video';
+    return fetch(apiGetVideosURL, {
+            headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+                    .then((resultInJon) => {
+                        return { videoList: resultInJon.explorationNumbers.map((number) => parseInt(number))}
+                    });
+            } else {
+                throw new Error('cannot get videos');
+            }
+        });
 }
 
 

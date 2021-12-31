@@ -1,8 +1,10 @@
 (() => {
     let component = document.getElementById('descriptionOfTheSession');
     let converter = new showdown.Converter();
+    let recordMediaStatus = document.getElementById('recordMediaStatus');
 
     function render() {
+        recordMediaStatus.checked = state.isPreparedToRecordMedia;
         if (state.showConfig) {
             component.style.display = 'none';
         } else {
@@ -17,15 +19,20 @@
         
     }
 
-    function next(e) {
-        state.pageKind = 'CreateSession';
+    recordMediaStatus.addEventListener('change', (event) => {
+        event.preventDefault();
+        sendMessage({ kind: "setRecordMediaStatus", recordMediaStatus: recordMediaStatus.checked })
+            .then(() => {
+                getStateAndRender();
+            })
+    });
+
+    document.getElementById('sessionDescriptionButton').addEventListener('click', (e) => {
         sendMessage({ kind: "changePopupPageKind", popupPageKind: 'Explore' })
             .then(() => {
                 getStateAndRender();
             });
-    }
-
-    document.getElementById('sessionDescriptionButton').addEventListener('click', next);
+    });
     addComponentToPopup(render);
 
     console.log('Session Description Component has been launched');
