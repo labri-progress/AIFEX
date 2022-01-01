@@ -12,11 +12,10 @@ COPY ./package.json /app/package.json
 RUN npm install
 
 # Install app dependencies
-
 COPY ./tsconfig.json /app
 COPY ./src /app/src
 
-RUN cd src && npm run compile
+RUN npm run compile
 
 
 

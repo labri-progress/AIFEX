@@ -14,7 +14,7 @@ RUN npm install
 COPY ./tsconfig.json /app
 COPY ./src /app/src
 
-RUN cd src && npm run compile
+RUN npm run compile
 
 FROM node
 # Set the working directory to /app
