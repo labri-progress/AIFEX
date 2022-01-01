@@ -241,10 +241,19 @@ module.exports = function attachRoutes(app, config) {
             .then(([session, screenshot, video]) => {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
-
+                const explorationsWithComment = session.explorationList.filter((exploration) => exploration.interactionList.some(interaction => interaction.concreteType === "Comment"));
+                const comments = explorationsWithComment.map((exploration) => {
+                    return exploration.interactionList.filter((interaction) => interaction.concreteType === "Comment").map((comment) => {
+                        comment.explorationNumber = exploration.explorationNumber;
+                        comment.testerName = exploration.testerName;
+                        return comment;
+                    });
+                }).reduce((acc, curr) => acc.concat(curr), []);
+                logger.debug(`comments:${JSON.stringify(comments)}`);
                 res.render('session/comments.ejs',{
                     account:req.session, 
                     serverURL: buildInvitation(modelId, sessionId),
+                    comments,
                     session,
                     connectionCode,
                     screenshot,

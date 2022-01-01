@@ -34,7 +34,7 @@
                         <% session.explorationList.sort((a, b)=> new Date(b.startDate) - new Date(a.startDate)).forEach((exploration, explIndex) => { %>
                             <tr>
                                 <td>
-                                    <%= explIndex %>
+                                    <%= exploration.explorationNumber %>
                                 </td>
                                 <td>
                                     <% var explorationStartDate=new Date(exploration.startDate) ;
@@ -85,9 +85,9 @@
                                         <%})%>
                                 </td>
                                 <td>
-                                    <% if (video.videoList.some(vi=> vi == explIndex)) {
+                                    <% if (video.videoList.some(vi=> vi == exploration.explorationNumber)) {
                                         %>
-                                        <a href="/static/video/<%=session.id%>_<%=explIndex%>.webm"><i
+                                        <a href="/static/video/<%=session.id%>_<%=exploration.explorationNumber%>.webm"><i
                                                 class="fas fa-video" style="color:red"></i></a>
                                         <% } else { %>
                                             <i class="fas fa-video-slash"></i>
