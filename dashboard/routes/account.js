@@ -65,6 +65,11 @@ module.exports = function attachRoutes(app, config) {
                 next();
                 return;
             }
+
+            if (req.originalUrl.startsWith('/open')) {
+                next();
+                return;
+            }
     
             if (req.originalUrl === '/us') {
                 next();

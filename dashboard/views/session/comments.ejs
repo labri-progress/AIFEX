@@ -27,6 +27,7 @@
                 <table id="session-details" class="table table-striped table-bordered">
                     <thead class="thead-dark">
                         <tr>
+                            <th scope="col" align="center">Id</th>
                             <th scope="col" align="center">Severity</th>
                             <th scope="col" align="center">Description</th>
                             <th scope="col" align="center">Date</th>
@@ -39,6 +40,11 @@
                     <tbody>
                         <% comments.forEach((comment) => { %>
                             <tr>
+                                <td>
+                                    <a href="/open/session/<%=connectionCode%>/exploration/<%=comment.explorationNumber%>/comment/<%=comment.index%>">
+                                        <%=connectionCode %>_<%=comment.explorationNumber%>_<%=comment.index%>
+                                    </a>
+                                </td>
                                 <td>
                                     <%= comment.kind %>
                                 </td>

@@ -267,6 +267,48 @@ module.exports = function attachRoutes(app, config) {
             });
     });
 
+    app.get('/open/session/:connectionCode/exploration/:explorationNumber/comment/:commentIndex', (req, res) => {
+        const { connectionCode, explorationNumber, commentIndex } = req.params;
+        const [sessionId, modelId] = connectionCode.split('$');
+
+        logger.debug(`GET comment (id = ${sessionId}, explorationNumber = ${explorationNumber}, commentIndex = ${commentIndex})`);
+        
+        Promise.all([getSessionById(req.session.jwt,sessionId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId)])
+            .then(([session, screenshots, videos]) => {
+                if (session !== undefined && screenshots !== undefined && videos !== undefined) {
+                    let exploration = session.explorationList[explorationNumber];
+                    if (exploration !== undefined ) {
+                        let comment = exploration.interactionList[commentIndex];
+                        if (comment.concreteType === "Comment") {
+                            let screenshot = screenshots.screenshotList.find(sc=> sc.explorationNumber == explorationNumber && sc.interactionIndex == comment.index);
+                            let video = videos.videoList.find(vi=> vi == explorationNumber);
+                            res.render('session/comment.ejs',{
+                                account:req.session, 
+                                serverURL: buildInvitation(modelId, sessionId),
+                                comment,
+                                explorationNumber,
+                                session,
+                                connectionCode,
+                                screenshot,
+                                video
+                            });
+                        } else {
+                            res.render('error.ejs', { message:"no bug report found", account: req.session, error: new Error("no bug report found") });
+                        }
+                    } else {
+                        res.render('error.ejs', { message:"no exploration found", account: req.session, error: new Error("no exploration found") });
+                    }
+                } else {
+                    res.render('error.ejs', { message:"no session, screenshot and video found", account: req.session, error: new Error("no session, screenshot and video found") });
+                }
+            })
+            .catch(e => {
+                let message = 'Cannot fetch the explorations';
+                logger.error(message);
+                res.render('error.ejs', { message, account: req.session, error: e })
+            });
+    });
+
     app.get("/dashboard/session/:connectionCode/print", (req, res) => {
         const { connectionCode } = req.params
         const [sessionId] = connectionCode.split('$');
