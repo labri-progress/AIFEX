@@ -41,6 +41,7 @@ function pingThenLoadDefault() {
         }
     })
     .catch( e => {
+        logger.error(`ping api: ${API_PING_URL} failed: ${e.message}`);
         setTimeout(pingThenLoadDefault, 4000);
     })
 }
