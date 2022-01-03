@@ -109,15 +109,6 @@
         } );
     </script>
 
-    <script defer>
-        function copy() {
-            var copyText = document.getElementById("serverURL");
-            copyText.select();
-            document.execCommand("copy");
-        }
-        document.getElementById("copy").addEventListener("click", copy);
-    </script>
-
     <script>
         let explorations =JSON.parse('<%-JSON.stringify(session.explorationList)%>');
         function showExploration(explorationNumber) {
