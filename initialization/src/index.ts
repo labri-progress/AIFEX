@@ -36,7 +36,7 @@ function pingThenLoadDefault() {
         if (resPing.ok) {
             loadingAnonymousAccount();
         } else {
-            logger.debug(`ping api: ${API_PING_URL} failed: ${resPing}`);
+            logger.info(`ping api: ${API_PING_URL} failed: ${resPing}`);
             setTimeout(pingThenLoadDefault, 4000);
         }
     })
