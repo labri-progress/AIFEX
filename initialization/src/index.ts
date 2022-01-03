@@ -5,7 +5,7 @@ import * as winston from "winston";
 
 let  API_URL = `http://reverseproxy/api`;
 if (process.env.NODE_ENV === 'production') {
-    API_URL = `https://reverseproxy/api`;
+    API_URL = `http://api`;
 }
 
 
