@@ -46,6 +46,8 @@ services:
     build:
       context: initialization/
       dockerfile: ./Dockerfile
+    environment:
+      - NODE_ENV=${NODE_ENV}
     depends_on:
       - "website"
       - "account"
