@@ -3,7 +3,11 @@ import fs from "fs";
 import path from "path";
 import * as winston from "winston";
 
-const API_URL = `http://reverseproxy/api`;
+let  API_URL = `http://reverseproxy/api`;
+if (process.env.NODE_ENV === 'production') {
+    API_URL = `https://reverseproxy/api`;
+}
+
 
 const logger = winston.createLogger({
     level: 'debug',
