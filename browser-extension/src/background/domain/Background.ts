@@ -52,7 +52,7 @@ export default class Background {
     private _lastInteractionComment: Comment | undefined;
 
     private _popupPageKind: PopupPageKind;
-    private _popupShowConfig: boolean;
+    private _showConfig: boolean;
     private _isRecording: boolean;
     private _screenshotList: Screenshot[];
 
@@ -64,6 +64,7 @@ export default class Background {
 
     private _aifexPopup: AifexPopup;
     private _overlayType: OverlayType;
+    private _showProbabilityPopup: boolean;
     
     private _recordActionByAction: boolean | undefined;
 
@@ -86,9 +87,10 @@ export default class Background {
         this._testerName = "anonymous";
         this._numberOfExplorationsMadeByTester = 0;
         this._popupPageKind = PopupPageKind.Home;
-        this._popupShowConfig = false;
+        this._showConfig = false;
 
         this._overlayType = "rainbow";
+        this._showProbabilityPopup = true;
 
         this._probabilityMap = new Map();
         this._commentDistributions = [];
@@ -620,13 +622,14 @@ export default class Background {
             state.interactionList = this._exploration.actions.map(interaction => interaction.toPrintableText());
         }
         state.isPreparedToRecordMedia = this._mediaRecordManager.isPreparedToRecordMedia;
-        state.showConfig = this._popupShowConfig;
+        state.showConfig = this._showConfig;
         state.shouldCreateNewWindowsOnConnect = this._shouldCreateNewWindowsOnConnect;
         state.shouldCloseWindowOnDisconnect = this._shouldCloseWindowOnDisconnect;
         state.shouldOpenPrivateWindows = this._shouldOpenPrivateWindows;
         logger.debug("state.shouldOpenPrivateWindows" + state.shouldOpenPrivateWindows + " / this._shouldOpenPrivateWindows" + this._shouldOpenPrivateWindows)
 
         state.popupIsDetached = this._aifexPopup.isDetached;
+        state.showProbabilityPopup = this._showProbabilityPopup;
 
         state.commentUpList = this._commentsUp;
         state.lastInteractionComment = this._lastInteractionComment;
@@ -648,6 +651,7 @@ export default class Background {
         state.webSite = this._webSite;
         state.overlayType = this._overlayType;
         state.exploration = this._exploration;
+        state.showProbabilityPopup = this._showProbabilityPopup;
         return state;
     }
 
@@ -713,20 +717,21 @@ export default class Background {
     }
 
     showConfig(): void {
-        this._popupShowConfig = !this._popupShowConfig;
+        this._showConfig = !this._showConfig;
 	}
 
-	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindows: boolean): void {
+	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindows: boolean, showProbabilityPopup: boolean): void {
         this._testerName = testerName;
         this._shouldCloseWindowOnDisconnect = shouldCloseWindowOnDisconnect;
         this._shouldCreateNewWindowsOnConnect = shouldCreateNewWindowsOnConnect;
         this._shouldOpenPrivateWindows = shouldOpenPrivateWindows;
         logger.debug("this._shouldOpenPrivateWindows" + this._shouldOpenPrivateWindows)
-        this._popupShowConfig = false;
+        this._showConfig = false;
+        this._showProbabilityPopup = showProbabilityPopup;
 	}
 	
 	cancelConfig(): void {
-		this._popupShowConfig = false;
+		this._showConfig = false;
 	}
 
 }

@@ -38,6 +38,7 @@ export default class TabScript {
             const rules = state.webSite.mappingList.map((ru : any) => this._ruleService.createRule(ru));
             this._ruleService.loadRules(rules);
             this._ruleService.mapRulesToElements();
+            this._highlighter.showProbabilityPopup = state.showProbabilityPopup;
             if (state.isActive) {
                 this.explorationStarted();
             } else {

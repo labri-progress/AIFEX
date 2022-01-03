@@ -11,11 +11,13 @@ export default class StateForTabScript {
     commentsUp: string[] | undefined;
     overlayType: OverlayType;
     exploration: Exploration | undefined;
+    showProbabilityPopup : boolean;
 
     constructor() {
         this.isRecording = false;
         this.displayUserView = false;
         this.overlayType = "rainbow";
+        this.showProbabilityPopup = true;
     }
 
 }

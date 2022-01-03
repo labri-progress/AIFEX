@@ -10,6 +10,7 @@ export default class State {
     confirmedComments: Comment[];
     userTabPosition: {x: string, y: string};
     displayUserView: boolean;
+    showProbabilityPopup: boolean;
 
     elementActionListMap: Map<HTMLElement|SVGElement, Action[]>;
     commentList: Comment[];
@@ -18,7 +19,7 @@ export default class State {
 
     exploration: Exploration;
 
-    constructor(confirmedComments : Comment[] = [], displayUserView: boolean, isActive: boolean= false, webSite : any, userTabPosition : {x: string, y: string}, overlayType: OverlayType, exploration: Exploration) {
+    constructor(confirmedComments : Comment[] = [], displayUserView: boolean, isActive: boolean= false, webSite : any, userTabPosition : {x: string, y: string}, overlayType: OverlayType, exploration: Exploration, showProbabilityPopup: boolean) {
         this.isActive = isActive;
         this.displayUserView = displayUserView;
         this.nextActions = [];
@@ -28,6 +29,7 @@ export default class State {
         this.overlayType = overlayType;
         this.userTabPosition = userTabPosition;
         this.elementActionListMap = new Map();
-        this.exploration = exploration
+        this.exploration = exploration;
+        this.showProbabilityPopup = showProbabilityPopup;
     }
 }

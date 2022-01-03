@@ -15,11 +15,11 @@ export default class CSSSelectorWithValueRule extends Rule {
                 let value = this.getValue(event.target);
                 let suffix;
                 try {
-                    suffix = getCssSelector(event.target, {selectors: ['id', 'tag', 'nthchild']});
+                    suffix = getCssSelector(event.target, {selectors: ['id', 'tag']});
                 } catch (e) {
                     logger.error(`exception`,new Error('css exception'));
                 }
-                if (value !== undefined) {
+                if (value !== undefined && value.trim().length > 0) {
                     suffix += `?${value}`;
                 }
                 return new Action(this.prefix, suffix);

@@ -1,4 +1,5 @@
 import ActionHighlighter from "../_infra/ActionHighlighter";
+import ActionsPopup from "../_infra/ActionPopup";
 import EvaluationHighlighter from "../_infra/EvaluationHighlighter";
 import ActionsAndElements from "./ActionsAndElements";
 import ExplorationEvaluation from "./ExplorationEvaluation";
@@ -8,23 +9,30 @@ import HighlighterCanvas from "../_infra/HighlighterCanvas";
 
 export default class Highlighter {
     private _actionHighlighter : ActionHighlighter;
+    private _actionPopup : ActionsPopup;
     private _evaluationActionsBorderView: EvaluationHighlighter;
     private _highlighterCanvas : HighlighterCanvas;
+    public showProbabilityPopup : boolean;
 
     private elementListMatchedByRule: (HTMLElement|SVGElement)[];
     private elementRules: Map<HTMLElement|SVGElement, Rule[]>  | undefined;
     private actionsAndElements: ActionsAndElements | undefined;
     private evaluation: ExplorationEvaluation | undefined;
 
-    constructor(highlighterCanvas: HighlighterCanvas, actionHighlighter: ActionHighlighter, evaluationHighlighter: EvaluationHighlighter) {
+    
+
+    constructor(highlighterCanvas: HighlighterCanvas,  actionPopup:ActionsPopup, actionHighlighter: ActionHighlighter, evaluationHighlighter: EvaluationHighlighter) {
         this._highlighterCanvas = highlighterCanvas;
+        this._actionPopup = actionPopup;
         this._actionHighlighter = actionHighlighter;
         this._evaluationActionsBorderView = evaluationHighlighter;
         this.elementListMatchedByRule = [];
+        this.showProbabilityPopup = true;
         this.elementRules = undefined;
         this.actionsAndElements = undefined;
         this.evaluation = undefined;
     }
+
 
     refresh(elementListMatchedByRule: (HTMLElement|SVGElement)[], elementRules: Map<HTMLElement|SVGElement, Rule[]>, actionsAndElements: ActionsAndElements, evaluation: ExplorationEvaluation | undefined): Promise<void> {
         return new Promise((resolve) => {
@@ -41,6 +49,9 @@ export default class Highlighter {
     private display() {
         if (this.actionsAndElements !== undefined && this.elementRules !== undefined) {
             this._actionHighlighter.show(this.actionsAndElements, this.elementListMatchedByRule, this.elementRules);
+            if (this.showProbabilityPopup){
+                this._actionPopup.show(this.actionsAndElements);
+            }
         }
         if (this.evaluation) {
             this._evaluationActionsBorderView.show(this.evaluation);
@@ -49,6 +60,7 @@ export default class Highlighter {
     }
 
     hide(): Promise<void> {
+        this._actionPopup.hide();
         this._actionHighlighter.hide();
         this._evaluationActionsBorderView.hide();
         this._highlighterCanvas.hide();

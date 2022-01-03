@@ -19,7 +19,8 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
                 popupCommentPosition: {x: string, y: string},
                 webSite: any,
                 overlayType: OverlayType,
-                exploration: any
+                exploration: any,
+                showProbabilityPopup: boolean
             }) => {
                 const error = chrome.runtime.lastError;
                 if (error) {
@@ -37,7 +38,8 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
                         data.webSite,
                         data.popupCommentPosition,
                         data.overlayType,
-                        data.exploration);
+                        data.exploration,
+                        data.showProbabilityPopup);
                     return resolve(state)
                 }
             });

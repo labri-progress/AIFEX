@@ -292,7 +292,7 @@ export default class HandlerOfMessageSentByPopup {
 
             case "submitConfig": {
                 logger.info(`Popup asks for ${msg.kind}`);
-                this._application.submitConfig(msg.testerName, msg.shouldCreateNewWindowsOnConnect, msg.shouldCloseWindowOnDisconnect, msg.shouldOpenPrivateWindows);
+                this._application.submitConfig(msg.testerName, msg.shouldCreateNewWindowsOnConnect, msg.shouldCloseWindowOnDisconnect, msg.shouldOpenPrivateWindows, msg.showProbabilityPopup);
                 sendResponse("ok");
                 return true;
             }

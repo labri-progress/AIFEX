@@ -19,7 +19,8 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
                 popupCommentPosition: {x: string, y: string},
                 webSite: any,
                 overlayType: OverlayType,
-                exploration: any
+                exploration: any,
+                showProbabilityPopup: boolean
             }) => {
                 const isActive = data.isRecording ? true : false;
                 let commentsUp : Comment[] = []
@@ -33,8 +34,9 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
                     data.webSite,
                     data.popupCommentPosition,
                     data.overlayType,
-                    data.exploration
-                );
+                    data.exploration,
+                    data.showProbabilityPopup);
+                    
                 return state;
             });
     }

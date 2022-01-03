@@ -115,8 +115,8 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.showConfig();
 	}
 
-	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindow: boolean): void {
-		return this._background.submitConfig(testerName, shouldCreateNewWindowsOnConnect, shouldCloseWindowOnDisconnect, shouldOpenPrivateWindow);
+	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindow: boolean, showProbabilityPopup: boolean): void {
+		return this._background.submitConfig(testerName, shouldCreateNewWindowsOnConnect, shouldCloseWindowOnDisconnect, shouldOpenPrivateWindow, showProbabilityPopup);
 	}
 
 	cancelConfig(): void {

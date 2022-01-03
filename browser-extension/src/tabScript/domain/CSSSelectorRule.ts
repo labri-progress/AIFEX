@@ -13,7 +13,7 @@ export default class CSSSelectorRule extends Rule {
         if (event.target) {
             let suffix;
             try {
-                suffix = getCssSelector(event.target, {selectors: ['id', 'tag', 'nthchild']});
+                suffix = getCssSelector(event.target, {selectors: ['id', 'tag']});
             } catch (e) {
                 logger.error(`exception`,new Error('css exception'));
             }

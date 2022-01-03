@@ -50,7 +50,7 @@ export default interface Interface4Popup {
 
     showConfig(): void;
 
-	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindow: boolean): void;
+	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindow: boolean, showProbabilityPopup: boolean): void;
 
     cancelConfig(): void;
 
