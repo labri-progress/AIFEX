@@ -3,7 +3,11 @@ import fs from "fs";
 import path from "path";
 import * as winston from "winston";
 
-const API_URL = `http://reverseproxy/api`;
+let  API_URL = `http://reverseproxy/api`;
+if (process.env.NODE_ENV === 'production') {
+    API_URL = `http://api`;
+}
+
 
 const logger = winston.createLogger({
     level: 'debug',
@@ -32,11 +36,12 @@ function pingThenLoadDefault() {
         if (resPing.ok) {
             loadingAnonymousAccount();
         } else {
-            logger.debug(`ping api: ${API_PING_URL} failed: ${resPing}`);
+            logger.info(`ping api: ${API_PING_URL} failed: ${resPing}`);
             setTimeout(pingThenLoadDefault, 4000);
         }
     })
     .catch( e => {
+        logger.error(`ping api: ${API_PING_URL} failed: ${e.message}`);
         setTimeout(pingThenLoadDefault, 4000);
     })
 }
