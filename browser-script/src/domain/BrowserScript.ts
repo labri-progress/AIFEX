@@ -2,6 +2,7 @@ import { logger } from "../framework/Logger";
 import Action from "./Action";
 import AifexService from "./AifexService";
 import BrowserService from "./BrowserService";
+import ClassMutationHandler from "./ClassMutationHandler";
 import EventListener from "./EventListener";
 import PageMutationHandler from "./PageMutationHandler";
 import RuleService from "./RuleService";
@@ -31,6 +32,8 @@ export default class BrowserScript {
         this._ruleService = new RuleService();
         this._eventListener = new EventListener(this._ruleService);
         this._eventListener.addObserver(this.processNewAction.bind(this));
+
+        new ClassMutationHandler();
 
         this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
         this._pageMutationHandler.init();
