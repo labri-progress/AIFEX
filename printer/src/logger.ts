@@ -1,6 +1,5 @@
 import * as winston from "winston";
-import { ElasticsearchTransport } from 'winston-elasticsearch';
-import config from "./_infra/config";
+
 
 let logLevel;
 

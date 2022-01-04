@@ -512,7 +512,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.post("/sessions/:sessionId/exploration/:explorationNumber/video", multer().single("video"), (req, res) => {
         const { sessionId, explorationNumber } = req.params;
-        logger.info(`addvideo sessionId ${sessionId}, explorationNumber ${explorationNumber}`);
+        logger.info(`addvideo sessionId`)
+        logger.debug(`sessionId: ${sessionId}, explorationNumber: ${explorationNumber}`);
         if (sessionId === undefined) {
             logger.warn(`sessionId must not be undefined`);
             res.status(INVALID_PARAMETERS_STATUS).send("sessionId must not be undefined");
@@ -665,7 +666,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
     app.post("/models/:modelId/link/:sessionId", (req, res) => {
         const modelId = req.params.modelId;
         const sessionId = req.params.sessionId;
-        logger.info(`link model to session: ${JSON.stringify(modelId)}, ${JSON.stringify(sessionId)}`);
+        logger.info(`link model to session`);
+        logger.debug(`modelId: ${JSON.stringify(modelId)}, sessionId: ${JSON.stringify(sessionId)}`);
         if (req.token === undefined) {
             logger.warn(`no token`);
             res.status(FORBIDDEN_STATUS).json({message:"No token"});
@@ -916,7 +918,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.post("/evaluator/", (req, res) => {
         const { sessionId, description, expression } = req.body;
-        logger.info(`create evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
+        logger.info(`create evaluator`);
+        logger.debug(`sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
         if (sessionId === undefined) {
             logger.warn("sessionId is required")
             return res.status(INVALID_PARAMETERS_STATUS).json({message: "session is required"});
@@ -950,7 +953,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
     app.patch("/evaluator/:sessionId", (req, res) => {
         const { sessionId } = req.params
         const { description, expression } = req.body;
-        logger.info(`update evaluator (sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
+        logger.info(`update evaluator`);
+        logger.debug(`sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
         if (sessionId === undefined) {
             logger.warn("sessionId is required")
             return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
@@ -972,7 +976,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.post("/evaluator/evaluate", (req, res) => {
         const { sessionId, actionList } = req.body;
-        logger.info(`evaluate sequence (sessionId : ${sessionId}, actionList : ${JSON.stringify(actionList)})`);
+        logger.info(`evaluate sequence`);
+        logger.debug(`sessionId : ${sessionId}, actionList : ${JSON.stringify(actionList)})`);
         if (sessionId === undefined) {
             logger.warn("sessionId is required")
             return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
@@ -999,7 +1004,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.post("/evaluator/evaluate-expression", (req, res) => {
         const { expression, actionList } = req.body;
-        logger.info(`evaluate sequence (expression : ${expression}, actionList : ${JSON.stringify(actionList)})`);
+        logger.info(`evaluate sequence`);
+        logger.debug(`expression : ${expression}, actionList : ${JSON.stringify(actionList)})`);
         if (expression === undefined) {
             logger.warn("expression is required")
             return res.status(INVALID_PARAMETERS_STATUS).send("expression is required");
@@ -1038,7 +1044,8 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     app.post("/evaluator/expressionToDot", (req, res) => {
         const { expression } = req.body;
-        logger.info(`expression to do : ${expression}`);
+        logger.info(`expression to dot`);
+        logger.debug(`expression: ${expression}`);
         if (!expression) {
             logger.warn("expression parameter is required", expression)
             return res.status(INTERNAL_SERVER_ERROR_STATUS).send("Invalid parameters");

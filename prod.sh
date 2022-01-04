@@ -8,10 +8,6 @@ npm install
 export HOST_ADDR="aifexpreprod.ovh" #Domain name
 export PROTOCOL="https"
 
-export ELASTIC_PASSWORD="elastic"
-export TOKEN_SECRET="changeme"
-
-
 export CERTIFICAT_SOURCE="/etc/letsencrypt" #Certificat source path
 export CERTIFICAT_TARGET="/etc/letsencrypt" #Certificat target path
 export NODE_ENV="production"

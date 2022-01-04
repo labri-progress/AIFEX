@@ -1,6 +1,4 @@
 import * as winston from "winston";
-import { ElasticsearchTransport } from 'winston-elasticsearch';
-import config from "./_infra/config";
 
 let logLevel;
 
@@ -10,19 +8,6 @@ let transports: any[] =
     new winston.transports.File({ filename: 'error.log', level: 'error' }),
     new winston.transports.File({ filename: 'combined.log' })
   ]
-
-if (process.env.NODE_ENV === 'production') {
-  transports.push(new ElasticsearchTransport({
-    level:'debug',
-    clientOpts: {
-      node: config.elastic,
-        auth: {
-          username: 'elastic',
-          password: config.elasticPassword
-        }
-    }
-  }));
-}
 
 
 

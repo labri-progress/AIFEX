@@ -11,19 +11,6 @@ let transports: any[] =
     new winston.transports.File({ filename: 'combined.log' })
   ]
 
-  if (process.env.NODE_ENV === 'production') {
-    transports.push(new ElasticsearchTransport({
-      level:'debug',
-      clientOpts: {
-        node: config.elastic,
-          auth: {
-            username: 'elastic',
-            password: config.elasticPassword
-          }
-      }
-    }));
-  }
-
 switch(process.env.NODE_ENV) {
     case 'production':
         logLevel = 'info';
