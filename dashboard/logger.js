@@ -1,6 +1,4 @@
 const winston = require('winston');
-const { ElasticsearchTransport } = require('winston-elasticsearch');
-const config = require('./config');
 
 let logLevel;
 

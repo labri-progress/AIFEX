@@ -25,11 +25,6 @@ switch(process.env.NODE_ENV) {
         logLevel = 'warn'
 }
 
-
-
-new winston.transports.File({ filename: 'error.log', level: 'error' }),
-new winston.transports.File({ filename: 'combined.log' })
-
 export const logger = winston.createLogger({
   level: logLevel,
   format: winston.format.combine(winston.format.label({label:'session'}),winston.format.json()),

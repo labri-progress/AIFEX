@@ -1,6 +1,4 @@
 import * as winston from "winston";
-import { ElasticsearchTransport } from 'winston-elasticsearch';
-import config from "./_infra/config";
 
 let logLevel;
 
@@ -26,10 +24,6 @@ switch(process.env.NODE_ENV) {
         logLevel = 'warn'
 }
 
-
-
-new winston.transports.File({ filename: 'error.log', level: 'error' }),
-new winston.transports.File({ filename: 'combined.log' })
 
 export const logger = winston.createLogger({
   level: logLevel,
