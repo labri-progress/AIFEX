@@ -33,7 +33,7 @@ npm install
 
 npm run production
 cd dist
-mv -f AIFEXScript.js ../dashboard/public
+mv -f AIFEXScript.js ../../dashboard/public
 cd ../..
 
 

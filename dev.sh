@@ -46,7 +46,7 @@ npm install
 
 npm run development
 cd dist
-mv -f AIFEXScript.js ../dashboard/public
+mv -f AIFEXScript.js ../../dashboard/public
 cd ../..
 
 
