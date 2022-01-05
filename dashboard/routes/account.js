@@ -90,6 +90,11 @@ module.exports = function attachRoutes(app, config) {
                 next();
                 return;
             }
+
+            if (req.originalUrl === '/browser-script') {
+                next();
+                return;
+            }
     
             res.redirect('/account/signin');
             return;

@@ -27,5 +27,9 @@
 <link rel="stylesheet" href="/static/aifex.css">
 <link rel="icon" type="image/png" href="/static/images/favicon.ico">
 
+<% if (account && account.browserScript && account.browserScript.isEnabled && account.browserScript.connexionURL) { %>
+<script id="AIFEX" connexion-url="<%=account.browserScript.connexionURL%>" src="/static/AIFEXScript.js" defer></script>
+<% } %>
+
 
 <title>AIFEX</title>

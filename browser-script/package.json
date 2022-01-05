@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/webpack.dev.js",
-    "prod": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/webpack.prod.js",
+    "development": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/webpack.dev.js",
+    "production": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/webpack.prod.js",
     "compile": "tsc"
   },
   "devDependencies": {

@@ -12,8 +12,6 @@ const path = require("path");
 
 const ONE_HOUR = 3600000;
 
-
-
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -50,6 +48,17 @@ const sessionMiddleware = session({
     proxy: (process.env.NODE_ENV === 'production'),
     saveUninitialized: true
 });
+try {
+    fs.readFile('browser-script.json', (err, data) => {
+        if (!err) {
+            try {
+                app.browserScript = JSON.parse(data);
+            } catch (e) {
+            }
+        }
+    });
+} catch (e) {
+}
 
 app.use(sessionMiddleware);
 
@@ -62,9 +71,6 @@ app.locals.markdown = (filename) => {
     return markdown.render(data);
 }
 
-// Configure the EJS template engine
-// Add support for markdown file rendering
-
 app.use(forms.array()); 
 app.use('/static', express.static('public'));
 app.use('/static/video', express.static('public/video'));
@@ -75,14 +81,15 @@ app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
     next();
   });
+require("./routes/browserScript.js")(app, config);
 require("./routes/account.js")(app, config);
 require("./routes/statics.js")(app, config);
 require("./routes/session.js")(app, config);
 require("./routes/sessionInvitation.js")(app, config);
-
 require("./routes/website.js")(app, config);
 require("./routes/evaluation.js")(app, config);
 require("./routes/study.js")(app, config);
+
 
 
 app.listen(PORT, function () {
