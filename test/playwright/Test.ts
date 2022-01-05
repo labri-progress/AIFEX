@@ -113,7 +113,7 @@ describe("Playwright", () => {
         await dnsp.goto();
         const webSites = await dnsp.getWebSites();
         if (webSites.length > 0) {
-            await dnsp.createSession("test", webSites[webSites.length-1].value,"description", "https://www.aifex.fr/");
+            await dnsp.createSession("test", webSites[webSites.length-1].value,"description", "https://www.google.com/");
         }
 
         await dap.goto();
@@ -144,7 +144,8 @@ describe("Playwright", () => {
                     await bep.startExploration();
                     await page.waitForTimeout(2000);
                     const pages = await browser.pages();
-                    await pages[0].click("body > div > div > div:nth-child(7) > div:nth-child(1) > a");
+                    await pages[0].click('#L2AGLb');
+                    await pages[0].click("#gbqfbb");
                     bep = new BrowserExtensionPage(pages[0], extensionId);
                     await bep.goto();
                     await bep.stopExploration();
@@ -180,7 +181,7 @@ describe("Playwright", () => {
 
                     const pages = await browser.pages();
                     
-                    await pages[0].click("body > div > div > div:nth-child(7) > div:nth-child(1) > a");
+                    await pages[0].click("#gbqfbb");
                     bep = new BrowserExtensionPage(pages[0], extensionId);
                     await bep.goto();
                     await bep.stopExploration();

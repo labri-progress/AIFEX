@@ -8,7 +8,7 @@ It starts and trains an AI model that will guide you while your are testing your
 
 AIFEX is designed as a docker compose platform. 
 
-To run it, you must install **nodejs**, **npm** and **docker** with **docker-compose**
+To run it, you must install **docker** with **docker-compose**
 
 Then just execute (if you are using Windows, please use bash): 
 
@@ -19,13 +19,11 @@ Then open http://localhost to create a new session.
 
 ## Run the AIFEX server on Production Mode
 
-To run it, you must install **nodejs**, **npm** and **docker** with **docker-compose**
+To run it, you must install **docker** with **docker-compose**
 
 
 Edit **./prod.sh**:
 1. replace HOST_ADDR by your server name.
-2. Change ELASTIC_PASSWORD and TOKEN_SECRET
-3. Set CERTIFICAT_SOURCE and CERTIFICAT_TARGET 
 
 Then just execute (if you are using Windows, please use bash): 
 
