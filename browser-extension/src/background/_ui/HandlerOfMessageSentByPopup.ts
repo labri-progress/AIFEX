@@ -20,11 +20,11 @@ export default class HandlerOfMessageSentByPopup {
                 if (!msg.popupPageKind) {
                     logger.debug(`no page`);
                     sendResponse({error: "page is missing"});
-                    return true;
                 } else {
                     this._application.changePopupPageKind(msg.popupPageKind);
-
+                    sendResponse({message: "page changed"});
                 }
+                return true;
             }
 
             case "checkDeprecated": {
@@ -32,13 +32,12 @@ export default class HandlerOfMessageSentByPopup {
                 if (!msg.url) {
                     logger.debug(`cannot check plugin version`);
                     sendResponse({error: "URL is missing"});
-                    return true;
                 } else {
                     try {
                         const connexionURL = new URL(msg.url);
                         this._application.makeCompatibilityCheck(connexionURL.origin)
                         .then((compatibilityCheck) => {
-                            logger.debug(`compatibilityCheck: ${compatibilityCheck}`);
+                            logger.debug(`compatibilityCheck: ${JSON.stringify(compatibilityCheck)}`);
                             sendResponse(compatibilityCheck);
                         })
                         .catch((error) => {
@@ -49,8 +48,8 @@ export default class HandlerOfMessageSentByPopup {
                         logger.error("wrong URL",new Error("url"));
                         sendResponse({error});
                     }
-                    return true;
                 }
+                return true;
 			}
 
 			case "getStateForPopup": {
@@ -197,12 +196,12 @@ export default class HandlerOfMessageSentByPopup {
             case "changeTesterName": {
                 logger.info(`Popup asks for ${msg.kind}`);
                 this._application.changeTesterName(msg.testerName)
-                .then(() => {
-                    sendResponse(this._application.getStateForPopup());
-                }).catch((error: Error) => {
-                    logger.error("popup asks to changeTesterName",error);
-                    sendResponse({error});
-                });
+                    .then(() => {
+                        sendResponse(this._application.getStateForPopup());
+                    }).catch((error: Error) => {
+                        logger.error("popup asks to changeTesterName",error);
+                        sendResponse({error});
+                    });
 				return true;
             }
 

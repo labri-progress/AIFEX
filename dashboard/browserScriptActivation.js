@@ -26,7 +26,7 @@ function activate(isEnabled) {
         })
 }
 
-let isEnabled = false;
+let isEnabled = true;
 activate(isEnabled)
     .then ((result) => {
         console.log(result);
