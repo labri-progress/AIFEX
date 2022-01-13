@@ -8,6 +8,7 @@ import SimpleRule from "./SimpleRule";
 import CSSSelectorRule from "./CSSSelectorRule";
 import AttributeValueRule from "./AttributeValueRule";
 import CSSSelectorWithValueRule from "./CSSSelectorWithValueRule";
+import RobulaSelectorRule from "./RobulaSelectorRule";
 
 export default class RuleService {
     elementRules: Map<HTMLElement|SVGElement, Rule[]>;
@@ -91,6 +92,8 @@ export default class RuleService {
                 return new CSSSelectorRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
             case "cssSelectorWithValue":
                 return new CSSSelectorWithValueRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
+            case "robulaSelector":
+                return new RobulaSelectorRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);
             case "attributeValue":
                 if (data.match.attributeName === undefined) {
                     return new SimpleRule(data.output.prefix,data.output.suffix, data.match.event, data.match?.css, data.match?.xpath, data.match?.code, data.match?.key, data?.context?.url, data?.context?.css, data?.context?.xpath, data.description);

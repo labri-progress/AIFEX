@@ -1,6 +1,6 @@
 (() => {
     let component = document.getElementById('configureComponent');
-    let testerNameInput = document.getElementById('testerName');
+    let testerName = document.getElementById('testerName');
     let shouldCreateNewWindowsOnConnect = document.getElementById('shouldCreateNewWindowsOnConnect');
     let shouldCloseWindowOnDisconnect = document.getElementById('shouldCloseWindowOnDisconnect');
     let shouldOpenPrivateWindows = document.getElementById("shouldOpenPrivateWindows");
@@ -11,7 +11,7 @@
     
 
     function render() {
-        testerNameInput.value = state.testerName;
+        testerName.value = state.testerName;
         shouldCreateNewWindowsOnConnect.checked = state.shouldCreateNewWindowsOnConnect;
         shouldCloseWindowOnDisconnect.checked = state.shouldCloseWindowOnDisconnect;
         shouldOpenPrivateWindows.checked = state.shouldOpenPrivateWindows;
@@ -27,7 +27,7 @@
         event.preventDefault();
         let msg = {
             kind: "submitConfig", 
-            testerName: testerNameInput.value, 
+            testerName: testerName.value, 
             shouldCreateNewWindowsOnConnect: shouldCreateNewWindowsOnConnect.checked, 
             shouldCloseWindowOnDisconnect: shouldCloseWindowOnDisconnect.checked,
             shouldOpenPrivateWindows: shouldOpenPrivateWindows.checked,
