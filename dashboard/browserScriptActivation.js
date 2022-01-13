@@ -1,7 +1,9 @@
 const fetch = require('node-fetch');
 
-const DASHBOARD_URL = 'http://localhost/browser-script';
-const CONNEXION_URL = 'http://localhost/join?sessionId=AnNbZeP_S&modelId=SjPBh9sVm';
+const DASHBOARD_URL = 'https://www.aifex.fr/browser-script';
+const CONNEXION_URL = 'https://www.aifex.fr/join?sessionId=ajJYAByEN&modelId=cf2rEWuWA';
+
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 function activate(isEnabled) {
     const ACTIVATE_URL = `${DASHBOARD_URL}`;
@@ -24,7 +26,7 @@ function activate(isEnabled) {
         })
 }
 
-let isEnabled = false;
+let isEnabled = true;
 activate(isEnabled)
     .then ((result) => {
         console.log(result);

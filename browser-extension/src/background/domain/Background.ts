@@ -110,9 +110,6 @@ export default class Background {
     private initialize(): void {
         this._sessionId = undefined;
         this._modelId = undefined;
-        this._serverURL = undefined;
-        this._testerName = "anonymous";
-        this._numberOfExplorationsMadeByTester = 0
         this._probabilityMap = new Map();
         this._commentDistributions = [];
         this._commentsUp = [];
