@@ -5,8 +5,8 @@
     </head>
     <body>
         <% include ./partials/nav %>
-        <div class="container">
-            <div class="jumbotron">
+        <div class="container" >
+            <div class="jumbotron" style="margin-bottom: 0;">
                 <h1 class="display-4">AIFEX </h1>
                 <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
                 <hr class="my-4"></hr>
@@ -23,20 +23,47 @@
                 <hr class="my-4"></hr>
                 
                 <div class="row">
-                    <div class="col-md-4">
-                        <img src="/static/images/design.jpg" width="100%" />
-                        <p><strong>Design</strong> your session by defining its scope and purpose.</p>
+                    <div class="col-md-6">
+                        <img src="/static/images/design.jpg" width="80%" />
                     </div>
-                    <div class="col-md-4">
-                        <img src="/static/images/run.jpg" width="100%"/>
-                        <p>Use our browser extension and its AI to <strong>run</strong> your session.</p>
+                    <div class="col-md-6 home-text">
+                        <h3>1</h3>
+                        <p><strong>Design</strong> your session by defining its scope and purpose. Give it a name, set the URL of the web application under test, choose one of our record configuration and give a short description. In less than 2 minutes your new session will be ready to run. </p>
                     </div>
-                    <div class="col-md-4">
-                        <img src="/static/images/analyze.jpg" width="100%"/>
-                        <p>Perform an <strong>analysis</strong> of your session. Check the identified bugs and fix them.</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 home-text">
+                        <h3>2</h3>
+                        <p><strong>Run</strong> your session either by using our browser extension or by integrating our script within you web application. Our browser extension visually presents all the performed explorations helping you to add diversity. Our script monitors the users of your web application. </p>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="/static/images/run.jpg" width="80%"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="/static/images/analyze.jpg" width="80%"/>
+                    </div>
+                    <div class="col-md-6 home-text">
+                        <h3>3</h3>
+                        <p><strong>Analyze</strong> your session by looking at all the explorations. You will be able to see all the bug reports expressed by the testers. By looking at the session traces you will be able to detect some new anomalies or to check some of your assumption. Furthermore, our IA will help you to measure the frequency of the testers/users' behaviors.</p>
                     </div>
                 </div>
             </div>
+
+            <div class="home-community">
+                <p class="main-text text-center">Join the community</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="https://github.com/labri-progress/AIFEX"> <img src="/static/images/GitHub.png" width="40%"/></a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="https://join.slack.com/t/aifex/shared_invite/zt-ga7dmlk4-krbg3nshhs7EjnENf9695Q"> <img src="/static/images/Slack.png" width="40%"/></a>
+                    </div>
+                </div>
+            </div>
+
+            
         </div>
   
     </body>
