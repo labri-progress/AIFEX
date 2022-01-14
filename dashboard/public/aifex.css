@@ -69,3 +69,22 @@ video {
 .inputSessionURL {
     width: 100px;
 }
+
+.home-text {
+    margin: auto;
+}
+
+.home-text h3 {
+    text-align:center;
+}
+
+.home-community {
+    margin: auto;
+}
+
+.home-community img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }

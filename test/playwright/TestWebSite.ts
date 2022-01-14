@@ -85,7 +85,7 @@ describe("Playwright", () => {
         await dnsp.goto();
         const webSites = await dnsp.getWebSites();
         if (webSites.length > 0) {
-            await dnsp.createSession("test", webSites[webSites.length-1].value,"description", TARGET_URL);
+            await dnsp.createSession("test", webSites[0].value,"description", TARGET_URL);
         }
 
         await dap.goto();
