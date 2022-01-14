@@ -70,7 +70,7 @@ describe("Playwright", () => {
         const page = await browser.newPage();
         const dsip = new DashboardSignInPage(page, DASHBOARD_URL);
         await dsip.goto();
-        await dsip.signin('ms', 'ms');
+        await dsip.signin('anonymous', 'anonymous');
         await page.close();
     })
 
@@ -112,6 +112,7 @@ describe("Playwright", () => {
                     await bep.createNewWindowsOnConnect(false);
                     await bep.joinSession();                    
                     await bep.connectSession(url);
+                    await bep.closeDescription();
                     await bep.startExploration();
                     await page.waitForTimeout(2000);
 
