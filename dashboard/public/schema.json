@@ -39,7 +39,7 @@
                     },
                     "suffix": {
                         "type": "string",
-                        "enum": ["value", "index", "innerText", "cssSelector", "cssSelectorWithValue", "robulaSelector", "attributeValue"]
+                        "enum": ["value", "index", "innerText", "cssSelector", "cssSelectorWithValue", "robulaSelector", "experimentSelector", "attributeValue"]
                     }
                 },
                 "additionalProperties": false,

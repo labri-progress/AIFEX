@@ -11,13 +11,15 @@ export default class CSSSelectorRule extends Rule {
 
     makeAction(event : Event): Action | undefined {
         if (event.target) {
-            let suffix;
-            try {
-                suffix = getCssSelector(event.target, {selectors: ['id', 'tag']});
-            } catch (e) {
-                logger.error(`exception`,new Error('css exception'));
+            if (event.target instanceof HTMLElement || event.target instanceof SVGElement) { 
+                let suffix;
+                try {
+                    suffix = getCssSelector(event.target, {selectors: ["id", "tag"]});
+                } catch (e) {
+                    logger.error(`exception`,new Error('css exception'));
+                }
+                return new Action(this.prefix, suffix);
             }
-            return new Action(this.prefix, suffix);
         }
     }
 

@@ -2,6 +2,7 @@ import Action from './Action';
 import Rule from './Rule';
 import getCssSelector from 'css-selector-generator';
 import {logger} from "../framework/Logger";
+import { CssSelectorType } from 'css-selector-generator/types/types';
 
 export default class CSSSelectorWithValueRule extends Rule {
     constructor(prefix: string, suffix: string | undefined, event: string, css: string | undefined, xpath: string | undefined,
@@ -15,7 +16,7 @@ export default class CSSSelectorWithValueRule extends Rule {
                 let value = this.getValue(event.target);
                 let suffix;
                 try {
-                    suffix = getCssSelector(event.target, {selectors: ['id', 'tag']});
+                    suffix = getCssSelector(event.target, {selectors: ["id", "tag"]});
                 } catch (e) {
                     logger.error(`exception`,new Error('css exception'));
                 }
