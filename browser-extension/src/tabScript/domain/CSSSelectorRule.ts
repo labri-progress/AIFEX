@@ -14,7 +14,35 @@ export default class CSSSelectorRule extends Rule {
             if (event.target instanceof HTMLElement || event.target instanceof SVGElement) { 
                 let suffix;
                 try {
-                    suffix = getCssSelector(event.target, {selectors: ["id", "tag"]});
+                    suffix = getCssSelector(event.target, {
+                        selectors: [
+                            "id", 
+                            "class", 
+                            "tag", 
+                            "attribute"
+                        ], 
+                        blacklist: [
+                            /.*data.*/i, 
+                            /.*aifex.*/i, 
+                            /.*over.*/i,
+                            /.*auto.*/i,
+                            /.*value.*/i,
+                            /.*checked.*/i,
+                            '[placeholder]',
+                            /.*href.*/i,
+                            /.*src.*/i,
+                            /.*onclick.*/i,
+                            /.*onload.*/i,
+                            /.*onkeyup.*/i,
+                            /.*width.*/i,
+                            /.*height.*/i,
+                            /.*style.*/i,
+                            /.*size.*/i,
+                            /.*maxlength.*/i
+                        ],
+                        combineBetweenSelectors: true,
+                        maxCandidates: 100
+                    });
                 } catch (e) {
                     logger.error(`exception`,new Error('css exception'));
                 }

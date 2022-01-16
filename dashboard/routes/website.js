@@ -3,6 +3,17 @@ const logger = require('../logger');
 
 module.exports = function attachRoutes(app, config) {
 
+    app.get('/dashboard/website/view', (req, res) => {
+        getWebSites(req.session.jwt)
+            .then((webSiteList) => {
+                res.render('website/view.ejs', {account:req.session, webSiteList});
+            })
+            .catch(e => {
+                logger.error(`error ${e}`);
+                res.render('error.ejs',{account:req.session, message:'cannot read account', error:e})
+            })
+    });
+    
     app.get('/dashboard/website/start', (req, res) => {
         res.render('website/start.ejs', { account: req.session });
     });

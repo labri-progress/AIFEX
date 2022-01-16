@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
       <% include ../partials/head %>
+      <script src="/static/lib/intro.min.js"></script>
+      <link rel="stylesheet" href="/static/lib/introjs.min.css"></link>
   </head>
   <body>
     <% include ../partials/nav %>
@@ -10,33 +12,35 @@
         <h1 class="display-4">AIFEX </h1>
         <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
         <hr class="my-4"></hr>
-        <h2>Sign in to AIFEX</h2>
-        <% if (kind) { %>
-          <div class="alert-<%= kind %> " role="alert">
-              <%=message %>
-          </div>
-        <% } %>
-        <form action="/account/signin" method="post" id="signin">
-          <div class="form-group row">
-            <label for="user" class="col-sm-2 col-form-label">Username</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" form="signin" name="username" id="user" required>
+        <div data-title="Welcome to AIFEX !" data-intro="You can sign in if you already have an account !">
+          <h2>Sign in to AIFEX</h2>
+          <% if (kind) { %>
+            <div class="alert-<%= kind %> " role="alert">
+                <%=message %>
             </div>
-          </div>
+          <% } %>
+          <form action="/account/signin" method="post" id="signin">
+            <div class="form-group row">
+              <label for="user" class="col-sm-2 col-form-label">Username</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" form="signin" name="username" id="user" required>
+              </div>
+            </div>
 
-          <div class="form-group row">
-            <label for="password" class="col-sm-2 col-form-label">Password</label>
-            <div class="col-sm-10">
-              <input type="password" class="form-control" name="password" id="password" required>
+            <div class="form-group row">
+              <label for="password" class="col-sm-2 col-form-label">Password</label>
+              <div class="col-sm-10">
+                <input type="password" class="form-control" name="password" id="password" required>
+              </div>
             </div>
-          </div>
-          
-          <button type="submit" class="btn btn-primary">Sign in</button>
-        </form>
+            
+            <button type="submit" class="btn btn-primary">Sign in</button>
+          </form>
+        </div>
 
         <br>
         <row>
-          <div class="alert-info " role="alert">
+          <div class="alert-info " role="alert" data-title="Join AIFEX !" data-intro="Or you can create an account and join us !">
             New to AIFEX ? <a href="/account/signup">Create an account</a>
           </div>
         </row>
@@ -44,4 +48,7 @@
       </div>
     </div>
   </body> 
+  <script>
+    introJs().start();
+  </script>
 </html>

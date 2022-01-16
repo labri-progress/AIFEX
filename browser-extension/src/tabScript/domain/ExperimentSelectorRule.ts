@@ -35,6 +35,7 @@ export default class ExperimentSelectorRule extends Rule {
                         /.*checked.*/i,
                         '[placeholder]',
                         /.*href.*/i,
+                        /.*src.*/i,
                         /.*onclick.*/i,
                         /.*onload.*/i,
                         /.*onkeyup.*/i,

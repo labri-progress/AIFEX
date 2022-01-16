@@ -87,4 +87,77 @@ video {
     margin-left: auto;
     margin-right: auto;
     width: 50%;
-  }
+}
+
+.content-title {
+    display: inline-block;
+    width: 80%;
+}
+
+.content-title-button {
+    margin-bottom: 0.5rem;
+}
+
+#session-cards-container {
+    margin: auto;
+    width: 100%;
+    background-color: darkgray;
+    padding: 10px 20px 20px;
+    border-radius: 10px;
+}
+
+.session-card {
+    margin: auto;
+    width: 100%;
+    background-color: #e9ecef;
+    padding: 10px 20px 20px;
+    margin: 0px 0px 8px;
+    border-radius: 10px;
+}
+
+.session-name {
+    display: inline-block;
+    width: 90%;
+
+}
+
+.session-card-left-container {
+    display: inline-block;
+    width: 80%;
+}
+
+.session-card-right-container {
+    display: inline-block;
+    width: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.session-exploration {
+    display: inline-block;
+    width: 40%
+}
+
+.session-configuration {
+    display: inline-block;
+    width: 40%;
+}
+
+.session-value {
+    display: inline-block;
+    background-color: darkgray;
+    text-align: center;
+    width: 80%;
+    border-radius: 10px;
+    margin: 0px 0px 8px;
+}
+
+.session-noinput {
+    border: none;
+}
+
+.session-card-right-text {
+    text-align: center;
+}
