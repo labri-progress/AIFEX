@@ -27,7 +27,6 @@
     "@types/node": "16.11.13",
     "@types/node-fetch": "^2.5.10",
     "@types/shortid": "0.0.29",
-    "@types/socket.io": "^3.0.1",
     "@types/source-map-support": "^0.5.4",
     "amqplib": "^0.8.0",
     "body-parse": "^0.1.0",
