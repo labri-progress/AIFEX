@@ -90,7 +90,7 @@ export default class Background {
         this._showConfig = false;
 
         this._overlayType = "rainbow";
-        this._showProbabilityPopup = true;
+        this._showProbabilityPopup = false;
 
         this._probabilityMap = new Map();
         this._commentDistributions = [];

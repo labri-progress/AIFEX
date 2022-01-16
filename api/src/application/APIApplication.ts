@@ -621,22 +621,26 @@ export default class APIApplication {
     accountInitialization(username: string) : Promise<"WebSiteAdded" | "IncorrectUsername"> {
         let mappings : Mapping[] = [];
         mappings.push(new Mapping({event:"click",css:"body"},{prefix:"Click",suffix:"cssSelector"}));
-        mappings.push(new Mapping({event:"keydown",key:"Enter",css:"body"},{prefix:"EnterKeyDown",suffix:"cssSelector"}));
-        mappings.push(new Mapping({event:"keydown",key:"Tab",css:"body"},{prefix:"TabKeyDown",suffix:"cssSelector"}));
-        mappings.push(new Mapping({event:"keydown",key:" ",css:"body"},{prefix:"SpaceKeyDown",suffix:"cssSelector"}));
-        mappings.push(new Mapping({event:"css-class-added",css:"body"},{prefix:"MouseOverAndCSSClassChange",suffix:"cssSelector"}));
-        return this._webSiteService.createWebSite("UserInteractions",mappings)
+        return this._webSiteService.createWebSite("Recording-Clicks",mappings)
         .then((webSiteId) => {
             return this._accountService.addWebSite(username,webSiteId)
         })
         .then(() => {
             mappings = [];
-            mappings.push(new Mapping({event:"click",css:"body"},{prefix:"Click",suffix:"cssSelectorWithValue"}));
-            mappings.push(new Mapping({event:"keydown",key:"Enter",css:"body"},{prefix:"EnterKeyDown",suffix:"cssSelectorWithValue"}));
-            mappings.push(new Mapping({event:"keydown",key:"Tab",css:"body"},{prefix:"TabKeyDown",suffix:"cssSelectorWithValue"}));
-            mappings.push(new Mapping({event:"keydown",key:" ",css:"body"},{prefix:"SpaceKeyDown",suffix:"cssSelectorWithValue"}));
-            mappings.push(new Mapping({event:"css-class-added",css:"body"},{prefix:"MouseOverAndCSSClassChange",suffix:"cssSelectorWithValue"}));
-            return this._webSiteService.createWebSite("UserInteractionsWithValue",mappings)
+            mappings.push(new Mapping({event:"click",css:"body"},{prefix:"Click",suffix:"cssSelector"}));
+            mappings.push(new Mapping({event:"keydown",key:"Enter",css:"body"},{prefix:"EnterKeyDown",suffix:"cssSelector"}));
+            mappings.push(new Mapping({event:"keydown",key:"Tab",css:"body"},{prefix:"TabKeyDown",suffix:"cssSelector"}));
+            return this._webSiteService.createWebSite("Recording-Clicks-EnterTabKeys",mappings)
+        })
+        .then((webSiteId) => {
+            return this._accountService.addWebSite(username,webSiteId)
+        })
+        .then(() => {
+            mappings = [];
+            mappings.push(new Mapping({event:"click",css:"body"},{prefix:"Click",suffix:"cssSelector"}));
+            mappings.push(new Mapping({event:"keydown",key:"Enter",css:"body"},{prefix:"EnterKeyDown",suffix:"cssSelector"}));
+            mappings.push(new Mapping({event:"keydown",key:"Tab",css:"body"},{prefix:"TabKeyDown",suffix:"cssSelector"}));
+            return this._webSiteService.createWebSite("RecordingWithValue-Clicks-EnterTabKeys",mappings)
         })
         .then((webSiteId) => {
             return this._accountService.addWebSite(username,webSiteId)

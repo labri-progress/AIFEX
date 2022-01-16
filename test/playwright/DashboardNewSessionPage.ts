@@ -13,6 +13,13 @@ export default class DashboardNewSessionPage {
         await this._page.goto(this._url + 'dashboard/session/create');
     }
 
+    async skipTuto() {
+        let skipButton = await this._page.$('.introjs-skipbutton');
+        if (skipButton) {
+            skipButton.click();
+        }
+    }
+
     async getWebSites() : Promise<{name:string, value:string}[]>{
         return await this._page.evaluate(() => {
             let webSiteId = document.getElementById('webSiteId');

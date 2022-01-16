@@ -111,6 +111,7 @@ describe("Playwright", () => {
         
         const dnsp = new DashboardNewSessionPage(page, DASHBOARD_URL);
         await dnsp.goto();
+        await dnsp.skipTuto();
         const webSites = await dnsp.getWebSites();
         if (webSites.length > 0) {
             await dnsp.createSession("test", webSites[webSites.length-1].value,"description", "https://www.aifex.fr/");
