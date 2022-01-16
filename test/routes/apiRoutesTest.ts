@@ -202,8 +202,8 @@ describe("API", () => {
             .then((account) => {
                 let accountCasted = account as any;
                 expect(accountCasted.authorizationSet.length).eql(5);
-                expect(accountCasted.authorizationSet[2].kind).to.be.eql("WebSite");
-                expect(accountCasted.authorizationSet[2].key).to.be.eql(webSiteId);
+                expect(accountCasted.authorizationSet[4].kind).to.be.eql("WebSite");
+                expect(accountCasted.authorizationSet[4].key).to.be.eql(webSiteId);
             });
     });
 
@@ -291,8 +291,8 @@ describe("API", () => {
             .then((account) => {
                 let accountCasted = account as any;
                 expect(accountCasted.authorizationSet.length).eql(6);
-                expect(accountCasted.authorizationSet[3].kind).to.be.eql("Session");
-                expect(accountCasted.authorizationSet[3].key).to.be.eql(sessionId);
+                expect(accountCasted.authorizationSet[5].kind).to.be.eql("Session");
+                expect(accountCasted.authorizationSet[5].key).to.be.eql(sessionId);
             });
     });
 
