@@ -24,22 +24,21 @@ export default class DashboardAccountPage {
     async getSessions() {
         return await this._page.evaluate(() => {
             let results : {name: string, url: string, numberOfExplorations: string}[] = [];
-            let table = document.querySelector('#session-list');
-            if (table) {
-                let sessions = table.querySelectorAll('tbody tr');
-                sessions.forEach(session => {
-                    let tds = session.querySelectorAll('td');
-                    if (tds.length >= 3) {
-                        let name = (tds[0].firstElementChild instanceof HTMLAnchorElement )?tds[0].firstElementChild.text : undefined;
-                        let url = (tds[1].firstElementChild instanceof HTMLInputElement )?tds[1].firstElementChild.value : undefined;
-                        let numberOfExplorations = tds[2].textContent;
-                        console.log(name, url, numberOfExplorations);
-                        if (name && url && numberOfExplorations) {
-                            results.push({name: name, url: url, numberOfExplorations: numberOfExplorations});
-                        }
+            let sessionCards = document.querySelectorAll('.session-card');
+            sessionCards.forEach(sessionCard => {
+                let sessionNumberOfExploration = sessionCard.querySelector('.session-exploration .session-value');
+                let sessionName = sessionCard.querySelector('.session-configuration .session-value');
+                let sessionInput = sessionCard.querySelector('.session-noinput');
+                if (sessionNumberOfExploration && sessionName && sessionInput ) {
+                    let numberOfExplorations = undefined || sessionNumberOfExploration.textContent;
+                    let name = undefined || sessionName.textContent;
+                    let url = (sessionInput instanceof HTMLInputElement )?sessionInput.value : undefined;
+                    console.log(name, url, numberOfExplorations);
+                    if (name && url && numberOfExplorations) {
+                        results.push({name: name, url: url, numberOfExplorations: numberOfExplorations});
                     }
-                })
-            }
+                }
+            })
             return results;
         });
 

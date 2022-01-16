@@ -2,8 +2,6 @@
 <html lang="en">
   <head>
       <% include ../partials/head %>
-      <script src="/static/lib/intro.min.js"></script>
-      <link rel="stylesheet" href="/static/lib/introjs.min.css"></link>
   </head>
   <body>
     <% include ../partials/nav %>
@@ -12,7 +10,7 @@
         <h1 class="display-4">AIFEX </h1>
         <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
         <hr class="my-4"></hr>
-        <div data-title="Welcome to AIFEX !" data-intro="You can sign in if you already have an account !">
+        <div>
           <h2>Sign in to AIFEX</h2>
           <% if (kind) { %>
             <div class="alert-<%= kind %> " role="alert">
@@ -40,7 +38,7 @@
 
         <br>
         <row>
-          <div class="alert-info " role="alert" data-title="Join AIFEX !" data-intro="Or you can create an account and join us !">
+          <div class="alert-info " role="alert" data-title="Join AIFEX !" data-intro="Don't forget to join us by creating an account !">
             New to AIFEX ? <a href="/account/signup">Create an account</a>
           </div>
         </row>

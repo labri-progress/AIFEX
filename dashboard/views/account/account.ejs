@@ -20,7 +20,7 @@
       
         <div id="session-cards-container">
           <h3 class="content-title"> Your Session(s)</h3>
-          <a role="button" id="createSessionButton" class="btn btn-primary content-title-button" href="/dashboard/session/create">New Session</a>
+          <a data-title="Welcome <%= account.username%> !" data-intro="Begin by designing your first session.<br/> Just click on the <em>new session</em> button" role="button" id="createSessionButton" class="btn btn-primary content-title-button" href="/dashboard/session/create">New Session</a>
           <% connectionCodeList.forEach((connectionCode,i) => { %>
             <div class="session-card">
               <h4 class="session-name"><%= sessionList[i].name ? sessionList[i].name : "Unamed" %></h4>
@@ -97,7 +97,10 @@
         })
       }
     </script>
-
-    
   </body> 
+  <script>
+    if (document.querySelectorAll('.session-card').length === 0) {
+      introJs().start();
+    }
+  </script>
 </html>
