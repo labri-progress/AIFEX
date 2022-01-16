@@ -4,7 +4,9 @@
       <% include ../partials/head %>
       <script>
         function copy(target) {
+          console.log('copy');
           var copyText = target.parentNode.querySelector('input');
+          console.log(copyText);
           copyText.select();
           document.execCommand("copy");
         }
@@ -39,7 +41,7 @@
                 </div>
                 <div>
                   <div>Connexion URL</div>
-                  <input type="text" class="session-value session-noinput" value="<%= serveurURLList[i] %>" disabled></input><i title="Copy in clipboard" data-toggle="tooltip" data-placement="right" onclick="copy(this)" class="fas fa-copy copy-icon fa-2x"></i>
+                  <input type="text" class="session-value session-noinput" value="<%= serveurURLList[i] %>" readonly></input><i title="Copy in clipboard" data-toggle="tooltip" data-placement="right" onclick="copy(this)" class="fas fa-copy copy-icon fa-2x"></i>
                 </div>
               </div>
               <div class="session-card-right-container">

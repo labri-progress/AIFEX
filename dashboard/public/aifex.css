@@ -161,3 +161,8 @@ video {
 .session-card-right-text {
     text-align: center;
 }
+
+.show-hide-bar {
+    text-align: center;
+    margin: 0px 0px 8px;
+}

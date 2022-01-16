@@ -7,19 +7,18 @@
     <% include ../partials/nav %>
     <div class="container">
       <div class="jumbotron">
-        <h1 class="display-4">AIFEX </h1>
-        <p class="lead">Improve the quality, efficiency and diversity of your exploratory test sessions</p>
+        <h1 class="display-4 content-title">Welcome <%= account.username%> !</h1>
         <hr class="my-4"></hr>
-        <h2>New Session</h2>
+        <h2>Create a New Session</h2>
         <form name="sessionForm" action="/dashboard/session/create" method="post" id="createSessionWithEmptyAI">
-          <div class="form-group row">
+          <div class="form-group row" data-title="Name your session" data-intro="This name helps you to identify the session !">
             <label for="name" class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" form="createSessionWithEmptyAI" name="name" id="name" placeholder="MySession" required>
             </div>
           </div>
 
-          <div class="form-group row" >
+          <div class="form-group row" data-title="Select a configuration" data-intro="Choose a configuration depending on the events you want to trace !">
             <label for="webSiteId" class="col-sm-2 col-form-label">Configuration</label>
             <div class="col-sm-10">
               <select name="webSiteId" id="webSiteId" class="form-control" form="createSessionWithEmptyAI" required>
@@ -34,7 +33,7 @@
             </div>
           </div>
 
-          <div class="form-group row">
+          <div class="form-group row" data-title="Set the base URL" data-intro="Set the URL where your explorations will start !">
             <label for="baseURL" class="col-sm-2 col-form-label">Exploration starting URL</label>
             <div class="col-sm-10">
               <input type="url" class="form-control" form="createSessionWithEmptyAI" name="baseURL" id="baseURL" urls="<%=webSiteURLList%>" required placeholder="https://www.mon_site.fr" required>
@@ -42,22 +41,22 @@
             </div>
           </div>
 
-          <div class="form-group row">
+          <div class="form-group row" data-title="Give a description" data-intro="The description will be read by the testers. Make your instructions clear.">
             <label class="form-label col-sm-2" for="description" >Description</label>
             <div class="col-sm-10">
               <textarea name="description" rows="15" cols="60" id="description" required>
 # Session objectives
-short description of the session
+short description of the session (with Mark Down language)
 
 ## main steps
 * step 1
-* step 2
+
               </textarea>
             </div>
 
           </div>
 
-          <div class="form-group row">
+          <div class="form-group row" data-title="Set the overlay" data-intro="This sets if the extention visually helps the testers (shadow means not) !">
             <label for="overlayType" class="col-sm-2 col-form-label">Overlay</label>
             <div class="col-sm-10">
               <select class="form-control" aria-label="Default select example" name="overlayType" id="overlayType" form="createSessionWithEmptyAI" required>
@@ -69,7 +68,7 @@ short description of the session
             </div>
           </div> 
 
-          <div class="form-group row">
+          <div class="form-group row" data-title="Select a recording mode" data-intro="It's up to you if you want AIFEX to record your actions step by step or once all have been done !">
             <label for="recordingMode" class="col-sm-2 col-form-label">Recording Mode</label>
             <div class="col-sm-10">
               <select class="form-control" aria-label="Default select example" name="recordingMode" id="recordingMode" form="createSessionWithEmptyAI" required>
@@ -81,7 +80,7 @@ short description of the session
             </div>
           </div> 
 
-          <button type="submit" class="btn btn-primary" id="submit">Create</button>
+          <button type="submit" class="btn btn-primary" id="submit" data-title="It's done !" data-intro="Click the <em>Create</em> button and run your session !">Create</button>
         </form>
       </div>
     </div>
@@ -106,5 +105,8 @@ short description of the session
       })
       form.classList.add('was-validated');
     }, false);
+  </script>
+  <script>
+    introJs().start();
   </script>
 </html>
