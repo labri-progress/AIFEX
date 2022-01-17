@@ -123,7 +123,7 @@ describe("Playwright", () => {
         await page.close();
     })
 
-    it ("should join connect to a session and create an exploration", async () => {
+    it ("should connect to a session and create an exploration", async () => {
         let page = await browser.newPage();
         const cep = new ChromeExtensionsPage(page);
         await cep.goto();
@@ -141,6 +141,7 @@ describe("Playwright", () => {
                     await bep.createNewWindowsOnConnect(false);
                     await bep.joinSession();                    
                     await bep.connectSession(url);
+                    await page.waitForTimeout(2000);
                     await bep.closeDescription();
                     await bep.startExploration();
                     await page.waitForTimeout(2000);
