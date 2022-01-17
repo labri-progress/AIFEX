@@ -64,7 +64,7 @@ function checkVersion(serverVersion, extensionVersion) {
     let serverSemVer = createSemVer(serverVersion);
     let extensionSemVer = createSemVer(extensionVersion);
     if (serverSemVer === undefined || extensionSemVer === undefined) {
-        return false;
+        return true;//for compatibility issue
     }
     if (serverSemVer.major > extensionSemVer.major) {
         return false;
@@ -75,9 +75,12 @@ function checkVersion(serverVersion, extensionVersion) {
     return true;
 }
 
-function createSemVer(version) {
+function createSemVer(versionAsString) {
     const SEMVER_NAMES = ['major', 'minor', 'patch'];
-    return version.split('.').map(v => parseInt(v)).reduce((prev, cur, index, versions) => {
+    if (typeof versionAsString !== 'string') {
+        return undefined;
+    }
+    return versionAsString.split('.').map(v => parseInt(v)).reduce((prev, cur, index, versions) => {
         if (versions.length !== 3) {
             return undefined;
         }

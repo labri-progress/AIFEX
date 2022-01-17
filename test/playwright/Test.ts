@@ -134,17 +134,21 @@ describe("Playwright", () => {
             let sessions = await dap.getSessions();
             if (sessions.length > 0) {
                 let url = sessions[sessions.length-1].url;
+                console.log('url:',url);
                 let numberOfExplorations = parseInt(sessions[sessions.length-1].numberOfExplorations);
+                console.log('number:',numberOfExplorations);
                 let bep = new BrowserExtensionPage(page, extensionId);
                 let isBEP = await bep.goto();
                 if (isBEP) {
+                    page.on('console', (consoleMessage) => {
+                        console.log(`${consoleMessage.type()}: ${consoleMessage.text()}`);
+                    })
                     await bep.createNewWindowsOnConnect(false);
                     await bep.joinSession();                    
                     await bep.connectSession(url);
-                    await page.waitForTimeout(2000);
+                    await page.waitForTimeout(12000);
                     await bep.closeDescription();
                     await bep.startExploration();
-                    await page.waitForTimeout(2000);
                     const pages = await browser.pages();
                     await pages[0].click("body > div > div > div.text-center > a");
                     bep = new BrowserExtensionPage(pages[0], extensionId);
