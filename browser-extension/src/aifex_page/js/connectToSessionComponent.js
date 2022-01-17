@@ -30,6 +30,7 @@
             .then(extensionInfo => {
                 console.log("extensionInfo:", JSON.stringify(extensionInfo));
                 if (!checkVersion(extensionInfo.serverVersion, extensionInfo.extensionVersion)) {
+                    console.log('wrong version');
                     connexionMessage.innerHTML = `Your current version ${extensionInfo.extensionVersion} of the AIFEX Extention is deprecated, please get latest version <a href="${extensionInfo.url}"> ${extensionInfo.serverVersion} </a>`;
                 } else {
                     sendMessage({
