@@ -28,8 +28,9 @@
         }
         sendMessage({ kind: "checkDeprecated", url: INPUT_URL })
             .then(extensionInfo => {
-                if (extensionInfo.latestVersion && extensionInfo.currentVersion !== extensionInfo.latestVersion) {
-                    connexionMessage.innerHTML = `Your current version ${extensionInfo.currentVersion} of the AIFEX Extention is deprecated, please get latest version <a href="${extensionInfo.url}"> ${extensionInfo.latestVersion} </a>`;
+                console.log("extensionInfo:", JSON.stringify(extensionInfo));
+                if (!checkVersion(extensionInfo.serverVersion, extensionInfo.extensionVersion)) {
+                    connexionMessage.innerHTML = `Your current version ${extensionInfo.extensionVersion} of the AIFEX Extention is deprecated, please get latest version <a href="${extensionInfo.url}"> ${extensionInfo.serverVersion} </a>`;
                 } else {
                     sendMessage({
                         kind: "connect",
@@ -58,3 +59,35 @@
     console.log('ConnectToSession Component has been launched');
 
 })();
+
+function checkVersion(serverVersion, extensionVersion) {
+    let serverSemVer = createSemVer(serverVersion);
+    let extensionSemVer = createSemVer(extensionVersion);
+    if (serverSemVer === undefined || extensionSemVer === undefined) {
+        return false;
+    }
+    if (serverSemVer.major > extensionSemVer.major) {
+        return false;
+    }
+    if (serverSemVer.minor > extensionSemVer.minor) {
+        return false;
+    }
+    return true;
+}
+
+function createSemVer(version) {
+    const SEMVER_NAMES = ['major', 'minor', 'patch'];
+    return version.split('.').map(v => parseInt(v)).reduce((prev, cur, index, versions) => {
+        if (versions.length !== 3) {
+            return undefined;
+        }
+        if (prev === undefined) {
+            return undefined
+        } 
+        if (isNaN(cur)) {
+            return undefined;
+        } 
+        prev[SEMVER_NAMES[index]] = cur;
+        return prev;
+    }, {})
+}
