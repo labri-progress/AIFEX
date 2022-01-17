@@ -74,4 +74,4 @@ RUN npm install
 # Compile project files
 RUN npm run compile
 
-CMD xvfb-run -a --server-args='-screen 0 1024x768x24' npm run testPlaywright
+CMD xvfb-run -a --server-args='-screen 0 1600x1200x24' npm run testPlaywright
