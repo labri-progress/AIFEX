@@ -5,7 +5,7 @@
     "compile": "tsc"
   },
   "devDependencies": {
-    "css-selector-generator": "^3.5.3",
+    "css-selector-generator": "^3.5.4",
     "px-robula-plus": "^1.0.1",
     "query-selector-shadow-dom": "^1.0.0",
     "ts-loader": "^9.2.6",

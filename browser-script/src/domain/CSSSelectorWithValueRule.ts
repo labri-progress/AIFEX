@@ -2,6 +2,7 @@ import Action from './Action';
 import Rule from './Rule';
 import getCssSelector from 'css-selector-generator';
 import {logger} from "../framework/Logger";
+import { CssSelectorType } from 'css-selector-generator/types/types';
 
 export default class CSSSelectorWithValueRule extends Rule {
     constructor(prefix: string, suffix: string | undefined, event: string, css: string | undefined, xpath: string | undefined,
@@ -15,7 +16,35 @@ export default class CSSSelectorWithValueRule extends Rule {
                 let value = this.getValue(event.target);
                 let suffix;
                 try {
-                    suffix = getCssSelector(event.target, {selectors: ['id', 'tag']});
+                    suffix = getCssSelector(event.target, {
+                        selectors: [
+                            "id", 
+                            "class", 
+                            "tag", 
+                            "attribute"
+                        ], 
+                        blacklist: [
+                            /.*data.*/i, 
+                            /.*aifex.*/i, 
+                            /.*over.*/i,
+                            /.*auto.*/i,
+                            /.*value.*/i,
+                            /.*checked.*/i,
+                            '[placeholder]',
+                            /.*href.*/i,
+                            /.*src.*/i,
+                            /.*onclick.*/i,
+                            /.*onload.*/i,
+                            /.*onkeyup.*/i,
+                            /.*width.*/i,
+                            /.*height.*/i,
+                            /.*style.*/i,
+                            /.*size.*/i,
+                            /.*maxlength.*/i
+                        ],
+                        combineBetweenSelectors: true,
+                        maxCandidates: 100
+                    });
                 } catch (e) {
                     logger.error(`exception`,new Error('css exception'));
                 }

@@ -1,7 +1,7 @@
 import Action from './Action';
 import Rule from './Rule';
-import {logger} from "../framework/Logger";
 import getCssSelector from 'css-selector-generator';
+import {logger} from "../framework/Logger";
 
 export default class CSSSelectorRule extends Rule {
     constructor(prefix: string, suffix: string | undefined, event: string, css: string | undefined, xpath: string | undefined,
@@ -11,13 +11,43 @@ export default class CSSSelectorRule extends Rule {
 
     makeAction(event : Event): Action | undefined {
         if (event.target) {
-            let suffix;
-            try {
-                suffix = getCssSelector(event.target, {selectors: ['id', 'tag']});
-            } catch (e) {
-                logger.error(`exception`,new Error('css exception'));
+            if (event.target instanceof HTMLElement || event.target instanceof SVGElement) { 
+                let suffix;
+                try {
+                    suffix = getCssSelector(event.target, {
+                        selectors: [
+                            "id", 
+                            "class", 
+                            "tag", 
+                            "attribute"
+                        ], 
+                        blacklist: [
+                            /.*data.*/i, 
+                            /.*aifex.*/i, 
+                            /.*over.*/i,
+                            /.*auto.*/i,
+                            /.*value.*/i,
+                            /.*checked.*/i,
+                            '[placeholder]',
+                            /.*href.*/i,
+                            /.*src.*/i,
+                            /.*onclick.*/i,
+                            /.*onload.*/i,
+                            /.*onkeyup.*/i,
+                            /.*width.*/i,
+                            /.*height.*/i,
+                            /.*style.*/i,
+                            /.*size.*/i,
+                            /.*maxlength.*/i
+                        ],
+                        combineBetweenSelectors: true,
+                        maxCandidates: 100
+                    });
+                } catch (e) {
+                    logger.error(`exception`,new Error('css exception'));
+                }
+                return new Action(this.prefix, suffix);
             }
-            return new Action(this.prefix, suffix);
         }
     }
 
