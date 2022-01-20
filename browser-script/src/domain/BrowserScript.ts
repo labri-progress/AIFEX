@@ -20,6 +20,7 @@ export default class BrowserScript {
     private _aifexService : AifexService;
     private _browserService : BrowserService;
     private _pageMutationHandler : PageMutationHandler;
+    private _classMutationHandler : ClassMutationHandler | undefined;
     private _explorationNumber: number | undefined;
 
     
@@ -32,8 +33,6 @@ export default class BrowserScript {
         this._ruleService = new RuleService();
         this._eventListener = new EventListener(this._ruleService);
         this._eventListener.addObserver(this.processNewAction.bind(this));
-
-        new ClassMutationHandler();
 
         this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
         this._pageMutationHandler.init();
@@ -49,6 +48,13 @@ export default class BrowserScript {
                             if (webSiteResult && webSiteResult !== 'Unauthorized') {
                                 const rules = webSiteResult.mappingList.map((ru : any) => this._ruleService.createRule(ru));
                                 this._ruleService.loadRules(rules);
+
+                                if (this._ruleService.getEventsToHandle().includes("css-class-added")) {
+                                    if (this._classMutationHandler === undefined) {
+                                        this._classMutationHandler = new ClassMutationHandler();
+                                    }
+                                }
+                                
                                 this._ruleService.mapRulesToElements();
                                 logger.debug(`Rules loaded : ${rules.length}`);
                                 this._eventListener.start();
