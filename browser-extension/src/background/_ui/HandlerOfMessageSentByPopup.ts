@@ -269,6 +269,13 @@ export default class HandlerOfMessageSentByPopup {
                 return true;
             }
 
+            case "setTakeAScreenshotByAction" : {
+                logger.info(`Popup asks for ${msg.kind}`);
+                this._application.setTakeAsScreenshotByAction(msg.takeAScreenshotByAction);
+                sendResponse("ok");
+                return true;
+            }
+
             case "toggleDetachPopup": {
                 logger.info(`Popup asks for ${msg.kind}`);
                 this._application.toggleDetachPopup()

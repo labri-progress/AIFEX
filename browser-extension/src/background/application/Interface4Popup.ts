@@ -40,6 +40,8 @@ export default interface Interface4Popup {
 
     setRecordMedia(recordMedia: boolean): Promise<void>;
 
+    setTakeAsScreenshotByAction(takeAScreenshotByAction : boolean): void;
+
     setShouldCreateNewWindowsOnConnect(shouldCreateNewWindowsOnConnect: boolean): void;
 
     setShouldCloseWindowOnDisconnect(shouldCloseWindowOnDisconnect: boolean): void;

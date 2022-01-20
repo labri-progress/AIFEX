@@ -25,6 +25,7 @@ export default class StateForPopup {
     public shouldCloseWindowOnDisconnect : boolean;
     public shouldOpenPrivateWindows : boolean;
     public showProbabilityPopup: boolean;
+    public takeAScreenshotByAction: boolean;
     public popupIsDetached: boolean;
     public evaluatorScenario: string | undefined;
     public commentDistributionList: CommentDistribution[];
@@ -48,6 +49,7 @@ export default class StateForPopup {
         this.shouldCloseWindowOnDisconnect = false;
         this.shouldOpenPrivateWindows = false;
         this.showProbabilityPopup = true;
+        this.takeAScreenshotByAction = false;
         this.isPreparedToRecordMedia = false;
         this.popupIsDetached = false;
         this.numberOfExplorationsMadeByTester = 0;

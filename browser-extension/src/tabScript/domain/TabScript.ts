@@ -16,6 +16,7 @@ export default class TabScript {
     private _eventListener : EventListener;
     private _highlighter : Highlighter;
     private _pageMutationHandler : PageMutationHandler;
+    private _classMutationHandler : ClassMutationHandler | undefined;
     private _actionsAndElements : ActionsAndElements | undefined;
     
     constructor(backgroundService : BackgroundService, highlighter: Highlighter) {
@@ -25,7 +26,7 @@ export default class TabScript {
         this._eventListener = new EventListener(this._ruleService, this._backgroundService);
         this._eventListener.onNewUserAction(this.onNewUserAction.bind(this));
 
-        new ClassMutationHandler();
+        
 
         this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
         this._pageMutationHandler.init();
@@ -37,6 +38,13 @@ export default class TabScript {
         .then(state => {
             const rules = state.webSite.mappingList.map((ru : any) => this._ruleService.createRule(ru));
             this._ruleService.loadRules(rules);
+
+            if (this._ruleService.getEventsToHandle().includes("css-class-added")) {
+                if (this._classMutationHandler === undefined) {
+                    this._classMutationHandler = new ClassMutationHandler();
+                }
+            }
+
             this._ruleService.mapRulesToElements();
             this._highlighter.showProbabilityPopup = state.showProbabilityPopup;
             if (state.isActive) {

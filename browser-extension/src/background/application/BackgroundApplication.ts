@@ -95,6 +95,10 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.setRecordMedia(recordMedia);
 	}
 
+	setTakeAsScreenshotByAction(takeAScreenshotByAction : boolean) : void {
+		return this._background.setTakeAsScreenshotByAction(takeAScreenshotByAction);
+	}
+
 	setShouldCreateNewWindowsOnConnect(shouldCreateNewWindowsOnConnect: boolean): void{
 		this._background.setShouldCreateNewWindowOnConnect(shouldCreateNewWindowsOnConnect);
 	}

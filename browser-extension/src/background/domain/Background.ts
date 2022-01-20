@@ -61,6 +61,7 @@ export default class Background {
     private _shouldCreateNewWindowsOnConnect: boolean;
     private _shouldCloseWindowOnDisconnect: boolean;
     private _shouldOpenPrivateWindows: boolean;
+    private _takeAScreenshotByAction: boolean;
 
     private _aifexPopup: AifexPopup;
     private _overlayType: OverlayType;
@@ -80,6 +81,7 @@ export default class Background {
         this._shouldCreateNewWindowsOnConnect = true;
         this._shouldCloseWindowOnDisconnect = true;
         this._shouldOpenPrivateWindows = false;
+        this._takeAScreenshotByAction = false;
         this._aifexPopup = new AifexPopup(this._browserService);
         this._aifexPopup.attachBrowserHandlers();
 
@@ -403,6 +405,10 @@ export default class Background {
                 this.fetchProbabilityMap()
             ];
 
+            if (this._takeAScreenshotByAction) {
+                promises.push(this.takeScreenShot());
+            }
+
             if (this._recordActionByAction) {
                 if (!this._serverURL ||  !this._sessionId) {
                     throw new Error("Not connected to a session")
@@ -623,6 +629,7 @@ export default class Background {
         state.shouldCreateNewWindowsOnConnect = this._shouldCreateNewWindowsOnConnect;
         state.shouldCloseWindowOnDisconnect = this._shouldCloseWindowOnDisconnect;
         state.shouldOpenPrivateWindows = this._shouldOpenPrivateWindows;
+        state.takeAScreenshotByAction = this._takeAScreenshotByAction;
         logger.debug("state.shouldOpenPrivateWindows" + state.shouldOpenPrivateWindows + " / this._shouldOpenPrivateWindows" + this._shouldOpenPrivateWindows)
 
         state.popupIsDetached = this._aifexPopup.isDetached;
@@ -692,6 +699,10 @@ export default class Background {
         } else {
             return this._mediaRecordManager.destroyRecording();
         }
+    }
+
+    setTakeAsScreenshotByAction(takeAScreenshotByAction : boolean) {
+        this._takeAScreenshotByAction = takeAScreenshotByAction;
     }
 
     setShouldCreateNewWindowOnConnect(shouldCreateNewWindowOnConnect: boolean): void {
