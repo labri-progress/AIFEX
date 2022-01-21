@@ -26,8 +26,6 @@ export default class TabScript {
         this._eventListener = new EventListener(this._ruleService, this._backgroundService);
         this._eventListener.onNewUserAction(this.onNewUserAction.bind(this));
 
-        
-
         this._pageMutationHandler = new PageMutationHandler(this.onMutation.bind(this));
         this._pageMutationHandler.init();
         this._highlighter = highlighter;

@@ -22,6 +22,7 @@ export default class RabbitDelegate {
         logger.debug(`Starting Rabbit MQ connection : amqp://${config.rabbitmq}`);
         amqp.connect(`amqp://${config.rabbitmq}`)
         .then((conn) => {
+            logger.info('connected to RabbitMQ');
             this.connection = conn;
             return this.connection.createChannel();
         })
@@ -31,7 +32,7 @@ export default class RabbitDelegate {
         })
         .then(() => {
             if (this.channel) {
-                this.channel.consume(QUEUE_NAME, message => {
+                return this.channel.consume(QUEUE_NAME, message => {
                     logger.debug(`Received message`);
                     if (message !== null) {
                         logger.debug(`Message: ${message.content.toString()}`);

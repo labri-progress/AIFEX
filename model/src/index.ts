@@ -21,7 +21,11 @@ function connectWithRetry(): Promise<void> {
     return mongoose.connect(config.database)
         .then(() => {
             logger.info("Connecting to database : " + config.database );
-        });
+        })
+        .catch((err) => {
+            logger.error('Connection to database failed.');
+            setTimeout(connectWithRetry, 2000);
+        })
 }
 
 // Create RESTServer
