@@ -1,4 +1,6 @@
 const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId, getCrossEntropyBySession, updateSession} = require('../service/apiService');
+const { sessionToGravity } = require("../service/gravityService");
+
 const logger = require('../logger');
 const buildInvitation = require("../invitations").buildInvitation;
 
@@ -200,9 +202,8 @@ module.exports = function attachRoutes(app, config) {
             });
     });
 
-    app.get('/dashboard/session/:connectionCode/json/', (req, res) => {
-        const { connectionCode } = req.params;
-        const [sessionId, modelId] = connectionCode.split('$');
+    app.get('/dashboard/session/:sessionId/json/', (req, res) => {
+        const {sessionId} = req.params;
         logger.info(`GET session in JSON (id = ${sessionId})`);
         getSessionById(req.session.jwt,sessionId)
             .then(session => {
@@ -214,6 +215,20 @@ module.exports = function attachRoutes(app, config) {
             });
     });
 
+    app.get('/dashboard/session/:sessionId/gravityJson/', (req, res) => {
+        const {sessionId} = req.params;
+        logger.info(`GET session in JSON (id = ${sessionId})`);
+        getSessionById(req.session.jwt,sessionId)
+            .then(session => {
+                logger.info(`Convert session in Gravity format (id = ${sessionId})`);
+                const gravityJson = sessionToGravity(session);
+                return res.json(gravityJson);
+            })
+            .catch(e => {
+                logger.error(e);
+                res.status(500).json({ error: e });
+            });
+    });
 
     app.get('/dashboard/session/:connectionCode/ngrams/', (req, res) => {
         const { connectionCode } = req.params

@@ -23,12 +23,13 @@
         <div id="session-cards-container">
           <h3 class="content-title"> Your Session(s)</h3>
           <a data-title="Welcome <%= account.username%> !" data-intro="Begin by designing your first session.<br/> Just click on the <em>new session</em> button" role="button" id="createSessionButton" class="btn btn-primary content-title-button" href="/dashboard/session/create">New Session</a>
-          <% connectionCodeList.forEach((connectionCode,i) => { %>
+          <% sessionIdList.forEach((sessionId,i) => { %>
             <div class="session-card">
               <h4 class="session-name"><%= sessionList[i].name ? sessionList[i].name : "Unamed" %></h4>
-              <a href="/dashboard/session/update/<%=connectionCode %>" ><i class="fas fa-wrench"></i></a>
-              <span class="download-session" sessionId="<%=connectionCode %>"><a href="/" ><i class="fas fa-download"></i></a></span>
-              <a href="/dashboard/session/remove/<%=connectionCode %>" ><i class="fas fa-trash-alt"></i></a>
+              <a class="session-action" href="/dashboard/session/update/<%=sessionId %>" data-toggle="tooltip" data-placement="top" title="Update session"><i class="fas fa-wrench"></i></a>
+              <a class="session-action" sessionAction="download-session" sessionId="<%=sessionId %>" href="/" data-toggle="tooltip" data-placement="top" title="Download session"><i class="fas fa-download"></i></a>
+              <a class="session-action" sessionAction="download-session-gravity" sessionId="<%=sessionId %>" href="/" data-toggle="tooltip" data-placement="top" title="Export session for Gravity"><image width="17px" height="17px" src="/static/images/icons/gravity.svg"></image></a>
+              <a class="session-action" href="/dashboard/session/remove/<%= connectionCodeList[i] %>" data-toggle="tooltip" data-placement="top" title="Remove session"><i class="fas fa-trash-alt"></i></a>
               <hr class="my-2"></hr>
               <div class="session-card-left-container">
                 <div class="session-exploration">
@@ -45,7 +46,7 @@
                 </div>
               </div>
               <div class="session-card-right-container">
-                <span><a href="/dashboard/session/view/<%=connectionCode %>" ><i class="fas fa-brain fa-5x"></i></a></span>
+                <span><a href="/dashboard/session/view/<%= connectionCodeList[i] %>" ><i class="fas fa-brain fa-5x"></i></a></span>
                 <div class="session-card-right-text">Analyze</div>
               </div>
             </div>
@@ -60,7 +61,6 @@
 
         $('[data-toggle="tooltip"]').tooltip({})
 
-        //console.log('on load');
         let ruleList = document.querySelectorAll('.mapping-rule');
         ruleList.forEach( rule => {
           let a = rule.querySelector('a');
@@ -78,10 +78,9 @@
           a.download = name+'.json';
         });   
 
-        let sessionList = document.querySelectorAll('.download-session');
+        let sessionList = document.querySelectorAll('[sessionAction="download-session"]');
         sessionList.forEach( session => {
-          let sessionId = session.getAttribute('sessionId').split('$')[0];
-          let a = session.querySelector('a');
+          let sessionId = session.getAttribute('sessionId');
           if (sessionId !== undefined) {
             const URL = "/dashboard/session/"+sessionId+"/json/";
             fetch(URL)
@@ -90,8 +89,27 @@
                   response.json()
                     .then( sessionToSave => {
                       let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sessionToSave));
-                      a.href = 'data:' + data;
-                      a.download = 'session_'+sessionId+'.json';
+                      session.href = 'data:' + data;
+                      session.download = 'session_'+sessionId+'.json';
+                    })
+                }
+              })
+          }
+        })
+
+        sessionList = document.querySelectorAll('[sessionAction="download-session-gravity"]');
+        sessionList.forEach( session => {
+          let sessionId = session.getAttribute('sessionId');
+          if (sessionId !== undefined) {
+            const URL = "/dashboard/session/"+sessionId+"/gravityJson/";
+            fetch(URL)
+              .then(response => {
+                if (response.ok) {
+                  response.json()
+                    .then( sessionToSave => {
+                      let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sessionToSave));
+                      session.href = 'data:' + data;
+                      session.download = 'session_'+sessionId+'.json';
                     })
                 }
               })

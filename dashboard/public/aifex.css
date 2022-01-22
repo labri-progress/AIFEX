@@ -117,8 +117,12 @@ video {
 
 .session-name {
     display: inline-block;
-    width: 90%;
+    width: 80%;
+}
 
+.session-action {
+    width: 1em;
+    height: 1em;
 }
 
 .session-card-left-container {

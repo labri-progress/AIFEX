@@ -167,14 +167,19 @@ module.exports = function attachRoutes(app, config) {
         Promise.all([getWebSites(req.session.jwt),getSessions(req.session.jwt),getModels(req.session.jwt)])
             .then(([webSiteList, sessionList, modelList]) => {
                 let serveurURLList = [];
+                let sessionIdList = [];
+                let modelIdList = [];
                 let connectionCodeList = [];
                 sessionList.forEach(session => {
                     logger.debug(`session ${JSON.stringify(session.id)}`);
                     let model4Session = modelList.find(model => model.sessionIdList.includes(session.id));
+                    sessionIdList.push(session.id);
+                    modelIdList.push(model4Session.id)
                     connectionCodeList.push(`${session.id}$${model4Session.id}`);
+
                     serveurURLList.push(`${process.env.PROTOCOL}://${process.env.HOST_ADDR}/join?sessionId=${session.id}&modelId=${model4Session.id}`);
                 });
-                res.render('account/account.ejs', {account:req.session, serveurURLList, connectionCodeList, webSiteList, sessionList});
+                res.render('account/account.ejs', {account:req.session, serveurURLList, sessionIdList, modelIdList, connectionCodeList, webSiteList, sessionList});
             })
             .catch(e => {
                 logger.error(`error ${e}`);
