@@ -665,7 +665,7 @@ export default class Background {
             let exploration = this._exploration;
             return this._browserService.takeScreenshot(windowId)
                 .then(image => {
-                    console.log("Take Screenshot ", image)
+                    logger.debug("Take Screenshot ");
                     this._screenshotList.push(new Screenshot(image, exploration.length - 1));
                     if (this._recordActionByAction && this._serverURL && this._sessionId && this._exploration) {
                         this._aifexService.addScreenshotList(
@@ -675,6 +675,10 @@ export default class Background {
                             this._screenshotList
                         );
                     }
+                })
+                .catch((error) => {
+                    logger.error("cannot take screenshot", error);
+                    return Promise.resolve();
                 })
         } else {
             return Promise.resolve();

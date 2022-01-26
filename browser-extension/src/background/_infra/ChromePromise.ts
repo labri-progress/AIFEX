@@ -202,9 +202,10 @@ export function sendMessageToTab(message={}, messageKind : string, tabId: number
     });
 }
 
+const JPG_QUALITY = 10 ; //100 is best quality
 export function takeScreenshot(windowId : number): Promise<string> {
     return new Promise((resolve, reject) => {
-        chrome.tabs.captureVisibleTab(windowId, {format : "jpeg",quality : 100}, dataImage => {
+        chrome.tabs.captureVisibleTab(windowId, {format : "jpeg",quality : JPG_QUALITY}, dataImage => {
             const error = chrome.runtime.lastError;
             if (error) {
                 console.error(error);
