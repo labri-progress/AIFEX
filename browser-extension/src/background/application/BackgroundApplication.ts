@@ -83,7 +83,7 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 	}
 
 	takeScreenShot(): Promise<void> {
-		return this._background.takeScreenShot();
+		return this._background.takeScreenShot(undefined);
 	}
 
 	drawAttention(): Promise<void> {

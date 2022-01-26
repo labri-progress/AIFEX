@@ -406,7 +406,16 @@ export default class Background {
             ];
 
             if (this._takeAScreenshotByAction) {
-                promises.push(this.takeScreenShot());
+                let actions = this._exploration.actions;
+                if (actions.length === 1) {
+                    promises.push(this.takeScreenShot(actions.length-1));
+                } else {
+                    let currentAction = actions[actions.length-1];
+                    let lastAction = actions[actions.length-2];
+                    if (currentAction.kind !== lastAction.kind || currentAction.value !== lastAction.value) {
+                        promises.push(this.takeScreenShot(actions.length-1));
+                    }
+                }
             }
 
             if (this._recordActionByAction) {
@@ -659,14 +668,15 @@ export default class Background {
         return state;
     }
 
-    takeScreenShot(): Promise<void> {
+    takeScreenShot(interactionIndex: number | undefined): Promise<void> {
         let windowId = this._windowManager.getConnectedWindowId();
         if (windowId && this._exploration) {
             let exploration = this._exploration;
             return this._browserService.takeScreenshot(windowId)
                 .then(image => {
                     logger.debug("Take Screenshot ");
-                    this._screenshotList.push(new Screenshot(image, exploration.length - 1));
+                    let index = interactionIndex || exploration.actions.length-1;
+                    this._screenshotList.push(new Screenshot(image, index));
                     if (this._recordActionByAction && this._serverURL && this._sessionId && this._exploration) {
                         this._aifexService.addScreenshotList(
                             this._serverURL,
