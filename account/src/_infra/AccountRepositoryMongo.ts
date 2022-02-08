@@ -95,6 +95,7 @@ export default class AccountRepositoryMongo implements AccountRepository {
     public findAccountByUserName(username: string): Promise<Account | undefined> {
         return AccountModel.findOne({ username }).exec()
             .then((accountDocument: AccountDocument | null) => {
+                console.log(JSON.stringify(accountDocument))
                 if (accountDocument === null) {
                     return undefined;
                 }
