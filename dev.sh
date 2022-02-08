@@ -40,7 +40,7 @@ cd ..
 rm -rf .logs
 mkdir .logs
 
-echo ========================== PLUGIN COMPILATION ==================================
+echo ========================== BROWSER SCRIPT COMPILATION ==================================
 cd browser-script/ 
 npm install
 

@@ -155,6 +155,7 @@ module.exports = function attachRoutes(app, config) {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
                 res.render('session/view.ejs', {
+                    
                     account: req.session,
                     serverURL: buildInvitation(model.id, session.id),
                     session,
