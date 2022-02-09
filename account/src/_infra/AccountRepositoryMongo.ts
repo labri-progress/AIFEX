@@ -24,7 +24,7 @@ export default class AccountRepositoryMongo implements AccountRepository {
     }
 
     public updateAccountByAddingAuthorizationAndInvitation(account: Account): Promise<"AccountUpdated"> {
-        logger.debug("updateAccountByAddingAuthorizationAndInvitation:"+JSON.stringify(account));
+        logger.info("updateAccountByAddingAuthorizationAndInvitation:"+JSON.stringify(account));
         const username = account.username;
         const authorizationSet = account.authorizationSet.map((authorization) => {
             return {
@@ -32,7 +32,7 @@ export default class AccountRepositoryMongo implements AccountRepository {
                 key: authorization.key,
             };
         });
-        logger.debug("authorizationSet:"+JSON.stringify(authorizationSet));
+        logger.info("authorizationSet:"+JSON.stringify(authorizationSet));
         const receivedInvitationSet = account.receivedInvitationSet.map((invitation) => {
             return {
                 fromUsername: invitation.fromUsername,
@@ -53,7 +53,12 @@ export default class AccountRepositoryMongo implements AccountRepository {
                 }
             };
         });
-        return AccountModel.updateOne({ username }, { $addToSet: { authorizationSet, receivedInvitationSet, sentInvitationSet } })
+
+        return AccountModel.updateOne({ username }, { $addToSet: { 
+            authorizationSet: { $each: authorizationSet }, 
+            receivedInvitationSet: { $each: receivedInvitationSet }, 
+            sentInvitationSet: { $each: sentInvitationSet } 
+        } })
             .exec()
             .then(() => {
                 return "AccountUpdated";
