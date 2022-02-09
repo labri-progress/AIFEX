@@ -52,7 +52,7 @@ export default class Account {
 
     addAuthorization(newAuthorization: Authorization): "AuthorizationAdded" | "AuthorizationWasAlreadyThere" {
         if (!this._authorizationSet.find(authorization => authorization.key === newAuthorization.key)) {
-            logger.info(`Pushing authorization ${newAuthorization}`);
+            logger.info(`Pushing authorization ${JSON.stringify(newAuthorization)}`);
 
             this._authorizationSet.push(newAuthorization);
             return "AuthorizationAdded";

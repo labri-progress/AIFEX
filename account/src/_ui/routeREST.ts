@@ -333,6 +333,9 @@ function addAuthorization(accountService: AccountService, res: Response, usernam
                     message: result,
                 });
             }
+        }).catch(e => {
+            logger.error(`Failed to create authorization ${e}`);
+            res.status(INTERNAL_SERVER_ERROR_STATUS).send({ error: e });
         })
 }
 

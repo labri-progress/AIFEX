@@ -91,6 +91,8 @@ export default class AccountService {
                     return "IncorrectUsername";
                 } else {
                     let addResult = foundAccount.addAuthorization(authorization);
+                    logger.debug(`addResult ${JSON.stringify(addResult)}`);
+
                     if (addResult === "AuthorizationAdded") {
                         logger.debug(`persisting authorization ${JSON.stringify(authorization)} to ${username}`);
                         return this._accountRepository.updateAccountByAddingAuthorizationAndInvitation(foundAccount)
@@ -99,6 +101,8 @@ export default class AccountService {
                                 return "AuthorizationAdded";
                             })
                     } else {
+                        logger.debug(`Failed to add Authorization`);
+
                         return "AuthorizationWasAlreadyThere";
                     }
                 }
