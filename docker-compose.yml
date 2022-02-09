@@ -112,7 +112,9 @@ services:
     volumes:
       - db-data:/data/db
     command: --quiet --logpath /data/db/mongod.log
-    
+    ports:
+      - 27017:27017
+          
 volumes:
   screenshot:
   video:

@@ -22,7 +22,7 @@ export default function attachRoutes(app: Express, accountService: AccountServic
         if (email === undefined) {
             email = "nomail";
         }
-        logger.info(`signup`);
+        logger.info(`signup for ${username}`);
         accountService.signup(username, email, password)
             .then((result) => {
                 if (result === "UserNameAlreadyTaken") {

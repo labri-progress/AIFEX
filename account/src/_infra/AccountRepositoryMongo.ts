@@ -21,7 +21,6 @@ export default class AccountRepositoryMongo implements AccountRepository {
             .then(() => {
                 return "AccountCreated";
             });
-
     }
 
     public updateAccountByAddingAuthorizationAndInvitation(account: Account): Promise<"AccountUpdated"> {
@@ -95,7 +94,7 @@ export default class AccountRepositoryMongo implements AccountRepository {
     public findAccountByUserName(username: string): Promise<Account | undefined> {
         return AccountModel.findOne({ username }).exec()
             .then((accountDocument: AccountDocument | null) => {
-                console.log(JSON.stringify(accountDocument))
+                console.log("Account Document : ", JSON.stringify(accountDocument))
                 if (accountDocument === null) {
                     return undefined;
                 }
