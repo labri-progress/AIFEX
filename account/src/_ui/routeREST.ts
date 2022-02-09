@@ -90,6 +90,8 @@ export default function attachRoutes(app: Express, accountService: AccountServic
             res.status(INVALID_PARAMETERS_STATUS).send({ error: "username or webSiteIf are missing" });
         } else {
             const authorization = new Authorization(Kind.WebSite, webSiteId);
+            logger.info(`addwebsite, webSiteId : ${webSiteId})`);
+
             addAuthorization(accountService, res, username, authorization)
                 .catch((e) => {
                     logger.error(`addwebsite error ${e}`)

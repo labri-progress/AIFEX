@@ -92,7 +92,7 @@ export default class AccountService {
                 } else {
                     let addResult = foundAccount.addAuthorization(authorization);
                     if (addResult === "AuthorizationAdded") {
-                        logger.debug(`authorization ${JSON.stringify(authorization)} added to ${username}`);
+                        logger.debug(`persisting authorization ${JSON.stringify(authorization)} to ${username}`);
                         return this._accountRepository.updateAccountByAddingAuthorizationAndInvitation(foundAccount)
                             .then(() => {
                                 logger.debug(`account repository updated`);
