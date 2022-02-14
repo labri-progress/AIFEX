@@ -100,7 +100,7 @@ describe("Domain - Session", () => {
             });
 
             it("should add a second observation to an exploration", () => {
-                session.addobservationToExploration(explorationNumber, observation2);
+                session.addObsersationToExploration(explorationNumber, observation2);
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
                 expect(interactionList.length).to.eql(3);
                 expect((<ObservationInteraction>interactionList[2]).observation).to.equal(observation2);
@@ -108,7 +108,7 @@ describe("Domain - Session", () => {
 
             it("should add a observation on a new action", () => {
                 session.addInteractionListToExploration(explorationNumber, [action2]);
-                session.addobservationToExploration(explorationNumber, observation3);
+                session.addObsersationToExploration(explorationNumber, observation3);
 
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
                 expect(interactionList.length).to.eql(5);

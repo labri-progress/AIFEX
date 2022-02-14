@@ -193,7 +193,7 @@ describe("Model", () => {
             headers: { "Content-Type": "application/json" },
         })
         .then((res) => {
-            // tslint:disable-next-line: no-unused-expression
+            // tslint:disable-next-line: no-unused-expressions
             expect(res.ok).to.be.true;
             return res.json();
         })

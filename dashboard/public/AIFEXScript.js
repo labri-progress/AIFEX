@@ -280,7 +280,7 @@ function normalizeSelector(sel) {
       /\s+|\/\*|["'[\]()]/g, // [..] set
       /\s+|\/\*|["'[\]()]/g, // (..) set
       null, // string literal (placeholder)
-      /\*\//g, // observation
+      /\*\//g, // comment
     ];
   sel = sel.trim();
 
@@ -323,7 +323,7 @@ function normalizeSelector(sel) {
           state.push(3);
           state_patterns[3] = new RegExp(match[0], "g");
         }
-        // starting a observation?
+        // starting a comment?
         else if (match[0] === "/*") {
           state.push(4);
         }
@@ -361,23 +361,23 @@ function normalizeSelector(sel) {
         // save matched text
         tokens.push(match[0]);
       }
-      // otherwise, string literal or observation
+      // otherwise, string literal or comment
       else {
         // save unmatched text
         tokens[tokens.length - 1] += unmatched;
 
-        // unescaped terminator to string literal or observation?
+        // unescaped terminator to string literal or comment?
         if (not_escaped_pattern.test(tokens[tokens.length - 1])) {
-          // observation terminator?
+          // comment terminator?
           if (state[state.length - 1] === 4) {
-            // ok to drop observation?
+            // ok to drop comment?
             if (
               tokens.length < 2 ||
               whitespace_pattern.test(tokens[tokens.length - 2])
             ) {
               tokens.pop();
             }
-            // otherwise, turn observation into whitespace
+            // otherwise, turn comment into whitespace
             else {
               tokens[tokens.length - 1] = " ";
             }
@@ -4056,9 +4056,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         for (var i = 0; i < maxLines; ++i) {
             // lineNo is 1-based, source[] is 0-based
             var line = lines[lineNumber - i - 1];
-            var observationPos = line.indexOf('//');
-            if (observationPos >= 0) {
-                line = line.substr(0, observationPos);
+            var commentPos = line.indexOf('//');
+            if (commentPos >= 0) {
+                line = line.substr(0, commentPos);
             }
 
             if (line) {
@@ -7635,7 +7635,7 @@ var CategoryConfiguration = (function () {
     });
     Object.defineProperty(CategoryConfiguration.prototype, "formatterLogMessage", {
         /**
-         * Get the formatterLogMessage function, see observation on the setter.
+         * Get the formatterLogMessage function, see comment on the setter.
          * @returns {((message:CategoryLogMessage)=>string)|null}
          */
         get: function () {
@@ -9012,7 +9012,7 @@ var LogGroupRule = (function () {
     });
     Object.defineProperty(LogGroupRule.prototype, "formatterLogMessage", {
         /**
-         * Get the formatterLogMessage function, see observation on the setter.
+         * Get the formatterLogMessage function, see comment on the setter.
          * @returns {((message:LogMessage)=>string)|null}
          */
         get: function () {
