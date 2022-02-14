@@ -1,4 +1,4 @@
-export default class Comment {
+export default class Observation {
     public readonly kind: string;
     public readonly value: string;
 

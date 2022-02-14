@@ -1,6 +1,5 @@
 import { generate } from "shortid";
-import Comment from "../domain/Comment";
-import Action from "./Action";
+import Observation from "./Observation";
 import Exploration from "./Exploration";
 import { RecordingMode } from "./RecordingMode";
 import Interaction from "./Interaction";
@@ -126,12 +125,12 @@ export default class Session {
         this._explorationList[explorationNumber].stop(stopDate);
     }
 
-    public addCommentToExploration(explorationNumber: number, comment: Comment): void {
+    public addObsersationToExploration(explorationNumber: number, observation: Observation): void {
         if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
-            throw new Error("cannot add comment to exploration, wrong explorationNumber.");
+            throw new Error("cannot add observation to exploration, wrong explorationNumber.");
         }
         const exploration = this._explorationList[explorationNumber];
-        exploration.addComment(comment);
+        exploration.addObservation(observation);
     }
 
     public addInteractionListToExploration(explorationNumber: number, interactionList: Interaction[]): void {

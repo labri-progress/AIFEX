@@ -1,27 +1,27 @@
-export default class CommentDistribution {
+export default class ObservationDistribution {
 
-    private _comment: string;
+    private _observation: string;
     private _distributions : {
-        commentOccurence: number,
+        observationOccurence: number,
         contextOccurece: number,
         context: string[]
     }[];
 
-    constructor(comment: string, distributions : {
-        commentOccurence: number,
+    constructor(observation: string, distributions : {
+        observationOccurence: number,
         contextOccurece: number,
         context: string[]
     }[]) {
-        this._comment = comment;
+        this._observation = observation;
         this._distributions = distributions;
     }
 
-    get comment() : string {
-        return this._comment;
+    get observation() : string {
+        return this._observation;
     }
 
     get distributions() : {
-        commentOccurence: number,
+        observationOccurence: number,
         contextOccurece: number,
         context: string[]
     }[] {

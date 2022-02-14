@@ -1,11 +1,11 @@
-import Comment from "./Comment";
+import Observation from "./Observation";
 import Action from "./Action";
 
 export default class Exploration {
 
     private _startDate : Date;
     private _stopDate : Date | undefined;
-    private _actions: (Action | Comment )[];
+    private _actions: (Action | Observation )[];
     private _explorationNumber: number;
     private _hasBeenUpdated: boolean;
 
@@ -28,7 +28,7 @@ export default class Exploration {
         return this._actions.filter(interaction => interaction instanceof Action) as Action[];
     }
 
-    get actionsAndComments(): (Action | Comment)[] {
+    get actionsAndObservations(): (Action | Observation)[] {
         return this._actions;
     }
 
@@ -63,9 +63,9 @@ export default class Exploration {
         }
     }
 
-    addComment(comment: Comment): void{
-        comment.index = this._actions.length;
-        this._actions.push(comment);
+    addObservation(observation: Observation): void{
+        observation.index = this._actions.length;
+        this._actions.push(observation);
     }
 
     setStopDate(): void {

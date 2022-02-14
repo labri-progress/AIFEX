@@ -38,38 +38,38 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% comments.forEach((comment) => { %>
+                        <% observations.forEach((observation) => { %>
                             <tr>
                                 <td>
-                                    <a href="/open/session/<%=connectionCode%>/exploration/<%=comment.explorationNumber%>/comment/<%=comment.index%>">
-                                        <%=connectionCode %>_<%=comment.explorationNumber%>_<%=comment.index%>
+                                    <a href="/open/session/<%=connectionCode%>/exploration/<%=observation.explorationNumber%>/observation/<%=observation.index%>">
+                                        <%=connectionCode %>_<%=observation.explorationNumber%>_<%=observation.index%>
                                     </a>
                                 </td>
                                 <td>
-                                    <%= comment.kind %>
+                                    <%= observation.kind %>
                                 </td>
                                 <td>
-                                    <%= comment.value %>
+                                    <%= observation.value %>
                                 </td>
                                 <td>
-                                    <%= (new Date(comment.date)).toUTCString() %>
+                                    <%= (new Date(observation.date)).toUTCString() %>
                                 </td>
                                 <td scope="row">
-                                    <%= comment.testerName %>
+                                    <%= observation.testerName %>
                                 </td>
                                 <td>
-                                    <% if (screenshot.screenshotList.some(sc=> sc.explorationNumber == comment.explorationNumber && sc.interactionIndex == comment.index)) { %>
-                                        <a href="/static/screenshot/<%=session.id%>_<%=comment.explorationNumber%>_<%=comment.index%>.jpg"><i class="fas fa-image" style="color:red"></i></a>
+                                    <% if (screenshot.screenshotList.some(sc=> sc.explorationNumber == observation.explorationNumber && sc.interactionIndex == observation.index)) { %>
+                                        <a href="/static/screenshot/<%=session.id%>_<%=observation.explorationNumber%>_<%=observation.index%>.jpg"><i class="fas fa-image" style="color:red"></i></a>
                                     <% } else { %>
                                             <i class="fas fa-image"></i>
                                     <% } %>
                                 </td>
                                 <td>
-                                    <button class="btn btn-primary" onclick="showExploration(<%=comment.explorationNumber%>)"> Show Exploration </button>
+                                    <button class="btn btn-primary" onclick="showExploration(<%=observation.explorationNumber%>)"> Show Exploration </button>
                                 </td>
                                 <td>
-                                    <% if (video.videoList.some(vi=> vi == comment.explorationNumber)) { %>
-                                        <a href="/static/video/<%=session.id%>_<%=comment.explorationNumber%>.webm"><i class="fas fa-video" style="color:red"></i></a>
+                                    <% if (video.videoList.some(vi=> vi == observation.explorationNumber)) { %>
+                                        <a href="/static/video/<%=session.id%>_<%=observation.explorationNumber%>.webm"><i class="fas fa-video" style="color:red"></i></a>
                                     <% } else { %>
                                         <i class="fas fa-video-slash"></i>
                                     <% } %>

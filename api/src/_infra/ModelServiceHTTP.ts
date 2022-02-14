@@ -1,4 +1,4 @@
-import CommentDistribution from "../domain/CommentDistribution";
+import ObservationDistribution from "../domain/ObservationDistribution";
 import Interaction from "../domain/Action";
 import Model from "../domain/Model";
 import { ModelPredictionType } from "../domain/ModelPredictionType";
@@ -121,8 +121,8 @@ export default class ModelServiceHTTP implements ModelService {
     }
 
 
-    getCommentDistributions(modelId: string, interactionList: Interaction[]): Promise<Map<string,CommentDistribution[]>> {
-        const ModelComputeURL = MODEL_URL + modelId + '/getcommentdistributions';
+    getObservationDistributions(modelId: string, interactionList: Interaction[]): Promise<Map<string,ObservationDistribution[]>> {
+        const ModelComputeURL = MODEL_URL + modelId + '/getobservationdistributions';
         let optionModelCompute = {
             method: 'POST',
             body:    JSON.stringify({interactionList}),
@@ -133,11 +133,11 @@ export default class ModelServiceHTTP implements ModelService {
                 if (response.ok) {
                     return response.json()
                         .then(dataArray => {
-                            let commentDistributions : Map<string,CommentDistribution[]> = new Map();
+                            let observationDistributions : Map<string,ObservationDistribution[]> = new Map();
                             dataArray.forEach((data: { note: string; distributions: any[]; })  => {
-                                commentDistributions.set(data.note, data.distributions.map((d) => new CommentDistribution(d.context, d.noteOccurence, d.contextOccurence)));
+                                observationDistributions.set(data.note, data.distributions.map((d) => new ObservationDistribution(d.context, d.noteOccurence, d.contextOccurence)));
                             });
-                            return commentDistributions;
+                            return observationDistributions;
                         });
                 } else {
                     return new Map();

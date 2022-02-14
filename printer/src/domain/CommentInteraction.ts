@@ -1,20 +1,20 @@
-import Comment from "./Comment";
+import Observation from "./Observation";
 import Interaction from "./Interaction";
 
 // Value Object
-export default class CommentInteraction extends Interaction {
-    public readonly comment: Comment;
+export default class ObservationInteraction extends Interaction {
+    public readonly observation: Observation;
 
-    constructor(index: number, comment: Comment) {
+    constructor(index: number, observation: Observation) {
         super(index);
-        this.comment = comment;
+        this.observation = observation;
     }
 
     public toString(): string {
-        if (this.comment.value) {
-            return `${this.comment.kind}$${this.comment.value}`;
+        if (this.observation.value) {
+            return `${this.observation.kind}$${this.observation.value}`;
         } else {
-            return this.comment.kind;
+            return this.observation.kind;
         }
     }
 }

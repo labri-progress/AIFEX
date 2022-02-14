@@ -1,4 +1,4 @@
-export default class Comment {
+export default class Observation {
     public readonly index: number;
     public readonly prefix: string;
     public readonly suffix: string;

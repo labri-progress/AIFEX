@@ -109,20 +109,20 @@
             </button>
 
 
-            <div class="aifex_component" id="commentSubComponent">
-                <h3>Post a Bug Report <span id="read-comment-button"><i class="fa fa-commenting"
-                            title="Read Comment"></i> Read existing bug reports !</span></h3>
+            <div class="aifex_component" id="obsersationSubComponent">
+                <h3>Post a Bug Report <span id="read-obsersation-button"><i class="fa fa-obsersationing"
+                            title="Read Obsersation"></i> Read existing bug reports !</span></h3>
 
-                <div id="comment-list"></div>
+                <div id="obsersation-list"></div>
 
-                <button id="comment-button" class="aifex_large_button">
-                    <i class="fa fa-comment" title="Add a Comment"></i> <span>Add a new bug report</span>
+                <button id="obsersation-button" class="aifex_large_button">
+                    <i class="fa fa-obsersation" title="Add a Obsersation"></i> <span>Add a new bug report</span>
                 </button>
-                <form id="commentForm">
+                <form id="obsersationForm">
 
                     <div class="aifex_form_element">
-                        <label htmlFor="commentType">Severity</label>
-                        <select class="custom-select" id="commentType">
+                        <label htmlFor="obsersationType">Severity</label>
+                        <select class="custom-select" id="obsersationType">
                             <option value="not defined">--not defined--</option>
                             <option value="Blocker">Blocker</option>
                             <option value="Critical">Critical</option>
@@ -133,21 +133,21 @@
                         </select>
                     </div>
                     <div class="aifex_form_element">
-                        <label htmlFor="commentDescription">Description</label>
-                        <textarea class="form-control" rows="4" placeholder="Comment's description"
-                            id="commentDescription"></textarea>
+                        <label htmlFor="obsersationDescription">Description</label>
+                        <textarea class="form-control" rows="4" placeholder="Obsersation's description"
+                            id="obsersationDescription"></textarea>
                     </div>
                     <div class="aifex_check_element">
-                        <input class="form-check-input" type="checkbox" id="commentScreenshot" name="commentScreenshot" checked>
-                        <label htmlFor="commentScreenshot" class="form-check-label">Attach Screenshot</label>
+                        <input class="form-check-input" type="checkbox" id="obsersationScreenshot" name="obsersationScreenshot" checked>
+                        <label htmlFor="obsersationScreenshot" class="form-check-label">Attach Screenshot</label>
                     </div>
                     <div class="aifex_button_group">
-                        <div id="commentIsSubmitted" class="aifex_checked_text">
+                        <div id="obsersationIsSubmitted" class="aifex_checked_text">
                             <i class="fa fa-check" style="color: green;"></i>
                             <span>Bug Report registered</span>
                         </div>
-                        <button type="submit" id="submit-comment" class="aifex_button">Submit</button>
-                        <button id="clearComment" class="aifex_button"> Clear</button>
+                        <button type="submit" id="submit-obsersation" class="aifex_button">Submit</button>
+                        <button id="clearObsersation" class="aifex_button"> Clear</button>
                     </div>
                 </form>
             </div>

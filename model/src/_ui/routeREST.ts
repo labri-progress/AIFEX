@@ -138,7 +138,7 @@ export default function attachRoutes(app: Express, modelService: ModelService): 
             }
             if (interaction.concreteType === "Action") {
                 seq.addStimulus(new Stimulus(value));
-            } else if (interaction.concreteType === "Comment") {
+            } else if (interaction.concreteType === "Observation") {
                 seq.addNote(new Note(value));
             }
         });
@@ -154,10 +154,10 @@ export default function attachRoutes(app: Express, modelService: ModelService): 
             });
     });
 
-    app.post("/model/:modelId/getcommentdistributions", (req, res) => {
+    app.post("/model/:modelId/getobservationdistributions", (req, res) => {
         const { interactionList } = req.body;
         const { modelId } = req.params;
-        logger.info(`getcommentlist for modelId:${modelId}, ${interactionList}`);
+        logger.info(`getobservationlist for modelId:${modelId}, ${interactionList}`);
 
         if (modelId === undefined) {
             logger.warn(`modelId must not be undefined`);
@@ -193,11 +193,11 @@ export default function attachRoutes(app: Express, modelService: ModelService): 
                         })),
                     });
                 });
-                logger.debug(`commentlist is returned`);
+                logger.debug(`observationlist is returned`);
                 return res.json(data);
             })
             .catch((e) => {
-                logger.error(`getcommentlist error ${e}`);
+                logger.error(`getobservationlist error ${e}`);
                 res.status(INTERNAL_SERVER_ERROR_STATUS).send("error");
             });
     });

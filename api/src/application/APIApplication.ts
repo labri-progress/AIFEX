@@ -13,9 +13,9 @@ import Model from "../domain/Model";
 import ModelService from "../domain/ModelService";
 import { ModelPredictionType } from "../domain/ModelPredictionType";
 import Video from "../domain/Video";
-import CommentDistribution from "../domain/CommentDistribution";
+import ObservationDistribution from "../domain/ObservationDistribution";
 import Ngram from "../domain/Ngram";
-import Comment from "../domain/Comment";
+import Observation from "../domain/Observation";
 import EvaluatorService from "../domain/EvaluatorService";
 import Evaluator from "../domain/Evaluator";
 import Evaluation from "../domain/Evaluation";
@@ -306,7 +306,7 @@ export default class APIApplication {
             });
     }
 
-    addExploration(sessionId: string, testerName: string, interactionList: (Action | Comment)[], startDate?: Date, stopDate?: Date, token?: Token): Promise<"Unauthorized" | number> {
+    addExploration(sessionId: string, testerName: string, interactionList: (Action | Observation)[], startDate?: Date, stopDate?: Date, token?: Token): Promise<"Unauthorized" | number> {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
             .then(([isPublic, maybeAccount]) => {
                 let authorized = false;
@@ -325,7 +325,7 @@ export default class APIApplication {
             });
     }
 
-    addInteractions(sessionId: string, explorationNumber: number, interactionList: (Action | Comment)[], token?: Token): Promise<"InteractionsAdded" | "ExplorationNotFound" | "Unauthorized"> {
+    addInteractions(sessionId: string, explorationNumber: number, interactionList: (Action | Observation)[], token?: Token): Promise<"InteractionsAdded" | "ExplorationNotFound" | "Unauthorized"> {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
         .then(([isPublic, maybeAccount]) => {
             let authorized = false;
@@ -521,7 +521,7 @@ export default class APIApplication {
                 }
             });    }
 
-    computeProbabilities(modelId: string, interactionList: (Action | Comment)[], token?: Token): Promise<"Unauthorized" | Map<string,number>> {
+    computeProbabilities(modelId: string, interactionList: (Action | Observation)[], token?: Token): Promise<"Unauthorized" | Map<string,number>> {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Model, modelId), this.getAccount(token)])
             .then(([isPublic, maybeAccount]) => {
                 let authorized = false;
@@ -540,7 +540,7 @@ export default class APIApplication {
             });
     }
 
-    getCommentDistributions(modelId: string, interactionList: (Action | Comment)[], token?: Token): Promise<"Unauthorized" | Map<string,CommentDistribution[]>> {
+    getObservationDistributions(modelId: string, interactionList: (Action | Observation)[], token?: Token): Promise<"Unauthorized" | Map<string,ObservationDistribution[]>> {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Model, modelId), this.getAccount(token)])
             .then(([isPublic, maybeAccount]) => {
                 let authorized = false;
@@ -551,7 +551,7 @@ export default class APIApplication {
                     invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
                 }
                 if (isPublic || authorized || invited) {
-                    return this._modelService.getCommentDistributions(modelId, interactionList)
+                    return this._modelService.getObservationDistributions(modelId, interactionList)
                             .then((result) => result);
                 } else {
                     return "Unauthorized";

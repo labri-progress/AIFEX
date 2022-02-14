@@ -17,7 +17,7 @@ let browser;
 let connexionId;
 let extensionId;
 
-describe("Comments", () => {
+describe("Observations", () => {
 
     describe('initialize connexion', () => {
         let page;
@@ -99,22 +99,22 @@ describe("Comments", () => {
     })
 
 
-    describe('Comments', () => {
+    describe('Observations', () => {
         let pageCDiscount;
         let pageExtension;
 
-        const COMMENT_DESCRIPTION_SELECTOR = '#commentDescription';
-        const SUBMIT_COMMENT_SELECTOR = "#submitComment"
-        const CLEAR_COMMENT_SELECTOR = "#clearComment"
-        const COMMENT_TYPE_SELECT_SELECTOR = "#commentType"
-        const COMMENT_SUCCESSFUL = "#commentSuccessul"
+        const COMMENT_DESCRIPTION_SELECTOR = '#observationDescription';
+        const SUBMIT_COMMENT_SELECTOR = "#submitObservation"
+        const CLEAR_COMMENT_SELECTOR = "#clearObservation"
+        const COMMENT_TYPE_SELECT_SELECTOR = "#observationType"
+        const COMMENT_SUCCESSFUL = "#observationSuccessul"
         const RELOAD = "#play-restart"
         const START = "#play-button"
         const STOP = "#stop-button"
-        const COMMENT = "Test comment"
+        const COMMENT = "Test observation"
         const SEARCH_BAR_SELECTOR = '#hFull > div.hSearch > div.hSrcInput > input';
-        const COMMENT_POPUP_HEADER = "#commentSectionHeader"
-        const COMMENT_POPUP_BODY = "#commentSectionBody"
+        const COMMENT_POPUP_HEADER = "#observationSectionHeader"
+        const COMMENT_POPUP_BODY = "#observationSectionBody"
         const INIT_SELECTOR = '#initialize';
         const CONNECT_SELECTOR = '#connectionCodeInput';
         const SIGNIN_SELECTOR = '#connectionSignIn';
@@ -155,7 +155,7 @@ describe("Comments", () => {
                 await pageCDiscount.click(SEARCH_BAR_SELECTOR)
         });    
 
-        it ('In Extension page should write a comment and click on submit', async() => {
+        it ('In Extension page should write a observation and click on submit', async() => {
             await pageExtension.bringToFront()
 
             await pageExtension.waitFor(COMMENT_DESCRIPTION_SELECTOR, {visible:true});
@@ -166,7 +166,7 @@ describe("Comments", () => {
             await pageExtension.click(SUBMIT_COMMENT_SELECTOR)
             await pageExtension.waitFor(COMMENT_SUCCESSFUL, {visible:true});
             let text = await pageExtension.$eval(COMMENT_SUCCESSFUL, mes => mes.innerText);
-            expect(text.trim()).to.eql("Comment registered")
+            expect(text.trim()).to.eql("Observation registered")
         });
 
        /* it ('In Extension page should reload and in CDiscount click on search bar', async() => {
@@ -186,7 +186,7 @@ describe("Comments", () => {
             await pageCDiscount.waitFor(COMMENT_POPUP_HEADER);
 
             let text = await pageCDiscount.$eval(COMMENT_POPUP_HEADER, mes => mes.innerText);
-            expect(text.trim()).to.eql("Comments : 1")
+            expect(text.trim()).to.eql("Observations : 1")
         } catch (e) {
             console.error(e)
         }

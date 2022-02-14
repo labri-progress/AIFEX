@@ -2180,7 +2180,7 @@
                     "value": "0"
                 },
                 {
-                    "concreteType": "Comment",
+                    "concreteType": "Observation",
                     "index": 3,
                     "kind": "Minor",
                     "value": "résultat de la recherche volant ps 4 trustmaster 150 pro approximatifs"
@@ -2233,7 +2233,7 @@
                     "value": "0"
                 },
                 {
-                    "concreteType": "Comment",
+                    "concreteType": "Observation",
                     "index": 3,
                     "kind": "Minor",
                     "value": "résultat de la recherche volat ps 4 trustmaster 150 pro approximatifs"
@@ -2268,7 +2268,7 @@
                     "value": "0"
                 },
                 {
-                    "concreteType": "Comment",
+                    "concreteType": "Observation",
                     "index": 3,
                     "kind": "Minor",
                     "value": "résultat de la recherche volat ps 4 trustmaster 150 pro approximatifs"
@@ -2317,7 +2317,7 @@
                     "value": "0"
                 },
                 {
-                    "concreteType": "Comment",
+                    "concreteType": "Observation",
                     "index": 4,
                     "kind": "Low",
                     "value": "ca rame"

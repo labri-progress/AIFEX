@@ -100,7 +100,7 @@
                     <div class="col-sm-6">
                         <div class="card" >
                             <div class="card-body">
-                                <a href="/dashboard/session/<%=connectionCode %>/comments"><canvas id="bugReportChart"></canvas></a>
+                                <a href="/dashboard/session/<%=connectionCode %>/observations"><canvas id="bugReportChart"></canvas></a>
                                 <script>
                                     const bugReportChartCanvas = document.getElementById('bugReportChart');
                                     const numbOfEnhancement = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.kind == 'Enhancement')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
@@ -145,7 +145,7 @@
                                                 },
                                                 title: {
                                                     display: true,
-                                                    text: '<%= session.explorationList.map(explo => explo.interactionList.filter(interaction => interaction.concreteType === "Comment")).reduce((acc, curr) => acc+curr.length, 0) %> Bug Reports',
+                                                    text: '<%= session.explorationList.map(explo => explo.interactionList.filter(interaction => interaction.concreteType === "Observation")).reduce((acc, curr) => acc+curr.length, 0) %> Bug Reports',
                                                     font: {
                                                         size: 26
                                                     }

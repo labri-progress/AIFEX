@@ -32,15 +32,15 @@ export function makeCSS() {
     margin-left: 5px;
   }
   
-  .popupCommentType{
+  .popupObservationType{
     color: rgb(241, 250, 140)
   }
   
-  .popupCommentDescription{
+  .popupObservationDescription{
     color: rgb(238, 238, 238);
   }
   
-  .comment{
+  .observation{
     padding-left: 30px
   }
   

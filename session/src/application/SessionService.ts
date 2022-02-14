@@ -1,9 +1,7 @@
 import Action from "../domain/Action";
 import ActionInteraction from "../domain/ActionInteraction";
-import Answer from "../domain/Answer";
-import AnswerInteraction from "../domain/AnswerInteraction";
-import Comment from "../domain/Comment";
-import CommentInteraction from "../domain/CommentInteraction";
+import Observation from "../domain/Observation";
+import ObersationInteraction from "../domain/ObservationInteraction";
 import Exploration from "../domain/Exploration";
 import Interaction from "../domain/Interaction";
 import { RecordingMode } from "../domain/RecordingMode";
@@ -165,7 +163,7 @@ export default class SessionService {
 
     public addExploration(sessionId: string,
                           testerName: string | undefined,
-                          interactionListData: Array<{index: number, concreteType: string, kind: string, value: string, date?: Date}>,
+                          interactionListData: Array<{index: number, concreteType: "Action" | "Observation", kind: string, value: string, date?: Date}>,
                           startDate?:Date,
                           stopDate?:Date,
                           ): Promise<number> {
@@ -204,11 +202,8 @@ export default class SessionService {
                                 if (interaction.concreteType === "Action") {
                                     interactionList.push(new ActionInteraction(interaction.index, new Action(interaction.kind, interaction.value), interaction.date));
                                 }
-                                if (interaction.concreteType === "Comment") {
-                                    interactionList.push(new CommentInteraction(interaction.index, new Comment(interaction.kind, interaction.value), interaction.date));
-                                }
-                                if (interaction.concreteType === "Answer") {
-                                    interactionList.push(new AnswerInteraction(interaction.index, new Answer(interaction.kind, interaction.value), interaction.date));
+                                if (interaction.concreteType === "Observation") {
+                                    interactionList.push(new ObersationInteraction(interaction.index, new Observation(interaction.kind, interaction.value), interaction.date));
                                 }
                             });
                         session.addInteractionListToExploration(explorationNumber, interactionList);
@@ -236,7 +231,7 @@ export default class SessionService {
 
     pushActionList(sessionId: string, explorationNumber: number, interactionListData: Array<{
             index: number, 
-            concreteType: string, 
+            concreteType: "Action" | "Observation", 
             kind: string, 
             value: string, 
             date?: Date}>,
@@ -253,11 +248,8 @@ export default class SessionService {
                                 if (interaction.concreteType === "Action") {
                                     return new ActionInteraction(interaction.index, new Action(interaction.kind, interaction.value), interaction.date);
                                 }
-                                if (interaction.concreteType === "Comment") {
-                                    return new CommentInteraction(interaction.index, new Comment(interaction.kind, interaction.value), interaction.date);
-                                }
-                                if (interaction.concreteType === "Answer") {
-                                    return new AnswerInteraction(interaction.index, new Answer(interaction.kind, interaction.value), interaction.date);                                
+                                if (interaction.concreteType === "Observation") {
+                                    return new ObersationInteraction(interaction.index, new Observation(interaction.kind, interaction.value), interaction.date);
                                 }
                                 else {
                                     throw new Error(`Invalid Type of interaction ${interaction.concreteType}`)

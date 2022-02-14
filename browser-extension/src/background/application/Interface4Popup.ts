@@ -34,7 +34,7 @@ export default interface Interface4Popup {
 
     changeTesterName(newName: string): Promise<void>;
 
-    addCommentToExploration(kind: string , message: string): void;
+    addObservationToExploration(kind: string , message: string): void;
 
     takeScreenShot(): Promise<void>;
 
@@ -48,7 +48,7 @@ export default interface Interface4Popup {
 
     setShouldOpenPrivateWindow(shouldCreatePrivateWindow: boolean): void;
 
-    upComment(type: string, value: string): void;
+    upObservation(type: string, value: string): void;
 
     showConfig(): void;
 

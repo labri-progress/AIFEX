@@ -5,10 +5,10 @@ import AifexPluginInfo from "./AifexPluginInfo";
 import ExplorationEvaluation from "./ExplorationEvaluation";
 import Evaluator from "./Evaluator";
 import Screenshot from "./Screenshot";
-import CommentDistribution from "./CommentDistribution";
+import ObservationDistribution from "./ObservationDistribution";
 import Token from "./Token";
 import Action from "./Action";
-import Comment from "./Comment";
+import Observation from "./Observation";
 
 export default interface AifexService {
 	ping(serverURL: string): Promise<void>;
@@ -40,11 +40,11 @@ export default interface AifexService {
 
 	createEmptyExploration(serverURL: string, sessionId: string, testerName :string): Promise<number>;
 
-	pushActionOrCommentList(serverURL: string, sessionId: string, explorationNumber: number, actionOrCommentList: (Action|Comment)[]): Promise<void>;
+	pushActionOrObservationList(serverURL: string, sessionId: string, explorationNumber: number, actionOrObservationList: (Action|Observation)[]): Promise<void>;
 
 	notifySubmissionAttempt(serverURL: string, sessionId: string, explorationNumber: number): Promise<void>;
 
-	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration, token?:Token): Promise<CommentDistribution[] | undefined> ;
+	getObservationDistributions(serverURL: string, modelId: string, exploration: Exploration, token?:Token): Promise<ObservationDistribution[] | undefined> ;
 
 	addScreenshotList(serverURL: string, sessionId: string, explorationNumber : number, list : Screenshot[]): Promise<void> ;
 

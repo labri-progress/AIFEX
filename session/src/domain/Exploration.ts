@@ -1,7 +1,7 @@
 import Action from "./Action";
 import ActionInteraction from "./ActionInteraction";
-import Comment from "./Comment";
-import CommentInteraction from "./CommentInteraction";
+import Observation from "./Observation";
+import ObersationInteraction from "./ObservationInteraction";
 import Interaction from "./Interaction";
 import Tester from "./Tester";
 
@@ -66,11 +66,11 @@ export default class Exploration {
         this._interactionList.push(new ActionInteraction(this._interactionList.length, action));
     }
 
-    public addComment(comment: Comment): void {
+    public addObservation(observation: Observation): void {
         if (this.isStopped) {
-            throw new Error("cannot add comment to exploration, exploration is stopped");
+            throw new Error("cannot add observation to exploration, exploration is stopped");
         }
-        this._interactionList.push(new CommentInteraction(this._interactionList.length, comment));
+        this._interactionList.push(new ObersationInteraction(this._interactionList.length, observation));
     }
 
     public addInteractionList(interactionList: Interaction[]): void {

@@ -4369,7 +4369,7 @@ debugging or experimenting. This page lists the available switches including the
 		</tr>
 		<tr id="process-per-site">
 		  <td>--process-per-site <a href="https://peter.sh/experiments/chromium-command-line-switches/#process-per-site" class="refer">⊗</a></td>
-		  <td>Enable the "Process Per Site" process model for all domains. This mode consolidates same-site pages so that they share a single process.  More details here: - https://www.chromium.org/developers/design-documents/process-models - The class comment in site_instance.h, listing the supported process models.  IMPORTANT: This isn't to be confused with --site-per-process (which is about isolation, not consolidation). You probably want the other one. <a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/public/common/content_switches.cc&amp;q=kProcessPerSite&amp;sq=package:chromium&amp;type=cs" class="refer">↪</a></td>
+		  <td>Enable the "Process Per Site" process model for all domains. This mode consolidates same-site pages so that they share a single process.  More details here: - https://www.chromium.org/developers/design-documents/process-models - The class observation in site_instance.h, listing the supported process models.  IMPORTANT: This isn't to be confused with --site-per-process (which is about isolation, not consolidation). You probably want the other one. <a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/public/common/content_switches.cc&amp;q=kProcessPerSite&amp;sq=package:chromium&amp;type=cs" class="refer">↪</a></td>
 		</tr>
 		<tr id="process-per-tab">
 		  <td>--process-per-tab <a href="https://peter.sh/experiments/chromium-command-line-switches/#process-per-tab" class="refer">⊗</a></td>
@@ -4881,7 +4881,7 @@ debugging or experimenting. This page lists the available switches including the
 		</tr>
 		<tr id="site-per-process">
 		  <td>--site-per-process <a href="https://peter.sh/experiments/chromium-command-line-switches/#site-per-process" class="refer">⊗</a></td>
-		  <td>Enforces a one-site-per-process security policy: * Each renderer process, for its whole lifetime, is dedicated to rendering pages for just one site. * Thus, pages from different sites are never in the same process. * A renderer process's access rights are restricted based on its site. * All cross-site navigations force process swaps. * &lt;iframe&gt;s are rendered out-of-process whenever the src= is cross-site.  More details here: - https://www.chromium.org/developers/design-documents/site-isolation - https://www.chromium.org/developers/design-documents/process-models - The class comment in site_instance.h, listing the supported process models.  IMPORTANT: this isn't to be confused with --process-per-site (which is about process consolidation, not isolation). You probably want this one. <a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/public/common/content_switches.cc&amp;q=kSitePerProcess&amp;sq=package:chromium&amp;type=cs" class="refer">↪</a></td>
+		  <td>Enforces a one-site-per-process security policy: * Each renderer process, for its whole lifetime, is dedicated to rendering pages for just one site. * Thus, pages from different sites are never in the same process. * A renderer process's access rights are restricted based on its site. * All cross-site navigations force process swaps. * &lt;iframe&gt;s are rendered out-of-process whenever the src= is cross-site.  More details here: - https://www.chromium.org/developers/design-documents/site-isolation - https://www.chromium.org/developers/design-documents/process-models - The class observation in site_instance.h, listing the supported process models.  IMPORTANT: this isn't to be confused with --process-per-site (which is about process consolidation, not isolation). You probably want this one. <a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/public/common/content_switches.cc&amp;q=kSitePerProcess&amp;sq=package:chromium&amp;type=cs" class="refer">↪</a></td>
 		</tr>
 		<tr id="skia-font-cache-limit-mb">
 		  <td>--skia-font-cache-limit-mb <a href="https://peter.sh/experiments/chromium-command-line-switches/#skia-font-cache-limit-mb" class="refer">⊗</a></td>
@@ -5361,7 +5361,7 @@ debugging or experimenting. This page lists the available switches including the
 		</tr>
 		<tr id="use-file-for-fake-video-capture">
 		  <td>--use-file-for-fake-video-capture <a href="https://peter.sh/experiments/chromium-command-line-switches/#use-file-for-fake-video-capture" class="refer">⊗</a></td>
-		  <td>Use an .y4m file to play as the webcam. See the comments in media/capture/video/file_video_capture_device.h for more details. <a href="https://code.google.com/p/chromium/codesearch#chromium/src/media/base/media_switches.cc&amp;q=kUseFileForFakeVideoCapture&amp;sq=package:chromium&amp;type=cs" class="refer">↪</a></td>
+		  <td>Use an .y4m file to play as the webcam. See the observations in media/capture/video/file_video_capture_device.h for more details. <a href="https://code.google.com/p/chromium/codesearch#chromium/src/media/base/media_switches.cc&amp;q=kUseFileForFakeVideoCapture&amp;sq=package:chromium&amp;type=cs" class="refer">↪</a></td>
 		</tr>
 		<tr id="use-first-display-as-internal">
 		  <td>--use-first-display-as-internal <a href="https://peter.sh/experiments/chromium-command-line-switches/#use-first-display-as-internal" class="refer">⊗</a></td>
@@ -5740,9 +5740,9 @@ the supported switches at a certain date.
         <section id="latest-articles">
           <h2>Latest Articles</h2>
           <ul>
-            <li style="cursor: pointer;"><a href="https://peter.sh/2013/12/element-matches-the-cr-tool-and-happy-holidays/">Element.matches(), the Cr tool an..</a> <time datetime="2013-12-18T22:12:50">Wednesday 18 December 2013</time> - 2 comments</li>
-            <li style="cursor: pointer;"><a href="https://peter.sh/2013/12/web-animations-engine-promises-and-datalist-support-for-android/">Web Animations Engine, Promises a..</a> <time datetime="2013-12-03T20:09:16">Tuesday 3 December 2013</time> - no comments</li>
-            <li style="cursor: pointer;"><a href="https://peter.sh/2013/11/faster-web-font-downloads-disableable-font-kerning-and-easy-hosted-apps/">Faster Web Font Downloads, Disabl..</a> <time datetime="2013-11-27T22:18:51">Wednesday 27 November 2013</time> - no comments</li>
+            <li style="cursor: pointer;"><a href="https://peter.sh/2013/12/element-matches-the-cr-tool-and-happy-holidays/">Element.matches(), the Cr tool an..</a> <time datetime="2013-12-18T22:12:50">Wednesday 18 December 2013</time> - 2 observations</li>
+            <li style="cursor: pointer;"><a href="https://peter.sh/2013/12/web-animations-engine-promises-and-datalist-support-for-android/">Web Animations Engine, Promises a..</a> <time datetime="2013-12-03T20:09:16">Tuesday 3 December 2013</time> - no observations</li>
+            <li style="cursor: pointer;"><a href="https://peter.sh/2013/11/faster-web-font-downloads-disableable-font-kerning-and-easy-hosted-apps/">Faster Web Font Downloads, Disabl..</a> <time datetime="2013-11-27T22:18:51">Wednesday 27 November 2013</time> - no observations</li>
           </ul>
         </section>
         <section id="my-whereabouts">

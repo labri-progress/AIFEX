@@ -1,11 +1,11 @@
-import CommentDistribution from "./CommentDistribution";
+import ObservationDistribution from "./ObservationDistribution";
 import Action from "./Action";
 
-export default class Comment {
+export default class Observation {
 
     public type: string;
     public note: string;
-    public distributionList: CommentDistribution[];
+    public distributionList: ObservationDistribution[];
 
     constructor(type: string, note: string) {
         this.type = type;
@@ -14,7 +14,7 @@ export default class Comment {
     }
 
     addDistribution(noteOccurence: number, contextOccurence: number, context: Action[]) : void{
-        const distribution = new CommentDistribution(context, contextOccurence, noteOccurence);
+        const distribution = new ObservationDistribution(context, contextOccurence, noteOccurence);
         this.distributionList.push(distribution)
     }
 
@@ -22,12 +22,12 @@ export default class Comment {
         return `${this.type}: ${this.note}`;
     }
 
-    static parseComment(commentText: string): Comment {
-        const parts = commentText.split("$");
+    static parseObservation(observationText: string): Observation {
+        const parts = observationText.split("$");
         if (parts.length === 2) {
-            return new Comment(parts[0], parts[1]);
+            return new Observation(parts[0], parts[1]);
         } else {
-            throw new Error("Failed to parse comment : " + commentText);
+            throw new Error("Failed to parse observation : " + observationText);
         }
     }
 

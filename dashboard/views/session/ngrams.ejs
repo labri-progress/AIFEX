@@ -32,7 +32,7 @@
                                 <th scope="col" align="center">N</th>
                                 <th scope="col" align="center">Actions</th>
                                 <th scope="col" align="center">Occurences</th>
-                                <th scope="col" align="center">Comments</th>
+                                <th scope="col" align="center">Observations</th>
 
                             </tr>
                         </thead>
@@ -42,8 +42,8 @@
                                     <td><%= ngram.n %></td>
                                     <td><%= ngram.key %></td>
                                     <td><%= ngram.occurence %></td>
-                                    <td><% for (comment of ngram.nextComments) { %>
-                                        <%= `${comment.key} (${comment.occurence})` %>
+                                    <td><% for (observation of ngram.nextObservations) { %>
+                                        <%= `${observation.key} (${observation.occurence})` %>
                                         <% } %>
                                     </td>
                                 </tr>

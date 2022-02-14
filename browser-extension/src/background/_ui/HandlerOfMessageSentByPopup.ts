@@ -227,17 +227,17 @@ export default class HandlerOfMessageSentByPopup {
             }
 
 
-            case "pushComment": {
+            case "pushObservation": {
                 logger.info(`Popup asks for ${msg.kind}`);
                 const { type, value } = msg;
-                this._application.addCommentToExploration(type, value);
+                this._application.addObservationToExploration(type, value);
                 sendResponse("ok");
                 return true;
             }
 
-            case "upComment": {
+            case "upObservation": {
                 logger.info(`Popup asks for ${msg.kind}`);
-                this._application.upComment(msg.type, msg.value);
+                this._application.upObservation(msg.type, msg.value);
                 sendResponse("ok");
                 return true;
             }

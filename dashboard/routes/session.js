@@ -249,7 +249,7 @@ module.exports = function attachRoutes(app, config) {
     });
 
 
-    app.get('/dashboard/session/:connectionCode/comments/', (req, res) => {
+    app.get('/dashboard/session/:connectionCode/observations/', (req, res) => {
         const { connectionCode } = req.params;
         const [sessionId, modelId] = connectionCode.split('$');
         
@@ -257,19 +257,19 @@ module.exports = function attachRoutes(app, config) {
             .then(([session, screenshot, video]) => {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
-                const explorationsWithComment = session.explorationList.filter((exploration) => exploration.interactionList.some(interaction => interaction.concreteType === "Comment"));
-                const comments = explorationsWithComment.map((exploration) => {
-                    return exploration.interactionList.filter((interaction) => interaction.concreteType === "Comment").map((comment) => {
-                        comment.explorationNumber = exploration.explorationNumber;
-                        comment.testerName = exploration.testerName;
-                        return comment;
+                const explorationsWithObservation = session.explorationList.filter((exploration) => exploration.interactionList.some(interaction => interaction.concreteType === "Observation"));
+                const observations = explorationsWithObservation.map((exploration) => {
+                    return exploration.interactionList.filter((interaction) => interaction.concreteType === "Observation").map((observation) => {
+                        observation.explorationNumber = exploration.explorationNumber;
+                        observation.testerName = exploration.testerName;
+                        return observation;
                     });
                 }).reduce((acc, curr) => acc.concat(curr), []);
-                logger.debug(`comments:${JSON.stringify(comments)}`);
-                res.render('session/comments.ejs',{
+                logger.debug(`observations:${JSON.stringify(observations)}`);
+                res.render('session/observations.ejs',{
                     account:req.session, 
                     serverURL: buildInvitation(modelId, sessionId),
-                    comments,
+                    observations,
                     session,
                     connectionCode,
                     screenshot,
@@ -283,25 +283,25 @@ module.exports = function attachRoutes(app, config) {
             });
     });
 
-    app.get('/open/session/:connectionCode/exploration/:explorationNumber/comment/:commentIndex', (req, res) => {
-        const { connectionCode, explorationNumber, commentIndex } = req.params;
+    app.get('/open/session/:connectionCode/exploration/:explorationNumber/observation/:observationIndex', (req, res) => {
+        const { connectionCode, explorationNumber, observationIndex } = req.params;
         const [sessionId, modelId] = connectionCode.split('$');
 
-        logger.debug(`GET comment (id = ${sessionId}, explorationNumber = ${explorationNumber}, commentIndex = ${commentIndex})`);
+        logger.debug(`GET observation (id = ${sessionId}, explorationNumber = ${explorationNumber}, observationIndex = ${observationIndex})`);
         
         Promise.all([getSessionById(req.session.jwt,sessionId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId)])
             .then(([session, screenshots, videos]) => {
                 if (session !== undefined && screenshots !== undefined && videos !== undefined) {
                     let exploration = session.explorationList[explorationNumber];
                     if (exploration !== undefined ) {
-                        let comment = exploration.interactionList[commentIndex];
-                        if (comment.concreteType === "Comment") {
-                            let screenshot = screenshots.screenshotList.find(sc=> sc.explorationNumber == explorationNumber && sc.interactionIndex == comment.index);
+                        let observation = exploration.interactionList[observationIndex];
+                        if (observation.concreteType === "Observation") {
+                            let screenshot = screenshots.screenshotList.find(sc=> sc.explorationNumber == explorationNumber && sc.interactionIndex == observation.index);
                             let video = videos.videoList.find(vi=> vi == explorationNumber);
-                            res.render('session/comment.ejs',{
+                            res.render('session/observation.ejs',{
                                 account:req.session, 
                                 serverURL: buildInvitation(modelId, sessionId),
-                                comment,
+                                observation,
                                 explorationNumber,
                                 session,
                                 connectionCode,

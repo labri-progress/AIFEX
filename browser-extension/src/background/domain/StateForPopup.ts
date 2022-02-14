@@ -1,9 +1,9 @@
 import Action from "./Action";
-import CommentDistribution from "./CommentDistribution";
+import ObservationDistribution from "./ObservationDistribution";
 import ExplorationEvaluation from "./ExplorationEvaluation";
 import PopupAction from "./PopupAction";
 import WebSite from "./Website";
-import Comment from "./Comment";
+import Observation from "./Observation";
 import Token from "./Token";
 import { PopupPageKind } from "./PopupPageKind";
 export default class StateForPopup {
@@ -28,14 +28,14 @@ export default class StateForPopup {
     public takeAScreenshotByAction: boolean;
     public popupIsDetached: boolean;
     public evaluatorScenario: string | undefined;
-    public commentDistributionList: CommentDistribution[];
-    public commentUpList: Comment[]
+    public observationDistributionList: ObservationDistribution[];
+    public observationUpList: Observation[]
     public evaluation: {
         validated: boolean
         nextActionList: Action[]
     } | undefined;
     public sessionDescription: string | undefined;
-    public lastInteractionComment: Comment | undefined;
+    public lastInteractionObservation: Observation | undefined;
 
     constructor() {
         this.pageKind = PopupPageKind.Home;
@@ -53,9 +53,9 @@ export default class StateForPopup {
         this.isPreparedToRecordMedia = false;
         this.popupIsDetached = false;
         this.numberOfExplorationsMadeByTester = 0;
-        this.commentDistributionList = [];
-        this.commentUpList = [];
-        this.lastInteractionComment = undefined;
+        this.observationDistributionList = [];
+        this.observationUpList = [];
+        this.lastInteractionObservation = undefined;
     }
 
     public readEvaluation(evaluation: ExplorationEvaluation, webSite: WebSite): void {

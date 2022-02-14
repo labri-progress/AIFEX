@@ -4,15 +4,15 @@
     let playButton = document.getElementById('play-button');
     let stopButton = document.getElementById('stop-button');
     let trashButton = document.getElementById('trash-button');
-    let commentButton = document.getElementById('comment-button');
-    let commentSubComponent = document.getElementById('commentSubComponent');
-    let submitCommentButton = document.getElementById('submit-comment');
-    let commentForm = document.getElementById('commentForm');
-    let readCommentButton = document.getElementById('read-comment-button');
-    let commentList = document.getElementById('comment-list');
+    let obsersationButton = document.getElementById('obsersation-button');
+    let obsersationSubComponent = document.getElementById('obsersationSubComponent');
+    let submitObsersationButton = document.getElementById('submit-obsersation');
+    let obsersationForm = document.getElementById('obsersationForm');
+    let readObsersationButton = document.getElementById('read-obsersation-button');
+    let obsersationList = document.getElementById('obsersation-list');
 
-    let readCommentIsVisible = false;
-    let addCommentIsVisible = false;
+    let readObsersationIsVisible = false;
+    let addObsersationIsVisible = false;
 
     function render() {
         if (state.showConfig) {
@@ -28,34 +28,34 @@
                 playButton.style.display = 'none';
                 stopButton.style.display = 'flex';
                 trashButton.style.display = 'flex';
-                commentSubComponent.style.display = 'flex';
-                commentForm.style.display = 'none';
+                obsersationSubComponent.style.display = 'flex';
+                obsersationForm.style.display = 'none';
 
-                if (state.lastInteractionComment) {
-                    document.getElementById("commentType").value = state.lastInteractionComment.kind;
-                    document.getElementById("commentDescription").value = state.lastInteractionComment.value;
-                    document.getElementById("commentIsSubmitted").style.display = 'flex'
-                    document.getElementById("submit-comment").style.display = 'none'
-                    document.getElementById("commentType").disabled = true;
-                    document.getElementById('commentDescription').disabled = true;
-                    document.getElementById('clearComment').style.display = "none";
+                if (state.lastInteractionObsersation) {
+                    document.getElementById("obsersationType").value = state.lastInteractionObsersation.kind;
+                    document.getElementById("obsersationDescription").value = state.lastInteractionObsersation.value;
+                    document.getElementById("obsersationIsSubmitted").style.display = 'flex'
+                    document.getElementById("submit-obsersation").style.display = 'none'
+                    document.getElementById("obsersationType").disabled = true;
+                    document.getElementById('obsersationDescription').disabled = true;
+                    document.getElementById('clearObsersation').style.display = "none";
 
                 } else {
-                    document.getElementById("commentIsSubmitted").style.display = 'none'
-                    document.getElementById("submit-comment").style.display = 'flex'
+                    document.getElementById("obsersationIsSubmitted").style.display = 'none'
+                    document.getElementById("submit-obsersation").style.display = 'flex'
                 }
 
-                if (state.commentDistributionList && state.commentDistributionList.length > 0) {
-                    readCommentButton.style.display = 'flex';
+                if (state.obsersationDistributionList && state.obsersationDistributionList.length > 0) {
+                    readObsersationButton.style.display = 'flex';
                 } else {
-                    readCommentButton.style.display = 'none';
+                    readObsersationButton.style.display = 'none';
                 }
             } else {
                 makeExplorationTitle.innerHTML = 'Start a new exploration';
                 playButton.style.display = 'flex';
                 stopButton.style.display = 'none';
                 trashButton.style.display = 'none';
-                commentSubComponent.style.display = 'none';
+                obsersationSubComponent.style.display = 'none';
             }
         }
     }
@@ -106,27 +106,27 @@
             })
     }
 
-    function openCommentView() {
-        if (!addCommentIsVisible) {
-            commentForm.style.display = 'block';
-            if (document.getElementById("commentSuccessul")) {
-                document.getElementById("commentSuccessul").style.display = 'none';
+    function openObsersationView() {
+        if (!addObsersationIsVisible) {
+            obsersationForm.style.display = 'block';
+            if (document.getElementById("obsersationSuccessul")) {
+                document.getElementById("obsersationSuccessul").style.display = 'none';
             }
-            addCommentIsVisible = true;
+            addObsersationIsVisible = true;
         } else {
-            commentForm.style.display = 'none';
-            addCommentIsVisible = false;
+            obsersationForm.style.display = 'none';
+            addObsersationIsVisible = false;
         }
     }
 
-    function submitComment(e) {
+    function submitObsersation(e) {
         e.preventDefault();
         console.log('submit bug report');
 
-        const type = document.getElementById('commentType').value;
-        const value = document.getElementById('commentDescription').value;
+        const type = document.getElementById('obsersationType').value;
+        const value = document.getElementById('obsersationDescription').value;
         sendMessage({
-            kind: "pushComment",
+            kind: "pushObsersation",
             type,
             value
         })
@@ -135,60 +135,60 @@
                     console.error(response.error)
                     return;
                 } else {
-                    const screenshot = document.getElementById('commentScreenshot').checked;
+                    const screenshot = document.getElementById('obsersationScreenshot').checked;
                     if (screenshot) {
                         sendMessage({
                             kind: "takeScreenshot"
                         })
                     }
-                    document.getElementById("commentIsSubmitted").style.display = 'flex'
-                    document.getElementById("submit-comment").style.display = 'none'
-                    document.getElementById("commentType").disabled = true;
-                    document.getElementById('commentDescription').disabled = true;
-                    document.getElementById('clearComment').style.display = "none";
+                    document.getElementById("obsersationIsSubmitted").style.display = 'flex'
+                    document.getElementById("submit-obsersation").style.display = 'none'
+                    document.getElementById("obsersationType").disabled = true;
+                    document.getElementById('obsersationDescription').disabled = true;
+                    document.getElementById('clearObsersation').style.display = "none";
                 }
                 
             });
     }
 
-    function readComments() {
-        if (!readCommentIsVisible) {
-            if (state.commentDistributionList && state.commentDistributionList.length > 0) {
-                commentList.style.display = 'flex';
-                commentList.style.flexDirection = 'column';
-                if (commentList.children.length === 0) {
-                    state.commentDistributionList.forEach((commentDistribution, i) => {
-                        if (commentDistribution._comment) {
-                            let [kind, description] = commentDistribution._comment.split('$');
-                            let commentId = document.createElement('div');
-                            commentId.innerHTML = `Comment ${i + 1}`;
-                            commentId.className = 'comment-id';
-                            let commentKind = document.createElement('div');
-                            commentKind.className = 'comment-kind';
-                            commentKind.innerHTML = "kind:" + kind;
-                            let commentDescription = document.createElement('div');
-                            commentDescription.className = 'comment-description';
-                            commentDescription.innerHTML = "description:" + description;
-                            commentList.appendChild(commentId);
-                            commentList.appendChild(commentKind);
-                            commentList.appendChild(commentDescription);
+    function readObsersations() {
+        if (!readObsersationIsVisible) {
+            if (state.obsersationDistributionList && state.obsersationDistributionList.length > 0) {
+                obsersationList.style.display = 'flex';
+                obsersationList.style.flexDirection = 'column';
+                if (obsersationList.children.length === 0) {
+                    state.obsersationDistributionList.forEach((obsersationDistribution, i) => {
+                        if (obsersationDistribution._obsersation) {
+                            let [kind, description] = obsersationDistribution._obsersation.split('$');
+                            let obsersationId = document.createElement('div');
+                            obsersationId.innerHTML = `Obsersation ${i + 1}`;
+                            obsersationId.className = 'obsersation-id';
+                            let obsersationKind = document.createElement('div');
+                            obsersationKind.className = 'obsersation-kind';
+                            obsersationKind.innerHTML = "kind:" + kind;
+                            let obsersationDescription = document.createElement('div');
+                            obsersationDescription.className = 'obsersation-description';
+                            obsersationDescription.innerHTML = "description:" + description;
+                            obsersationList.appendChild(obsersationId);
+                            obsersationList.appendChild(obsersationKind);
+                            obsersationList.appendChild(obsersationDescription);
                         }
                     });
                 }
-                readCommentIsVisible = true;
+                readObsersationIsVisible = true;
             }
         } else {
-            commentList.style.display = 'none';
-            readCommentIsVisible = false;
+            obsersationList.style.display = 'none';
+            readObsersationIsVisible = false;
         }
     }
 
     playButton.addEventListener('click', startExploration);
     stopButton.addEventListener('click', stopExploration);
     trashButton.addEventListener('click', trashExploration);
-    commentButton.addEventListener('click', openCommentView);
-    submitCommentButton.addEventListener('click', submitComment);
-    readCommentButton.addEventListener('click', readComments);
+    obsersationButton.addEventListener('click', openObsersationView);
+    submitObsersationButton.addEventListener('click', submitObsersation);
+    readObsersationButton.addEventListener('click', readObsersations);
 
     addComponentToPopup(render);
 

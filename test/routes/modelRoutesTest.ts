@@ -158,14 +158,14 @@ describe("Model", () => {
         });
     });
 
-    it("should add an exploration with comment", () => {
+    it("should add an exploration with observation", () => {
         const url = SESSION_URL + sessionId + "/exploration/add";
         const body = {
             testerName: "superTester",
             interactionList: [
                 {index: 1, concreteType: "Action", kind: "start"},
                 {index: 2, concreteType: "Action", kind: "click", value: "value"},
-                {index: 3, concreteType: "Comment", kind: "bug", value: "hard"},
+                {index: 3, concreteType: "Observation", kind: "bug", value: "hard"},
             ],
         };
         return fetch(url, {
@@ -179,8 +179,8 @@ describe("Model", () => {
         });
     });
 
-    it("should get the distribution of the comment", () => {
-        const url = MODEL_URL + modelId + "/getcommentdistributions";
+    it("should get the distribution of the observation", () => {
+        const url = MODEL_URL + modelId + "/getobservationdistributions";
         const body = {
             interactionList: [
                 {index: 1, concreteType: "Action", kind: "start"},
@@ -197,10 +197,10 @@ describe("Model", () => {
             expect(res.ok).to.be.true;
             return res.json();
         })
-        .then( (commentDistributions) => {
-            const commentDistributionList = commentDistributions as any;
-            expect(commentDistributionList.length).eql(1);
-            const distributionsForNote = commentDistributionList[0];
+        .then( (observationDistributions) => {
+            const observationDistributionList = observationDistributions as any;
+            expect(observationDistributionList.length).eql(1);
+            const distributionsForNote = observationDistributionList[0];
             expect(distributionsForNote.note).to.eql("bug$hard");
             expect(distributionsForNote.distributions.length).to.eql(2);
 

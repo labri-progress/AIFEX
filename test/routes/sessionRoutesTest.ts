@@ -116,7 +116,7 @@ describe("Infra", () => {
                 testerName: "superTester",
                 interactionList: [
                     {index: 0, concreteType: "Action", kind: "add", value: "5"},
-                    {index: 1, concreteType: "Comment", kind: "bug", value: "important"},
+                    {index: 1, concreteType: "Observation", kind: "bug", value: "important"},
                     {index: 2, concreteType: "Action", kind: "remove", value: "3"},
                 ],
             };
@@ -245,7 +245,7 @@ describe("Infra", () => {
             const AddInteractionsURL = `${SESSION_URL}${sessionId}/exploration/${0}/pushActionList`;
             const interactionList = [
                 {index: 0, concreteType: "Action", kind: "add", value: "5"},
-                {index: 1, concreteType: "Comment", kind: "bug", value: "important"},
+                {index: 1, concreteType: "Observation", kind: "bug", value: "important"},
                 {index: 2, concreteType: "Action", kind: "remove", value: "3"},
             ];
             let option = {

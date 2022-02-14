@@ -1,5 +1,5 @@
 import Action from "./Action";
-import Comment from "./Comment";
+import Observation from "./Observation";
 import { RecordingMode } from "./RecordingMode";
 import Screenshot from "./Screenshot";
 import Session from "./Session";
@@ -16,7 +16,7 @@ export default interface SessionService {
 
     updateSession(sessionId: string, webSiteId: string, baseURL: string, name: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<Session>;
 
-    addExploration(sessionId: string, testerName: string, interactionList: (Action | Comment)[], startDate?: Date, stopDate?: Date): Promise<number>;
+    addExploration(sessionId: string, testerName: string, interactionList: (Action | Observation)[], startDate?: Date, stopDate?: Date): Promise<number>;
 
     addScreenshots(screenshots: Screenshot[]): Promise<"ScreenshotsAdded">;
 
@@ -26,6 +26,6 @@ export default interface SessionService {
 
     findExplorationsWithVideo(sessionId: string): Promise<number[]>;
 
-    addInteractions(sessionId: string, explorationNumber: number, interactionList: (Action | Comment)[]): Promise<"InteractionsAdded" | "ExplorationNotFound">;
+    addInteractions(sessionId: string, explorationNumber: number, interactionList: (Action | Observation)[]): Promise<"InteractionsAdded" | "ExplorationNotFound">;
 
 }
