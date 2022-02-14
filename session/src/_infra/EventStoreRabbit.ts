@@ -51,7 +51,7 @@ export default class EventStoreRabbit implements EventStore {
             }
             if (interaction instanceof ObersationInteraction) {
                 sequence.push({
-                    concreteType : "Obersation",
+                    concreteType : "Observation",
                     kind : interaction.observation.kind,
                     value : interaction.observation.value,
                 });

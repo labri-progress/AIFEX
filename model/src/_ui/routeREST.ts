@@ -157,7 +157,7 @@ export default function attachRoutes(app: Express, modelService: ModelService): 
     app.post("/model/:modelId/getobservationdistributions", (req, res) => {
         const { interactionList } = req.body;
         const { modelId } = req.params;
-        logger.info(`getobservationlist for modelId:${modelId}, ${interactionList}`);
+        logger.info(`getobservationdistributions for modelId:${modelId}, ${interactionList}`);
 
         if (modelId === undefined) {
             logger.warn(`modelId must not be undefined`);

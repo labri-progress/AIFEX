@@ -114,6 +114,7 @@ describe("Model", () => {
             expect(explNum).to.eql(0);
         });
     });
+
     it("should compute probability", () => {
         const url = MODEL_URL + modelId + "/getprobabilitymap";
 
@@ -166,6 +167,8 @@ describe("Model", () => {
                 {index: 1, concreteType: "Action", kind: "start"},
                 {index: 2, concreteType: "Action", kind: "click", value: "value"},
                 {index: 3, concreteType: "Observation", kind: "bug", value: "hard"},
+                {index: 4, concreteType: "Action", kind: "end"},
+
             ],
         };
         return fetch(url, {
@@ -184,7 +187,7 @@ describe("Model", () => {
         const body = {
             interactionList: [
                 {index: 1, concreteType: "Action", kind: "start"},
-                {index: 2, concreteType: "Action", kind: "click", value: "value"},
+                {index: 2, concreteType: "Action", kind: "click", value: "value"}
             ]
         };
         return fetch(url, {
