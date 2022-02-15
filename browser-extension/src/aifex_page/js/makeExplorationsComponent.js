@@ -4,15 +4,15 @@
     let playButton = document.getElementById('play-button');
     let stopButton = document.getElementById('stop-button');
     let trashButton = document.getElementById('trash-button');
-    let obsersationButton = document.getElementById('obsersation-button');
-    let obsersationSubComponent = document.getElementById('obsersationSubComponent');
-    let submitObsersationButton = document.getElementById('submit-obsersation');
-    let obsersationForm = document.getElementById('obsersationForm');
-    let readObsersationButton = document.getElementById('read-obsersation-button');
-    let obsersationList = document.getElementById('obsersation-list');
+    let observationButton = document.getElementById('observation-button');
+    let observationSubComponent = document.getElementById('observationSubComponent');
+    let submitObservationButton = document.getElementById('submit-observation');
+    let observationForm = document.getElementById('observationForm');
+    let readObservationButton = document.getElementById('read-observation-button');
+    let observationList = document.getElementById('observation-list');
 
-    let readObsersationIsVisible = false;
-    let addObsersationIsVisible = false;
+    let readObservationIsVisible = false;
+    let addObservationIsVisible = false;
 
     function render() {
         if (state.showConfig) {
@@ -28,34 +28,34 @@
                 playButton.style.display = 'none';
                 stopButton.style.display = 'flex';
                 trashButton.style.display = 'flex';
-                obsersationSubComponent.style.display = 'flex';
-                obsersationForm.style.display = 'none';
+                observationSubComponent.style.display = 'flex';
+                observationForm.style.display = 'none';
 
-                if (state.lastInteractionObsersation) {
-                    document.getElementById("obsersationType").value = state.lastInteractionObsersation.kind;
-                    document.getElementById("obsersationDescription").value = state.lastInteractionObsersation.value;
-                    document.getElementById("obsersationIsSubmitted").style.display = 'flex'
-                    document.getElementById("submit-obsersation").style.display = 'none'
-                    document.getElementById("obsersationType").disabled = true;
-                    document.getElementById('obsersationDescription').disabled = true;
-                    document.getElementById('clearObsersation').style.display = "none";
+                if (state.lastInteractionObservation) {
+                    document.getElementById("observationType").value = state.lastInteractionObservation.kind;
+                    document.getElementById("observationDescription").value = state.lastInteractionObservation.value;
+                    document.getElementById("observationIsSubmitted").style.display = 'flex'
+                    document.getElementById("submit-observation").style.display = 'none'
+                    document.getElementById("observationType").disabled = true;
+                    document.getElementById('observationDescription').disabled = true;
+                    document.getElementById('clearObservation').style.display = "none";
 
                 } else {
-                    document.getElementById("obsersationIsSubmitted").style.display = 'none'
-                    document.getElementById("submit-obsersation").style.display = 'flex'
+                    document.getElementById("observationIsSubmitted").style.display = 'none'
+                    document.getElementById("submit-observation").style.display = 'flex'
                 }
 
-                if (state.obsersationDistributionList && state.obsersationDistributionList.length > 0) {
-                    readObsersationButton.style.display = 'flex';
+                if (state.observationDistributionList && state.observationDistributionList.length > 0) {
+                    readObservationButton.style.display = 'flex';
                 } else {
-                    readObsersationButton.style.display = 'none';
+                    readObservationButton.style.display = 'none';
                 }
             } else {
                 makeExplorationTitle.innerHTML = 'Start a new exploration';
                 playButton.style.display = 'flex';
                 stopButton.style.display = 'none';
                 trashButton.style.display = 'none';
-                obsersationSubComponent.style.display = 'none';
+                observationSubComponent.style.display = 'none';
             }
         }
     }
@@ -106,27 +106,27 @@
             })
     }
 
-    function openObsersationView() {
-        if (!addObsersationIsVisible) {
-            obsersationForm.style.display = 'block';
-            if (document.getElementById("obsersationSuccessul")) {
-                document.getElementById("obsersationSuccessul").style.display = 'none';
+    function openObservationView() {
+        if (!addObservationIsVisible) {
+            observationForm.style.display = 'block';
+            if (document.getElementById("observationSuccessul")) {
+                document.getElementById("observationSuccessul").style.display = 'none';
             }
-            addObsersationIsVisible = true;
+            addObservationIsVisible = true;
         } else {
-            obsersationForm.style.display = 'none';
-            addObsersationIsVisible = false;
+            observationForm.style.display = 'none';
+            addObservationIsVisible = false;
         }
     }
 
-    function submitObsersation(e) {
+    function submitObservation(e) {
         e.preventDefault();
         console.log('submit bug report');
 
-        const type = document.getElementById('obsersationType').value;
-        const value = document.getElementById('obsersationDescription').value;
+        const type = document.getElementById('observationType').value;
+        const value = document.getElementById('observationDescription').value;
         sendMessage({
-            kind: "pushObsersation",
+            kind: "pushObservation",
             type,
             value
         })
@@ -135,60 +135,60 @@
                     console.error(response.error)
                     return;
                 } else {
-                    const screenshot = document.getElementById('obsersationScreenshot').checked;
+                    const screenshot = document.getElementById('observationScreenshot').checked;
                     if (screenshot) {
                         sendMessage({
                             kind: "takeScreenshot"
                         })
                     }
-                    document.getElementById("obsersationIsSubmitted").style.display = 'flex'
-                    document.getElementById("submit-obsersation").style.display = 'none'
-                    document.getElementById("obsersationType").disabled = true;
-                    document.getElementById('obsersationDescription').disabled = true;
-                    document.getElementById('clearObsersation').style.display = "none";
+                    document.getElementById("observationIsSubmitted").style.display = 'flex'
+                    document.getElementById("submit-observation").style.display = 'none'
+                    document.getElementById("observationType").disabled = true;
+                    document.getElementById('observationDescription').disabled = true;
+                    document.getElementById('clearObservation').style.display = "none";
                 }
                 
             });
     }
 
-    function readObsersations() {
-        if (!readObsersationIsVisible) {
-            if (state.obsersationDistributionList && state.obsersationDistributionList.length > 0) {
-                obsersationList.style.display = 'flex';
-                obsersationList.style.flexDirection = 'column';
-                if (obsersationList.children.length === 0) {
-                    state.obsersationDistributionList.forEach((obsersationDistribution, i) => {
-                        if (obsersationDistribution._obsersation) {
-                            let [kind, description] = obsersationDistribution._obsersation.split('$');
-                            let obsersationId = document.createElement('div');
-                            obsersationId.innerHTML = `Obsersation ${i + 1}`;
-                            obsersationId.className = 'obsersation-id';
-                            let obsersationKind = document.createElement('div');
-                            obsersationKind.className = 'obsersation-kind';
-                            obsersationKind.innerHTML = "kind:" + kind;
-                            let obsersationDescription = document.createElement('div');
-                            obsersationDescription.className = 'obsersation-description';
-                            obsersationDescription.innerHTML = "description:" + description;
-                            obsersationList.appendChild(obsersationId);
-                            obsersationList.appendChild(obsersationKind);
-                            obsersationList.appendChild(obsersationDescription);
+    function readObservations() {
+        if (!readObservationIsVisible) {
+            if (state.observationDistributionList && state.observationDistributionList.length > 0) {
+                observationList.style.display = 'flex';
+                observationList.style.flexDirection = 'column';
+                if (observationList.children.length === 0) {
+                    state.observationDistributionList.forEach((observationDistribution, i) => {
+                        if (observationDistribution._observation) {
+                            let [kind, description] = observationDistribution._observation.split('$');
+                            let observationId = document.createElement('div');
+                            observationId.innerHTML = `Observation ${i + 1}`;
+                            observationId.className = 'observation-id';
+                            let observationKind = document.createElement('div');
+                            observationKind.className = 'observation-kind';
+                            observationKind.innerHTML = "kind:" + kind;
+                            let observationDescription = document.createElement('div');
+                            observationDescription.className = 'observation-description';
+                            observationDescription.innerHTML = "description:" + description;
+                            observationList.appendChild(observationId);
+                            observationList.appendChild(observationKind);
+                            observationList.appendChild(observationDescription);
                         }
                     });
                 }
-                readObsersationIsVisible = true;
+                readObservationIsVisible = true;
             }
         } else {
-            obsersationList.style.display = 'none';
-            readObsersationIsVisible = false;
+            observationList.style.display = 'none';
+            readObservationIsVisible = false;
         }
     }
 
     playButton.addEventListener('click', startExploration);
     stopButton.addEventListener('click', stopExploration);
     trashButton.addEventListener('click', trashExploration);
-    obsersationButton.addEventListener('click', openObsersationView);
-    submitObsersationButton.addEventListener('click', submitObsersation);
-    readObsersationButton.addEventListener('click', readObsersations);
+    observationButton.addEventListener('click', openObservationView);
+    submitObservationButton.addEventListener('click', submitObservation);
+    readObservationButton.addEventListener('click', readObservations);
 
     addComponentToPopup(render);
 

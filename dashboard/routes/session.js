@@ -257,9 +257,13 @@ module.exports = function attachRoutes(app, config) {
             .then(([session, screenshot, video]) => {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
-                const explorationsWithObservation = session.explorationList.filter((exploration) => exploration.interactionList.some(interaction => interaction.concreteType === "Observation"));
+                const explorationsWithObservation = session.explorationList.filter((exploration) => exploration.interactionList.some(interaction => {
+                    return interaction.concreteType === "Observation" || interaction.concreteType === "Comment"
+                }));
                 const observations = explorationsWithObservation.map((exploration) => {
-                    return exploration.interactionList.filter((interaction) => interaction.concreteType === "Observation").map((observation) => {
+                    return exploration.interactionList.filter((interaction) => {
+                        interaction.concreteType === "Comment" || interaction.concreteType === "Observation"
+                    }).map((observation) => {
                         observation.explorationNumber = exploration.explorationNumber;
                         observation.testerName = exploration.testerName;
                         return observation;

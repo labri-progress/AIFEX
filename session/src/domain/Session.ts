@@ -125,7 +125,7 @@ export default class Session {
         this._explorationList[explorationNumber].stop(stopDate);
     }
 
-    public addObsersationToExploration(explorationNumber: number, observation: Observation): void {
+    public addObservationToExploration(explorationNumber: number, observation: Observation): void {
         if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
             throw new Error("cannot add observation to exploration, wrong explorationNumber.");
         }
