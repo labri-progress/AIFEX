@@ -13,37 +13,30 @@
         <div class="jumbotron">
             <h1 class="display-4 content-title">Session : <%= session.name ? session.name : "Unamed" %></h1>
             <hr class="my-4"></hr>
-            
-            <div class="show-hide-bar" id="connection-mode-show-bar">
-                Show connection mode 
-                <svg width="14" height="9" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 7L7.70711 7.70711L7 8.41421L6.29289 7.70711L7 7ZM13.7071 1.70711L7.70711 7.70711L6.29289 6.29289L12.2929 0.292893L13.7071 1.70711ZM6.29289 7.70711L0.292893 1.70711L1.70711 0.292894L7.70711 6.29289L6.29289 7.70711Z" fill="#323232"/>
-                </svg>
-            </div>
-            <div class="show-hide-bar" id="connection-mode-hide-bar">
-                Hide connection mode
-                <svg width="14" height="9" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 2L6.29289 1.29289L7 0.585786L7.70711 1.29289L7 2ZM0.292893 7.29289L6.29289 1.29289L7.70711 2.70711L1.70711 8.70711L0.292893 7.29289ZM7.70711 1.29289L13.7071 7.29289L12.2929 8.70711L6.29289 2.70711L7.70711 1.29289Z" fill="#323232"/>
-                </svg>
-            </div>
-            <div id="connection-mode" class="session-card" style="background-color: white;">
-                <h4>Run your session with our browser extension</h4>
-                <div>Download one of our browser extensions</div>
-                <span class="session-value"> <a href="/download">Download page</a></span>
-                <div>Join the session with this connection code</div>
-                <div id="copy-connection-code">
-                    <input type="text" class="session-value session-noinput" id="serverURL" value="<%=serverURL %>" readonly></input><i title="Copy in clipboard" data-toggle="tooltip" data-placement="right" class="fas fa-copy copy-icon"></i>
+
+            <div class="card card-body">
+
+            <div id="connection-mode" class="session-card">
+                <h4>Explore your WebSite</h4>
+                <div>Copy this connection code in the AIFEX browser extension</div>
+                <div id="copy-connection-code" class="copy-connection-code-component" connexion_code="<%=serverURL%>" title="Copy in clipboard" data-toggle="tooltip" data-placement="top">
+                    <span class="copy-connection-code-button"><i class="fas fa-lg fa-copy copy-icon"></i></span>
+                    <span class="copy-connection-code-text">Connection code</span>
                 </div>
-                <br>
-                <h4>Or even link your session with your web application</h4>
-                <div>Include this script in all the pages of your web application</div>
-                <span class="session-value"> &lt;script id="AIFEX" connexion-url="<%=serverURL %>" src="https://www.aifex.fr/static/AIFEXScript.js" defer&gt;&lt;/script&gt;</span>
             </div>
+            <a  data-toggle="collapse" href="#collapseConnectionScript" role="button" aria-expanded="false" aria-controls="collapseConnectionScript">
+                Also, record directly from your website
+            </a>
 
+            <div class="collapse" id="collapseConnectionScript">
+                    <div>Include this script in your web pages to record automatically</div>
+                    <span class="session-value"> &lt;script id="AIFEX" connexion-url="<%=serverURL %>" src="https://www.aifex.fr/static/AIFEXScript.js" defer&gt;&lt;/script&gt;</span>
+            </div>
+        </div>
+
+                
             
 
-            
-            
             <%if (session.explorationList.length === 0) { %>
                 <div class="alert alert-warning" role="alert">
                     <strong>Warning!</strong> No exploration performed yet.
@@ -188,40 +181,13 @@
     </div>
 
     <script defer>
+        document.querySelectorAll('[data-toggle="tooltip"]').tooltip()
+    
         function copyServerURL() {
-            var copyText = document.getElementById("serverURL");
-            copyText.select();
-            document.execCommand("copy");
+            var copyText = document.getElementById("copy-connection-code").getAttribute("connexion_code");
+            navigator.clipboard.writeText(copyText)
         }
         document.getElementById("copy-connection-code").addEventListener("click", copyServerURL);
-    </script>
-
-    <script defer>
-        let numberOfExplorations = parseInt(<%=session.explorationList.length%>);
-        let showConnectionMode = numberOfExplorations === 0 ? true : false;
-        let connectionModeElement = document.getElementById('connection-mode');
-        let connectionModeShowBar = document.getElementById('connection-mode-show-bar');
-        let connectionModeHideBar = document.getElementById('connection-mode-hide-bar');
-        if (!showConnectionMode) {
-            connectionModeElement.style.display = 'none';
-            connectionModeShowBar.style.display = 'block';
-            connectionModeHideBar.style.display = 'none';
-        } else {
-            connectionModeElement.style.display = 'block';
-            connectionModeShowBar.style.display = 'none';
-            connectionModeHideBar.style.display = 'block';
-        }
-        connectionModeHideBar.addEventListener('click', () => {
-            connectionModeElement.style.display = 'none';
-            connectionModeShowBar.style.display = 'block';
-            connectionModeHideBar.style.display = 'none';
-        });
-        connectionModeShowBar.addEventListener('click', () => {
-            connectionModeElement.style.display = 'block';
-            connectionModeShowBar.style.display = 'none';
-            connectionModeHideBar.style.display = 'block';
-        });
-        
     </script>
 
 </body>
