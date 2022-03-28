@@ -1,16 +1,13 @@
-import RuleService from "./RuleService";
 import BackgroundService from "./BackgroundService"
 import Action from "./Action";
 import { logger } from "../framework/Logger";
 
 export default class EventListener {
-    private _ruleService: RuleService;
     private _handledEvents: string[];
     private _newActionCallbacks: ((action: Action) => void)[];
     private _backgroundService: BackgroundService;
 
-    constructor(ruleService: RuleService, backgroundService: BackgroundService) {
-        this._ruleService = ruleService
+    constructor(backgroundService: BackgroundService) {
         this._handledEvents = [];
         this._newActionCallbacks = [];
         this._backgroundService = backgroundService;
@@ -30,7 +27,7 @@ export default class EventListener {
     }
 
     private listen(): void {
-        const events = this._ruleService.getEventsToHandle()
+        const events = ['mousedown', 'keydown'];
         this._handledEvents = events;
 
         this._handledEvents.forEach((handledEvent) => {
@@ -57,7 +54,7 @@ export default class EventListener {
                         logger.info(`action : ${action.toString()}`);
                         this._backgroundService.sendAction(action)
                             .then(() => {
-                                this._newActionCallbacks.forEach(callback => callback(action));
+                                
                             })
                             .catch((error) => {
                                 logger.error('Error while Listener pushed action ', error);
@@ -65,12 +62,6 @@ export default class EventListener {
                     }
                 }
             }
-        }
-    }
-
-    public onNewUserAction(callback : (action : Action) => void): void {
-        if (typeof callback === "function") {
-            this._newActionCallbacks.push(callback)
         }
     }
 }

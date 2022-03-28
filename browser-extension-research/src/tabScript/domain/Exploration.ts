@@ -1,9 +1,8 @@
-import Observation from "./Observation";
 import Action from "./Action";
 
 export default class Exploration {
 
-    private _actions: (Action | Observation )[];
+    private _actions: (Action)[];
 
     constructor() {
         this._actions = [];
