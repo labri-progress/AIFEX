@@ -5,10 +5,10 @@ import Session from "../domain/Session";
 import AifexPluginInfo from "../domain/AifexPluginInfo";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import Action from "../domain/Action";
-import Comment from "../domain/Comment";
+import Observation from "../domain/Observation";
 import Evaluator from "../domain/Evaluator";
 import Screenshot from "../domain/Screenshot";
-import CommentDistribution from "../domain/CommentDistribution";
+import ObservationDistribution from "../domain/ObservationDistribution";
 import Token from "../domain/Token";
 
 const OK_STATUS = 200;
@@ -265,14 +265,14 @@ export default class AifexServiceHTTP implements AifexService {
 			});
 	}
 
-	pushActionOrCommentList(serverURL: string, sessionId: string, explorationNumber: number, actionOrCommentList: (Action|Comment)[]): Promise<void> {
+	pushActionOrObservationList(serverURL: string, sessionId: string, explorationNumber: number, actionOrObservationList: (Action|Observation)[]): Promise<void> {
 		const body = {
-			interactionList: actionOrCommentList.map((actionOrComment: Action | Comment) => ({
-				index: actionOrComment.index,
-				concreteType: actionOrComment.getConcreteType(),
-				kind: actionOrComment.kind,
-				value: actionOrComment.value,
-				date: actionOrComment.date
+			interactionList: actionOrObservationList.map((actionOrObservation: Action | Observation) => ({
+				index: actionOrObservation.index,
+				concreteType: actionOrObservation.getConcreteType(),
+				kind: actionOrObservation.kind,
+				value: actionOrObservation.value,
+				date: actionOrObservation.date
 			}))
 		}
 		const option = {
@@ -298,7 +298,7 @@ export default class AifexServiceHTTP implements AifexService {
 			}
 		}).catch(error => {
 			console.error(error);
-			throw new Error("Service Failed to push new action or new comment");
+			throw new Error("Service Failed to push new action or new observation");
 		})
 	}
 
@@ -323,7 +323,7 @@ export default class AifexServiceHTTP implements AifexService {
 		});	
 	}
 
-	getCommentDistributions(serverURL: string, modelId: string, exploration: Exploration, token?:Token): Promise<CommentDistribution[] | undefined> {
+	getObservationDistributions(serverURL: string, modelId: string, exploration: Exploration, token?:Token): Promise<ObservationDistribution[] | undefined> {
 		const body = {
 			interactionList: exploration.interactionsToJSON()
 		};
@@ -333,17 +333,17 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
 		};
 		return fetch(
-			`${serverURL}/api/models/${modelId}/comment-distributions`,
+			`${serverURL}/api/models/${modelId}/observation-distributions`,
 			option)
 			.then((response) => {
 				if (response.status === OK_STATUS) {
 					return response
 						.json()
-						.then((commentDistributionsData: {
-							commentDistributions: any[]}) => {
-								console.log(JSON.stringify(commentDistributionsData));
-								return commentDistributionsData.commentDistributions.map(commentDistributionData => {
-									return new CommentDistribution(commentDistributionData[0], commentDistributionData[1]);
+						.then((observationDistributionsData: {
+							observationDistributions: any[]}) => {
+								console.log(JSON.stringify(observationDistributionsData));
+								return observationDistributionsData.observationDistributions.map(observationDistributionData => {
+									return new ObservationDistribution(observationDistributionData[0], observationDistributionData[1]);
 								})
 						})
 				}

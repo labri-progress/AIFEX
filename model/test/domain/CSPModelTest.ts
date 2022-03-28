@@ -133,7 +133,7 @@ describe("#getStimulusProbabilityMap", () => {
 });
 describe("#getNoteDistributionListMap", () => {
 
-    it("should get a distribution after : one stimulus, one comment", () => {
+    it("should get a distribution after : one stimulus, one observation", () => {
         const m = new CSPModel(3);
         const seq = new Sequence();
         seq.addStimulus(new Stimulus("home"));
@@ -152,7 +152,7 @@ describe("#getNoteDistributionListMap", () => {
         }
     });
 
-    it("should get a distribution after : two stimulus, one comment", () => {
+    it("should get a distribution after : two stimulus, one observation", () => {
         const m = new CSPModel(3);
         const seq = new Sequence();
         seq.addStimulus(new Stimulus("start"));
@@ -177,7 +177,7 @@ describe("#getNoteDistributionListMap", () => {
         
     });
 
-    it("should get a distribution after : two stimulus, one comment, one stimulus", () => {
+    it("should get a distribution after : two stimulus, one observation, one stimulus", () => {
         const m = new CSPModel(3);
 
         const seq1 = new Sequence();

@@ -1,5 +1,6 @@
 import Authorization from "./Authorization";
 import Invitation from "./Invitation";
+import { logger } from "../logger";
 
 export default class Account {
     private _username: string;//id
@@ -51,9 +52,13 @@ export default class Account {
 
     addAuthorization(newAuthorization: Authorization): "AuthorizationAdded" | "AuthorizationWasAlreadyThere" {
         if (!this._authorizationSet.find(authorization => authorization.key === newAuthorization.key)) {
+            logger.info(`Pushing authorization ${JSON.stringify(newAuthorization)}`);
+
             this._authorizationSet.push(newAuthorization);
             return "AuthorizationAdded";
         } else {
+            logger.info(`Authorization is already there`);
+
             return "AuthorizationWasAlreadyThere";
         }
     }

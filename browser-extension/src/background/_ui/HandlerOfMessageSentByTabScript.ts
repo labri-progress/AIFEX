@@ -32,17 +32,17 @@ export default class HandlerOfMessageSentByTabScript {
                 return true;
             }
 
-            case "getCommentDistributions": {
+            case "getObservationDistributions": {
                 logger.info(`TabScript asks for ${msg.kind}`);
-                let distributions = this._application.getCommentDistributions();
-                let commentDistributionList = distributions.map(dist => {
+                let distributions = this._application.getObservationDistributions();
+                let observationDistributionList = distributions.map(dist => {
                     return {
-                        comment : dist.comment,
+                        observation : dist.observation,
                         distributions : dist.distributions
                     }
                 });
                 sendResponse({
-                    commentDistributionList: JSON.parse(JSON.stringify(commentDistributionList))
+                    observationDistributionList: JSON.parse(JSON.stringify(observationDistributionList))
                 });
                 return true;
             }

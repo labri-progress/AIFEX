@@ -1,5 +1,5 @@
 import State, { OverlayType } from "../domain/State";
-import Comment from "../domain/Comment";
+import Observation from "../domain/Observation";
 import Action from "../domain/Action";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import BackgroundService from "../domain/BackgroundService";
@@ -12,34 +12,20 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
             chrome.runtime.sendMessage({
                 kind: 'getStateForTabScript'
             }, {}, (data: {
-                commentsUp: string[],
-                displayUserView: boolean,
                 isActive: boolean,
-                isRecording: boolean,
-                popupCommentPosition: {x: string, y: string},
                 webSite: any,
                 overlayType: OverlayType,
-                exploration: any,
                 showProbabilityPopup: boolean
             }) => {
                 const error = chrome.runtime.lastError;
                 if (error) {
                     return reject(error);
                 } else {
-                    const isActive = data.isRecording ? true : false;
-                    let commentsUp : Comment[] = []
-                    if (data.commentsUp && Array.isArray(data.commentsUp)) {
-                        commentsUp = data.commentsUp.map((commentText) => Comment.parseComment(commentText));
-                    }
                     const state = new State(
-                        commentsUp,
-                        data.displayUserView,
-                        isActive,
-                        data.webSite,
-                        data.popupCommentPosition,
+                        data.isActive,
                         data.overlayType,
-                        data.exploration,
-                        data.showProbabilityPopup);
+                        data.showProbabilityPopup,
+                        data.webSite)
                     return resolve(state)
                 }
             });

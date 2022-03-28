@@ -1,4 +1,4 @@
-export default class Comment {
+export default class Observation {
 
     kind: string;
     value: string;
@@ -21,14 +21,14 @@ export default class Comment {
     }
 
     getConcreteType(): string {
-        return "Comment";
+        return "Observation";
     }
 
     toPrintableText(): string {
         if (this.value) {
-            return `Comment : ${this.kind} - ${this.value}`
+            return `Observation : ${this.kind} - ${this.value}`
         } else {
-            return `Comment : ${this.kind}`
+            return `Observation : ${this.kind}`
         }
     }
 

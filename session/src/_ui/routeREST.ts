@@ -1,8 +1,7 @@
 import multer from "multer";
 import SessionService from "../application/SessionService";
 import ActionInteraction from "../domain/ActionInteraction";
-import AnswerInteraction from "../domain/AnswerInteraction";
-import CommentInteraction from "../domain/CommentInteraction";
+import ObersationInteraction from "../domain/ObservationInteraction";
 import { Express, Request } from "express";
 import { logger } from "../logger";
 import Session from "../domain/Session";
@@ -111,24 +110,16 @@ export default function attachRoutes(app: Express, sessionService: SessionServic
                                             date: interaction.date
                                         };
                                     }
-                                    if (interaction instanceof CommentInteraction) {
+                                    if (interaction instanceof ObersationInteraction) {
                                         return {
-                                            concreteType: "Comment",
+                                            concreteType: "Observation",
                                             index: interaction.index,
-                                            kind: interaction.comment.kind,
-                                            value: interaction.comment.value,
+                                            kind: interaction.observation.kind,
+                                            value: interaction.observation.value,
                                             date: interaction.date
                                         };
                                     }
-                                    if (interaction instanceof AnswerInteraction) {
-                                        return {
-                                            concreteType: "Answer",
-                                            index: interaction.index,
-                                            kind: interaction.answer.kind,
-                                            value: interaction.answer.value,
-                                            date: interaction.date
-                                        };
-                                    }
+                            
                                 }),
                             };
                         }),

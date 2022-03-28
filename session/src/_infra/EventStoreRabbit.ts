@@ -2,8 +2,7 @@ import amqp = require('amqplib');
 import EventStore from "../application/EventStore";
 import config from "./config";
 import ActionInteraction from "../domain/ActionInteraction";
-import AnswerInteraction from "../domain/AnswerInteraction";
-import CommentInteraction from "../domain/CommentInteraction";
+import ObersationInteraction from "../domain/ObservationInteraction";
 import Exploration from "../domain/Exploration";
 import { logger } from '../logger';
 
@@ -50,20 +49,14 @@ export default class EventStoreRabbit implements EventStore {
                     value : interaction.action.suffix,
                 });
             }
-            if (interaction instanceof CommentInteraction) {
+            if (interaction instanceof ObersationInteraction) {
                 sequence.push({
-                    concreteType : "Comment",
-                    kind : interaction.comment.kind,
-                    value : interaction.comment.value,
+                    concreteType : "Observation",
+                    kind : interaction.observation.kind,
+                    value : interaction.observation.value,
                 });
             }
-            if (interaction instanceof AnswerInteraction) {
-                sequence.push({
-                    concreteType : "Answer",
-                    kind : interaction.answer.kind,
-                    value : interaction.answer.value,
-                });
-            }
+
         });
 
         const msg = {

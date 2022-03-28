@@ -109,21 +109,20 @@
             </button>
 
 
-            <div class="aifex_component" id="commentSubComponent">
-                <h3>Post a Bug Report <span id="read-comment-button"><i class="fa fa-commenting"
-                            title="Read Comment"></i> Read existing bug reports !</span></h3>
+            <div class="aifex_component" id="observationSubComponent">
+                <h3>Post a Bug Report <span id="read-observation-button"><i class="fa fa-observationing"
+                            title="Read Observation"></i> Read existing bug reports !</span></h3>
 
-                <div id="comment-list"></div>
+                <div id="observation-list"></div>
 
-                <button id="comment-button" class="aifex_large_button">
-                    <i class="fa fa-comment" title="Add a Comment"></i> <span>Add a new bug report</span>
+                <button id="observation-button" class="aifex_large_button">
+                    <i class="fa fa-observation" title="Add a Observation"></i> <span>Add a new bug report</span>
                 </button>
-                <form id="commentForm">
+                <form id="observationForm">
 
                     <div class="aifex_form_element">
-                        <label htmlFor="commentType">Severity</label>
-                        <select class="custom-select" id="commentType">
-                            <option value="not defined">--not defined--</option>
+                        <label htmlFor="observationType">Severity</label>
+                        <select class="custom-select" id="observationType">
                             <option value="Blocker">Blocker</option>
                             <option value="Critical">Critical</option>
                             <option value="Major">Major</option>
@@ -133,21 +132,21 @@
                         </select>
                     </div>
                     <div class="aifex_form_element">
-                        <label htmlFor="commentDescription">Description</label>
-                        <textarea class="form-control" rows="4" placeholder="Comment's description"
-                            id="commentDescription"></textarea>
+                        <label htmlFor="observationDescription">Description</label>
+                        <textarea class="form-control" rows="4" placeholder="Observation's description"
+                            id="observationDescription"></textarea>
                     </div>
                     <div class="aifex_check_element">
-                        <input class="form-check-input" type="checkbox" id="commentScreenshot" name="commentScreenshot" checked>
-                        <label htmlFor="commentScreenshot" class="form-check-label">Attach Screenshot</label>
+                        <input class="form-check-input" type="checkbox" id="observationScreenshot" name="observationScreenshot" checked>
+                        <label htmlFor="observationScreenshot" class="form-check-label">Attach Screenshot</label>
                     </div>
                     <div class="aifex_button_group">
-                        <div id="commentIsSubmitted" class="aifex_checked_text">
+                        <div id="observationIsSubmitted" class="aifex_checked_text">
                             <i class="fa fa-check" style="color: green;"></i>
                             <span>Bug Report registered</span>
                         </div>
-                        <button type="submit" id="submit-comment" class="aifex_button">Submit</button>
-                        <button id="clearComment" class="aifex_button"> Clear</button>
+                        <button type="submit" id="submit-observation" class="aifex_button">Submit</button>
+                        <button id="clearObservation" class="aifex_button"> Clear</button>
                     </div>
                 </form>
             </div>

@@ -55,7 +55,7 @@ function createMonaco(code, jsonSchema, htmlIdOfLocation, htmlIdForm, formFieldN
             schema: jsonSchema
         }],
         validate: true,
-        allowComments: false
+        allowObservations: false
     }
 
     monaco.languages.json.jsonDefaults.setDiagnosticsOptions(config)

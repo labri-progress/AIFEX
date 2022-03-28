@@ -13,8 +13,8 @@ import AifexPopup from "./AifexPopup";
 import PopupService from "./PopupService";
 import Evaluator from "./Evaluator";
 import Screenshot from "./Screenshot";
-import Comment from "./Comment"
-import CommentDistribution from "./CommentDistribution";
+import Observation from "./Observation"
+import ObservationDistribution from "./ObservationDistribution";
 import { OverlayType } from "./Session";
 import { PopupPageKind } from "./PopupPageKind";
 import Token from "./Token";
@@ -47,13 +47,13 @@ export default class Background {
     private _rejectIncorrectExplorations: boolean;
 
     private _probabilityMap: Map<string, number>;
-    private _commentDistributions: CommentDistribution[] | undefined;
-    private _commentsUp: Comment[];
-    private _lastInteractionComment: Comment | undefined;
+    private _observationDistributions: ObservationDistribution[] | undefined;
+    private _observationsUp: Observation[];
+    private _lastInteractionObservation: Observation | undefined;
 
     private _popupPageKind: PopupPageKind;
     private _showConfig: boolean;
-    private _isRecording: boolean;
+    private _isActive: boolean;
     private _screenshotList: Screenshot[];
 
     private _mediaRecordManager: MediaRecorderManager;
@@ -85,7 +85,7 @@ export default class Background {
         this._aifexPopup = new AifexPopup(this._browserService);
         this._aifexPopup.attachBrowserHandlers();
 
-        this._isRecording = false;
+        this._isActive = false;
         this._testerName = "anonymous";
         this._numberOfExplorationsMadeByTester = 0;
         this._popupPageKind = PopupPageKind.Home;
@@ -95,9 +95,9 @@ export default class Background {
         this._showProbabilityPopup = false;
 
         this._probabilityMap = new Map();
-        this._commentDistributions = [];
-        this._commentsUp = [];
-        this._lastInteractionComment = undefined;
+        this._observationDistributions = [];
+        this._observationsUp = [];
+        this._lastInteractionObservation = undefined;
         this._screenshotList = [];
         this._explorationEvaluation = undefined;
         this._rejectIncorrectExplorations = true;
@@ -113,11 +113,11 @@ export default class Background {
         this._sessionId = undefined;
         this._modelId = undefined;
         this._probabilityMap = new Map();
-        this._commentDistributions = [];
-        this._commentsUp = [];
+        this._observationDistributions = [];
+        this._observationsUp = [];
         this._screenshotList = [];
         this._explorationEvaluation = undefined;
-        this._isRecording = false;
+        this._isActive = false;
     }
 
     changePopupPageKind(popupPageKind: PopupPageKind): void {
@@ -211,10 +211,10 @@ export default class Background {
         this._evaluator = undefined;
         this._sessionBaseURL = undefined;
         this._webSite = undefined;
-        this._isRecording = false;
+        this._isActive = false;
         this._exploration = undefined;
         this._screenshotList = [];
-        this._commentsUp = [];
+        this._observationsUp = [];
         this._popupPageKind = PopupPageKind.Home;
 
         if (this._shouldCloseWindowOnDisconnect) {
@@ -268,11 +268,11 @@ export default class Background {
     }
 
     startExploration() : Promise<void> {
-        if (this._isRecording) {
+        if (this._isActive) {
                 return Promise.resolve();
         } 
         return this._windowManager.reloadConnectedWindow(this._sessionBaseURL).then(() => {
-            this._isRecording = true;
+            this._isActive = true;
 
             return this.createExploration()
             .then(() => {
@@ -286,7 +286,7 @@ export default class Background {
             })
             .catch((e) => {
                 this._exploration = undefined;
-                this._isRecording = false;
+                this._isActive = false;
                 throw new Error(e);
             })
             .then(() => {
@@ -305,10 +305,10 @@ export default class Background {
     }
 
     removeExploration(): Promise<void> {
-        if (this._isRecording) {
+        if (this._isActive) {
             this._mediaRecordManager.stopRecording();
             this._exploration = undefined;
-            this._isRecording = false;
+            this._isActive = false;
             const state = this.getStateForTabScript();
             const tabIds = this._windowManager.getConnectedTabIds();
             return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
@@ -355,7 +355,7 @@ export default class Background {
         }
     }
 
-    private fetchComments(): Promise<void> {
+    private fetchObservations(): Promise<void> {
         if (!this._sessionId) {
             return Promise.reject("Not connected to a session");
         }
@@ -363,12 +363,12 @@ export default class Background {
             if (this._exploration.actions.length === 0) {
                 return Promise.resolve();
             } else {
-                return this._aifexService.getCommentDistributions(this._serverURL, this._modelId, this._exploration, this._token)
-                    .then((commentDistributionList) => {
-                        if (commentDistributionList === undefined) {
-                            this._commentDistributions = [];
+                return this._aifexService.getObservationDistributions(this._serverURL, this._modelId, this._exploration, this._token)
+                    .then((observationDistributionList) => {
+                        if (observationDistributionList === undefined) {
+                            this._observationDistributions = [];
                         } else {
-                            this._commentDistributions = commentDistributionList;
+                            this._observationDistributions = observationDistributionList;
                         }
                     })
             }
@@ -379,28 +379,28 @@ export default class Background {
     }
 
     getProbabilityMap(): Map<string, number> {
-        if (this._isRecording && this._exploration !== undefined && this._exploration.actions.length !== 0) {
+        if (this._isActive && this._exploration !== undefined && this._exploration.actions.length !== 0) {
             return this._probabilityMap;
         } else {
             return new Map();
         }
     }
 
-    getCommentDistributions(): CommentDistribution[] {
-        if (this._isRecording && this._exploration !== undefined && this._exploration.actions.length !== 0 && this._commentDistributions) {
-            return this._commentDistributions;
+    getObservationDistributions(): ObservationDistribution[] {
+        if (this._isActive && this._exploration !== undefined && this._exploration.actions.length !== 0 && this._observationDistributions) {
+            return this._observationDistributions;
         } else {
             return [];
         }
     }
 
     processNewAction(prefix: string, suffix?: string): Promise<void> {
-        if (this._isRecording && this._exploration) {
+        if (this._isActive && this._exploration) {
             this._exploration.addAction(prefix, suffix);
-            this._commentsUp = [];
-            this._lastInteractionComment = undefined
+            this._observationsUp = [];
+            this._lastInteractionObservation = undefined
             const promises = [
-                this.fetchComments(),
+                this.fetchObservations(),
                 this.evaluateExploration(),
                 this.fetchProbabilityMap()
             ];
@@ -427,7 +427,7 @@ export default class Background {
                 }
                 const actionList = this._exploration.actions;
                 const lastAction = actionList[actionList.length-1];
-                const pushActionListPromise = this._aifexService.pushActionOrCommentList(
+                const pushActionListPromise = this._aifexService.pushActionOrObservationList(
                     this._serverURL, 
                     this._sessionId, 
                     this._exploration.explorationNumber, 
@@ -445,10 +445,10 @@ export default class Background {
         }
     }
 
-    addCommentToExploration(comment: Comment): void {
-        if (this._isRecording && this._exploration) {
-            this._exploration.addComment(comment);
-            this._lastInteractionComment = comment;
+    addObservationToExploration(observation: Observation): void {
+        if (this._isActive && this._exploration) {
+            this._exploration.addObservation(observation);
+            this._lastInteractionObservation = observation;
             if (this._recordActionByAction) {
                 if (!this._serverURL ||  !this._sessionId) {
                     throw new Error("Not connected to a session")
@@ -456,11 +456,11 @@ export default class Background {
                 if (this._exploration.explorationNumber === undefined) {
                     throw new Error("The exploration has not been correctly started")
                 }
-                this._aifexService.pushActionOrCommentList(
+                this._aifexService.pushActionOrObservationList(
                     this._serverURL, 
                     this._sessionId, 
                     this._exploration.explorationNumber, 
-                    [comment])
+                    [observation])
 
             }
             this.refreshPopup()
@@ -471,17 +471,17 @@ export default class Background {
         return this._popupService.refresh(this.getStateForPopup())
     }
 
-    upComment(comment: Comment): void {
-        if (this._isRecording) {
-            if (!this._commentsUp.map((comment: Comment) => comment.value).includes(comment.value)) {
-                this.addCommentToExploration(comment);
-                this._commentsUp.push(comment);
+    upObservation(observation: Observation): void {
+        if (this._isActive) {
+            if (!this._observationsUp.map((observation: Observation) => observation.value).includes(observation.value)) {
+                this.addObservationToExploration(observation);
+                this._observationsUp.push(observation);
             }
         }
     }
 
     private stopRecordingExploration(): Promise<void> {
-        if (!this._isRecording) {
+        if (!this._isActive) {
             return Promise.resolve();
         } 
         if (this._exploration === undefined) {
@@ -498,13 +498,13 @@ export default class Background {
         .then(() => {
             if (this._evaluator && !this._explorationEvaluation?.isAccepted && this._rejectIncorrectExplorations) {
                 this.displayInvalidExploration();
-                this._isRecording = true;
+                this._isActive = true;
                 return;
             }
             else {
                 return this.processNewAction("end")
                 .then(() => {
-                    this._isRecording = false;
+                    this._isActive = false;
                     exploration.setStopDate();
                     if (!this._recordActionByAction) {
                         const MIN_NUMBER_OF_ACTIONS = 3; //start + oneUserAction + end
@@ -528,7 +528,7 @@ export default class Background {
                     logger.debug("ask tabs to stop recording the exploration");
                     this._exploration = undefined;
                     this._screenshotList = [];
-                    this._commentsUp = [];
+                    this._observationsUp = [];
                     const state = this.getStateForTabScript();
                     const tabIds = this._windowManager.getConnectedTabIds();
                     return Promise.all(tabIds.map(id => this._tabScriptService.stopExploration(id, state)))
@@ -550,11 +550,11 @@ export default class Background {
 
     sendExploration(): Promise<void> {
         if (this._serverURL && this._exploration && this._sessionId && !this._recordActionByAction) {
-            return this._aifexService.pushActionOrCommentList(
+            return this._aifexService.pushActionOrObservationList(
                 this._serverURL,
                 this._sessionId,
                 this._exploration.explorationNumber,
-                this._exploration.actionsAndComments
+                this._exploration.actionsAndObservations
             ).then(()=>{})
         } else {
             return Promise.resolve();
@@ -626,7 +626,7 @@ export default class Background {
 
         state.sessionDescription = this._sessionDescription;
         state.numberOfExplorationsMadeByTester = this._numberOfExplorationsMadeByTester;
-        state.isRecording = this._isRecording;
+        state.isRecording = this._isActive;
         state.testerName = this._testerName;
         state.hasBaseURL = this._sessionBaseURL !== undefined;
         state.managedWindowId = this._windowManager.getConnectedWindowId();
@@ -644,9 +644,9 @@ export default class Background {
         state.popupIsDetached = this._aifexPopup.isDetached;
         state.showProbabilityPopup = this._showProbabilityPopup;
 
-        state.commentUpList = this._commentsUp;
-        state.lastInteractionComment = this._lastInteractionComment;
-        state.commentDistributionList = this._commentDistributions || [];
+        state.observationUpList = this._observationsUp;
+        state.lastInteractionObservation = this._lastInteractionObservation;
+        state.observationDistributionList = this._observationDistributions || [];
 
         if (this._evaluator) {
             state.evaluatorScenario = this._evaluator.description;
@@ -660,10 +660,9 @@ export default class Background {
 
     getStateForTabScript(): StateForTabScript {
         const state = new StateForTabScript();
-        state.isRecording = this._isRecording;
+        state.isActive = this._isActive;
         state.webSite = this._webSite;
         state.overlayType = this._overlayType;
-        state.exploration = this._exploration;
         state.showProbabilityPopup = this._showProbabilityPopup;
         return state;
     }
@@ -698,7 +697,7 @@ export default class Background {
     setRecordMedia(recordMedia: boolean): Promise<void> {
         logger.debug('setRecordMedia:'+ recordMedia);
         if (recordMedia) {
-            if (this._isRecording) {
+            if (this._isActive) {
                 return this._mediaRecordManager.prepareRecording()
                     .then(() => {
                         return this._mediaRecordManager.startRecording();

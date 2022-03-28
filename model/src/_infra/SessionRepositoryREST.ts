@@ -28,7 +28,7 @@ export default class SessionRepositoryREST implements SessionRepository {
                         }
                         if (interaction.concreteType === "Action") {
                             seq.addStimulus(new Stimulus(value));
-                        } else if (interaction.concreteType === "Comment") {
+                        } else if (interaction.concreteType === "Observation") {
                             seq.addNote(new Note(value));
                         }
                     });

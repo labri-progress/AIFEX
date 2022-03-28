@@ -27,7 +27,7 @@ mv -f chromeExtension.zip ../dashboard/public
 mv -f firefoxExtension.zip ../dashboard/public
 cd ..
 
-echo ========================== PLUGIN COMPILATION ==================================
+echo ========================== BROWSER SCRIPT COMPILATION ==================================
 cd browser-script/ 
 npm install
 

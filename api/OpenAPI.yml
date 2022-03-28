@@ -777,9 +777,9 @@ paths:
       security:
         - bearerAuth: []
 
-  /models/{modelId}/comment-distributions:
+  /models/{modelId}/observation-distributions:
     post:
-      description: get distributions of the comment for a given interaction list
+      description: get distributions of the observation for a given interaction list
       parameters:
         - in: path
           name: modelId
@@ -798,13 +798,13 @@ paths:
 
       responses:
         '200':
-          description: The comment distributions
+          description: The observation distributions
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  commentDistributions:                  
+                  observationDistributions:                  
                       type: array
                       items:
                         type: array
@@ -859,7 +859,7 @@ paths:
                                   type: string
                                 occurence:
                                   type: integer
-                          nextComments:
+                          nextObservations:
                             type: array
                             items:
                               type: object
@@ -1382,7 +1382,7 @@ components:
         properties:
           concreteType:
             type: string
-            enum: [Action, Comment]
+            enum: [Action, Observation]
           kind:
             type: string
           value: 

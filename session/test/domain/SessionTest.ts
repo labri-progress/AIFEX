@@ -2,12 +2,12 @@ import chai from "chai";
 const expect = chai.expect;
 import "mocha";
 import Action from "../../src/domain/Action";
-import Comment from "../../src/domain/Comment";
+import Observation from "../../src/domain/Observation";
 import Session from "../../src/domain/Session";
 import Tester from "../../src/domain/Tester";
 import WebSite from "../../src/domain/WebSite";
 import ActionInteraction from "../../src/domain/ActionInteraction";
-import CommentInteraction from "../../src/domain/CommentInteraction";
+import ObservationInteraction from "../../src/domain/ObservationInteraction";
 
 const BASE_URL = "http://mywebsite.com";
 
@@ -80,39 +80,39 @@ describe("Domain - Session", () => {
 
         });
 
-        describe("Adding comment in an exploration", () => {
+        describe("Adding observation in an exploration", () => {
             const session = new Session(undefined, webSite, BASE_URL, "MySession", "do it", undefined, undefined );
             const action1 = new ActionInteraction(1,new Action("action1"));
             const action2 = new ActionInteraction(2,new Action("action2"));
-            const comment1 = new Comment("bug", "first");
-            const comment2 = new Comment("bug", "second");
-            const comment3 = new Comment("bug", "third");
+            const observation1 = new Observation("bug", "first");
+            const observation2 = new Observation("bug", "second");
+            const observation3 = new Observation("bug", "third");
 
             const explorationNumber = session.startExploration(anonymousTester);
             session.addInteractionListToExploration(explorationNumber, [ action1]);
 
-            it("should add a comment to an exploration", () => {
-                session.addCommentToExploration(explorationNumber, comment1);
+            it("should add a observation to an exploration", () => {
+                session.addObservationToExploration(explorationNumber, observation1);
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
                 expect(interactionList.length).to.eql(2);
                 expect(interactionList[0] instanceof ActionInteraction).to.be.true;
-                expect(interactionList[1] instanceof CommentInteraction).to.be.true;
+                expect(interactionList[1] instanceof ObservationInteraction).to.be.true;
             });
 
-            it("should add a second comment to an exploration", () => {
-                session.addCommentToExploration(explorationNumber, comment2);
+            it("should add a second observation to an exploration", () => {
+                session.addObservationToExploration(explorationNumber, observation2);
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
                 expect(interactionList.length).to.eql(3);
-                expect((<CommentInteraction>interactionList[2]).comment).to.equal(comment2);
+                expect((<ObservationInteraction>interactionList[2]).observation).to.equal(observation2);
             });
 
-            it("should add a comment on a new action", () => {
+            it("should add a observation on a new action", () => {
                 session.addInteractionListToExploration(explorationNumber, [action2]);
-                session.addCommentToExploration(explorationNumber, comment3);
+                session.addObservationToExploration(explorationNumber, observation3);
 
                 const interactionList = session.getInteractionListOfExploration(explorationNumber);
                 expect(interactionList.length).to.eql(5);
-                expect((<CommentInteraction>interactionList[4]).comment).to.equal(comment3);
+                expect((<ObservationInteraction>interactionList[4]).observation).to.equal(observation3);
             });
         });
 

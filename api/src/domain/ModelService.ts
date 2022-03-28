@@ -1,8 +1,8 @@
 import Action from "./Action";
-import Comment from "./Comment";
+import Observation from "./Observation";
 import Model from "./Model";
 import { ModelPredictionType } from "./ModelPredictionType";
-import CommentDistribution from "./CommentDistribution";
+import ObservationDistribution from "./ObservationDistribution";
 import Ngram from "./Ngram";
 
 export default interface ModelService {
@@ -16,9 +16,9 @@ export default interface ModelService {
 
     linkModelToSession(modelId: string, sessionId: string): Promise<"ModelLinkedToSession" | "ModelIsUnknown">;
 
-    computeProbabilities(modelId: string, interactionList: (Action | Comment)[]): Promise<Map<string,number>>;
+    computeProbabilities(modelId: string, interactionList: (Action | Observation)[]): Promise<Map<string,number>>;
 
-    getCommentDistributions(modelId: string, interactionList: (Action | Comment)[]): Promise<Map<string,CommentDistribution[]>>;
+    getObservationDistributions(modelId: string, interactionList: (Action | Observation)[]): Promise<Map<string,ObservationDistribution[]>>;
 
     getAllNgram(modelId: string): Promise<Ngram[]>;
 

@@ -1,8 +1,7 @@
 import Action from "../domain/Action";
 import ActionInteraction from "../domain/ActionInteraction";
-import AnswerInteraction from "../domain/AnswerInteraction";
-import Comment from "../domain/Comment";
-import CommentInteraction from "../domain/CommentInteraction";
+import Observation from "../domain/Observation";
+import ObersationInteraction from "../domain/ObservationInteraction";
 import Interaction from "../domain/Interaction";
 import { RecordingMode } from "../domain/RecordingMode";
 import Session from "../domain/Session";
@@ -94,21 +93,12 @@ export default class SessionRepositoryMongo implements SessionRepository {
                     date: interaction.date
                 };
             }
-            if (interaction instanceof CommentInteraction) {
+            if (interaction instanceof ObersationInteraction) {
                 return {
-                    concreteType: "Comment",
+                    concreteType: "Observation",
                     index: interaction.index,
-                    kind: interaction.comment.kind,
-                    value: interaction.comment.value,
-                    date: interaction.date
-                };
-            }
-            if (interaction instanceof AnswerInteraction) {
-                return {
-                    concreteType: "Answer",
-                    index: interaction.index,
-                    kind: interaction.answer.kind,
-                    value: interaction.answer.value,
+                    kind: interaction.observation.kind,
+                    value: interaction.observation.value,
                     date: interaction.date
                 };
             }
@@ -179,14 +169,14 @@ export default class SessionRepositoryMongo implements SessionRepository {
                                     if (interactionData.concreteType === "Action") {
                                         interactionList.push(new ActionInteraction(interactionData.index, new Action(interactionData.kind, interactionData.value), interactionData.date));
                                     }
-                                    if (interactionData.concreteType === "Comment") {
-                                        let comment: Comment;
+                                    if (interactionData.concreteType === "Observation") {
+                                        let observation: Observation;
                                         if (interactionData.value !== undefined) {
-                                            comment = new Comment(interactionData.kind, interactionData.value)
+                                            observation = new Observation(interactionData.kind, interactionData.value)
                                         } else {
-                                            comment = new Comment(interactionData.kind, "");
+                                            observation = new Observation(interactionData.kind, "");
                                         }
-                                        interactionList.push(new CommentInteraction(interactionData.index, comment, interactionData.date));
+                                        interactionList.push(new ObersationInteraction(interactionData.index, observation, interactionData.date));
                                     }
                                 });
                                 session.addInteractionListToExploration(explorationNumber, interactionList);

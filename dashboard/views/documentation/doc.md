@@ -51,7 +51,7 @@ Stop / Save : Stop your exploration and send it to the server.
 
 Trash : Stop and delete the current exploration, without sending the data to the server.
 
-Add a new comment to your exploration : Adds a comment to your exploration, which will be available in the dashboard. You can add a screenshot to your comment by checking the corresponding checkbox.
+Add a new observation to your exploration : Adds a observation to your exploration, which will be available in the dashboard. You can add a screenshot to your observation by checking the corresponding checkbox.
 
 Create your own session
 ===========

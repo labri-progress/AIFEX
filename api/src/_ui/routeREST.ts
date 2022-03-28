@@ -723,21 +723,21 @@ export default function attachRoutes(app: Application, api: APIApplication) {
 
     });
 
-    app.post("/models/:modelId/comment-distributions", (req, res) => {
+    app.post("/models/:modelId/observation-distributions", (req, res) => {
         const modelId = req.params.modelId;
         const {interactionList} = req.body;
-        logger.info(`get comment distributions`);
+        logger.info(`get observation distributions`);
         if (modelId === undefined || interactionList === undefined) {
             logger.warn(`modelId or interactionList are undefined`);
             res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId or no InteractionList"});
         } else {
-            api.getCommentDistributions(modelId, interactionList, req.token)
-                .then(commentDistributions => {
-                    if (commentDistributions === "Unauthorized") {
+            api.getObservationDistributions(modelId, interactionList, req.token)
+                .then(observationDistributions => {
+                    if (observationDistributions === "Unauthorized") {
                         res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
                     } else {
-                        logger.info("Comment distributions are computed");
-                        res.json({commentDistributions:Array.from(commentDistributions)});
+                        logger.info("Observation distributions are computed");
+                        res.json({observationDistributions:Array.from(observationDistributions)});
                     }
                 })
                 .catch((e) => {

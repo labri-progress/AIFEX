@@ -1,6 +1,6 @@
 import Action from "./Action";
 
-export default class CommentDistribution {
+export default class ObservationDistribution {
 
     actions: Action[];
     occurence: number;

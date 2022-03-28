@@ -1,8 +1,8 @@
 import AifexService from "../domain/AifexService";
 import Background from "../domain/Background";
 import BrowserService from "../domain/BrowserService";
-import Comment from "../domain/Comment";
-import CommentDistribution from "../domain/CommentDistribution";
+import Observation from "../domain/Observation";
+import ObservationDistribution from "../domain/ObservationDistribution";
 import CompatibilityCheck from "../domain/CompatibilityCheck";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import { PopupPageKind } from "../domain/PopupPageKind";
@@ -78,8 +78,8 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.removeExploration();
 	}
 
-	addCommentToExploration(kind: string , message: string): void{
-		this._background.addCommentToExploration(new Comment(kind, message));
+	addObservationToExploration(kind: string , message: string): void{
+		this._background.addObservationToExploration(new Observation(kind, message));
 	}
 
 	takeScreenShot(): Promise<void> {
@@ -140,16 +140,16 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.getProbabilityMap();
 	}
 
-	getCommentDistributions(): CommentDistribution[] {
-		return this._background.getCommentDistributions();
+	getObservationDistributions(): ObservationDistribution[] {
+		return this._background.getObservationDistributions();
 	}
 
 	processNewAction(kind: string, value: string): Promise<void> {
 		return this._background.processNewAction(kind, value);
 	}
 
-	upComment(kind: string, value: string): void {
-		return this._background.upComment(new Comment(kind, value));
+	upObservation(kind: string, value: string): void {
+		return this._background.upObservation(new Observation(kind, value));
 	}
 
 	getExplorationEvaluation(): ExplorationEvaluation | undefined {

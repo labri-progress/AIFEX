@@ -2,8 +2,8 @@ import fetch from "node-fetch";
 import config from "./config";
 import Action from "../domain/Action";
 import ActionInteraction from "../domain/ActionInteraction";
-import Comment from "../domain/Comment";
-import CommentInteraction from "../domain/CommentInteraction";
+import Observation from "../domain/Observation";
+import ObservationInteraction from "../domain/ObservationInteraction";
 import Mapping from "../domain/Mapping";
 import Session from "../domain/Session";
 import SessionRepository from "../domain/SessionRepository";
@@ -49,11 +49,11 @@ export default class SessionRepositoryREST implements SessionRepository {
                     if (interaction.concreteType === "Action") {
                         return new ActionInteraction(interaction.index, new Action(interaction.kind, interaction.value));
                     }
-                    if (interaction.concreteType === "Comment" && interaction.value !== undefined) {
-                        return new CommentInteraction(interaction.index, new Comment(interaction.kind, interaction.value));
+                    if (interaction.concreteType === "Observation" && interaction.value !== undefined) {
+                        return new ObservationInteraction(interaction.index, new Observation(interaction.kind, interaction.value));
                     }
                 })
-                .filter( (interaction): interaction is ActionInteraction | CommentInteraction => interaction !== undefined) ;
+                .filter( (interaction): interaction is ActionInteraction | ObservationInteraction => interaction !== undefined) ;
                 session.addInteractionListToExploration(explorationNumber, interactionList);
             });
 

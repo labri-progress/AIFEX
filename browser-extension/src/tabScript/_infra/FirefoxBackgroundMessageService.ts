@@ -1,8 +1,9 @@
 import State, { OverlayType } from "../domain/State";
-import Comment from "../domain/Comment";
+import Observation from "../domain/Observation";
 import Action from "../domain/Action";
 import ExplorationEvaluation from "../domain/ExplorationEvaluation";
 import BackgroundService from "../domain/BackgroundService";
+import WebSite from "../../background/domain/Website";
 
 
 export default class FirefoxBackgroundMessageService  implements BackgroundService{
@@ -12,30 +13,16 @@ export default class FirefoxBackgroundMessageService  implements BackgroundServi
                 kind: 'getStateForTabScript'
             })
             .then ((data: {
-                commentsUp: string[],
-                isDisplayingComments: boolean,
                 isActive: boolean,
-                isRecording: boolean,
-                popupCommentPosition: {x: string, y: string},
-                webSite: any,
+                webSite: WebSite,
                 overlayType: OverlayType,
-                exploration: any,
                 showProbabilityPopup: boolean
             }) => {
-                const isActive = data.isRecording ? true : false;
-                let commentsUp : Comment[] = []
-                if (data.commentsUp && Array.isArray(data.commentsUp)) {
-                    commentsUp = data.commentsUp.map((commentText) => Comment.parseComment(commentText));
-                }
                 const state = new State(
-                    commentsUp,
-                    data.isDisplayingComments,
-                    isActive,
-                    data.webSite,
-                    data.popupCommentPosition,
+                    data.isActive,
                     data.overlayType,
-                    data.exploration,
-                    data.showProbabilityPopup);
+                    data.showProbabilityPopup,
+                    data.webSite);
                     
                 return state;
             });
