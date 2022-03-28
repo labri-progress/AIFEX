@@ -151,15 +151,15 @@ export default class ChromeBrowserService implements BrowserService {
     }
 
     setPopupToDetached(): void {
-        chrome.browserAction.setPopup({ popup: this.aifexPopupDetachedUrl });
+        chrome.action.setPopup({ popup: this.aifexPopupDetachedUrl });
     }
 
     setPopupToAttached(): void {
-        chrome.browserAction.setPopup({ popup: this.aifexPopupAttachedUrl });
+        chrome.action.setPopup({ popup: this.aifexPopupAttachedUrl });
     }
 
     attachBrowserActionClicked(handler: (windowId: number) => void): void {
-        chrome.browserAction.onClicked.addListener((tab) => {
+        chrome.action.onClicked.addListener((tab) => {
             if (tab.id) {
                 handler(tab.id);
             }

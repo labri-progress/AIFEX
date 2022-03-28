@@ -1,23 +1,28 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "AIFEX | AI For Exploratory testing",
-  "version": "0.11.6",
+  "version": "0.11.7",
   "description": "Help tester to collaborate on exploratory testing sessions",
   "permissions": [
-    "<all_urls>",
+    "activeTab",
     "webNavigation",
     "tabs",
-    "desktopCapture"
+    "desktopCapture",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "*://*/*"
   ],
   "icons": {
     "128": "images/aifex_icon.png"
   },
-  "browser_action": {
+  "action": {
     "default_title": "AIFEX",
     "default_popup": "aifex_page/index.html"
   },
   "background": {
-    "scripts": ["index.js"]
+    "service_worker": "index.js"
   }
   
 }

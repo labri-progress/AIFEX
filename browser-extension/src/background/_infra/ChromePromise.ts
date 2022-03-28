@@ -139,25 +139,13 @@ export function focusTab(tabId : number): Promise<void> {
 export function executeTabScript(tabId: number): Promise<boolean> {
     logger.info(`executre script for id:${tabId}`);
     return new Promise((resolve, reject) => {
-        chrome.tabs.executeScript(tabId, {file: 'tabScript.js'}, () => {
-            const error = chrome.runtime.lastError;
-            if (error) {
-                const errorMsg = error.message;
-                const chromeStartPage = 'Cannot access contents of url "chrome-search://local-ntp/local-ntp.html';
-                const chromeExtensionPage = 'Cannot access a chrome:// URL';
-                const restrictedPage = 'Cannot access contents of url';
-                // Not an error, happens when a chrome:// tab is opened in the window
-
-                if (errorMsg && (errorMsg.startsWith(chromeStartPage) || errorMsg.startsWith(chromeExtensionPage) || errorMsg.startsWith(restrictedPage))) {
-                    resolve(false);
-                } else {
-                    reject(errorMsg);
-                }
-            }
-            else {
-                resolve(true);
-            }
-        });
+        chrome.scripting.executeScript({target: {tabId}, files: ['tabScript.js']})
+        .then(() => {
+            resolve(true);
+        })
+        .catch((err) => {
+            resolve(false);
+        }); 
     });
 }
 
@@ -208,7 +196,6 @@ export function takeScreenshot(windowId : number): Promise<string> {
         chrome.tabs.captureVisibleTab(windowId, {format : "jpeg",quality : JPG_QUALITY}, dataImage => {
             const error = chrome.runtime.lastError;
             if (error) {
-                console.error(error);
                 reject(error);
             } else {
                 resolve(dataImage)

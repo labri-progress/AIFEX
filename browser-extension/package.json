@@ -22,9 +22,9 @@
   },
   "devDependencies": {
     "@medv/finder": "^2.1.0",
-    "@types/chrome": "0.0.159",
-    "@types/dom-mediacapture-record": "^1.0.10",
-    "@types/firefox-webext-browser": "^82.0.1",
+    "@types/chrome": "0.0.180",
+    "@types/dom-mediacapture-record": "^1.0.11",
+    "@types/firefox-webext-browser": "^94.0.1",
     "bootstrap": "^5.1.3",
     "copy-webpack-plugin": "^9.0.1",
     "css-selector-generator": "^3.5.4",

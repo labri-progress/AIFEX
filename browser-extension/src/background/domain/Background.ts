@@ -687,7 +687,7 @@ export default class Background {
                     }
                 })
                 .catch((error) => {
-                    logger.error("cannot take screenshot", error);
+                    logger.warn("cannot take screenshot");
                     return Promise.resolve();
                 })
         } else {
