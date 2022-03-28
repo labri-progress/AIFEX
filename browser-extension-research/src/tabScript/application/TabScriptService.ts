@@ -11,7 +11,7 @@ import Highlighter from "../domain/Highlighter";
 export default class TabScriptService implements Interface4Background {
     private _tabScript : TabScript;
 
-    constructor(backgroundService : BackgroundService, highlighter: Highlighter) {
+    constructor(backgroundService : BackgroundService) {
         this._tabScript = new TabScript(backgroundService, highlighter);
     }
 
