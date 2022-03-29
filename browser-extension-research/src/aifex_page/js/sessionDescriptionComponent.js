@@ -4,9 +4,12 @@
     let recordMediaStatus = document.getElementById('recordMediaStatus');
     let takeAScreenshotByAction = document.getElementById('takeAScreenshotByAction');
 
+    let testerName = document.getElementById('testerName');
+
     function render() {
         recordMediaStatus.checked = state.isPreparedToRecordMedia;
         takeAScreenshotByAction.checked = state.takeAScreenshotByAction;
+        testerName.value = state.testerName;
         if (state.showConfig) {
             component.style.display = 'none';
         } else {
@@ -37,10 +40,23 @@
     });
 
     document.getElementById('sessionDescriptionButton').addEventListener('click', (e) => {
-        sendMessage({ kind: "changePopupPageKind", popupPageKind: 'Explore' })
-            .then(() => {
-                getStateAndRender();
-            });
+        e.preventDefault();
+
+        sendMessage({
+            kind: "submitConfig", 
+            testerName: testerName.value,
+            shouldCreateNewWindowsOnConnect: true, 
+            shouldCloseWindowOnDisconnect: true,
+            shouldOpenPrivateWindows: false,
+            showProbabilityPopup: false
+        })
+        .then(() => {
+            sendMessage({ kind: "changePopupPageKind", popupPageKind: 'Explore' })
+        })
+        .then(() => {
+            getStateAndRender();
+        });
+        
     });
 
     addComponentToPopup(render);

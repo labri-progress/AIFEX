@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>AIFEX</title>
+    <title>AIFEX RESEARCH</title>
     <link rel="stylesheet" href="./css/popup.css">
     <link rel="stylesheet" href="./css/font-awesome.min.css">
 
@@ -25,7 +25,6 @@
     <header>
         <h2>AIFEX</h2>
         <div id="header-buttons" class="btn-group" role="group" aria-label="windowButtons">
-            <span id="config-button" class="fa fa-cog fa-lg"></span>
             <span id="attach-button" class="fa fa-window-minimize fa-lg"></span>
             <span id="detach-button" class="fa fa-window-maximize fa-lg"></span>
             <span id="disconnect-button" class="fa fa-close fa-lg"></span>
@@ -83,13 +82,19 @@
 
         <div class="aifex_component" id="descriptionOfTheSession">
             <div id="sessionDescription"></div>
+
             <div class="aifex_check_element" id="recordMediaStatusDiv">
-                <input type="checkbox" id="recordMediaStatus" name="recordMediaStatus" >
+                <input type="checkbox" id="recordMediaStatus" name="recordMediaStatus" disabled>
                 <label for="recordMediaStatus">Record a video for each exploration ?</label>
             </div>
             <div class="aifex_check_element" id="takeAScreenshotByActionDiv">
-                <input type="checkbox" id="takeAScreenshotByAction" name="takeAScreenshotByAction" >
+                <input type="checkbox" id="takeAScreenshotByAction" name="takeAScreenshotByAction" disabled>
                 <label for="takeAScreenshotByAction">Make a screenshot for every action ?</label>
+            </div>
+
+            <div class="aifex_form_element">
+                <label for="testerName">TesterName</label>
+                <input id="testerName" class="form-control" type="text" placeholder="Anonymous"/>
             </div>
             
             <button id="sessionDescriptionButton" class="aifex_button">OK</button>
