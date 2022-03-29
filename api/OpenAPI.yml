@@ -4,6 +4,7 @@ info:
   version: '0.10.11'
 servers:
   - url: http://localhost/api
+  - url: https://www.aifex.fr/api
 paths:
   /ping:
     get:

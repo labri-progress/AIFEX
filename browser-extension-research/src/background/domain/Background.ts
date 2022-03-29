@@ -163,7 +163,7 @@ export default class Background {
 
     connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
         this.initialize();
-        logger.debug("exploration size : " + this._exploration);
+        logger.debug("exploration size : " + this._exploration?.length);
         return Promise.all([this._aifexService.hasModel(serverURL, modelId, this._token), this._aifexService.getSession(serverURL, sessionId, this._token)])
             .then(([modelResult, sessionResult]) => {
                 if (modelResult === "Unauthorized" || sessionResult === "Unauthorized") { 
@@ -228,24 +228,6 @@ export default class Background {
         return this._sessionId !== undefined;
     }
 
-    reloadWebsite(): Promise<void> {
-        if (!this._webSite || !this._serverURL) {
-            return Promise.resolve();
-        }
-        return this._aifexService.getWebSite(this._serverURL, this._webSite.id, this._token)
-            .then((webSite) => {
-                if (webSite === "Unauthorized") {
-                    throw new Error("Unauthorized to load website")
-                }
-                this._webSite = webSite;
-            })
-            .then((_) => {
-                const state = this.getStateForTabScript();
-                const tabIds = this._windowManager.getConnectedTabIds();
-                return Promise.all(tabIds.map(id => this._tabScriptService.reload(id, state))).then(() => { });
-            })
-    }
-
     drawAttention(): Promise<void> {
         const id = this._windowManager.getConnectedWindowId();
         if (this._sessionId && id !== undefined && id !== null) {
@@ -268,40 +250,50 @@ export default class Background {
     }
 
     startExploration() : Promise<void> {
+        logger.debug('startExploration');
         if (this._isActive) {
+                logger.debug('isActive');
                 return Promise.resolve();
         } 
-        return this._windowManager.reloadConnectedWindow(this._sessionBaseURL).then(() => {
-            this._isActive = true;
+        return this._windowManager.reloadConnectedWindow(this._sessionBaseURL)
+            .then(() => {
+                logger.debug('reloadConnected');
+                this._isActive = true;
 
-            return this.createExploration()
-            .then(() => {
-                return this.processNewAction("start");
-            })
-            .then(() => {
-                const state = this.getStateForTabScript();
-                const tabIds = this._windowManager.getConnectedTabIds();
-
-                return Promise.all(tabIds.map(tabId => this._tabScriptService.startExploration(tabId, state)));
-            })
-            .catch((e) => {
-                this._exploration = undefined;
-                this._isActive = false;
-                throw new Error(e);
-            })
-            .then(() => {
-                if (this._evaluator) {
-                    this.evaluateExploration();
-                }
-            })
-            .then(() => {
-                return this._mediaRecordManager.startRecording()
-                    .catch((e) => {
-                        this._mediaRecordManager.destroyRecording();
-                        console.error(e)
+                return this.createExploration()
+                    .then(() => {
+                        logger.debug('exploration created');
+                        return this.processNewAction("start");
                     })
-            })        
-        })
+                    .then(() => {
+                        logger.debug('start action');
+                        const state = this.getStateForTabScript();
+                        const tabIds = this._windowManager.getConnectedTabIds();
+
+                        logger.debug('state and tabIds are ok');
+
+                        return Promise.all(tabIds.map(tabId => this._tabScriptService.startExploration(tabId, state)));
+                    })
+                    .catch((e) => {
+                        logger.debug('messages error, not sent to tabScript');
+                        this._exploration = undefined;
+                        this._isActive = false;
+                        throw new Error(e);
+                    })
+                    .then(() => {
+                        logger.debug('evaluate');
+                        if (this._evaluator) {
+                            this.evaluateExploration();
+                        }
+                    })
+                    .then(() => {
+                        return this._mediaRecordManager.startRecording()
+                            .catch((e) => {
+                                this._mediaRecordManager.destroyRecording();
+                                console.error(e)
+                            })
+                    })        
+            })
     }
 
     removeExploration(): Promise<void> {
@@ -427,6 +419,7 @@ export default class Background {
                 }
                 const actionList = this._exploration.actions;
                 const lastAction = actionList[actionList.length-1];
+                logger.debug(`processNewAction, lastAction: ${lastAction.kind} ${lastAction.value}`);
                 const pushActionListPromise = this._aifexService.pushActionOrObservationList(
                     this._serverURL, 
                     this._sessionId, 
@@ -435,8 +428,10 @@ export default class Background {
 
                 promises.push(pushActionListPromise);
             }
+            logger.debug(`there are ${promises.length} promises`);
             return Promise.all(promises)
                 .then(() => {
+                    logger.debug('will refreshPopup');
                     this.refreshPopup();
                 })
 

@@ -57,10 +57,6 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.disconnect();
 	}
 
-	reloadWebsite(): Promise<void> {
-		return this._background.reloadWebsite();
-	}
-
 	startExploration(): Promise<void> {
 		return this._background.startExploration();
 	}

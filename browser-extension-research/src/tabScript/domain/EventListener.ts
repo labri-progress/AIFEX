@@ -1,15 +1,12 @@
 import BackgroundService from "./BackgroundService"
 import Action from "./Action";
 import { logger } from "../framework/Logger";
+import getCssSelector from 'css-selector-generator';
 
 export default class EventListener {
-    private _handledEvents: string[];
-    private _newActionCallbacks: ((action: Action) => void)[];
     private _backgroundService: BackgroundService;
 
     constructor(backgroundService: BackgroundService) {
-        this._handledEvents = [];
-        this._newActionCallbacks = [];
         this._backgroundService = backgroundService;
     }
 
@@ -27,41 +24,145 @@ export default class EventListener {
     }
 
     private listen(): void {
-        const events = ['mousedown', 'keydown'];
-        this._handledEvents = events;
-
-        this._handledEvents.forEach((handledEvent) => {
-            logger.debug(`listening to ${handledEvent}`);
-            document.addEventListener(handledEvent, this.exploratoryListener.bind(this), true)
-        });
+        logger.debug(`listening to events`);
+        document.addEventListener('mousedown', this.listenToMouseDown.bind(this), true);
+        document.addEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
 
     private unlisten(): void {
-        this._handledEvents.forEach((handledEvent) => {
-            document.removeEventListener(handledEvent, this.exploratoryListener.bind(this), true)
-        });
+        document.removeEventListener('mousedown', this.listenToMouseDown.bind(this), true);
+        document.removeEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
 
-    private exploratoryListener(event: Event): void {
+    private listenToMouseDown(event: Event): void {
         let unsafeEvent: any = event;
-        if (unsafeEvent.isTrusted || unsafeEvent.type === 'css-class-added') {
-            if (!unsafeEvent.explored) {
-                unsafeEvent.explored = true;
-                const rule = this._ruleService.getMatchingRule(event);
-                if (rule) {
-                    const action = rule.makeAction(event);
-                    if (action) {
-                        logger.info(`action : ${action.toString()}`);
-                        this._backgroundService.sendAction(action)
-                            .then(() => {
-                                
-                            })
-                            .catch((error) => {
-                                logger.error('Error while Listener pushed action ', error);
-                            })
-                    }
-                }
+        if (unsafeEvent.isTrusted && !unsafeEvent.explored) {
+            if (event instanceof MouseEvent) {
+                let prefix = 'click';
+                let suffix = this.makeSuffix(event);
+                let action = new Action(prefix, suffix);
+
+                logger.info(`action : ${action.toString()}`);
+                this._backgroundService.sendAction(action)
+                    .catch((error) => {
+                        logger.error('Error while Listener pushed action ', error);
+                    })
             }
         }
     }
+
+
+    private listenToKeyDown(event: Event): void {
+        let unsafeEvent: any = event;
+        if (unsafeEvent.isTrusted && !unsafeEvent.explored) {
+            if (event instanceof KeyboardEvent) {
+                let prefix = 'Edit';
+                let isEditable = false;
+                if (event.target instanceof HTMLElement && event.target.isContentEditable) {
+                    isEditable = true;
+                }
+
+                
+                switch (event.code) {
+                    case 'Tab':
+                        if (event.shiftKey){
+                            prefix = 'ShiftTab';
+                        } else {
+                            prefix = 'Tab';
+                        }
+                        break;
+                    case 'Enter':
+                        if (isEditable) {
+                            prefix = 'Edit';
+                        } else {
+                            prefix = 'Enter';
+                        }
+                        break;
+                    case 'Space':
+                        if (isEditable) {
+                            prefix = 'Edit';
+                        } else {
+                            prefix = 'Space';
+                        }
+                        break;
+                    case 'ArrowUp':
+                    case 'ArrowDown':
+                    case 'ArrowLeft':
+                    case 'ArrowRight':
+                        if (isEditable) {
+                            prefix = 'Edit';
+                        } else {
+                            prefix = event.code;
+                        }
+                        break;
+                    case 'Escape':
+                        prefix = 'Escape';
+                        break;
+                    default:
+                        prefix = 'Edit';
+
+                }
+
+                let suffix = this.makeSuffix(event);
+                let action = new Action(prefix, suffix);
+                logger.info(`action : ${action.toString()}`);
+                this._backgroundService.sendAction(action)
+                    .then(() => {
+                        
+                    })
+                    .catch((error) => {
+                        logger.error('Error while Listener pushed action ', error);
+                    })
+            }
+        }
+    }
+
+
+    makeSuffix(event : Event): string | undefined {
+        if (event.target) {
+            if (event.target instanceof HTMLElement || event.target instanceof SVGElement) { 
+                let suffix;
+                try {
+                    suffix = getCssSelector(event.target, {
+                        selectors: [
+                            "id", 
+                            "class", 
+                            "tag", 
+                            "attribute"
+                        ], 
+                        blacklist: [
+                            /.*data.*/i, 
+                            /.*aifex.*/i, 
+                            /.*over.*/i,
+                            /.*auto.*/i,
+                            /.*value.*/i,
+                            /.*checked.*/i,
+                            '[placeholder]',
+                            /.*href.*/i,
+                            /.*src.*/i,
+                            /.*onclick.*/i,
+                            /.*onload.*/i,
+                            /.*onkeyup.*/i,
+                            /.*width.*/i,
+                            /.*height.*/i,
+                            /.*style.*/i,
+                            /.*size.*/i,
+                            /.*maxlength.*/i
+                        ],
+                        combineBetweenSelectors: true,
+                        maxCandidates: 100
+                    });
+                } catch (e) {
+                    logger.error(`exception`,new Error('css exception'));
+                }
+
+                const rect = event.target.getBoundingClientRect();
+                if (rect) {
+                    suffix +=`?left=${rect.left}&top=${rect.top}&right=${rect.right}&bottom=${rect.bottom}&width=${rect.width}&height=${rect.height}&screenwidth=${window.innerWidth}&screenheight=${window.innerHeight}`;
+                }
+                return suffix;
+            }
+        }
+    }
+
 }

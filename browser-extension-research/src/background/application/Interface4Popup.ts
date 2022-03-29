@@ -22,8 +22,6 @@ export default interface Interface4Popup {
 
     disconnect(): Promise<void>;
 
-    reloadWebsite(): Promise<void>;
-
     drawAttention(): Promise<void>;
 
     startExploration(): Promise<void>;

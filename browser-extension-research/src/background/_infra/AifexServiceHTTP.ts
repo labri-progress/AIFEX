@@ -10,6 +10,7 @@ import Evaluator from "../domain/Evaluator";
 import Screenshot from "../domain/Screenshot";
 import ObservationDistribution from "../domain/ObservationDistribution";
 import Token from "../domain/Token";
+import { logger } from "../Logger";
 
 const OK_STATUS = 200;
 const INVALID_PARAMETERS_STATUS = 400;
@@ -266,6 +267,7 @@ export default class AifexServiceHTTP implements AifexService {
 	}
 
 	pushActionOrObservationList(serverURL: string, sessionId: string, explorationNumber: number, actionOrObservationList: (Action|Observation)[]): Promise<void> {
+		logger.debug(`pushActionOrObservationList: ${JSON.stringify(actionOrObservationList)}`);
 		const body = {
 			interactionList: actionOrObservationList.map((actionOrObservation: Action | Observation) => ({
 				index: actionOrObservation.index,
@@ -274,32 +276,33 @@ export default class AifexServiceHTTP implements AifexService {
 				value: actionOrObservation.value,
 				date: actionOrObservation.date
 			}))
-		}
+		};
+		logger.debug(`pushActionOrObservationList JSON: ${JSON.stringify(body)}`);
 		const option = {
 			method: "POST",
 			body: JSON.stringify(body),
 			headers: { "Content-Type": "application/json" },
 		};
-		return fetch(
-			`${serverURL}/api/sessions/${sessionId}/explorations/${explorationNumber}/interactions`,
-			option)
-		.then((response) => {
-			if (response.status === OK_STATUS) {
-				return;
-			}
-			if (response.status === NOT_FOUND_STATUS) {
-				return Promise.reject(new Error(`sessionId not found`));
-			}
-			if (response.status === INVALID_PARAMETERS_STATUS) {
-				return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
-			}
-			if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-				return Promise.reject(new Error(`server error`));
-			}
-		}).catch(error => {
-			console.error(error);
-			throw new Error("Service Failed to push new action or new observation");
-		})
+		return fetch(`${serverURL}/api/sessions/${sessionId}/explorations/${explorationNumber}/interactions`,option)
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					logger.debug(`pushActionOrObservationList: OK`);
+					return;
+				}
+				if (response.status === NOT_FOUND_STATUS) {
+					return Promise.reject(new Error(`sessionId not found`));
+				}
+				if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(new Error(`sessionId and/or exploration is malformed`));
+				}
+				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(new Error(`server error`));
+				}
+			})
+			.catch(error => {
+				console.error(error);
+				throw new Error("Service Failed to push new action or new observation");
+			})
 	}
 
 	notifySubmissionAttempt(serverURL: string, sessionId: string, explorationNumber: number) {		
@@ -333,16 +336,16 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
 		};
 		return fetch(
-			`${serverURL}/api/models/${modelId}/observation-distributions`,
+			`${serverURL}/api/models/${modelId}/comment-distributions`,
 			option)
 			.then((response) => {
 				if (response.status === OK_STATUS) {
 					return response
 						.json()
 						.then((observationDistributionsData: {
-							observationDistributions: any[]}) => {
-								console.log(JSON.stringify(observationDistributionsData));
-								return observationDistributionsData.observationDistributions.map(observationDistributionData => {
+							commentDistributions: any[]}) => {
+								logger.debug(JSON.stringify(observationDistributionsData));
+								return observationDistributionsData.commentDistributions.map(observationDistributionData => {
 									return new ObservationDistribution(observationDistributionData[0], observationDistributionData[1]);
 								})
 						})

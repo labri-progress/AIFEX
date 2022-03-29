@@ -178,6 +178,8 @@ export function sendMessageToTab(message={}, messageKind : string, tabId: number
                     } 
                     else if (error.message.startsWith(`Could not establish connection. Receiving end does not exist`)) {
                         resolve(`Could not establish connection. Receiving end does not exist`);
+                    } else {
+                        resolve(error.message);
                     }
                 }
                  else {

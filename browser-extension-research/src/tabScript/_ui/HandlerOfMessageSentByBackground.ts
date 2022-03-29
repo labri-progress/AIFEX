@@ -15,6 +15,7 @@ export default class HandlerOfMessageSentByBackground  {
     }
 
     handleMessage(msg : any, sender : any, sendResponse: Function) : boolean {
+        logger.debug(`TabScript received message: ${msg.kind}`);
         switch (msg.kind) {
             case "explorationStarted":
                 this._tabScriptService.explorationStarted();
@@ -23,11 +24,6 @@ export default class HandlerOfMessageSentByBackground  {
 
             case "explorationStopped":
                 this._tabScriptService.explorationStopped();
-                sendResponse("ok");
-                return true;
-
-            case "reload":
-                this._tabScriptService.reload();
                 sendResponse("ok");
                 return true;
 

@@ -234,4 +234,13 @@ export default class ChromeBrowserService implements BrowserService {
         })
     }
 
+    attachOnCompletedHandler(handler: (tabId: number) => void): void {
+        chrome.webNavigation.onCompleted.addListener(details => {
+            const NAVIGATION_OCCURS_IN_TOP_FRAME = 0;
+            if (details.frameId === NAVIGATION_OCCURS_IN_TOP_FRAME) {
+                handler(details.tabId);
+            }
+        })
+    }
+
 }

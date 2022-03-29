@@ -22,10 +22,6 @@ export default class TabScript {
         })
     }
 
-    getState() : Promise<State> {
-        return this._backgroundService.getState();
-    }
-
     explorationStarted() : void {
         this._eventListener.explorationStarted();
     }

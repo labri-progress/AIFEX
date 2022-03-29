@@ -4,6 +4,4 @@ export default interface Interface4Background {
 
   explorationStopped():void;
 
-  reload():void;
-
 }

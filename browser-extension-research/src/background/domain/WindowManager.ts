@@ -67,9 +67,9 @@ export default class WindowManager {
     reloadConnectedWindow(url?:string) : Promise<void> {
         if (this._connectedWindow && this._connectedWindow.id) {
             return this._browserService.restartWindow(this._connectedWindow.id, url)
-            .catch(error => {
-                console.error("Failed to reload connected window : ", error.message);
-            })
+                .catch(error => {
+                    console.error("Failed to reload connected window : ", error.message);
+                })
         } else {
             return Promise.resolve();
         }
@@ -114,7 +114,8 @@ export default class WindowManager {
         this._browserService.attachTabDetachedHandler(this.onTabDetached.bind(this));
         this._browserService.attachTabAttachedHandler(this.onTabAttached.bind(this));
         this._browserService.attachTabActivatedHandler(this.onTabActivated.bind(this));
-        this._browserService.attachOnDomLoadedHandler(this.onNavigationDOMLoaded.bind(this));
+        //this._browserService.attachOnDomLoadedHandler(this.onNavigationDOMLoaded.bind(this));
+        this._browserService.attachOnCompletedHandler(this.onCompleted.bind(this));
     }
 
 
@@ -165,7 +166,6 @@ export default class WindowManager {
     }
 
     private onTabRemoved(tabId: number, windowId:number) : void {
-
         if (windowId === this._connectedWindow?.id) {
             this._connectedWindow.removeTab(tabId);
         } else {
@@ -206,6 +206,10 @@ export default class WindowManager {
     }
 
     private onNavigationDOMLoaded(tabId: number) : void {
+        this.connectTab(tabId);
+    }
+
+    private onCompleted(tabId: number) : void {
         this.connectTab(tabId);
     }
 

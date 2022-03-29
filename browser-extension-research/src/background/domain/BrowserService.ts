@@ -55,4 +55,6 @@ export default interface BrowserService {
 
     attachOnCommittedHandler( handler : (tabId:number) => void): void;
 
+    attachOnCompletedHandler( handler : (tabId:number) => void): void;
+
 }

@@ -136,20 +136,6 @@ export default class HandlerOfMessageSentByPopup {
                 return true;
             }
 
-            case "reloadWebSite": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application
-                    .reloadWebsite()
-                    .then(() => {
-                        sendResponse("ok");
-                    })
-                    .catch((error) => {
-                        logger.error("popup asks to reloadWebSite",error);
-                        sendResponse({error});
-                    });
-                return true;
-            }
-
             case "startExploration": {
                 logger.info(`Popup asks for ${msg.kind}`);
                 this._application
