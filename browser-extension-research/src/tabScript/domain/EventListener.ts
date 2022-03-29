@@ -38,7 +38,7 @@ export default class EventListener {
         let unsafeEvent: any = event;
         if (unsafeEvent.isTrusted && !unsafeEvent.explored) {
             if (event instanceof MouseEvent) {
-                let prefix = 'click';
+                let prefix = 'Click';
                 let suffix = this.makeSuffix(event);
                 let action = new Action(prefix, suffix);
 

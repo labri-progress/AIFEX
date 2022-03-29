@@ -81,7 +81,7 @@ export default class Background {
         this._shouldCreateNewWindowsOnConnect = true;
         this._shouldCloseWindowOnDisconnect = true;
         this._shouldOpenPrivateWindows = false;
-        this._takeAScreenshotByAction = false;
+        this._takeAScreenshotByAction = true;
         this._aifexPopup = new AifexPopup(this._browserService);
         this._aifexPopup.attachBrowserHandlers();
 
