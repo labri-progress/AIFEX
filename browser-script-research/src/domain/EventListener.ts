@@ -1,37 +1,20 @@
-import BackgroundService from "./BackgroundService"
 import Action from "./Action";
 import { logger } from "../framework/Logger";
 import getCssSelector from 'css-selector-generator';
+import AifexService from "./AifexService";
 
 export default class EventListener {
-    private _backgroundService: BackgroundService;
+    
+    private _aifexService: AifexService;
 
-    constructor(backgroundService: BackgroundService) {
-        this._backgroundService = backgroundService;
-    }
-
-    explorationStarted(): void {
-        this.listen();
-    }
-
-    explorationStopped(): void {
-        this.unlisten();
-    }
-
-    reload(): void {
-        this.unlisten();
-        this.listen();
+    constructor(aifexService: AifexService) {
+        this._aifexService = aifexService
     }
 
     private listen(): void {
         logger.debug(`listening to events`);
         document.addEventListener('mousedown', this.listenToMouseDown.bind(this), true);
         document.addEventListener('keydown', this.listenToKeyDown.bind(this), true);
-    }
-
-    private unlisten(): void {
-        document.removeEventListener('mousedown', this.listenToMouseDown.bind(this), true);
-        document.removeEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
 
     private listenToMouseDown(event: Event): void {
@@ -164,5 +147,5 @@ export default class EventListener {
             }
         }
     }
-
+    
 }
