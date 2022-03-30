@@ -1,23 +1,13 @@
-import Rule from "./Rule";
-
 export default class Action {
 
     public prefix: string;
     public suffix: string | undefined;
-    public ruleList: Rule[];
-    public htmlElementList: (HTMLElement|SVGElement)[];
     public date: Date;
 
-    constructor(prefix: string, suffix?: string, ruleList: Rule[] = [], htmlElementList: HTMLElement[]= []) {
+    constructor(prefix: string, suffix?: string) {
         this.prefix = prefix;
         this.suffix = suffix;
-        this.ruleList = ruleList;
-        this.htmlElementList = htmlElementList;
         this.date = new Date();
-    }
-
-    public setRuleList(ruleList: Rule[]): void {
-        this.ruleList = ruleList;
     }
 
     public getConcreteType(): string {

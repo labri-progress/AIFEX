@@ -1,7 +1,6 @@
 import Action from "../domain/Action";
 import AifexService from "../domain/AifexService";
 import Token from "../domain/Token";
-import WebSite from "../domain/Website";
 import Session from "../domain/Session";
 import AifexPluginInfo from "../domain/AifexPluginInfo";
 const OK_STATUS = 200;
@@ -84,32 +83,7 @@ export default class AifexServiceHTTP implements AifexService {
 			})
 	}
 
-	getWebSite(serverURL: string, webSiteId: string, token: Token | undefined): Promise<WebSite | undefined | "Unauthorized"> {
-		return fetch(`${serverURL}/api/websites/${webSiteId}`, {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token?.token}` },
-		})
-			.then((response) => {
-				if (response.status === OK_STATUS) {
-					return response
-						.json()
-						.then(websiteData => {
-							return new WebSite(websiteData.id, websiteData.name, websiteData.mappingList);
-						})
-				}
-				if (response.status === INVALID_PARAMETERS_STATUS) {
-					return Promise.reject(`sessionId is malformed`);
-				}
-				if (response.status === NOT_FOUND_STATUS) {
-					return;
-				}
-				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-					return Promise.reject(`server error`);
-				}
-			})
-
-	}
-
+	
 	createEmptyExploration(testerName: string, serverURL: string, sessionId: string): Promise<number> {
 		const body = {
 			testerName,

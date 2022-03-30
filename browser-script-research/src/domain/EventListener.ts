@@ -6,12 +6,18 @@ import AifexService from "./AifexService";
 export default class EventListener {
     
     private _aifexService: AifexService;
+    private _explorationNumber: number;
+    private _serverURL: string;
+	private _sessionId: string;
 
-    constructor(aifexService: AifexService) {
-        this._aifexService = aifexService
+    constructor(aifexService: AifexService, explorationNumber: number, serverURL: string, sessionId: string) {
+        this._aifexService = aifexService;
+        this._explorationNumber = explorationNumber;
+        this._serverURL = serverURL;
+        this._sessionId = sessionId;
     }
 
-    private listen(): void {
+    public listen(): void {
         logger.debug(`listening to events`);
         document.addEventListener('mousedown', this.listenToMouseDown.bind(this), true);
         document.addEventListener('keydown', this.listenToKeyDown.bind(this), true);
@@ -26,7 +32,7 @@ export default class EventListener {
                 let action = new Action(prefix, suffix);
 
                 logger.info(`action : ${action.toString()}`);
-                this._backgroundService.sendAction(action)
+                this._aifexService.sendAction(this._explorationNumber, action, this._serverURL, this._sessionId)
                     .catch((error) => {
                         logger.error('Error while Listener pushed action ', error);
                     })
@@ -89,10 +95,7 @@ export default class EventListener {
                 let suffix = this.makeSuffix(event);
                 let action = new Action(prefix, suffix);
                 logger.info(`action : ${action.toString()}`);
-                this._backgroundService.sendAction(action)
-                    .then(() => {
-                        
-                    })
+                this._aifexService.sendAction(this._explorationNumber, action, this._serverURL, this._sessionId)
                     .catch((error) => {
                         logger.error('Error while Listener pushed action ', error);
                     })

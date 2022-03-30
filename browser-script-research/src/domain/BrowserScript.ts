@@ -24,8 +24,6 @@ export default class BrowserScript {
         this._token = token;
         this._aifexService = aifexService;
         this._browserService = browserService;
-        this._ruleService = new RuleService();
-        this._eventListener = new EventListener(this._ruleService);
     }
 
     start() : Promise<void> {
@@ -37,27 +35,20 @@ export default class BrowserScript {
                     const currentExplorationNumber = this._browserService.getExplorationNumber();
                     if (currentExplorationNumber !== undefined) {
                         this._explorationNumber = currentExplorationNumber;
+                        this._eventListener = new EventListener(this._aifexService, this._explorationNumber, this._serverURL, this._sessionId);
+                        this._eventListener.listen();
                     } else {
                         this._aifexService.createEmptyExploration("BROWSER_SCRIPT", this._serverURL, this._sessionId)
                         .then((explorationNumber) => {
                             this._explorationNumber = explorationNumber;
                             this._browserService.saveExplorationNumber(this._explorationNumber);
-                        })
-                        .then(() => {
-                            this.processNewAction(new Action("start", undefined));
+                            this._aifexService.sendAction(this._explorationNumber, new Action("start", undefined), this._serverURL, this._sessionId);
+                            this._eventListener = new EventListener(this._aifexService, this._explorationNumber, this._serverURL, this._sessionId);
+                            this._eventListener.listen();
                         })
                     }
-                })
                 }
             })
     }
-
-    processNewAction(action: Action): void {
-        if (this._explorationNumber === undefined) {
-            throw new Error("The exploration has not been correctly started")
-        }
-        this._aifexService.sendAction(this._explorationNumber, action, this._serverURL, this._sessionId);
-    }
-
 
 }
