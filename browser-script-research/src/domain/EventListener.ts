@@ -78,11 +78,7 @@ export default class EventListener {
                     case 'ArrowDown':
                     case 'ArrowLeft':
                     case 'ArrowRight':
-                        if (isEditable) {
-                            prefix = 'Edit';
-                        } else {
-                            prefix = event.code;
-                        }
+                        prefix = event.code;
                         break;
                     case 'Escape':
                         prefix = 'Escape';
