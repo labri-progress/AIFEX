@@ -36,7 +36,7 @@ export default class EventListener {
 
     private listenToMouseDown(event: Event): void {
         let unsafeEvent: any = event;
-        if (unsafeEvent.isTrusted && !unsafeEvent.explored) {
+        if (!unsafeEvent.explored) {
             if (event instanceof MouseEvent) {
                 let prefix = 'Click';
                 let suffix = this.makeSuffix(event);
@@ -54,7 +54,7 @@ export default class EventListener {
 
     private listenToKeyDown(event: Event): void {
         let unsafeEvent: any = event;
-        if (unsafeEvent.isTrusted && !unsafeEvent.explored) {
+        if (!unsafeEvent.explored) {
             if (event instanceof KeyboardEvent) {
                 let prefix = 'Edit';
                 let isEditable = false;
@@ -89,11 +89,7 @@ export default class EventListener {
                     case 'ArrowDown':
                     case 'ArrowLeft':
                     case 'ArrowRight':
-                        if (isEditable) {
-                            prefix = 'Edit';
-                        } else {
-                            prefix = event.code;
-                        }
+                        prefix = event.code;
                         break;
                     case 'Escape':
                         prefix = 'Escape';
@@ -107,9 +103,6 @@ export default class EventListener {
                 let action = new Action(prefix, suffix);
                 logger.info(`action : ${action.toString()}`);
                 this._backgroundService.sendAction(action)
-                    .then(() => {
-                        
-                    })
                     .catch((error) => {
                         logger.error('Error while Listener pushed action ', error);
                     })

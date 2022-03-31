@@ -25,7 +25,7 @@ export default class EventListener {
 
     private listenToMouseDown(event: Event): void {
         let unsafeEvent: any = event;
-        if (unsafeEvent.isTrusted && !unsafeEvent.explored) {
+        if (!unsafeEvent.explored) {
             if (event instanceof MouseEvent) {
                 let prefix = 'Click';
                 let suffix = this.makeSuffix(event);
@@ -43,7 +43,7 @@ export default class EventListener {
 
     private listenToKeyDown(event: Event): void {
         let unsafeEvent: any = event;
-        if (unsafeEvent.isTrusted && !unsafeEvent.explored) {
+        if (!unsafeEvent.explored) {
             if (event instanceof KeyboardEvent) {
                 let prefix = 'Edit';
                 let isEditable = false;
