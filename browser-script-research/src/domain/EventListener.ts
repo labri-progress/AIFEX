@@ -2,17 +2,24 @@ import Action from "./Action";
 import { logger } from "../framework/Logger";
 import getCssSelector from 'css-selector-generator';
 import AifexService from "./AifexService";
+import html2canvas from 'html2canvas';
+import Screenshot from "./Screenshot";
+import BrowserService from "./BrowserService";
 
 export default class EventListener {
     
     private _aifexService: AifexService;
+    private _browserService: BrowserService;
     private _explorationNumber: number;
+    private _interactionIndex: number;
     private _serverURL: string;
 	private _sessionId: string;
 
-    constructor(aifexService: AifexService, explorationNumber: number, serverURL: string, sessionId: string) {
+    constructor(aifexService: AifexService, browserService: BrowserService, explorationNumber: number, interactionIndex: number, serverURL: string, sessionId: string) {
         this._aifexService = aifexService;
+        this._browserService = browserService;
         this._explorationNumber = explorationNumber;
+        this._interactionIndex = interactionIndex;
         this._serverURL = serverURL;
         this._sessionId = sessionId;
     }
@@ -33,6 +40,18 @@ export default class EventListener {
 
                 logger.info(`action : ${action.toString()}`);
                 this._aifexService.sendAction(this._explorationNumber, action, this._serverURL, this._sessionId)
+                    .then(() => {
+                        logger.debug(`action sent`);
+                        this._interactionIndex++;
+                        this._browserService.saveInteractionIndex(this._interactionIndex);
+                        return html2canvas(document.body);
+                    })
+                    .then((canvas) => {
+                        const base64image = canvas.toDataURL("image/png");
+                        let screenshot = new Screenshot(base64image, this._interactionIndex - 1);
+                        logger.debug(`image sent`);
+                        return this._aifexService.sendScreenshot(this._serverURL, this._sessionId, this._explorationNumber, screenshot);
+                    })
                     .catch((error) => {
                         logger.error('Error while Listener pushed action ', error);
                     })
@@ -92,6 +111,16 @@ export default class EventListener {
                 let action = new Action(prefix, suffix);
                 logger.info(`action : ${action.toString()}`);
                 this._aifexService.sendAction(this._explorationNumber, action, this._serverURL, this._sessionId)
+                    .then(() => {
+                        this._interactionIndex++;
+                        this._browserService.saveInteractionIndex(this._interactionIndex);
+                        return html2canvas(document.body);
+                    })
+                    .then((canvas) => {
+                        const base64image = canvas.toDataURL("image/png");
+                        let screenshot = new Screenshot(base64image, this._interactionIndex - 1);
+                        return this._aifexService.sendScreenshot(this._serverURL, this._sessionId, this._explorationNumber, screenshot);
+                    })
                     .catch((error) => {
                         logger.error('Error while Listener pushed action ', error);
                     })

@@ -3,6 +3,7 @@ import AifexService from "../domain/AifexService";
 import Token from "../domain/Token";
 import Session from "../domain/Session";
 import AifexPluginInfo from "../domain/AifexPluginInfo";
+import Screenshot from "../domain/Screenshot";
 const OK_STATUS = 200;
 const INVALID_PARAMETERS_STATUS = 400;
 const FORBIDDEN_STATUS = 403;
@@ -152,6 +153,39 @@ export default class AifexServiceHTTP implements AifexService {
 				console.error(error);
 				throw new Error("Service Failed to push new action");
 			})
-
 	}
+
+
+	sendScreenshot(serverURL: string, sessionId: string, explorationNumber: number, screenshot: Screenshot): Promise<void> {
+		const screenshotList = [{
+			sessionId : sessionId,
+			explorationNumber : explorationNumber,
+			image : screenshot.image,
+			interactionIndex : screenshot.interactionIndex
+		}];
+		const body = {
+			screenshotList,
+		};
+		const option = {
+			method: "POST",
+			body: JSON.stringify(body),
+			headers: { "Content-Type": "application/json" },
+		};
+		return fetch(`${serverURL}/api/sessions/${sessionId}/screenshots`, option)
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return;
+				}
+				else if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(new Error(`screenshotList is malformed`));
+				}
+				else if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(new Error(`server error`));
+				} else {
+					return Promise.reject(new Error('error'+response.status));
+				}
+			});
+	}
+
+	
 }

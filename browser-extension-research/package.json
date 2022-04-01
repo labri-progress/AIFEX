@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "html2canvas": "^1.4.1",
     "query-selector-shadow-dom": "^1.0.0"
   },
   "devDependencies": {

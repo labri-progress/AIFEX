@@ -8,7 +8,7 @@ logger.info("AIFEX script is running.");
 
 const AIFEX_SCRIPT = document.getElementById("AIFEX");
 if (AIFEX_SCRIPT) {
-    logger.info("AIFEX SCRIPT Element is found.");
+    logger.info("AIFEX SCRIPT TAG is found.");
     const CONNEXION_URL = AIFEX_SCRIPT.getAttribute("connexion-url");
     if (CONNEXION_URL) {
         logger.info("AIFEX connexion-url Element is found.");

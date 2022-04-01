@@ -16,6 +16,7 @@ export default class BrowserScript {
     private _aifexService : AifexService;
     private _browserService : BrowserService;
     private _explorationNumber: number | undefined;
+    private _interactionIndex: number | undefined;
 
     
     constructor(serverURL: string, sessionId: string, token: Token | undefined, aifexService: AifexService, browserService: BrowserService) {
@@ -33,19 +34,26 @@ export default class BrowserScript {
                     this._webSiteId = sessionResult.webSiteId;
                     
                     const currentExplorationNumber = this._browserService.getExplorationNumber();
-                    if (currentExplorationNumber !== undefined) {
+                    const interactionIndex = this._browserService.getInteractionIndex();
+                    if (currentExplorationNumber !== undefined && interactionIndex !== undefined) {
+                        logger.info("Exploration number is already set to " + currentExplorationNumber);
+                        logger.info("Interaction index is already set to " + interactionIndex);
                         this._explorationNumber = currentExplorationNumber;
-                        this._eventListener = new EventListener(this._aifexService, this._explorationNumber, this._serverURL, this._sessionId);
+                        this._interactionIndex = interactionIndex;
+                        this._eventListener = new EventListener(this._aifexService, this._browserService, this._explorationNumber, this._interactionIndex, this._serverURL, this._sessionId);
                         this._eventListener.listen();
                     } else {
                         this._aifexService.createEmptyExploration("BROWSER_SCRIPT", this._serverURL, this._sessionId)
-                        .then((explorationNumber) => {
-                            this._explorationNumber = explorationNumber;
-                            this._browserService.saveExplorationNumber(this._explorationNumber);
-                            this._aifexService.sendAction(this._explorationNumber, new Action("start", undefined), this._serverURL, this._sessionId);
-                            this._eventListener = new EventListener(this._aifexService, this._explorationNumber, this._serverURL, this._sessionId);
-                            this._eventListener.listen();
-                        })
+                            .then((explorationNumber) => {
+                                logger.info("New exploration,  number is " + explorationNumber);
+                                this._explorationNumber = explorationNumber;
+                                this._browserService.saveExplorationNumber(this._explorationNumber);
+                                this._aifexService.sendAction(this._explorationNumber, new Action("start", undefined), this._serverURL, this._sessionId);
+                                this._interactionIndex = 0;
+                                this._browserService.saveInteractionIndex(this._interactionIndex);
+                                this._eventListener = new EventListener(this._aifexService, this._browserService, this._explorationNumber, this._interactionIndex, this._serverURL, this._sessionId);
+                                this._eventListener.listen();
+                            })
                     }
                 }
             })
