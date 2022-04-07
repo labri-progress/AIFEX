@@ -146,6 +146,7 @@ export default class EventListener {
                         maxCandidates: 100
                     });
                 } catch (e) {
+                    suffix = "error";
                     logger.error(`exception`,new Error('css exception'));
                 }
 

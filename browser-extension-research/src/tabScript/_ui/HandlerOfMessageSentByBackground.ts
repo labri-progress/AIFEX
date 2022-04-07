@@ -1,6 +1,6 @@
-import ExtensionCommunicationService from "./ExtensionCommunicationService";
 import Interface4Background from "../application/Interface4Background";
 import {logger} from "../framework/Logger";
+import ExtensionCommunicationService from "./ExtensionCommunicationService";
 
 export default class HandlerOfMessageSentByBackground  {
 

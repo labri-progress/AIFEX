@@ -4,7 +4,7 @@
     let recordMediaStatus = document.getElementById('recordMediaStatus');
     let takeAScreenshotByAction = document.getElementById('takeAScreenshotByAction');
 
-    let testerName = document.getElementById('testerName');
+    let testerName = document.getElementById('testerNameInDescription');
 
     function render() {
         recordMediaStatus.checked = state.isPreparedToRecordMedia;

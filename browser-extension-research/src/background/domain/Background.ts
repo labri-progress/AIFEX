@@ -232,6 +232,7 @@ export default class Background {
         if (this._serverURL === undefined || this._sessionId === undefined) {
             throw new Error("Not connected to a session")
         }
+        logger.debug('will create an empty exploration for testerName: ' + this._testerName);
         return this._aifexService.createEmptyExploration(this._serverURL, this._sessionId, this._testerName)
             .then(explorationNumber => {
                 this._exploration = new Exploration(explorationNumber);
@@ -599,6 +600,7 @@ export default class Background {
 
 	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindows: boolean, showProbabilityPopup: boolean): void {
         this._testerName = testerName;
+        logger.debug('testerName:'+ testerName);
         this._shouldCloseWindowOnDisconnect = shouldCloseWindowOnDisconnect;
         this._shouldCreateNewWindowsOnConnect = shouldCreateNewWindowsOnConnect;
         this._shouldOpenPrivateWindows = shouldOpenPrivateWindows;
