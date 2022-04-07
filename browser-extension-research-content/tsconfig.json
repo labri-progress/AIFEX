@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "lib": ["ES2020", "DOM"],
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "outDir": "dist",
+        "sourceMap": true,
+        "strict": true,
+        "target": "ES6"
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "types": [
+        "chrome"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+  }
