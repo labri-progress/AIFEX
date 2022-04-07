@@ -74,10 +74,6 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.removeExploration();
 	}
 
-	addObservationToExploration(kind: string , message: string): void{
-		this._background.addObservationToExploration(new Observation(kind, message));
-	}
-
 	takeScreenShot(): Promise<void> {
 		return this._background.takeScreenShot(undefined);
 	}
@@ -132,23 +128,7 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.getStateForTabScript();
 	}
 
-	getProbabilityMap():Map<string, number> {
-		return this._background.getProbabilityMap();
-	}
-
-	getObservationDistributions(): ObservationDistribution[] {
-		return this._background.getObservationDistributions();
-	}
-
 	processNewAction(kind: string, value: string): Promise<void> {
 		return this._background.processNewAction(kind, value);
-	}
-
-	upObservation(kind: string, value: string): void {
-		return this._background.upObservation(new Observation(kind, value));
-	}
-
-	getExplorationEvaluation(): ExplorationEvaluation | undefined {
-		return this._background.getExplorationEvaluation();
 	}
 }

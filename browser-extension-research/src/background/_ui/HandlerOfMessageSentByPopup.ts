@@ -211,22 +211,6 @@ export default class HandlerOfMessageSentByPopup {
                 sendResponse(this._application.getStateForPopup());
                 return true;
             }
-
-
-            case "pushObservation": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                const { type, value } = msg;
-                this._application.addObservationToExploration(type, value);
-                sendResponse("ok");
-                return true;
-            }
-
-            case "upObservation": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application.upObservation(msg.type, msg.value);
-                sendResponse("ok");
-                return true;
-            }
                 
             case "takeScreenshot": {
                 logger.info(`Popup asks for ${msg.kind}`);

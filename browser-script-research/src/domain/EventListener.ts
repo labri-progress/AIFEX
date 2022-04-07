@@ -44,6 +44,25 @@ export default class EventListener {
                         logger.debug(`action sent`);
                         this._interactionIndex++;
                         this._browserService.saveInteractionIndex(this._interactionIndex);
+                        if (event.target) {
+                            let target = event.target;
+                            if (target instanceof HTMLElement || target instanceof SVGElement) {
+                                target.style.border = '4em solid red';
+                                const elemRect = target.getBoundingClientRect();
+                                const bodyRect = document.body.getBoundingClientRect();
+                                const topOffset = elemRect.top - bodyRect.top;
+                                const leftOffset   = elemRect.left - bodyRect.left;
+                                const padding = 200;
+                                const margin = 100;
+                                return html2canvas(document.body,{
+                                    allowTaint: true,
+                                    width: elemRect.width + padding,
+                                    height: elemRect.height + padding,
+                                    x: leftOffset - margin,
+                                    y: topOffset - margin
+                                });
+                            }
+                        } 
                         return html2canvas(document.body);
                     })
                     .then((canvas) => {
@@ -114,7 +133,13 @@ export default class EventListener {
                     .then(() => {
                         this._interactionIndex++;
                         this._browserService.saveInteractionIndex(this._interactionIndex);
-                        return html2canvas(document.body);
+                        return html2canvas(document.body,{
+                            allowTaint: true,
+                            scrollX: window.scrollX,
+                            scrollY: window.scrollY,
+                            x: window.innerWidth,
+                            y: window.innerHeight
+                        });
                     })
                     .then((canvas) => {
                         const base64image = canvas.toDataURL("image/png");

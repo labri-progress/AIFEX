@@ -32,8 +32,6 @@ export default interface Interface4Popup {
 
     changeTesterName(newName: string): Promise<void>;
 
-    addObservationToExploration(kind: string , message: string): void;
-
     takeScreenShot(): Promise<void>;
 
     setRecordMedia(recordMedia: boolean): Promise<void>;
@@ -45,8 +43,6 @@ export default interface Interface4Popup {
     setShouldCloseWindowOnDisconnect(shouldCloseWindowOnDisconnect: boolean): void;
 
     setShouldOpenPrivateWindow(shouldCreatePrivateWindow: boolean): void;
-
-    upObservation(type: string, value: string): void;
 
     showConfig(): void;
 

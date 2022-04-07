@@ -22,44 +22,6 @@ export default class HandlerOfMessageSentByTabScript {
 				sendResponse(state);
 				return true;
             }
-
-            case "getProbabilityMap": {
-                logger.info(`TabScript asks for ${msg.kind}`);
-                let probabiliytMap = this._application.getProbabilityMap();
-                sendResponse({
-                    probabilityMap: JSON.parse(JSON.stringify(Array.from(probabiliytMap)))
-                });
-                return true;
-            }
-
-            case "getObservationDistributions": {
-                logger.info(`TabScript asks for ${msg.kind}`);
-                let distributions = this._application.getObservationDistributions();
-                let observationDistributionList = distributions.map(dist => {
-                    return {
-                        observation : dist.observation,
-                        distributions : dist.distributions
-                    }
-                });
-                sendResponse({
-                    observationDistributionList: JSON.parse(JSON.stringify(observationDistributionList))
-                });
-                return true;
-            }
-
-            case "getEvaluation":
-                logger.info(`TabScript asks for ${msg.kind}`);
-                let explorationEvaluation = this._application.getExplorationEvaluation();
-                if (explorationEvaluation) {
-                    sendResponse({
-                        isAccepted: explorationEvaluation.isAccepted,
-                        nextActionList: explorationEvaluation.nextActionList.map(action => action.toString()),
-                    });
-                    return true;
-                } else {
-                    sendResponse();
-                    return true;
-                }
                 
             case "pushAction": {
                 logger.info(`TabScript asks for ${msg.kind}`);
