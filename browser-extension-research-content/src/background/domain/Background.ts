@@ -305,14 +305,6 @@ export default class Background {
         if (suffix !== undefined) {
             currentAction += "$" + suffix;
         }
-
-        if (currentAction === this._lastPerformedAction) {
-            if (!this._takeAScreenshotByAction) {
-                return Promise.resolve();
-            } else if (this._lastHasScreenshot) {
-                return Promise.resolve();
-            }
-        }
         
         if (this._isActive && this._exploration) {
             this._exploration.addAction(prefix, suffix);
@@ -363,7 +355,7 @@ export default class Background {
                         this._lastPerformedAction = currentAction;
                     }
                     logger.debug('will refreshPopup');
-                    this.refreshPopup();
+                    //this.refreshPopup();
                 })
         } else {
             return Promise.resolve();

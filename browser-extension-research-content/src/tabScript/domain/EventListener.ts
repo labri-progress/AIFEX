@@ -43,8 +43,9 @@ export default class EventListener {
                 let suffix = this.makeSuffix(event);
                 let action = new Action(prefix, suffix);
 
-                logger.info(`action : ${action.toString()}`);
+                
                 if (this._lastAction !== action.toString()) {
+                    logger.info(`action : ${action.toString()}`);
                     this._lastAction = action.toString();
                     this._backgroundService.sendAction(action)
                         .catch((error) => {
@@ -105,8 +106,9 @@ export default class EventListener {
 
                 let suffix = this.makeSuffix(event);
                 let action = new Action(prefix, suffix);
-                logger.info(`action : ${action.toString()}`);
+                
                 if (this._lastAction !== action.toString()) {
+                    logger.info(`action : ${action.toString()}`);
                     this._lastAction = action.toString();
                     this._backgroundService.sendAction(action)
                         .catch((error) => {
