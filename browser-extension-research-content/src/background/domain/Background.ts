@@ -40,6 +40,8 @@ export default class Background {
     private _token: Token | undefined;
 
     private _exploration: Exploration | undefined;
+    private _lastPerformedAction: string | undefined;
+    private _lastHasScreenshot: boolean;
     private _numberOfExplorationsMadeByTester: number;
 
     private _evaluator: Evaluator | undefined;
@@ -99,6 +101,7 @@ export default class Background {
         this._observationsUp = [];
         this._lastInteractionObservation = undefined;
         this._screenshotList = [];
+        this._lastHasScreenshot = false;
         this._explorationEvaluation = undefined;
         this._rejectIncorrectExplorations = true;
 
@@ -249,6 +252,8 @@ export default class Background {
             .then(() => {
                 logger.debug('reloadConnected');
                 this._isActive = true;
+                this._lastPerformedAction = undefined;
+                this._lastHasScreenshot = false;
 
                 return this.createExploration()
                     .then(() => {
@@ -296,6 +301,19 @@ export default class Background {
         }
     }
     processNewAction(prefix: string, suffix?: string): Promise<void> {
+        let currentAction = prefix;
+        if (suffix !== undefined) {
+            currentAction += "$" + suffix;
+        }
+
+        if (currentAction === this._lastPerformedAction) {
+            if (!this._takeAScreenshotByAction) {
+                return Promise.resolve();
+            } else if (this._lastHasScreenshot) {
+                return Promise.resolve();
+            }
+        }
+        
         if (this._isActive && this._exploration) {
             this._exploration.addAction(prefix, suffix);
             this._observationsUp = [];
@@ -334,12 +352,19 @@ export default class Background {
                 promises.push(pushActionListPromise);
             }
             logger.debug(`there are ${promises.length} promises`);
-            return Promise.all(promises)
-                .then(() => {
+            return Promise.allSettled(promises)
+                .then((results) => {
+                    if (results[0].status === "rejected") {
+                        this._lastHasScreenshot = false;
+                    } else {
+                        this._lastHasScreenshot = true;
+                    }
+                    if (results[1].status === "fulfilled") {
+                        this._lastPerformedAction = currentAction;
+                    }
                     logger.debug('will refreshPopup');
                     this.refreshPopup();
                 })
-
         } else {
             return Promise.resolve();
         }

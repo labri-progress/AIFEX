@@ -5,6 +5,7 @@ import getCssSelector from 'css-selector-generator';
 
 export default class EventListener {
     private _backgroundService: BackgroundService;
+    private _lastAction: string | undefined;
 
     constructor(backgroundService: BackgroundService) {
         this._backgroundService = backgroundService;
@@ -43,10 +44,13 @@ export default class EventListener {
                 let action = new Action(prefix, suffix);
 
                 logger.info(`action : ${action.toString()}`);
-                this._backgroundService.sendAction(action)
-                    .catch((error) => {
-                        logger.error('Error while Listener pushed action ', error);
-                    })
+                if (this._lastAction !== action.toString()) {
+                    this._lastAction = action.toString();
+                    this._backgroundService.sendAction(action)
+                        .catch((error) => {
+                            logger.error('Error while Listener pushed action ', error);
+                        })
+                }
             }
         }
     }
@@ -102,10 +106,13 @@ export default class EventListener {
                 let suffix = this.makeSuffix(event);
                 let action = new Action(prefix, suffix);
                 logger.info(`action : ${action.toString()}`);
-                this._backgroundService.sendAction(action)
-                    .catch((error) => {
-                        logger.error('Error while Listener pushed action ', error);
-                    })
+                if (this._lastAction !== action.toString()) {
+                    this._lastAction = action.toString();
+                    this._backgroundService.sendAction(action)
+                        .catch((error) => {
+                            logger.error('Error while Listener pushed action ', error);
+                        })
+                }
             }
         }
     }
