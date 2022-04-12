@@ -6,13 +6,11 @@
         "outDir": "dist",
         "sourceMap": true,
         "strict": true,
-        "target": "ES6"
+        "target": "ES6",
+        "typeRoots": ["node_modules/@types"]
     },
     "include": [
         "src/**/*"
-    ],
-    "types": [
-        "chrome"
     ],
     "exclude": [
         "node_modules"

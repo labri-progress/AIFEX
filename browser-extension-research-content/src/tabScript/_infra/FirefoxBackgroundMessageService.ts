@@ -1,4 +1,4 @@
-import State, { OverlayType } from "../domain/State";
+import State from "../domain/State";
 import Action from "../domain/Action";
 import BackgroundService from "../domain/BackgroundService";
 

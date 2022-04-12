@@ -2,9 +2,8 @@ import TabScriptService from "./application/TabScriptService";
 import FirefoxBackgroundMessageService from "./_infra/FirefoxBackgroundMessageService";
 import FirefoxExtensionCommunicationService from "./_infra/FirefoxExtensionCommunicationService";
 import HandlerOfMessageSentByBackground from "./_ui/HandlerOfMessageSentByBackground";
-import {logger} from "./framework/Logger";
 
-logger.info("AIFEX script is running.")
+console.log("AIFEX script is running.")
 
 const backgroundService = new FirefoxBackgroundMessageService();
 

@@ -1,5 +1,4 @@
 import Interface4Background from "../application/Interface4Background";
-import {logger} from "../framework/Logger";
 import ExtensionCommunicationService from "./ExtensionCommunicationService";
 
 export default class HandlerOfMessageSentByBackground  {
@@ -15,7 +14,7 @@ export default class HandlerOfMessageSentByBackground  {
     }
 
     handleMessage(msg : any, sender : any, sendResponse: Function) : boolean {
-        logger.debug(`TabScript received message: ${msg.kind}`);
+        console.log(`TabScript received message: ${msg.kind}`);
         switch (msg.kind) {
             case "explorationStarted":
                 this._tabScriptService.explorationStarted();
@@ -32,7 +31,7 @@ export default class HandlerOfMessageSentByBackground  {
                 return true;
 
             default:
-                logger.error("unhandled message ", msg);
+                console.log("unhandled message ", msg);
                 sendResponse("ok");
                 return true;
             }

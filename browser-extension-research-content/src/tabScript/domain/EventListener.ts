@@ -1,6 +1,5 @@
 import BackgroundService from "./BackgroundService"
 import Action from "./Action";
-import { logger } from "../framework/Logger";
 import getCssSelector from 'css-selector-generator';
 
 export default class EventListener {
@@ -25,7 +24,7 @@ export default class EventListener {
     }
 
     private listen(): void {
-        logger.debug(`listening to events`);
+        console.log(`[TabScript] listening to events`);
         document.addEventListener('mousedown', this.listenToMouseDown.bind(this), true);
         document.addEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
@@ -45,11 +44,11 @@ export default class EventListener {
 
                 
                 if (this._lastAction !== action.toString()) {
-                    logger.info(`action : ${action.toString()}`);
+                    console.log(`[TabScript] action : ${action.toString()}`);
                     this._lastAction = action.toString();
                     this._backgroundService.sendAction(action)
                         .catch((error) => {
-                            logger.error('Error while Listener pushed action ', error);
+                            console.log('[TabScript] Error while Listener pushed action ', error);
                         })
                 }
             }
@@ -108,11 +107,11 @@ export default class EventListener {
                 let action = new Action(prefix, suffix);
                 
                 if (this._lastAction !== action.toString()) {
-                    logger.info(`action : ${action.toString()}`);
+                    console.log(`[TabScript] action : ${action.toString()}`);
                     this._lastAction = action.toString();
                     this._backgroundService.sendAction(action)
                         .catch((error) => {
-                            logger.error('Error while Listener pushed action ', error);
+                            console.log('[TabScript] Error while Listener pushed action ', error);
                         })
                 }
             }
@@ -152,11 +151,12 @@ export default class EventListener {
                             /.*maxlength.*/i
                         ],
                         combineBetweenSelectors: true,
-                        maxCandidates: 100
+                        maxCandidates: 80,
+                        maxCombinations: 80
                     });
                 } catch (e) {
                     suffix = "error";
-                    logger.error(`exception`,new Error('css exception'));
+                    console.log(`[TabScript] exception while generating suffix : ${e}`);
                 }
 
                 const rect = event.target.getBoundingClientRect();

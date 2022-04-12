@@ -271,9 +271,6 @@ export default class Background {
                     })
                     .catch((e) => {
                         logger.debug('messages error, not sent to tabScript');
-                        this._exploration = undefined;
-                        this._isActive = false;
-                        throw new Error(e);
                     })
                     .then(() => {
                         return this._mediaRecordManager.startRecording()

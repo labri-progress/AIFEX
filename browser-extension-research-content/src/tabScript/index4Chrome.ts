@@ -3,10 +3,8 @@ import ChromeBackgroundMessageService from "./_infra/ChromeBackgroundMessageServ
 import ChromeExtensionCommunicationService from "./_infra/ChromeExtensionCommunicationService";
 import HandlerOfMessageSentByBackground from "./_ui/HandlerOfMessageSentByBackground";
 
-import {logger} from "./framework/Logger";
 
-logger.info("AIFEX script is running.")
-
+console.log("AIFEX is running");
 const backgroundService = new ChromeBackgroundMessageService();
 
 const tabScriptService = new TabScriptService(backgroundService);

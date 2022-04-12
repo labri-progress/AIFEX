@@ -15,11 +15,11 @@ export default class TabScript {
 
     synchronizeWithBackground() : Promise<void> {
         return this._backgroundService.getState()
-        .then(state => {
-            if (state.isActive) {
-                this.explorationStarted();
-            }
-        })
+            .then(state => {
+                if (state.isActive) {
+                    this.explorationStarted();
+                }
+            })
     }
 
     explorationStarted() : void {

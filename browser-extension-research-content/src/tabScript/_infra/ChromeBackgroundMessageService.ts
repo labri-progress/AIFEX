@@ -1,4 +1,4 @@
-import State, { OverlayType } from "../domain/State";
+import State from "../domain/State";
 import Action from "../domain/Action";
 import BackgroundService from "../domain/BackgroundService";
 
@@ -10,10 +10,7 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
             chrome.runtime.sendMessage({
                 kind: 'getStateForTabScript'
             }, {}, (data: {
-                isActive: boolean,
-                webSite: any,
-                overlayType: OverlayType,
-                showProbabilityPopup: boolean
+                isActive: boolean
             }) => {
                 const error = chrome.runtime.lastError;
                 if (error) {
@@ -28,7 +25,7 @@ export default class ChromeBackgroundMessageService  implements BackgroundServic
     }
 
     sendAction(action: Action): Promise<void> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             chrome.runtime.sendMessage({
                 action,
                 kind: 'pushAction'
