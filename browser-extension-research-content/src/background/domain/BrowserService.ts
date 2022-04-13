@@ -57,4 +57,7 @@ export default interface BrowserService {
 
     attachOnCompletedHandler( handler : (tabId:number) => void): void;
 
+    getFromStorage(key: string): Promise<any>;
+
+    setToStorage(key: string, value: any): Promise<void>;
 }
