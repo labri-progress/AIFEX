@@ -113,6 +113,7 @@ export default class Background {
     }
 
     private initialize(): void {
+        logger.debug('initialize');
         this._sessionId = undefined;
         this._modelId = undefined;
         this._probabilityMap = new Map();
@@ -197,6 +198,7 @@ export default class Background {
     }
 
     disconnect(): Promise<void> {
+        logger.debug('disconnect');
         this._sessionId = undefined;
         this._modelId = undefined;
         this._serverURL = undefined;
@@ -266,24 +268,13 @@ export default class Background {
                         const tabIds = this._windowManager.getConnectedTabIds();
 
                         logger.debug('state and tabIds are ok');
-
-                        return Promise.all(tabIds.map(tabId => this._tabScriptService.startExploration(tabId, state)));
-                    })
-                    .catch((e) => {
-                        logger.debug('messages error, not sent to tabScript');
-                    })
-                    .then(() => {
-                        return this._mediaRecordManager.startRecording()
-                            .catch((e) => {
-                                this._mediaRecordManager.destroyRecording();
-                                console.error(e)
-                            })
                     })        
             })
     }
 
     removeExploration(): Promise<void> {
         if (this._isActive) {
+            logger.debug('removeExploration');
             this._mediaRecordManager.stopRecording();
             this._exploration = undefined;
             this._isActive = false;
@@ -381,6 +372,7 @@ export default class Background {
         
         return this.processNewAction("end")
             .then(() => {
+                logger.debug('process end');
                 this._isActive = false;
                 exploration.setStopDate();
                 if (!this._recordActionByAction) {
