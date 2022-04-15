@@ -3,7 +3,6 @@ import Session from "../domain/Session";
 import AifexPluginInfo from "../domain/AifexPluginInfo";
 import Action from "../domain/Action";
 import Screenshot from "../domain/Screenshot";
-import { logger } from "../Logger";
 
 const OK_STATUS = 200;
 const INVALID_PARAMETERS_STATUS = 400;
@@ -146,7 +145,7 @@ export default class AifexServiceHTTP implements AifexService {
 
 
 	pushActionOrObservationList(serverURL: string, sessionId: string, explorationNumber: number, actions: Action[]): Promise<void> {
-		logger.debug(`pushActionOrObservationList: ${JSON.stringify(actions)}`);
+		console.log(`pushActionOrObservationList: ${JSON.stringify(actions)}`);
 		const body = {
 			interactionList: actions.map((actionOrObservation: Action) => ({
 				index: actionOrObservation.index,
@@ -156,7 +155,7 @@ export default class AifexServiceHTTP implements AifexService {
 				date: actionOrObservation.date
 			}))
 		};
-		logger.debug(`pushActionOrObservationList JSON: ${JSON.stringify(body)}`);
+		console.log(`pushActionOrObservationList JSON: ${JSON.stringify(body)}`);
 		const option = {
 			method: "POST",
 			body: JSON.stringify(body),
@@ -165,7 +164,7 @@ export default class AifexServiceHTTP implements AifexService {
 		return fetch(`${serverURL}/api/sessions/${sessionId}/explorations/${explorationNumber}/interactions`,option)
 			.then((response) => {
 				if (response.status === OK_STATUS) {
-					logger.debug(`pushActionOrObservationList: OK`);
+					console.log(`pushActionOrObservationList: OK`);
 					return;
 				}
 				if (response.status === NOT_FOUND_STATUS) {

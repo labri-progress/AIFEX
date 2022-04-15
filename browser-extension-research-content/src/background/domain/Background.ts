@@ -6,7 +6,6 @@ import StateForPopup from "./StateForPopup";
 import StateForTabScript from "./StateForTabScript";
 import Screenshot from "./Screenshot";
 import { PopupPageKind } from "./PopupPageKind";
-import { logger } from "../Logger";
 
 export default class Background {
 
@@ -14,8 +13,6 @@ export default class Background {
     private _browserService: BrowserService;
 
     private _sessionId: string | undefined;
-    private _sessionDescription: string | undefined;
-    private _modelId: string | undefined;
     private _serverURL: string | undefined;
     private _sessionBaseURL: string | undefined;
 
@@ -25,13 +22,9 @@ export default class Background {
     private _numberOfExplorationsMadeByTester: number;
 
     private _popupPageKind: PopupPageKind;
-    private _showConfig: boolean;
     private _isActive: boolean;
     private _screenshotList: Screenshot[];
 
-    private _shouldCreateNewWindowsOnConnect: boolean;
-    private _shouldCloseWindowOnDisconnect: boolean;
-    private _shouldOpenPrivateWindows: boolean;
     private _takeAScreenshotByAction: boolean;
 
     private _recordActionByAction: boolean | undefined;
@@ -40,24 +33,18 @@ export default class Background {
         this._aifexService = aifexService;
         this._browserService = browserService;
 
-        this._shouldCreateNewWindowsOnConnect = true;
-        this._shouldCloseWindowOnDisconnect = true;
-        this._shouldOpenPrivateWindows = false;
         this._takeAScreenshotByAction = true;
 
         this._isActive = false;
         this._testerName = "anonymous";
         this._numberOfExplorationsMadeByTester = 0;
         this._popupPageKind = PopupPageKind.Home;
-        this._showConfig = false;
-
         this._screenshotList = [];
     }
 
     private initialize(): void {
-        logger.debug('initialize');
+        console.log('initialize');
         this._sessionId = undefined;
-        this._modelId = undefined;
         this._screenshotList = [];
         this._isActive = false;
     }
@@ -75,8 +62,12 @@ export default class Background {
 
     connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
         this.initialize();
-        logger.debug("exploration size : " + this._exploration?.length);
-        return this._aifexService.getSession(serverURL, sessionId)
+        console.log("exploration size : " + this._exploration?.length);
+        return this._browserService.openLongLiveTab()
+            .then(() => {
+                console.log('tab opened');
+                return this._aifexService.getSession(serverURL, sessionId);
+            })            
             .then((sessionResult) => {
                 if (sessionResult === "Unauthorized") { 
                     return "Unauthorized";
@@ -84,9 +75,8 @@ export default class Background {
                     return "NotFound";
                 } else {
                     this._recordActionByAction = sessionResult.recordingMode === "byinteraction";
-                    logger.debug("Recording mode: " + this._recordActionByAction);
+                    console.log("Recording mode: " + this._recordActionByAction);
                     this._sessionBaseURL = sessionResult.baseURL;
-                    this._sessionDescription = sessionResult.description;
                     this._sessionId = sessionId;
                     this._serverURL = serverURL;
                     this._popupPageKind = PopupPageKind.ReadSessionDescription;
@@ -96,9 +86,8 @@ export default class Background {
     }
 
     disconnect(): void {
-        logger.debug('disconnect');
+        console.log('disconnect');
         this._sessionId = undefined;
-        this._modelId = undefined;
         this._serverURL = undefined;
         this._sessionBaseURL = undefined;
         this._isActive = false;
@@ -111,7 +100,7 @@ export default class Background {
         if (this._serverURL === undefined || this._sessionId === undefined) {
             throw new Error("Not connected to a session")
         }
-        logger.debug('will create an empty exploration for testerName: ' + this._testerName);
+        console.log('will create an empty exploration for testerName: ' + this._testerName);
         return this._aifexService.createEmptyExploration(this._serverURL, this._sessionId, this._testerName)
             .then(explorationNumber => {
                 this._exploration = new Exploration(explorationNumber);
@@ -119,23 +108,23 @@ export default class Background {
     }
 
     startExploration() : Promise<void> {
-        logger.debug('startExploration');
+        console.log('startExploration');
         if (this._isActive) {
-                logger.debug('isActive');
+                console.log('isActive');
                 return Promise.resolve();
         } 
         
         
-        logger.debug('reloadConnected');
+        console.log('reloadConnected');
         this._isActive = true;
 
         return this.createExploration()
             .then(() => {
-                logger.debug('exploration created');
+                console.log('exploration created');
                 return this.processNewAction("start");
             })
             .then(() => {
-                logger.debug('start action');
+                console.log('start action');
                 const state = this.getStateForTabScript();
 
             })        
@@ -173,7 +162,7 @@ export default class Background {
                 }
                 const actionList = this._exploration.actions;
                 const lastAction = actionList[actionList.length-1];
-                logger.debug(`processNewAction, lastAction: ${lastAction.kind} ${lastAction.value}`);
+                console.log(`processNewAction, lastAction: ${lastAction.kind} ${lastAction.value}`);
                 const pushActionListPromise = this._aifexService.pushActionOrObservationList(
                     this._serverURL, 
                     this._sessionId, 
@@ -182,7 +171,7 @@ export default class Background {
 
                 promises.push(pushActionListPromise);
             }
-            logger.debug(`there are ${promises.length} promises`);
+            console.log(`there are ${promises.length} promises`);
             return Promise.allSettled(promises)
                 .then((results) => {
                     //type alignement
@@ -210,12 +199,12 @@ export default class Background {
         
         return this.processNewAction("end")
             .then(() => {
-                logger.debug('process end');
+                console.log('process end');
                 this._isActive = false;
                 exploration.setStopDate();
             })
             .then(() => {
-                logger.debug("ask tabs to stop recording the exploration");
+                console.log("ask tabs to stop recording the exploration");
                 this._exploration = undefined;
                 this._screenshotList = [];
                 return;
@@ -246,11 +235,6 @@ export default class Background {
         state.pageKind = this._popupPageKind;
         state.serverURL = this._serverURL;
 
-        if (this._serverURL && this._sessionId && this._modelId) {
-            state.url = `${this._serverURL}/join?sessionId=${this._sessionId}&modelId=${this._modelId}`;
-        }
-
-        state.sessionDescription = this._sessionDescription;
         state.numberOfExplorationsMadeByTester = this._numberOfExplorationsMadeByTester;
         state.isRecording = this._isActive;
         state.testerName = this._testerName;
@@ -258,13 +242,7 @@ export default class Background {
         if (this._exploration) {
             state.interactionList = this._exploration.actions.map(interaction => interaction.toPrintableText());
         }
-        state.showConfig = this._showConfig;
-        state.shouldCreateNewWindowsOnConnect = this._shouldCreateNewWindowsOnConnect;
-        state.shouldCloseWindowOnDisconnect = this._shouldCloseWindowOnDisconnect;
-        state.shouldOpenPrivateWindows = this._shouldOpenPrivateWindows;
         state.takeAScreenshotByAction = this._takeAScreenshotByAction;
-        logger.debug("state.shouldOpenPrivateWindows" + state.shouldOpenPrivateWindows + " / this._shouldOpenPrivateWindows" + this._shouldOpenPrivateWindows);
-
         return state;
     }
 
@@ -280,7 +258,7 @@ export default class Background {
             let exploration = this._exploration;
             return this._browserService.takeScreenshot()
                 .then(image => {
-                    logger.debug("Take Screenshot ");
+                    console.log("Take Screenshot ");
                     let index = interactionIndex || exploration.actions.length-1;
                     this._screenshotList.push(new Screenshot(image, index));
                     if (this._recordActionByAction && this._serverURL && this._sessionId && this._exploration) {
@@ -293,7 +271,7 @@ export default class Background {
                     }
                 })
                 .catch((error) => {
-                    logger.warn("cannot take screenshot");
+                    console.log("cannot take screenshot");
                     return Promise.resolve();
                 })
         } else {
@@ -307,26 +285,9 @@ export default class Background {
     }
 
 
-    setShouldOpenPrivateWindow(shouldOpenPrivateWindows: boolean): void {
-        this._shouldOpenPrivateWindows = shouldOpenPrivateWindows;
-    }
-
-    showConfig(): void {
-        this._showConfig = !this._showConfig;
-	}
-
-	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindows: boolean, showProbabilityPopup: boolean): void {
+	submitConfig(testerName: string): void {
         this._testerName = testerName;
-        logger.debug('testerName:'+ testerName);
-        this._shouldCloseWindowOnDisconnect = shouldCloseWindowOnDisconnect;
-        this._shouldCreateNewWindowsOnConnect = shouldCreateNewWindowsOnConnect;
-        this._shouldOpenPrivateWindows = shouldOpenPrivateWindows;
-        logger.debug("this._shouldOpenPrivateWindows" + this._shouldOpenPrivateWindows)
-        this._showConfig = false;
+        console.log('testerName:'+ testerName);
 	}
 	
-	cancelConfig(): void {
-		this._showConfig = false;
-	}
-
 }

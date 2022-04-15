@@ -57,21 +57,10 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 	}
 
 
-	setShouldOpenPrivateWindow(shouldOpenPrivateWindow: boolean): void {
-		this._background.setShouldOpenPrivateWindow(shouldOpenPrivateWindow);
+	submitConfig(testerName: string): void {
+		return this._background.submitConfig(testerName);
 	}
 
-	showConfig(): void {
-		return this._background.showConfig();
-	}
-
-	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindow: boolean, showProbabilityPopup: boolean): void {
-		return this._background.submitConfig(testerName, shouldCreateNewWindowsOnConnect, shouldCloseWindowOnDisconnect, shouldOpenPrivateWindow, showProbabilityPopup);
-	}
-
-	cancelConfig(): void {
-		return this._background.cancelConfig();
-	}
 
 	/************************/
 	/* For TabScript        */

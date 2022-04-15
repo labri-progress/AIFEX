@@ -1,8 +1,6 @@
 
 import BrowserService from "../domain/BrowserService";
 import { getCurrentWindow, takeScreenshot } from "./ChromePromise";
-import WindowOption from "./WindowOption";
-import { logger } from "../Logger";
 const DEFAULT_WINDOW_OPTIONS = { url: 'https://www.aifex.fr' };
 const DEFAULT_TAB_OPTIONS = {};
 
@@ -10,6 +8,7 @@ export default class ChromeBrowserService implements BrowserService {
 
     constructor() {
     }
+    
 
     getExtensionVesion(): string {
         return chrome.runtime.getManifest().version
@@ -42,6 +41,13 @@ export default class ChromeBrowserService implements BrowserService {
                 res();
             });
         });
+    }
+
+    openLongLiveTab(): Promise<void> {
+        return chrome.tabs.create({url: 'bg.html'})
+            .then((tab: chrome.tabs.Tab) => {
+                console.log('ok');
+            });
     }
 
 

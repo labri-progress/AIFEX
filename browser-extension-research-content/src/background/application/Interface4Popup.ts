@@ -22,12 +22,6 @@ export default interface Interface4Popup {
 
     setTakeAsScreenshotByAction(takeAScreenshotByAction : boolean): void;
 
-    setShouldOpenPrivateWindow(shouldCreatePrivateWindow: boolean): void;
-
-    showConfig(): void;
-
-	submitConfig(testerName: string, shouldCreateNewWindowsOnConnect: boolean, shouldCloseWindowOnDisconnect: boolean, shouldOpenPrivateWindow: boolean, showProbabilityPopup: boolean): void;
-
-    cancelConfig(): void;
+	submitConfig(testerName: string): void;
 
 }

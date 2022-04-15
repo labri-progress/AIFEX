@@ -1,5 +1,4 @@
 import WindowOption from "./WindowOption";
-import {logger} from "../Logger";
 
 export function createWindow(options: WindowOption): Promise<chrome.windows.Window> {
     return new Promise((resolve, reject) => {
@@ -137,7 +136,7 @@ export function focusTab(tabId : number): Promise<void> {
 }
 
 export function executeTabScript(tabId: number): Promise<boolean> {
-    logger.info(`executre script for id:${tabId}`);
+    console.log(`executre script for id:${tabId}`);
     return new Promise((resolve, reject) => {
         chrome.scripting.executeScript({target: {tabId}, files: ['tabScript.js']})
         .then(() => {
