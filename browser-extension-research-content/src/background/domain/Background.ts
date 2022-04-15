@@ -29,6 +29,8 @@ export default class Background {
 
     private _recordActionByAction: boolean | undefined;
 
+    private _tabLink : any | undefined;
+
     constructor(aifexService: AifexService,  browserService: BrowserService) {
         this._aifexService = aifexService;
         this._browserService = browserService;
@@ -64,8 +66,9 @@ export default class Background {
         this.initialize();
         console.log("exploration size : " + this._exploration?.length);
         return this._browserService.openLongLiveTab()
-            .then(() => {
+            .then((tab) => {
                 console.log('tab opened');
+                this._tabLink = tab;
                 return this._aifexService.getSession(serverURL, sessionId);
             })            
             .then((sessionResult) => {

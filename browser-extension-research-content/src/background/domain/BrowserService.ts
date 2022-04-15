@@ -8,5 +8,5 @@ export default interface BrowserService {
 
     setToStorage(key: string, value: any): Promise<void>;
 
-    openLongLiveTab(): Promise<void>;
+    openLongLiveTab(): Promise<any>;
 }

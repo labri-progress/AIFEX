@@ -43,11 +43,8 @@ export default class ChromeBrowserService implements BrowserService {
         });
     }
 
-    openLongLiveTab(): Promise<void> {
-        return chrome.tabs.create({url: 'bg.html'})
-            .then((tab: chrome.tabs.Tab) => {
-                console.log('ok');
-            });
+    openLongLiveTab(): Promise<any> {
+        return chrome.tabs.create({url: 'bg.html'});
     }
 
 
