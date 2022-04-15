@@ -42,6 +42,7 @@ export default class Background {
         this._numberOfExplorationsMadeByTester = 0;
         this._popupPageKind = PopupPageKind.Home;
         this._screenshotList = [];
+        this._loadStateFromStorage();
     }
 
     private initialize(): void {
@@ -65,12 +66,7 @@ export default class Background {
     connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
         this.initialize();
         console.log("exploration size : " + this._exploration?.length);
-        return this._browserService.openLongLiveTab()
-            .then((tab) => {
-                console.log('tab opened');
-                this._tabLink = tab;
-                return this._aifexService.getSession(serverURL, sessionId);
-            })            
+        return this._aifexService.getSession(serverURL, sessionId)
             .then((sessionResult) => {
                 if (sessionResult === "Unauthorized") { 
                     return "Unauthorized";
@@ -120,8 +116,12 @@ export default class Background {
         
         console.log('reloadConnected');
         this._isActive = true;
+        
 
-        return this.createExploration()
+        return this._saveStateInStorage()
+            .then(() => {
+                this.createExploration()
+            })
             .then(() => {
                 console.log('exploration created');
                 return this.processNewAction("start");
@@ -132,6 +132,7 @@ export default class Background {
 
             })        
     }
+    
 
     processNewAction(prefix: string, suffix?: string): Promise<void> {
         let currentAction = prefix;
@@ -292,5 +293,42 @@ export default class Background {
         this._testerName = testerName;
         console.log('testerName:'+ testerName);
 	}
+
+    private _saveStateInStorage() {
+        console.log('try to store');
+        const state : any = {};
+        state.isActive = this._isActive;
+        state.serverURL = this._serverURL;
+        state.sessionId = this._sessionId;
+        state.sessionBaseURL = this._sessionBaseURL;
+        state.testerName = this._testerName;
+        state.takeAScreenshotByAction = this._takeAScreenshotByAction;
+        state.recordActionByAction = this._recordActionByAction;
+        state.exploration = this._exploration;
+        state.screenshotList = this._screenshotList;
+        state.popupPageKind = this._popupPageKind;
+        console.log('save state');
+        return this._browserService.setToStorage('state', state);
+    }
+
+    private _loadStateFromStorage() {
+        console.log('try to load state');
+        return this._browserService.getFromStorage('state')
+            .then((state) => {
+                if (state) {
+                    console.log('load state');
+                    this._isActive = state.isActive;
+                    this._serverURL = state.serverURL;
+                    this._sessionId = state.sessionId;
+                    this._sessionBaseURL = state.sessionBaseURL;
+                    this._testerName = state.testerName;
+                    this._takeAScreenshotByAction = state.takeAScreenshotByAction;
+                    this._recordActionByAction = state.recordActionByAction;
+                    this._exploration = state.exploration;
+                    this._screenshotList = state.screenshotList;
+                    this._popupPageKind = state.popupPageKind;
+                }
+            })
+    }
 	
 }
