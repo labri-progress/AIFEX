@@ -13,9 +13,7 @@
 
     <!-- Components Render Function-->
     <script src="./js/popup.js" defer></script>
-    <script src="./js/headerComponent.js" defer></script>
     <script src="./js/homeComponent.js" defer></script>
-    <script src="./js/configComponent.js" defer></script>
     <script src="./js/sessionDescriptionComponent.js" defer></script>
     <script src="./js/connectToSessionComponent.js" defer></script>
     <script src="./js/makeExplorationsComponent.js" defer></script>
@@ -25,10 +23,6 @@
     <header>
         <h2>AIFEX</h2>
         <div id="header-buttons" class="btn-group" role="group" aria-label="windowButtons">
-            <span id="config-button" class="fa fa-cog fa-lg"></span>
-            <span id="attach-button" class="fa fa-window-minimize fa-lg"></span>
-            <span id="detach-button" class="fa fa-window-maximize fa-lg"></span>
-            <span id="disconnect-button" class="fa fa-close fa-lg"></span>
         </div>
 
     </header>
@@ -39,35 +33,6 @@
             <button id="goToJoinSession" class="aifex_large_button" > Join </button>
             <button id="goToCreateSession" class="aifex_large_button" disabled> Create </button>
         </div>
-
-        <div class="aifex_component" id="configureComponent">
-            <h3>General Configuration</h3>
-            <form id="configForm">
-                <div class="aifex_form_element">
-                    <label for="testerName">TesterName</label>
-                    <input id="testerName" class="form-control" type="text" placeholder="Anonymous"/>
-                </div>
-                <div class="aifex_check_element" id="shouldCreateNewWindowsOnConnectDiv">
-                    <input type="checkbox" id="shouldCreateNewWindowsOnConnect" name="shouldCreateNewWindowsOnConnect" >
-                    <label for="shouldCreateNewWindowsOnConnect">Open a new window when joining a session ?</label>
-                </div>
-                <div class="aifex_check_element" id="shouldCloseWindowOnDisconnectDiv">
-                    <input type="checkbox" id="shouldCloseWindowOnDisconnect" name="shouldCloseWindowOnDisconnect" >
-                    <label for="shouldCloseWindowOnDisconnect">Close window when disconnecting a session ?</label>
-                </div>
-                <div class="aifex_check_element" id="shouldOpenPrivateWindowsDiv">
-                    <input type="checkbox" id="shouldOpenPrivateWindows" name="shouldOpenPrivateWindows" >
-                    <label for="shouldOpenPrivateWindows">Should open private navigation windows ?</label>
-                </div>
-                <div class="aifex_check_element" id="showProbabilityPopupDiv">
-                    <input type="checkbox" id="showProbabilityPopup" name="showProbabilityPopup" >
-                    <label for="showProbabilityPopup">Show Popup ?</label>
-                </div>
-                <button id="submitConfig" class="aifex_button" type="submit" >Ok</button>
-                <button id="cancelConfig" class="aifex_button">Cancel</button>
-            </form>
-        </div>
-
 
         <div class="aifex_component" id="connectToSessionComponent">
             <h3>Join a session</h3>
@@ -110,52 +75,6 @@
             <button id="stop-button" class="aifex_large_button" class="aifex_button">
                 <i class="fa fa-stop" title="Stop"></i> <span>Stop/Save</span>
             </button>
-            <button id="trash-button" class="aifex_large_button">
-                <i class="fa fa-trash" title="Trash"></i> <span>Trash</span>
-            </button>
-
-
-            <div class="aifex_component" id="observationSubComponent">
-                <h3>Post a Bug Report <span id="read-observation-button"><i class="fa fa-observationing"
-                            title="Read Observation"></i> Read existing bug reports !</span></h3>
-
-                <div id="observation-list"></div>
-
-                <button id="observation-button" class="aifex_large_button">
-                    <i class="fa fa-observation" title="Add a Observation"></i> <span>Add a new bug report</span>
-                </button>
-                <form id="observationForm">
-
-                    <div class="aifex_form_element">
-                        <label htmlFor="observationType">Severity</label>
-                        <select class="custom-select" id="observationType">
-                            <option value="Blocker">Blocker</option>
-                            <option value="Critical">Critical</option>
-                            <option value="Major">Major</option>
-                            <option value="Minor">Minor</option>
-                            <option value="Trivial">Trivial</option>
-                            <option value="Enhancement">Enhancement</option>
-                        </select>
-                    </div>
-                    <div class="aifex_form_element">
-                        <label htmlFor="observationDescription">Description</label>
-                        <textarea class="form-control" rows="4" placeholder="Observation's description"
-                            id="observationDescription"></textarea>
-                    </div>
-                    <div class="aifex_check_element">
-                        <input class="form-check-input" type="checkbox" id="observationScreenshot" name="observationScreenshot" checked>
-                        <label htmlFor="observationScreenshot" class="form-check-label">Attach Screenshot</label>
-                    </div>
-                    <div class="aifex_button_group">
-                        <div id="observationIsSubmitted" class="aifex_checked_text">
-                            <i class="fa fa-check" style="color: green;"></i>
-                            <span>Bug Report registered</span>
-                        </div>
-                        <button type="submit" id="submit-observation" class="aifex_button">Submit</button>
-                        <button id="clearObservation" class="aifex_button"> Clear</button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 </body>

@@ -60,32 +60,6 @@ export default class HandlerOfMessageSentByPopup {
 				return true;
 			}
 
-            case "linkServer": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application.linkServer(msg.url)
-                    .then((result) => {
-                        logger.debug(`linkServer: ${result}`);
-                        sendResponse(result);
-                    })
-                    .catch((error) => {
-                        sendResponse({error});
-                    });
-                return true;
-            }
-
-            case "signin": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application.signin(msg.username, msg.password)
-                    .then((result) => {
-                        if (result === "SignedIn") {                            
-                            sendResponse({message:result});
-                        } else {
-                            sendResponse({error:result});
-                        }
-                    })
-                return true;
-            }
-
             case "connect": {
                 logger.info(`Popup asks for ${msg.kind}`);
                 if (!msg.url) {
@@ -124,15 +98,8 @@ export default class HandlerOfMessageSentByPopup {
 
             case "disconnect": {
                 logger.info(`Popup asks for ${msg.kind}`);
-                this._application
-                    .disconnect()
-                    .then(() => {
-                        sendResponse("ok");
-                    })
-                    .catch((error) => {
-                        logger.error("popup asks to disconnect",error);
-                        sendResponse({ error });
-                    });
+                this._application.disconnect();
+                sendResponse("ok");
                 return true;
             }
 
@@ -166,19 +133,6 @@ export default class HandlerOfMessageSentByPopup {
                 return true;
             }
 
-            case "removeExploration": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application
-                    .removeExploration()
-                    .then(() => {
-                        sendResponse(this._application.getStateForPopup());
-                    }).catch((error) => {
-                        logger.error("popup asks to removeExploration",error);
-                        sendResponse({error});
-                    });
-                return true;
-            }
-
             case "changeTesterName": {
                 logger.info(`Popup asks for ${msg.kind}`);
                 this._application.changeTesterName(msg.testerName)
@@ -191,53 +145,13 @@ export default class HandlerOfMessageSentByPopup {
 				return true;
             }
 
-            case "setCreateNewWindowOnConnect": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application.setShouldCreateNewWindowsOnConnect(msg.shouldCreateNewWindowOnConnect);
-                sendResponse(this._application.getStateForPopup());
-                return true;
-            }
-
-            case "setCloseWindowOnConnect": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application.setShouldCloseWindowOnDisconnect(msg.shouldCloseWindowOnDisconnect);
-                sendResponse(this._application.getStateForPopup());
-                return true;
-            }
-
             case "setOpenPrivateWindow": {
                 logger.info(`Popup asks for ${msg.kind}`);            
                 this._application.setShouldOpenPrivateWindow(msg.shouldOpenPrivateWindows);
                 sendResponse(this._application.getStateForPopup());
                 return true;
             }
-                
-            case "takeScreenshot": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application.takeScreenShot();
-                sendResponse("ok");
-                return true;
-            }
 
-            case "drawAttention": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application.drawAttention();
-                sendResponse("ok");
-                return true;
-            }
-
-            case "setRecordMediaStatus" : {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application.setRecordMedia(msg.recordMediaStatus)
-                .then(() => {
-                    sendResponse("ok");
-                })
-                .catch( (error: Error) => {
-                    logger.error("Failed to set media record", new Error("Failed to set media record"));
-                    sendResponse({error});
-                })
-                return true;
-            }
 
             case "setTakeAScreenshotByAction" : {
                 logger.info(`Popup asks for ${msg.kind}`);
@@ -246,18 +160,6 @@ export default class HandlerOfMessageSentByPopup {
                 return true;
             }
 
-            case "toggleDetachPopup": {
-                logger.info(`Popup asks for ${msg.kind}`);
-                this._application.toggleDetachPopup()
-                .then(() => {
-                    sendResponse("ok");
-                })
-                .catch((error) => {
-                    logger.error("popup asks to toggleDetachPopup",error)
-                    sendResponse({error});
-                })
-                return true;
-            }
 
             case "showConfig": {
                 logger.info(`Popup asks for ${msg.kind}`);
