@@ -13,7 +13,7 @@
         if (state.showConfig) {
             component.style.display = 'none';
         } else {
-            if (state.pageKind === 'ReadSessionDescription') {
+            if (state.popupPageKind === 'ReadSessionDescription') {
                 document.getElementById('sessionDescription').innerHTML = converter.makeHtml(state.sessionDescription);
                 component.style.display = 'block';
 
@@ -42,21 +42,12 @@
     document.getElementById('sessionDescriptionButton').addEventListener('click', (e) => {
         e.preventDefault();
 
-        sendMessage({
-            kind: "submitConfig", 
-            testerName: testerName.value,
-            shouldCreateNewWindowsOnConnect: true, 
-            shouldCloseWindowOnDisconnect: true,
-            shouldOpenPrivateWindows: false,
-            showProbabilityPopup: false
-        })
-        .then(() => {
-            sendMessage({ kind: "changePopupPageKind", popupPageKind: 'Explore' })
-        })
-        .then(() => {
-            getStateAndRender();
-        });
-        
+        state.testerName = testerName.value;
+        state.popupPageKind = 'Explore';
+        setStateToStorage(state)
+            .then(() => {
+                getStateAndRender();
+            });        
     });
 
     addComponentToPopup(render);

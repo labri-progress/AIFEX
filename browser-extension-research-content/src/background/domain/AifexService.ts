@@ -21,5 +21,4 @@ export default interface AifexService {
 
 	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> ;
 
-	getNumberOfExplorationForTesterName(serverURL: string, sessionId: string, testerName: string): Promise<number>;
 }

@@ -5,14 +5,10 @@
     
 
     function render() {
-        if (state.showConfig) {
-            component.style.display = 'none';
+        if (state.popupPageKind === 'ConnectToSession') {
+            component.style.display = 'flex';
         } else {
-            if (state.pageKind === 'ConnectToSession') {
-                component.style.display = 'flex';
-            } else {
-                component.style.display = 'none';
-            }
+            component.style.display = 'none';
         }
     }
 

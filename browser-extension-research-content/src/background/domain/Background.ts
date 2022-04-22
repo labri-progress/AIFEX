@@ -1,59 +1,19 @@
+import State from "./State";
 import AifexService from "./AifexService";
 import BrowserService from "./BrowserService";
 import CompatibilityCheck from "./CompatibilityCheck";
-import Exploration from "./Exploration";
-import StateForPopup from "./StateForPopup";
-import StateForTabScript from "./StateForTabScript";
+import {PopupPageKind} from './PopupPageKind';
 import Screenshot from "./Screenshot";
-import { PopupPageKind } from "./PopupPageKind";
+import Action from "./Action";
 
 export default class Background {
 
     private _aifexService: AifexService;
     private _browserService: BrowserService;
 
-    private _sessionId: string | undefined;
-    private _serverURL: string | undefined;
-    private _sessionBaseURL: string | undefined;
-
-    private _testerName: string | "anonymous";
-
-    private _exploration: Exploration | undefined;
-    private _numberOfExplorationsMadeByTester: number;
-
-    private _popupPageKind: PopupPageKind;
-    private _isActive: boolean;
-    private _screenshotList: Screenshot[];
-
-    private _takeAScreenshotByAction: boolean;
-
-    private _recordActionByAction: boolean | undefined;
-
-    private _tabLink : any | undefined;
-
     constructor(aifexService: AifexService,  browserService: BrowserService) {
         this._aifexService = aifexService;
         this._browserService = browserService;
-
-        this._takeAScreenshotByAction = true;
-
-        this._isActive = false;
-        this._testerName = "anonymous";
-        this._numberOfExplorationsMadeByTester = 0;
-        this._popupPageKind = PopupPageKind.Home;
-        this._screenshotList = [];
-        this._loadStateFromStorage();
-    }
-
-    private initialize(): void {
-        console.log('initialize');
-        this._sessionId = undefined;
-        this._screenshotList = [];
-        this._isActive = false;
-    }
-
-    changePopupPageKind(popupPageKind: PopupPageKind): void {
-        this._popupPageKind = popupPageKind;
     }
 
     makeCompatibilityCheck(serverURL: string): Promise<CompatibilityCheck> {
@@ -64,8 +24,7 @@ export default class Background {
     }
 
     connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
-        this.initialize();
-        console.log("exploration size : " + this._exploration?.length);
+        console.log("connect");
         return this._aifexService.getSession(serverURL, sessionId)
             .then((sessionResult) => {
                 if (sessionResult === "Unauthorized") { 
@@ -73,262 +32,140 @@ export default class Background {
                 } else if (sessionResult === undefined) {
                     return "NotFound";
                 } else {
-                    this._recordActionByAction = sessionResult.recordingMode === "byinteraction";
-                    console.log("Recording mode: " + this._recordActionByAction);
-                    this._sessionBaseURL = sessionResult.baseURL;
-                    this._sessionId = sessionId;
-                    this._serverURL = serverURL;
-                    this._popupPageKind = PopupPageKind.ReadSessionDescription;
-                    return "Connected";
-                } 
+                    return this._browserService.getStateFromStorage()
+                        .then((stateFromStorage) => {
+                            let state = stateFromStorage || new State();
+                            state.sessionBaseURL = sessionResult.baseURL;
+                            state.sessionId = sessionId;
+                            state.serverURL = serverURL;
+                            state.connectedToSession = true;
+                            state.popupPageKind = PopupPageKind.ReadSessionDescription;
+                            return this._browserService.setStateToStorage(state)
+                                .then(() => {
+                                    return "Connected";
+                                })
+                        })
+                }
             })
     }
 
-    disconnect(): void {
-        console.log('disconnect');
-        this._sessionId = undefined;
-        this._serverURL = undefined;
-        this._sessionBaseURL = undefined;
-        this._isActive = false;
-        this._exploration = undefined;
-        this._screenshotList = [];
-        this._popupPageKind = PopupPageKind.Home;
-    }
-
-    createExploration(): Promise<void> {
-        if (this._serverURL === undefined || this._sessionId === undefined) {
-            throw new Error("Not connected to a session")
-        }
-        console.log('will create an empty exploration for testerName: ' + this._testerName);
-        return this._aifexService.createEmptyExploration(this._serverURL, this._sessionId, this._testerName)
-            .then(explorationNumber => {
-                this._exploration = new Exploration(explorationNumber);
-            })
-    }
+    
 
     startExploration() : Promise<void> {
         console.log('startExploration');
-        if (this._isActive) {
-                console.log('isActive');
-                return Promise.resolve();
-        } 
-        
-        
-        console.log('reloadConnected');
-        this._isActive = true;
-        
-
-        return this._saveStateInStorage()
-            .then(() => {
-                this.createExploration()
-            })
-            .then(() => {
-                console.log('exploration created');
-                return this.processNewAction("start");
-            })
-            .then(() => {
-                console.log('start action');
-                const state = this.getStateForTabScript();
-
-            })        
+        return this._browserService.getStateFromStorage()
+            .then((state) => {
+                if (state == undefined || state.serverURL === undefined || state.sessionId === undefined) {
+                    throw new Error("Not connected to a session")
+                }
+                if (state.isRecording) {
+                    console.log('Connected and recording');
+                    return Promise.resolve();
+                }
+                console.log('will create an empty exploration for testerName: ' + state.testerName);
+                return this._aifexService.createEmptyExploration(state.serverURL, state.sessionId, state.testerName || "anonymous")
+                    .then(explorationNumber => {
+                        state.explorationNumber = explorationNumber;
+                        state.explorationLength = 0;
+                        state.isRecording = true;
+                        return this._browserService.setStateToStorage(state);
+                    })
+                    .then(() => {
+                        console.log('exploration created');
+                        return this.processNewAction("start");
+                    })
+            })  
     }
     
 
     processNewAction(prefix: string, suffix?: string): Promise<void> {
-        let currentAction = prefix;
-        if (suffix !== undefined) {
-            currentAction += "$" + suffix;
-        }
+        return this._browserService.getStateFromStorage()
+            .then((state) => {
+                if (state && state.isRecording && state.explorationNumber !== undefined && state.explorationLength !== undefined) {
+                    const newAction = new Action(prefix, suffix, state.explorationLength);
+                    const promises = [];
         
-        if (this._isActive && this._exploration) {
-            this._exploration.addAction(prefix, suffix);
-            const promises = [];
-
-            if (this._takeAScreenshotByAction) {
-                let actions = this._exploration.actions;
-                if (actions.length === 1) {
-                    promises.push(this.takeScreenShot(actions.length-1));
-                } else {
-                    let currentAction = actions[actions.length-1];
-                    let lastAction = actions[actions.length-2];
-                    if (currentAction.kind !== lastAction.kind || currentAction.value !== lastAction.value) {
-                        promises.push(this.takeScreenShot(actions.length-1));
+                    if (state.takeAScreenshotByAction) {
+                        promises.push(this.takeScreenShot(state.explorationLength));
                     }
+        
+                    if (state.recordActionByAction) {
+                        if (!state.serverURL ||  !state.sessionId) {
+                            throw new Error("Not connected to a session")
+                        }
+                        console.log(`processNewAction : ${newAction.kind} ${newAction.value}`);
+                        const pushActionListPromise = this._aifexService.pushActionOrObservationList(
+                            state.serverURL, 
+                            state.sessionId, 
+                            state.explorationNumber, 
+                            [newAction])
+        
+                        promises.push(pushActionListPromise);
+                    }
+                    console.log(`there are ${promises.length} promises`);
+                    return Promise.allSettled(promises)
+                        .then((results) => {
+                            state.explorationLength ? state.explorationLength++ : state.explorationLength = 1;
+                            return this._browserService.setStateToStorage(state);
+                        })
+                        .then(() => {})
+                } else {
+                    return Promise.resolve();
                 }
-            }
-
-            if (this._recordActionByAction) {
-                if (!this._serverURL ||  !this._sessionId) {
-                    throw new Error("Not connected to a session")
-                }
-                if (this._exploration.explorationNumber === undefined) {
-                    throw new Error("The exploration has not been correctly started")
-                }
-                const actionList = this._exploration.actions;
-                const lastAction = actionList[actionList.length-1];
-                console.log(`processNewAction, lastAction: ${lastAction.kind} ${lastAction.value}`);
-                const pushActionListPromise = this._aifexService.pushActionOrObservationList(
-                    this._serverURL, 
-                    this._sessionId, 
-                    this._exploration.explorationNumber, 
-                    [lastAction])
-
-                promises.push(pushActionListPromise);
-            }
-            console.log(`there are ${promises.length} promises`);
-            return Promise.allSettled(promises)
-                .then((results) => {
-                    //type alignement
-                })
-        } else {
-            return Promise.resolve();
-        }
+            })
     }
 
 
     stopExploration(): Promise<void> {
-        if (!this._isActive) {
-            return Promise.resolve();
-        } 
-        if (this._exploration === undefined) {
-            return Promise.resolve();
-        }
-        if (!(this._serverURL && this._sessionId)) {
-            throw new Error("Not connected to a session")
-        }
-        if (!this._exploration) {
-            throw new Error("Exploration is required")
-        }
-        let exploration: Exploration = this._exploration;
-        
-        return this.processNewAction("end")
-            .then(() => {
-                console.log('process end');
-                this._isActive = false;
-                exploration.setStopDate();
-            })
-            .then(() => {
-                console.log("ask tabs to stop recording the exploration");
-                this._exploration = undefined;
-                this._screenshotList = [];
-                return;
-            })
-    }
-
-    changeTesterName(name: string): void {
-        this._testerName = name;
-    }
-
-    updateNumberOfExplorationByTester(): Promise<void> {
-        if (!this._testerName) {
-            this._numberOfExplorationsMadeByTester = 0;
-            return Promise.resolve();
-        }
-        if (this._serverURL && this._sessionId) {
-            return this._aifexService.getNumberOfExplorationForTesterName(this._serverURL, this._sessionId, this._testerName)
-                .then((numberOfExploration) => {
-                    this._numberOfExplorationsMadeByTester = numberOfExploration;
-                })
-        } else {
-            return Promise.resolve();
-        }
-    }
-
-    getStateForPopup(): StateForPopup {
-        const state = new StateForPopup();
-        state.pageKind = this._popupPageKind;
-        state.serverURL = this._serverURL;
-
-        state.numberOfExplorationsMadeByTester = this._numberOfExplorationsMadeByTester;
-        state.isRecording = this._isActive;
-        state.testerName = this._testerName;
-        state.hasBaseURL = this._sessionBaseURL !== undefined;
-        if (this._exploration) {
-            state.interactionList = this._exploration.actions.map(interaction => interaction.toPrintableText());
-        }
-        state.takeAScreenshotByAction = this._takeAScreenshotByAction;
-        return state;
-    }
-
-
-    getStateForTabScript(): StateForTabScript {
-        const state = new StateForTabScript();
-        state.isActive = this._isActive;
-        return state;
-    }
-
-    takeScreenShot(interactionIndex: number | undefined): Promise<void> {
-        if (this._exploration) {
-            let exploration = this._exploration;
-            return this._browserService.takeScreenshot()
-                .then(image => {
-                    console.log("Take Screenshot ");
-                    let index = interactionIndex || exploration.actions.length-1;
-                    this._screenshotList.push(new Screenshot(image, index));
-                    if (this._recordActionByAction && this._serverURL && this._sessionId && this._exploration) {
-                        this._aifexService.addScreenshotList(
-                            this._serverURL,
-                            this._sessionId,
-                            this._exploration.explorationNumber,
-                            this._screenshotList
-                        );
-                    }
-                })
-                .catch((error) => {
-                    console.log("cannot take screenshot");
-                    return Promise.resolve();
-                })
-        } else {
-            return Promise.resolve();
-        }
-    }
-
-
-    setTakeAsScreenshotByAction(takeAScreenshotByAction : boolean) {
-        this._takeAScreenshotByAction = takeAScreenshotByAction;
-    }
-
-
-	submitConfig(testerName: string): void {
-        this._testerName = testerName;
-        console.log('testerName:'+ testerName);
-	}
-
-    private _saveStateInStorage() {
-        console.log('try to store');
-        const state : any = {};
-        state.isActive = this._isActive;
-        state.serverURL = this._serverURL;
-        state.sessionId = this._sessionId;
-        state.sessionBaseURL = this._sessionBaseURL;
-        state.testerName = this._testerName;
-        state.takeAScreenshotByAction = this._takeAScreenshotByAction;
-        state.recordActionByAction = this._recordActionByAction;
-        state.exploration = this._exploration;
-        state.screenshotList = this._screenshotList;
-        state.popupPageKind = this._popupPageKind;
-        console.log('save state');
-        return this._browserService.setToStorage('state', state);
-    }
-
-    private _loadStateFromStorage() {
-        console.log('try to load state');
-        return this._browserService.getFromStorage('state')
+        return this._browserService.getStateFromStorage()
             .then((state) => {
-                if (state) {
-                    console.log('load state');
-                    this._isActive = state.isActive;
-                    this._serverURL = state.serverURL;
-                    this._sessionId = state.sessionId;
-                    this._sessionBaseURL = state.sessionBaseURL;
-                    this._testerName = state.testerName;
-                    this._takeAScreenshotByAction = state.takeAScreenshotByAction;
-                    this._recordActionByAction = state.recordActionByAction;
-                    this._exploration = state.exploration;
-                    this._screenshotList = state.screenshotList;
-                    this._popupPageKind = state.popupPageKind;
+                if (!state || !state.serverURL || !state.sessionId) {
+                    throw new Error("Not connected to a session")
                 }
+                if (!state || !state.connectedToSession || !state.isRecording || state.explorationNumber === undefined) {
+                    return Promise.resolve();
+                } 
+                
+                return this.processNewAction("end")
+                    .then(() => {
+                        console.log('process end');
+                        state.isRecording = false;  
+                        state.explorationNumber = undefined;
+                        state.explorationLength = undefined;
+                        return this._browserService.setStateToStorage(state);
+                    })
+
             })
+        
+    }
+
+    private takeScreenShot(interactionIndex: number | undefined): Promise<void> {
+        return this._browserService.getStateFromStorage()
+            .then((state) => {
+                if (state && state.explorationNumber && state.isRecording) {
+                    return this._browserService.takeScreenshot()
+                        .then(image => {
+                            console.log("Take Screenshot ");
+                            let index = interactionIndex;
+                            if (state.recordActionByAction && state.serverURL && state.sessionId && state.explorationNumber) {
+                                this._aifexService.addScreenshotList(
+                                    state.serverURL,
+                                    state.sessionId,
+                                    state.explorationNumber,
+                                    [new Screenshot(image, state.explorationLength ||0)]
+                                );
+                            }
+                        })
+                        .catch((error) => {
+                            console.log("cannot take screenshot");
+                            return Promise.resolve();
+                        })
+                } else {
+                    return Promise.resolve();
+                }
+
+            })
+        
     }
 	
 }

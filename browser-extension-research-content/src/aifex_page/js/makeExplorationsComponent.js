@@ -9,7 +9,7 @@
         if (state.showConfig) {
             component.style.display = 'none';
         } else {
-            if (state.pageKind === 'Explore') {
+            if (state.popupPageKind === 'Explore') {
                 component.style.display = 'flex';
             } else {
                 component.style.display = 'none';

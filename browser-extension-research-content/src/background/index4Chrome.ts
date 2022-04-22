@@ -4,6 +4,7 @@ import ChromeBrowserService from "./_infra/ChromeBrowserService";
 import HandlerOfMessageSentByPopup from "./_ui/HandlerOfMessageSentByPopup";
 import HandlerOfMessageSentByTabScript from "./_ui/HandlerOfMessageSentByTabScript";
 import ChromeExtensionCommunicationService from "./_infra/ChromeExtensionCommunicationService";
+import State from "./domain/State";
 
 
 const browserService = new ChromeBrowserService();
@@ -16,3 +17,17 @@ const handlerOfMessageSentTabScript = new HandlerOfMessageSentByTabScript(applic
 
 handlerOfMessageSentByPopup.attachCommunicationService(chromeExtensionCommunicationService);
 handlerOfMessageSentTabScript.attachCommunicationService(chromeExtensionCommunicationService);
+
+(async () => {
+    console.log('build at ', new Date());
+    let state : State | undefined;
+    state = await browserService.getStateFromStorage(); 
+    console.log('just after construct, state from storage is ', state);
+    if (! state) {
+        console.log('no state in storage, will create new one and store it ! ');
+        await browserService.setStateToStorage(new State());
+        console.log('state is saved');
+        state = await browserService.getStateFromStorage(); 
+        console.log('state from storage', state);
+    }
+})();

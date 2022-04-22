@@ -38,3 +38,15 @@ function getCurrentWindow() {
             })
     }
 }
+
+
+function getStateFromStorage() {
+    return chrome.storage.local.get("AIFEX_STATE")
+        .then((result) => {
+            return result["AIFEX_STATE"];
+        });
+}
+
+function setStateToStorage(state) {
+    return chrome.storage.local.set({"AIFEX_STATE": state});
+}

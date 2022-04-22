@@ -1,17 +1,12 @@
 import TabScriptService from "./application/TabScriptService";
-import ChromeBackgroundMessageService from "./_infra/ChromeBackgroundMessageService";
-import ChromeExtensionCommunicationService from "./_infra/ChromeExtensionCommunicationService";
-import HandlerOfMessageSentByBackground from "./_ui/HandlerOfMessageSentByBackground";
+import ChromeBrowserService from "./_infra/ChromeBrowserService";
+import ChromeBackgroundService from "./_infra/ChromeBackgroundService";
 
 
-console.log("AIFEX is running");
-const backgroundService = new ChromeBackgroundMessageService();
+console.log("[TabScript] TabScript is running");
+const backgroundService = new ChromeBackgroundService();
+const browserService = new ChromeBrowserService();
 
-const tabScriptService = new TabScriptService(backgroundService);
+const tabScriptService = new TabScriptService(backgroundService, browserService);
 
-const communicationService = new ChromeExtensionCommunicationService();
-
-const handler = new HandlerOfMessageSentByBackground(tabScriptService);
-handler.attachCommunicationService(communicationService);
-
-tabScriptService.synchronizeWithBackground();
+tabScriptService.synchronizeWithState();

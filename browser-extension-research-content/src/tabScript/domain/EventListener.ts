@@ -14,24 +14,10 @@ export default class EventListener {
         this.listen();
     }
 
-    explorationStopped(): void {
-        this.unlisten();
-    }
-
-    reload(): void {
-        this.unlisten();
-        this.listen();
-    }
-
     private listen(): void {
         console.log(`[TabScript] listening to events`);
         document.addEventListener('mousedown', this.listenToMouseDown.bind(this), true);
         document.addEventListener('keydown', this.listenToKeyDown.bind(this), true);
-    }
-
-    private unlisten(): void {
-        document.removeEventListener('mousedown', this.listenToMouseDown.bind(this), true);
-        document.removeEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
 
     private listenToMouseDown(event: Event): void {

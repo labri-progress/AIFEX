@@ -215,28 +215,6 @@ export default class AifexServiceHTTP implements AifexService {
 	}
 
 
-
-
-	getNumberOfExplorationForTesterName(serverURL: string, sessionId: string, testerName: string): Promise<number> {
-		return fetch(`${this.getSessionURL(serverURL)}/session/${sessionId}/numberOfTesterExploration/${testerName}`)
-			.then((response) => {
-				if (response.status === OK_STATUS) {
-					return response.json();
-				}
-				if (response.ok) {
-					return;
-				}
-				if (response.status === INVALID_PARAMETERS_STATUS) {
-					return Promise.reject(`webSiteId is malformed`);
-				}
-				if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
-					return Promise.reject(`server error`);
-				}
-			}).then((data: { numberOfExplorations: number }) => {
-				return data.numberOfExplorations
-			})
-	}
-
 	private getSessionURL(serverURL: string) {
 		const SERVER_URL = new URL(serverURL);
 		const SERVER_IN_PRODUCTION = SERVER_URL.protocol === 'https:';

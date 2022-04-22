@@ -19,24 +19,12 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 	/* For Popup        */
 	/************************/
 
-	changePopupPageKind(popupPageKind: PopupPageKind): void {
-		return this._background.changePopupPageKind(popupPageKind);
-	}
-
-	getStateForPopup(): StateForPopup {
-		return this._background.getStateForPopup();
-	}
-
 	makeCompatibilityCheck(serverURL: string): Promise<CompatibilityCheck> {
 		return this._background.makeCompatibilityCheck(serverURL);
 	}
 
 	connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
 		return this._background.connect(serverURL, sessionId, modelId);
-	}
-
-	disconnect(): void {
-		return this._background.disconnect();
 	}
 
 	startExploration(): Promise<void> {
@@ -47,29 +35,10 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 		return this._background.stopExploration();
 	}
 
-	changeTesterName(newName: string): Promise<void> {
-		this._background.changeTesterName(newName);
-		return this._background.updateNumberOfExplorationByTester();
-	}
-	
-	setTakeAsScreenshotByAction(takeAScreenshotByAction : boolean) : void {
-		return this._background.setTakeAsScreenshotByAction(takeAScreenshotByAction);
-	}
-
-
-	submitConfig(testerName: string): void {
-		return this._background.submitConfig(testerName);
-	}
-
 
 	/************************/
 	/* For TabScript        */
 	/************************/
-
-
-	getStateForTabScript(): StateForTabScript {
-		return this._background.getStateForTabScript();
-	}
 
 	processNewAction(kind: string, value: string): Promise<void> {
 		return this._background.processNewAction(kind, value);

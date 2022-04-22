@@ -1,28 +1,18 @@
 
-import Interface4Background from "./Interface4Background";
 import BackgroundService from "../domain/BackgroundService";
+import BrowserService from "../domain/BrowserService";
 import TabScript from "../domain/TabScript";
 
-export default class TabScriptService implements Interface4Background {
+export default class TabScriptService {
     private _tabScript : TabScript;
 
-    constructor(backgroundService : BackgroundService) {
-        this._tabScript = new TabScript(backgroundService);
+    constructor(backgroundService : BackgroundService, browserService : BrowserService) {
+        this._tabScript = new TabScript(backgroundService, browserService);
     }
 
-    synchronizeWithBackground() : Promise<void> {
+    synchronizeWithState() : Promise<void> {
         console.log(`tabscript will synchronize with Background`);
-        return this._tabScript.synchronizeWithBackground();
-    }
-
-    explorationStarted() :void{
-        console.log(`exploration started`);
-        this._tabScript.explorationStarted();
-    }
-
-    explorationStopped() :void{
-        console.log(`exploration stopped`);
-        this._tabScript.explorationStopped();
+        return this._tabScript.synchronizeWithState();
     }
 
 }

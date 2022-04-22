@@ -14,14 +14,7 @@ export default class HandlerOfMessageSentByTabScript {
 
 
     private handleMessage(msg : any, sender : any, sendResponse : Function): boolean {
-        switch (msg.kind) {
-			case "getStateForTabScript": {
-                console.log(`TabScript asks for ${msg.kind}`);
-                let state = this._application.getStateForTabScript();
-				sendResponse(state);
-				return true;
-            }
-                
+        switch (msg.kind) {   
             case "pushAction": {
                 console.log(`TabScript asks for ${msg.kind}`);
                 const action = msg.action;

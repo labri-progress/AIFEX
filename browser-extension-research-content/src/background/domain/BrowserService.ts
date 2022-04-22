@@ -1,12 +1,12 @@
+import State from "./State";
 
 export default interface BrowserService {
     getExtensionVesion():string;
 
     takeScreenshot(): Promise<string> ;
 
-    getFromStorage(key: string): Promise<any>;
+    getStateFromStorage(): Promise<State | undefined>;
 
-    setToStorage(key: string, value: any): Promise<void>;
+    setStateToStorage(state: State): Promise<void>;
 
-    openLongLiveTab(): Promise<any>;
 }

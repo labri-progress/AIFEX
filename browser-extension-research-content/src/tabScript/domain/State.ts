@@ -1,7 +1,7 @@
 export default class State {
-    isActive: boolean;
+    public isRecording : boolean;
 
-    constructor(isActive: boolean) {
-        this.isActive = isActive;
+    constructor(isActive : boolean) {
+        this.isRecording = isActive;
     }
 }

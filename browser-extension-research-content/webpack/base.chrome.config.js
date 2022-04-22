@@ -5,7 +5,6 @@ const baseConfig = require("./base.config");
 baseConfig.plugins.push(new CopyWebpackPlugin({
 	patterns: [
 		{ from: "./src/manifest.chrome.json", to: "manifest.json" },
-		{ from: "./src/background/_infra/bg.html", to: "bg.html" }
 	]
 }));
 

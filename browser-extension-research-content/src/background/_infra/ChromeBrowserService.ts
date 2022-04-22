@@ -1,14 +1,12 @@
 
+import State from "../domain/State";
 import BrowserService from "../domain/BrowserService";
 import { getCurrentWindow, takeScreenshot } from "./ChromePromise";
-const DEFAULT_WINDOW_OPTIONS = { url: 'https://www.aifex.fr' };
-const DEFAULT_TAB_OPTIONS = {};
 
 export default class ChromeBrowserService implements BrowserService {
 
     constructor() {
     }
-    
 
     getExtensionVesion(): string {
         return chrome.runtime.getManifest().version
@@ -26,26 +24,20 @@ export default class ChromeBrowserService implements BrowserService {
             });
     }
 
-    getFromStorage(key: string): Promise<any> {
-        return new Promise((res, rej) => {
-            chrome.storage.local.get([key], (result) => {
-                res(result.key);
+    getStateFromStorage(): Promise<State | undefined> {
+        return chrome.storage.local.get("AIFEX_STATE")
+            .then( (result) => {
+                return result["AIFEX_STATE"];
             });
-        });
+
     }
-    setToStorage(key: string, value: any): Promise<void> {
-        return new Promise((res, rej) => {
-            let keyVal : any = {};
-            keyVal[key] = value;
-            chrome.storage.local.set(keyVal, () => {
-                res();
-            });
-        });
+
+    setStateToStorage(state: State): Promise<void> {
+        return chrome.storage.local.set({"AIFEX_STATE": state});
     }
 
     openLongLiveTab(): Promise<any> {
         return chrome.tabs.create({url: 'bg.html'});
     }
-
 
 }

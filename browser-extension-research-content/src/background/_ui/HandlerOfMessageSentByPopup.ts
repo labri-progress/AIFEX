@@ -14,17 +14,6 @@ export default class HandlerOfMessageSentByPopup {
 
     private handleMessage(msg : any, sender : any, sendResponse : Function): boolean {
         switch (msg.kind) {
-            case "changePopupPageKind": {
-                console.log(`Popup asks for ${msg.kind}`);
-                if (!msg.popupPageKind) {
-                    console.log(`no page`);
-                    sendResponse({error: "page is missing"});
-                } else {
-                    this._application.changePopupPageKind(msg.popupPageKind);
-                    sendResponse({message: "page changed"});
-                }
-                return true;
-            }
 
             case "checkDeprecated": {
                 console.log(`Popup asks for ${msg.kind}`);
@@ -49,14 +38,6 @@ export default class HandlerOfMessageSentByPopup {
                     }
                 }
                 return true;
-			}
-
-			case "getStateForPopup": {
-                console.log(`Popup asks for ${msg.kind}`);
-                let state = this._application.getStateForPopup();
-                console.log(`state is returned`);
-				sendResponse(state);
-				return true;
 			}
 
             case "connect": {
@@ -95,20 +76,13 @@ export default class HandlerOfMessageSentByPopup {
                 return true;
             }
 
-            case "disconnect": {
-                console.log(`Popup asks for ${msg.kind}`);
-                this._application.disconnect();
-                sendResponse("ok");
-                return true;
-            }
-
             case "startExploration": {
                 console.log(`Popup asks for ${msg.kind}`);
                 this._application
                     .startExploration()
                     .then(() => {
                         console.log(`start exploration`);
-                        sendResponse(this._application.getStateForPopup());
+                        sendResponse("started");
                     })
                     .catch((error : Error) => {
                         console.log("popup asks to startExploration", error);
@@ -123,39 +97,12 @@ export default class HandlerOfMessageSentByPopup {
                     .stopExploration()
                     .then(() => {
                         console.log('stopped');
-                        sendResponse(this._application.getStateForPopup());
+                        sendResponse("stopped");
                     })
                     .catch((error) => {
                         console.log("popup asks to stopExploration", error);
                         sendResponse({error});
                     });
-                return true;
-            }
-
-            case "changeTesterName": {
-                console.log(`Popup asks for ${msg.kind}`);
-                this._application.changeTesterName(msg.testerName)
-                    .then(() => {
-                        sendResponse(this._application.getStateForPopup());
-                    }).catch((error: Error) => {
-                        console.log("popup asks to changeTesterName",error);
-                        sendResponse({error});
-                    });
-				return true;
-            }
-
-
-            case "setTakeAScreenshotByAction" : {
-                console.log(`Popup asks for ${msg.kind}`);
-                this._application.setTakeAsScreenshotByAction(msg.takeAScreenshotByAction);
-                sendResponse("ok");
-                return true;
-            }
-
-            case "submitConfig": {
-                console.log(`Popup asks for ${msg.kind}`);
-                this._application.submitConfig(msg.testerName);
-                sendResponse("ok");
                 return true;
             }
 
