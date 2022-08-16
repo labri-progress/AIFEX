@@ -1,23 +1,11 @@
-import Rule from "./Rule";
-
 export default class Action {
 
     public prefix: string;
     public suffix: string | undefined;
-    public probability: number;
-    public ruleList: Rule[];
-    public htmlElementList: (HTMLElement|SVGElement)[];
 
-    constructor(prefix: string, suffix?: string, ruleList: Rule[] = [], htmlElementList: HTMLElement[]= []) {
+    constructor(prefix: string, suffix?: string) {
         this.prefix = prefix;
         this.suffix = suffix;
-        this.probability = 0;
-        this.ruleList = ruleList;
-        this.htmlElementList = htmlElementList;
-    }
-
-    public setRuleList(ruleList: Rule[]): void {
-        this.ruleList = ruleList;
     }
 
     public toString(): string {

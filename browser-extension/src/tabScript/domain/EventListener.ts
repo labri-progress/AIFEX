@@ -1,18 +1,12 @@
-import RuleService from "./RuleService";
 import BackgroundService from "./BackgroundService"
 import Action from "./Action";
-import { logger } from "../framework/Logger";
+import getCssSelector from 'css-selector-generator';
 
 export default class EventListener {
-    private _ruleService: RuleService;
-    private _handledEvents: string[];
-    private _newActionCallbacks: ((action: Action) => void)[];
     private _backgroundService: BackgroundService;
+    private _lastAction: string | undefined;
 
-    constructor(ruleService: RuleService, backgroundService: BackgroundService) {
-        this._ruleService = ruleService
-        this._handledEvents = [];
-        this._newActionCallbacks = [];
+    constructor(backgroundService: BackgroundService) {
         this._backgroundService = backgroundService;
     }
 
@@ -20,57 +14,138 @@ export default class EventListener {
         this.listen();
     }
 
-    explorationStopped(): void {
-        this.unlisten();
-    }
-
-    reload(): void {
-        this.unlisten();
-        this.listen();
-    }
-
     private listen(): void {
-        const events = this._ruleService.getEventsToHandle()
-        this._handledEvents = events;
-
-        this._handledEvents.forEach((handledEvent) => {
-            logger.debug(`listening to ${handledEvent}`);
-            document.addEventListener(handledEvent, this.exploratoryListener.bind(this), true)
-        });
+        console.log(`[TabScript] listening to events`);
+        document.addEventListener('mousedown', this.listenToMouseDown.bind(this), true);
+        document.addEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
 
-    private unlisten(): void {
-        this._handledEvents.forEach((handledEvent) => {
-            document.removeEventListener(handledEvent, this.exploratoryListener.bind(this), true)
-        });
-    }
-
-    private exploratoryListener(event: Event): void {
+    private listenToMouseDown(event: Event): void {
         let unsafeEvent: any = event;
-        if (unsafeEvent.isTrusted || unsafeEvent.type === 'css-class-added') {
-            if (!unsafeEvent.explored) {
-                unsafeEvent.explored = true;
-                const rule = this._ruleService.getMatchingRule(event);
-                if (rule) {
-                    const action = rule.makeAction(event);
-                    if (action) {
-                        logger.info(`action : ${action.toString()}`);
-                        this._backgroundService.sendAction(action)
-                            .then(() => {
-                                this._newActionCallbacks.forEach(callback => callback(action));
-                            })
-                            .catch((error) => {
-                                logger.error('Error while Listener pushed action ', error);
-                            })
-                    }
+        if (!unsafeEvent.explored) {
+            if (event instanceof MouseEvent) {
+                let prefix = 'Click';
+                let suffix = this.makeSuffix(event);
+                let action = new Action(prefix, suffix);
+
+                
+                if (this._lastAction !== action.toString()) {
+                    console.log(`[TabScript] action : ${action.toString()}`);
+                    this._lastAction = action.toString();
+                    this._backgroundService.sendAction(action);
                 }
             }
         }
     }
 
-    public onNewUserAction(callback : (action : Action) => void): void {
-        if (typeof callback === "function") {
-            this._newActionCallbacks.push(callback)
+
+    private listenToKeyDown(event: Event): void {
+        let unsafeEvent: any = event;
+        if (!unsafeEvent.explored) {
+            if (event instanceof KeyboardEvent) {
+                let prefix = 'Edit';
+                let isEditable = false;
+                if (event.target instanceof HTMLInputElement && !event.target.disabled && !event.target.readOnly) {
+                    isEditable = true;
+                }
+
+                
+                switch (event.code) {
+                    case 'Tab':
+                        if (event.shiftKey){
+                            prefix = 'ShiftTab';
+                        } else {
+                            prefix = 'Tab';
+                        }
+                        break;
+                    case 'Enter':
+                        if (isEditable) {
+                            prefix = 'Edit';
+                        } else {
+                            prefix = 'Enter';
+                        }
+                        break;
+                    case 'Space':
+                        if (isEditable) {
+                            prefix = 'Edit';
+                        } else {
+                            prefix = 'Space';
+                        }
+                        break;
+                    case 'ArrowUp':
+                    case 'ArrowDown':
+                    case 'ArrowLeft':
+                    case 'ArrowRight':
+                        prefix = event.code;
+                        break;
+                    case 'Escape':
+                        prefix = 'Escape';
+                        break;
+                    default:
+                        prefix = 'Edit';
+
+                }
+
+                let suffix = this.makeSuffix(event);
+                let action = new Action(prefix, suffix);
+                
+                if (this._lastAction !== action.toString()) {
+                    console.log(`[TabScript] action : ${action.toString()}`);
+                    this._lastAction = action.toString();
+                    this._backgroundService.sendAction(action);
+                }
+            }
         }
     }
+
+
+    makeSuffix(event : Event): string | undefined {
+        if (event.target) {
+            if (event.target instanceof HTMLElement || event.target instanceof SVGElement) { 
+                let suffix;
+                try {
+                    suffix = getCssSelector(event.target, {
+                        selectors: [
+                            "id", 
+                            "class", 
+                            "tag", 
+                            "attribute"
+                        ], 
+                        blacklist: [
+                            /.*data.*/i, 
+                            /.*aifex.*/i, 
+                            /.*over.*/i,
+                            /.*auto.*/i,
+                            /.*value.*/i,
+                            /.*checked.*/i,
+                            '[placeholder]',
+                            /.*href.*/i,
+                            /.*src.*/i,
+                            /.*onclick.*/i,
+                            /.*onload.*/i,
+                            /.*onkeyup.*/i,
+                            /.*width.*/i,
+                            /.*height.*/i,
+                            /.*style.*/i,
+                            /.*size.*/i,
+                            /.*maxlength.*/i
+                        ],
+                        combineBetweenSelectors: true,
+                        maxCandidates: 80,
+                        maxCombinations: 80
+                    });
+                } catch (e) {
+                    suffix = "error";
+                    console.log(`[TabScript] exception while generating suffix : ${e}`);
+                }
+
+                const rect = event.target.getBoundingClientRect();
+                if (rect) {
+                    suffix +=`?left=${rect.left}&top=${rect.top}&right=${rect.right}&bottom=${rect.bottom}&width=${rect.width}&height=${rect.height}&screenwidth=${window.innerWidth}&screenheight=${window.innerHeight}`;
+                }
+                return suffix;
+            }
+        }
+    }
+
 }

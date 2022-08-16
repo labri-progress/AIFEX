@@ -1,11 +1,10 @@
-import Observation from "./Observation";
 import Action from "./Action";
 
 export default class Exploration {
 
     private _startDate : Date;
     private _stopDate : Date | undefined;
-    private _actions: (Action | Observation )[];
+    private _actions: Action[];
     private _explorationNumber: number;
     private _hasBeenUpdated: boolean;
 
@@ -25,15 +24,7 @@ export default class Exploration {
     }
 
     get actions(): Action[] {
-        return this._actions.filter(interaction => interaction instanceof Action) as Action[];
-    }
-
-    get actionsAndObservations(): (Action | Observation)[] {
         return this._actions;
-    }
-
-    get evaluableInteractions(): (Action)[] {
-        return this._actions.filter(interaction => interaction instanceof Action) as (Action)[];
     }
 
     get length(): number {
@@ -61,11 +52,6 @@ export default class Exploration {
         if (this.actions.length > 1) {
             this.actions.pop()
         }
-    }
-
-    addObservation(observation: Observation): void{
-        observation.index = this._actions.length;
-        this._actions.push(observation);
     }
 
     setStopDate(): void {

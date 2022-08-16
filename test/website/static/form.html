@@ -1,11 +1,13 @@
 <html>
+    <head>
+        <!--<script id="AIFEX" connexion-url="https://www.aifex.fr/join?sessionId=hYnGzJ8i3&modelId=qC1Nl_UJU" src="AIFEXScript.js"></script>-->
+    </head>
     <body>
-        <h1>AIFEX Test Website</h1>
-        <a href="index.html">Go To Home</a>
-        <h2>Here Is A Simple Form</h2>
+        <h1>Test Website</h1>
+        <h2>Log In</h2>
         <form method="GET" action="index.html">
-            <input type="text" id="name" name="name" placeholder="Name">
-            <input type="text" id="email" name="email" placeholder="Email">
+            <input type="text" id="username" name="name" placeholder="username">
+            <input type="password" id="password" name="email" placeholder="password">
             <input type="submit" id="submit" value="Submit">
         </form>
         <hr/>
@@ -13,4 +15,5 @@
             <span>This website has been developed for testing purpose</span>
         </footer>
     </body>
+    <script>document.body.addEventListener('keypress', (ev) => { console.log(ev.key);});</script>
 </html>
