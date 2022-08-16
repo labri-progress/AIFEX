@@ -21,14 +21,10 @@ export ELASTIC_PASSWORD="el@st!c"
 export TOKEN_SECRET="changeme"
 
 npm run development
-cd dist/firefox
-zip -qr ../../firefoxExtension .
-cd ..
-rm -fr firefox
+cd dist
 zip -qr ../chromeExtension ./chrome
 cd ..
 mv -f chromeExtension.zip ../dashboard/public
-mv -f firefoxExtension.zip ../dashboard/public
 cd ..
 
 cd browser-extension/ 

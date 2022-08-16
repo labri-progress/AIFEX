@@ -17,14 +17,10 @@ export PLUGIN_INFO="$(node -e 'console.log(JSON.stringify(require("./src/manifes
 echo "PLUGIN_INFO = $PLUGIN_INFO"
 
 npm run production
-cd dist/firefox
-zip -r ../../firefoxExtension .
-cd ..
-rm -fr firefox
+cd dist
 zip -r ../chromeExtension ./chrome
 cd ..
 mv -f chromeExtension.zip ../dashboard/public
-mv -f firefoxExtension.zip ../dashboard/public
 cd ..
 
 echo ========================== BROWSER SCRIPT COMPILATION ==================================
