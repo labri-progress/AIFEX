@@ -6,13 +6,13 @@
   "scripts": {
     "developmentChrome": "node ./node_modules/webpack/bin/webpack.js --config webpack/development.chrome.config.js",
     "developmentFirefox": "node ./node_modules/webpack/bin/webpack.js --config webpack/development.firefox.config.js",
-    "development": "npm run developmentChrome && npm run developmentFirefox",
+    "development": "npm run developmentChrome",
     "productionChrome": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/production.chrome.config.js",
     "productionFirefox": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/production.firefox.config.js",
-    "production": "npm run productionChrome && npm run productionFirefox",
+    "production": "npm run productionChrome",
     "githubChrome": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/github.chrome.config.js",
     "githubFirefox": "node ./node_modules/webpack/bin/webpack.js --config ./webpack/github.firefox.config.js",
-    "github": "npm run githubChrome && npm run githubFirefox",
+    "github": "npm run githubChrome",
     "compile": "tsc"
   },
   "author": "",
