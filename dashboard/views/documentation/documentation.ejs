@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <% include ../partials/head %>
+        <%- include('../partials/head', {account}) %>
         <link rel="stylesheet" type="text/css"  href="/static/documentation.css">
     </head>
     <body>
-        <% include ../partials/nav %>
+        <%- include('../partials/nav', {account}) %>
         <div class="container">
         <div id="toc_container">
             <p class="toc_title">Contents</p>

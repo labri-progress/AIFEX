@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <% include ../partials/head %>
+        <%- include('../partials/head', {account}) %>
         <script src="/static/chart.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css" />
     </head>
     <body>
-        <% include ../partials/nav %>
+        <%- include('../partials/nav', {account}) %>
         <div class="container">
             <div class="jumbotron">
                 <h1 class="display-4">AIFEX </h1>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <% include ../partials/head %>
+        <%- include('../partials/head', {account}) %>
 
         <script src="//d3js.org/d3.v5.min.js"></script>
         <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
@@ -10,7 +10,7 @@
 
     </head>
     <body>
-        <% include ../partials/nav %>
+        <%- include('../partials/nav', {account}) %>
 
             <div class="container jumbotron">
                 <h1>Scenario </h1>

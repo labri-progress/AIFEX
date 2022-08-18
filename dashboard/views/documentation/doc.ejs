@@ -2,14 +2,14 @@
 <html lang="en">
 
 <head>
-    <% include ../partials/head %>
-    <% include ../partials/prism %>
+    <%- include('../partials/head', {account}) %>
+    <%- include('../partials/prism') %>
     <link rel="stylesheet" href="/static/documentation.css">
 
 </head>
 
 <body data-spy="scroll" data-target="#toc">
-    <% include ../partials/nav %>
+    <%- include('../partials/nav', {account}) %>
     <div class="container">
         <div class="row">
             <!-- sidebar, which will move to the top on a small screen -->

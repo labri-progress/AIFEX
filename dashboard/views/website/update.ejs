@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-    <% include ../partials/head %>
+    <%- include('../partials/head', {account}) %>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js"></script>
     <script src="/static/monaco.js"></script>
 </head>
 
 <body>
-    <% include ../partials/nav %>
+    <%- include('../partials/nav', {account}) %>
     <div class="container">
         <div class="jumbotron">
             <h1 class="display-4">AIFEX </h1>

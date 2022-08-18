@@ -2,12 +2,12 @@
 <html lang="en">
 
 <head>
-    <% include ../partials/head %>
+    <%- include('../partials/head', {account}) %>
     <script src="/static/lib/chart.min.js"></script>
 </head>
 
 <body>
-    <% include ../partials/nav %>
+    <%- include('../partials/nav', {account}) %>
 
     <div class="container">
         <div class="jumbotron">
