@@ -12,10 +12,9 @@
     <script src="./js/browserAPI.js" defer></script>
 
     <!-- Components Render Function-->
-    <script src="./js/popup.js" defer></script>
+    <script src="./js/componentManager.js" defer></script>
     <script src="./js/headerComponent.js" defer></script>
     <script src="./js/homeComponent.js" defer></script>
-    <script src="./js/configComponent.js" defer></script>
     <script src="./js/sessionDescriptionComponent.js" defer></script>
     <script src="./js/connectToSessionComponent.js" defer></script>
     <script src="./js/makeExplorationsComponent.js" defer></script>
@@ -25,49 +24,17 @@
     <header>
         <h2>AIFEX</h2>
         <div id="header-buttons" class="btn-group" role="group" aria-label="windowButtons">
-            <span id="config-button" class="fa fa-cog fa-lg"></span>
-            <span id="attach-button" class="fa fa-window-minimize fa-lg"></span>
-            <span id="detach-button" class="fa fa-window-maximize fa-lg"></span>
             <span id="disconnect-button" class="fa fa-close fa-lg"></span>
         </div>
 
     </header>
 
     <div id="container">
+
         <div class="aifex_component" id="homeComponent">
-            <h3>Join a session or create a new one ?</h3>
-            <button id="goToJoinSession" class="aifex_large_button" > Join </button>
-            <button id="goToCreateSession" class="aifex_large_button" disabled> Create </button>
+            <h3>Welcome to AIFEX</h3>
+            <button id="goToJoinSession" class="aifex_large_button" > Join a Session </button>
         </div>
-
-        <div class="aifex_component" id="configureComponent">
-            <h3>General Configuration</h3>
-            <form id="configForm">
-                <div class="aifex_form_element">
-                    <label for="testerName">TesterName</label>
-                    <input id="testerName" class="form-control" type="text" placeholder="Anonymous"/>
-                </div>
-                <div class="aifex_check_element" id="shouldCreateNewWindowsOnConnectDiv">
-                    <input type="checkbox" id="shouldCreateNewWindowsOnConnect" name="shouldCreateNewWindowsOnConnect" >
-                    <label for="shouldCreateNewWindowsOnConnect">Open a new window when joining a session ?</label>
-                </div>
-                <div class="aifex_check_element" id="shouldCloseWindowOnDisconnectDiv">
-                    <input type="checkbox" id="shouldCloseWindowOnDisconnect" name="shouldCloseWindowOnDisconnect" >
-                    <label for="shouldCloseWindowOnDisconnect">Close window when disconnecting a session ?</label>
-                </div>
-                <div class="aifex_check_element" id="shouldOpenPrivateWindowsDiv">
-                    <input type="checkbox" id="shouldOpenPrivateWindows" name="shouldOpenPrivateWindows" >
-                    <label for="shouldOpenPrivateWindows">Should open private navigation windows ?</label>
-                </div>
-                <div class="aifex_check_element" id="showProbabilityPopupDiv">
-                    <input type="checkbox" id="showProbabilityPopup" name="showProbabilityPopup" >
-                    <label for="showProbabilityPopup">Show Popup ?</label>
-                </div>
-                <button id="submitConfig" class="aifex_button" type="submit" >Ok</button>
-                <button id="cancelConfig" class="aifex_button">Cancel</button>
-            </form>
-        </div>
-
 
         <div class="aifex_component" id="connectToSessionComponent">
             <h3>Join a session</h3>
@@ -83,13 +50,14 @@
 
         <div class="aifex_component" id="descriptionOfTheSession">
             <div id="sessionDescription"></div>
-            <div class="aifex_check_element" id="recordMediaStatusDiv">
-                <input type="checkbox" id="recordMediaStatus" name="recordMediaStatus" >
-                <label for="recordMediaStatus">Record a video for each exploration ?</label>
-            </div>
             <div class="aifex_check_element" id="takeAScreenshotByActionDiv">
                 <input type="checkbox" id="takeAScreenshotByAction" name="takeAScreenshotByAction" >
                 <label for="takeAScreenshotByAction">Make a screenshot for every action ?</label>
+            </div>
+
+            <div class="aifex_form_element">
+                <label for="testerNameInDescription">TesterName</label>
+                <input id="testerNameInDescription" class="form-control" type="text" placeholder="Anonymous"/>
             </div>
             
             <button id="sessionDescriptionButton" class="aifex_button">OK</button>
@@ -103,9 +71,6 @@
             </button>
             <button id="stop-button" class="aifex_large_button" class="aifex_button">
                 <i class="fa fa-stop" title="Stop"></i> <span>Stop/Save</span>
-            </button>
-            <button id="trash-button" class="aifex_large_button">
-                <i class="fa fa-trash" title="Trash"></i> <span>Trash</span>
             </button>
 
 

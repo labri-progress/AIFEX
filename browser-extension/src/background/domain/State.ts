@@ -5,6 +5,7 @@ export default class State {
     public serverURL : string | undefined;
     public sessionId : string | undefined;
     public sessionBaseURL : string | undefined;
+    public sessionDescription : string | undefined;
     public testerName : string | undefined;
     public takeAScreenshotByAction : boolean;
     public recordActionByAction : boolean;

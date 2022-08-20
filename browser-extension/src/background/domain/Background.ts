@@ -39,6 +39,7 @@ export default class Background {
                             state.sessionBaseURL = sessionResult.baseURL;
                             state.sessionId = sessionId;
                             state.serverURL = serverURL;
+                            state.sessionDescription = sessionResult.description;
                             state.connectedToSession = true;
                             state.popupPageKind = PopupPageKind.ReadSessionDescription;
                             return this._browserService.setStateToStorage(state)

@@ -29,9 +29,9 @@ module.exports = {
 			{ from: "./src/images/aifex_icon_rec.png", to: "images/aifex_icon_rec.png" },
 			{ from: "./src/images/aifex_icon_notif.png", to: "images/aifex_icon_notif.png" },
 			{ from: "./src/images/aifex_icon_rec_notif.png", to: "images/aifex_icon_rec_notif.png" },
-			{ from: "./src/aifex_page/", to: "aifex_page" },
-            { from: "./node_modules/font-awesome/css/font-awesome.min.css", to: "aifex_page/css/font-awesome.min.css" },
-            { from: "./node_modules/font-awesome/fonts", to: "aifex_page/fonts" },
+			{ from: "./src/popup/", to: "popup" },
+            { from: "./node_modules/font-awesome/css/font-awesome.min.css", to: "popup/css/font-awesome.min.css" },
+            { from: "./node_modules/font-awesome/fonts", to: "popup/fonts" },
 		]})
 	],
 };

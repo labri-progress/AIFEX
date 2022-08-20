@@ -8,7 +8,7 @@
         if (state.showConfig) {
             component.style.display = 'none';
         } else {
-            if (state.pageKind === 'ConnectToSession') {
+            if (state.popupPageKind === 'ConnectToSession') {
                 component.style.display = 'flex';
             } else {
                 component.style.display = 'none';
@@ -54,7 +54,7 @@
                 }
             })
     }
-    addComponentToPopup(render);
+    addComponent(render);
     connectionForm.addEventListener("submit", handleConnexion);
 
     console.log('ConnectToSession Component has been launched');

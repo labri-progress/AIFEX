@@ -3,7 +3,6 @@
     let makeExplorationTitle = document.getElementById('makeExplorationTitle');
     let playButton = document.getElementById('play-button');
     let stopButton = document.getElementById('stop-button');
-    let trashButton = document.getElementById('trash-button');
     let observationButton = document.getElementById('observation-button');
     let observationSubComponent = document.getElementById('observationSubComponent');
     let submitObservationButton = document.getElementById('submit-observation');
@@ -15,49 +14,44 @@
     let addObservationIsVisible = false;
 
     function render() {
-        if (state.showConfig) {
-            component.style.display = 'none';
+        if (state.popupPageKind === 'Explore') {
+            component.style.display = 'flex';
         } else {
-            if (state.pageKind === 'Explore') {
-                component.style.display = 'flex';
-            } else {
-                component.style.display = 'none';
-            }
-            if (state.isRecording) {
-                makeExplorationTitle.innerHTML = 'Stop/Save your exploration or Trash it';
-                playButton.style.display = 'none';
-                stopButton.style.display = 'flex';
-                trashButton.style.display = 'flex';
-                observationSubComponent.style.display = 'flex';
-                observationForm.style.display = 'none';
-
-                if (state.lastInteractionObservation) {
-                    document.getElementById("observationType").value = state.lastInteractionObservation.kind;
-                    document.getElementById("observationDescription").value = state.lastInteractionObservation.value;
-                    document.getElementById("observationIsSubmitted").style.display = 'flex'
-                    document.getElementById("submit-observation").style.display = 'none'
-                    document.getElementById("observationType").disabled = true;
-                    document.getElementById('observationDescription').disabled = true;
-                    document.getElementById('clearObservation').style.display = "none";
-
-                } else {
-                    document.getElementById("observationIsSubmitted").style.display = 'none'
-                    document.getElementById("submit-observation").style.display = 'flex'
-                }
-
-                if (state.observationDistributionList && state.observationDistributionList.length > 0) {
-                    readObservationButton.style.display = 'flex';
-                } else {
-                    readObservationButton.style.display = 'none';
-                }
-            } else {
-                makeExplorationTitle.innerHTML = 'Start a new exploration';
-                playButton.style.display = 'flex';
-                stopButton.style.display = 'none';
-                trashButton.style.display = 'none';
-                observationSubComponent.style.display = 'none';
-            }
+            component.style.display = 'none';
         }
+        if (state.isRecording) {
+            makeExplorationTitle.innerHTML = 'Stop/Save your exploration';
+            playButton.style.display = 'none';
+            stopButton.style.display = 'flex';
+            observationSubComponent.style.display = 'flex';
+            observationForm.style.display = 'none';
+
+            if (state.lastInteractionObservation) {
+                document.getElementById("observationType").value = state.lastInteractionObservation.kind;
+                document.getElementById("observationDescription").value = state.lastInteractionObservation.value;
+                document.getElementById("observationIsSubmitted").style.display = 'flex'
+                document.getElementById("submit-observation").style.display = 'none'
+                document.getElementById("observationType").disabled = true;
+                document.getElementById('observationDescription').disabled = true;
+                document.getElementById('clearObservation').style.display = "none";
+
+            } else {
+                document.getElementById("observationIsSubmitted").style.display = 'none'
+                document.getElementById("submit-observation").style.display = 'flex'
+            }
+
+            if (state.observationDistributionList && state.observationDistributionList.length > 0) {
+                readObservationButton.style.display = 'flex';
+            } else {
+                readObservationButton.style.display = 'none';
+            }
+        } else {
+            makeExplorationTitle.innerHTML = 'Start a new exploration';
+            playButton.style.display = 'flex';
+            stopButton.style.display = 'none';
+            observationSubComponent.style.display = 'none';
+        }
+        
     }
 
     function startExploration() {
@@ -89,22 +83,6 @@
             })
     }
     
-    function trashExploration() {
-        console.log('handle trash');
-        sendMessage({
-            kind: 'removeExploration'
-        })
-            .then((response) => {
-                if (response.error) {
-                    console.error('handle trash', response.error);
-                } else {
-                    getStateAndRender()
-                }
-            })
-            .catch(e => {
-                console.error('handle trash', e);
-            })
-    }
 
     function openObservationView() {
         if (!addObservationIsVisible) {
@@ -185,12 +163,11 @@
 
     playButton.addEventListener('click', startExploration);
     stopButton.addEventListener('click', stopExploration);
-    trashButton.addEventListener('click', trashExploration);
     observationButton.addEventListener('click', openObservationView);
     submitObservationButton.addEventListener('click', submitObservation);
     readObservationButton.addEventListener('click', readObservations);
 
-    addComponentToPopup(render);
+    addComponent(render);
 
     console.log('MakeExplorations Component has been launched');
 
