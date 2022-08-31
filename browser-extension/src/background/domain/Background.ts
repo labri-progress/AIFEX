@@ -91,19 +91,19 @@ export default class Background {
                         promises.push(this.takeScreenShot(state.explorationLength));
                     }
         
-                    if (state.recordActionByAction) {
-                        if (!state.serverURL ||  !state.sessionId) {
-                            throw new Error("Not connected to a session")
-                        }
-                        console.log(`processNewAction : ${newAction.kind} ${newAction.value}`);
-                        const pushActionListPromise = this._aifexService.pushActionOrObservationList(
-                            state.serverURL, 
-                            state.sessionId, 
-                            state.explorationNumber, 
-                            [newAction])
-        
-                        promises.push(pushActionListPromise);
+                    
+                    if (!state.serverURL ||  !state.sessionId) {
+                        throw new Error("Not connected to a session")
                     }
+                    console.log(`processNewAction : ${newAction.kind} ${newAction.value}`);
+                    const pushActionListPromise = this._aifexService.pushActionOrObservationList(
+                        state.serverURL, 
+                        state.sessionId, 
+                        state.explorationNumber, 
+                        [newAction])
+    
+                    promises.push(pushActionListPromise);
+                    
                     console.log(`there are ${promises.length} promises`);
                     return Promise.allSettled(promises)
                         .then((results) => {
