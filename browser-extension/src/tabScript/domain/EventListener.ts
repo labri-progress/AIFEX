@@ -51,7 +51,6 @@ export default class EventListener {
 
                 
                 if (this._lastAction !== action.toString()) {
-                    console.log(`[TabScript] action : ${action.toString()}`);
                     this._lastAction = action.toString();
                     this._backgroundService.sendAction(action);
                 }
@@ -111,7 +110,6 @@ export default class EventListener {
                 let action = new Action(prefix, suffix);
                 
                 if (this._lastAction !== action.toString()) {
-                    console.log(`[TabScript] action : ${action.toString()}`);
                     this._lastAction = action.toString();
                     this._backgroundService.sendAction(action);
                 }

@@ -55,7 +55,6 @@ export default class Highlighter {
         this._browserService.getStateFromStorage()
             .then((state) => {                
                 if (state.probabilities) {
-                    console.log(state.probabilities);
                     state.probabilities.forEach(([locator, proba]) => {
                         let kindValue = locator.split('$');
                         if (kindValue.length > 1) {
@@ -63,13 +62,11 @@ export default class Highlighter {
                             let locatorParameters = value.split('?');
                             if (locatorParameters.length > 1) {
                                 let locator = locatorParameters[0];
-                                console.log(locator);
                                 let elements = querySelectorAllDeep(locator);
                                 elements.forEach((element) => {
                                     if (element instanceof HTMLElement || element instanceof SVGElement) {
                                         element.setAttribute("aifex_style", "true");
                                         if (this._highlighterCanvas) {
-                                            console.log('canvas');
                                             if (proba > WARM_COLOR_THRESHOLD) {
                                                 element.setAttribute("aifex_frequency", "often")
                                                 this._highlighterCanvas.highlightElement(element, oftenColor)
@@ -81,8 +78,6 @@ export default class Highlighter {
                                                 element.setAttribute("aifex_frequency", "rarely")
                                                 this._highlighterCanvas.highlightElement(element, rarelyColor)
                                             }
-                                        } else {
-                                            console.log('no canvas');
                                         }
                                     }
                                 })

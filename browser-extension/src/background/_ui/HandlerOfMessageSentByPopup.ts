@@ -16,24 +16,19 @@ export default class HandlerOfMessageSentByPopup {
         switch (msg.kind) {
 
             case "checkDeprecated": {
-                console.log(`Popup asks for ${msg.kind}`);
                 if (!msg.url) {
-                    console.log(`cannot check plugin version`);
                     sendResponse({error: "URL is missing"});
                 } else {
                     try {
                         const connexionURL = new URL(msg.url);
                         this._application.makeCompatibilityCheck(connexionURL.origin)
                         .then((compatibilityCheck) => {
-                            console.log(`compatibilityCheck: ${JSON.stringify(compatibilityCheck)}`);
                             sendResponse(compatibilityCheck);
                         })
                         .catch((error) => {
-                            console.log("popup asks for checkDeprecated", error);
                             sendResponse({error});
                         });
                     } catch (error) {
-                        console.log("wrong URL",new Error("url"));
                         sendResponse({error});
                     }
                 }

@@ -212,8 +212,9 @@ export default class AifexServiceHTTP implements AifexService {
 		modelId: string,
 		actions: Action[]
 	): Promise<[[string, number]]> {
+		let interactionList = actions.map((action) => new Action(action.kind, action.value?.split('?')[0], action.index))
 		const body = {
-			interactionList: actions,
+			interactionList: interactionList,
 		};
 		const option = {
 			method: "POST",
@@ -236,7 +237,6 @@ export default class AifexServiceHTTP implements AifexService {
 				} else if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
 					return Promise.reject(`server error`);
 				} else {
-					console.log('nothing');
 					return [];
 				}	
 			})

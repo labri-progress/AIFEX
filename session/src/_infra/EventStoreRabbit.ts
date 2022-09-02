@@ -43,10 +43,14 @@ export default class EventStoreRabbit implements EventStore {
         
         exploration.interactionList.forEach((interaction) => {
             if (interaction instanceof ActionInteraction) {
+                let value = interaction.action.suffix;
+                if (interaction.action.suffix) {
+                    value = interaction.action.suffix.split('?')[0];
+                }
                 sequence.push({
                     concreteType : "Action",
                     kind : interaction.action.prefix,
-                    value : interaction.action.suffix,
+                    value : value,
                 });
             }
             if (interaction instanceof ObersationInteraction) {

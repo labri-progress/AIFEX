@@ -141,7 +141,6 @@ export default class Background {
                 
                 return this.processNewAction("end")
                     .then(() => {
-                        console.log('process end');
                         state.isRecording = false;  
                         state.explorationNumber = undefined;
                         state.explorationLength = undefined;
