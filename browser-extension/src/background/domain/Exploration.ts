@@ -70,7 +70,7 @@ export default class Exploration {
             return (
                 {
                     index: index,
-                    concreteType: interaction.getConcreteType(),
+                    concreteType: interaction.concreteType,
                     kind: interaction.kind,
                     value: interaction.value,
                     date: interaction.date

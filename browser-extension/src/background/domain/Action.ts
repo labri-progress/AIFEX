@@ -4,16 +4,14 @@ export default class Action {
     value: string | undefined;
     index: number;
     date: Date;
+    concreteType: string;
 
     constructor(kind: string, value?: string, index: number= 0) {
         this.kind = kind;
         this.value = value;
         this.index = index;
         this.date = new Date();
-    }
-
-    getConcreteType(): string {
-        return "Action";
+        this.concreteType = 'Action';
     }
 
     toString(): string {

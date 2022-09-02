@@ -146,13 +146,7 @@ export default class AifexServiceHTTP implements AifexService {
 	
 	pushActionOrObservationList(serverURL: string, sessionId: string, explorationNumber: number, actions: Action[]): Promise<void> {
 		const body = {
-			interactionList: actions.map((action: Action) => ({
-				index: action.index,
-				concreteType: action.getConcreteType(),
-				kind: action.kind,
-				value: action.value,
-				date: action.date
-			}))
+			interactionList: actions
 		}
 		const option = {
 			method: "POST",
@@ -210,6 +204,42 @@ export default class AifexServiceHTTP implements AifexService {
 					return Promise.reject(new Error('error'+response.status));
 				}
 			});
+	}
+
+
+	getProbabilities(
+		serverURL: string,
+		modelId: string,
+		actions: Action[]
+	): Promise<[[string, number]]> {
+		const body = {
+			interactionList: actions,
+		};
+		const option = {
+			method: "POST",
+			body: JSON.stringify(body),
+			headers: { 'Content-Type': 'application/json' },
+		};
+		return fetch(
+			`${serverURL}/api/models/${modelId}/probabilities`,
+			option
+		)
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response
+						.json()
+						.then((jsonMap) => {
+							return jsonMap.probabilities;
+						});
+				} else if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(`modelId and/or interaction list is malformed`);
+				} else if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(`server error`);
+				} else {
+					console.log('nothing');
+					return [];
+				}	
+			})
 	}
 
 	

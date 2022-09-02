@@ -12,4 +12,3 @@ const browserService = new ChromeBrowserService();
 
 const tabScriptService = new TabScriptService(backgroundService, browserService);
 
-tabScriptService.synchronizeWithState();

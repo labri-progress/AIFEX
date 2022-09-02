@@ -1,18 +1,27 @@
 import BackgroundService from "./BackgroundService"
 import Action from "./Action";
 import getCssSelector from 'css-selector-generator';
+import BrowserService from "./BrowserService";
+import State from "./State";
 
 export default class EventListener {
     private _backgroundService: BackgroundService;
+    private _browserService : BrowserService;
     private _lastAction: string | undefined;
 
-    constructor(backgroundService: BackgroundService) {
+    constructor(backgroundService: BackgroundService, browserService: BrowserService) {
         this._backgroundService = backgroundService;
+        this._browserService = browserService;
+        this._browserService.getStateFromStorage()
+            .then((state: State) => {
+                if (state.isRecording) {
+                    this.listen();
+                } else {
+                    console.log("[TabScript] does not record event");
+                }
+            })
     }
 
-    explorationStarted(): void {
-        this.listen();
-    }
 
     private listen(): void {
         console.log(`[TabScript] listening to events`);

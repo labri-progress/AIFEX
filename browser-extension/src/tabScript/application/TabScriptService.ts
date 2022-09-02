@@ -11,9 +11,4 @@ export default class TabScriptService {
         this._tabScript = new TabScript(backgroundService, browserService);
     }
 
-    synchronizeWithState() : Promise<void> {
-        logger.info(`tabscript will synchronize with state`);
-        return this._tabScript.synchronizeWithState();
-    }
-
 }

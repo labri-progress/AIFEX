@@ -21,4 +21,6 @@ export default interface AifexService {
 
 	getPluginInfo(serverURL: string): Promise<AifexPluginInfo> ;
 
+	getProbabilities(serverURL: string, modelId: string, actions: Action[]): Promise<[[string, number]]>;
+
 }

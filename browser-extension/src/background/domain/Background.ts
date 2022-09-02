@@ -5,6 +5,7 @@ import Screenshot from "./Screenshot";
 import { PopupPageKind } from "./PopupPageKind";
 import Action from "./Action";
 import State from "./State";
+import { logger } from "../Logger";
 
 export default class Background {
 
@@ -26,11 +27,11 @@ export default class Background {
 
     connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
         console.log("connect");
-        return this._aifexService.getSession(serverURL, sessionId)
-            .then((sessionResult) => {
-                if (sessionResult === "Unauthorized") { 
+        return Promise.all([this._aifexService.hasModel(serverURL, modelId), this._aifexService.getSession(serverURL, sessionId)])
+            .then(([modelResult, sessionResult]) => {
+                if (modelResult === "Unauthorized" || sessionResult === "Unauthorized") { 
                     return "Unauthorized";
-                } else if (sessionResult === undefined) {
+                } else if (modelResult === false || sessionResult === undefined) {
                     return "NotFound";
                 } else {
                     return this._browserService.getStateFromStorage()
@@ -38,10 +39,12 @@ export default class Background {
                             let state = stateFromStorage || new State();
                             state.sessionBaseURL = sessionResult.baseURL;
                             state.sessionId = sessionId;
+                            state.modelId = modelId;
                             state.serverURL = serverURL;
                             state.sessionDescription = sessionResult.description;
                             state.connectedToSession = true;
                             state.popupPageKind = PopupPageKind.ReadSessionDescription;
+                            state.actions = [];
                             return this._browserService.setStateToStorage(state)
                                 .then(() => {
                                     return "Connected";
@@ -84,17 +87,15 @@ export default class Background {
         return this._browserService.getStateFromStorage()
             .then((state) => {
                 if (state && state.isRecording && state.explorationNumber !== undefined && state.explorationLength !== undefined) {
-                    const newAction = new Action(prefix, suffix, state.explorationLength);
-                    const promises = [];
-        
-                    if (state.takeAScreenshotByAction) {
-                        promises.push(this.takeScreenShot(state.explorationLength));
-                    }
-        
-                    
                     if (!state.serverURL ||  !state.sessionId) {
                         throw new Error("Not connected to a session")
                     }
+
+                    const newAction = new Action(prefix, suffix, state.explorationLength);
+                    const promises = [];
+
+                    state.explorationLength ? state.explorationLength++ : state.explorationLength = 1;
+                    state.actions.push(newAction);
                     console.log(`processNewAction : ${newAction.kind} ${newAction.value}`);
                     const pushActionListPromise = this._aifexService.pushActionOrObservationList(
                         state.serverURL, 
@@ -104,10 +105,20 @@ export default class Background {
     
                     promises.push(pushActionListPromise);
                     
-                    console.log(`there are ${promises.length} promises`);
+                    if (state.modelId) {
+                        promises.push(this._aifexService.getProbabilities(state.serverURL, state.modelId, state.actions));
+                    }
+
+                    if (state.takeAScreenshotByAction) {
+                        promises.push(this.takeScreenShot(state.explorationLength));
+                    }
+                    
                     return Promise.allSettled(promises)
-                        .then((results) => {
-                            state.explorationLength ? state.explorationLength++ : state.explorationLength = 1;
+                        .then(([pushResult, probaResult, screenshotResult]) => {
+                            if (probaResult.status === "fulfilled" && probaResult.value) {
+                                state.probabilities = probaResult.value;
+                            }
+                            console.log(state);
                             return this._browserService.setStateToStorage(state);
                         })
                         .then(() => {})
@@ -134,6 +145,7 @@ export default class Background {
                         state.isRecording = false;  
                         state.explorationNumber = undefined;
                         state.explorationLength = undefined;
+                        state.actions = [];
                         return this._browserService.setStateToStorage(state);
                     })
 
