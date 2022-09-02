@@ -21,20 +21,32 @@ export default class Highlighter {
     constructor(browserService : BrowserService) {
         this._browserService = browserService;
         this._lastElementWithAIFEXStyle = new Set();
+        this._browserService.addListenerToChangeInState((oldState, newState) => {
+            if (oldState.isRecording === true && newState.isRecording === false) {
+                this.hide();
+            }
+            if (oldState.isRecording === false && newState.isRecording === true) {
+                this.show();
+            }
+            if (newState.actions.length > oldState.actions.length)  {
+                this.show();
+            }
+        })
         this._browserService.getStateFromStorage()
             .then((state: State) => {
                 if (state.isRecording) {
-                    this._highlighterCanvas = new HighlighterCanvas();
                     this.show();
-                    console.log("[TabScript] shows elements");
-                } else {
-                    console.log("[TabScript] does not show any element");
                 }
             })
         
     }
 
     show(): void {
+        if (this._highlighterCanvas === undefined) {
+            this._highlighterCanvas = new HighlighterCanvas();
+        }
+        
+        console.log("[TabScript] shows elements");
         this._lastElementWithAIFEXStyle.forEach(element => {
             element.removeAttribute("aifex_frequency");
             element.removeAttribute("aifex_style");
@@ -51,10 +63,13 @@ export default class Highlighter {
                             let locatorParameters = value.split('?');
                             if (locatorParameters.length > 1) {
                                 let locator = locatorParameters[0];
+                                console.log(locator);
                                 let elements = querySelectorAllDeep(locator);
                                 elements.forEach((element) => {
                                     if (element instanceof HTMLElement || element instanceof SVGElement) {
+                                        element.setAttribute("aifex_style", "true");
                                         if (this._highlighterCanvas) {
+                                            console.log('canvas');
                                             if (proba > WARM_COLOR_THRESHOLD) {
                                                 element.setAttribute("aifex_frequency", "often")
                                                 this._highlighterCanvas.highlightElement(element, oftenColor)
@@ -66,6 +81,8 @@ export default class Highlighter {
                                                 element.setAttribute("aifex_frequency", "rarely")
                                                 this._highlighterCanvas.highlightElement(element, rarelyColor)
                                             }
+                                        } else {
+                                            console.log('no canvas');
                                         }
                                     }
                                 })
@@ -74,6 +91,15 @@ export default class Highlighter {
                     })
                 }
             })
+    }
+
+    hide(): void {
+        console.log("[TabScript] does not show any element");
+        const domElements = querySelectorAllDeep("[aifex_style]")
+        for (const domElement of domElements) {
+            domElement.removeAttribute("aifex_frequency");
+            domElement.removeAttribute("aifex_style");
+        }
     }
 
 }

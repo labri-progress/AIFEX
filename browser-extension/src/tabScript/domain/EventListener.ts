@@ -12,12 +12,18 @@ export default class EventListener {
     constructor(backgroundService: BackgroundService, browserService: BrowserService) {
         this._backgroundService = backgroundService;
         this._browserService = browserService;
+        this._browserService.addListenerToChangeInState((oldState, newState) => {
+            if (oldState.isRecording === true && newState.isRecording === false) {
+                this.unlisten();
+            }
+            if (oldState.isRecording === false && newState.isRecording === true) {
+                this.listen();
+            }
+        })
         this._browserService.getStateFromStorage()
             .then((state: State) => {
                 if (state.isRecording) {
                     this.listen();
-                } else {
-                    console.log("[TabScript] does not record event");
                 }
             })
     }
@@ -27,6 +33,12 @@ export default class EventListener {
         console.log(`[TabScript] listening to events`);
         document.addEventListener('mousedown', this.listenToMouseDown.bind(this), true);
         document.addEventListener('keydown', this.listenToKeyDown.bind(this), true);
+    }
+
+    private unlisten(): void {
+        console.log("[TabScript] does not record event");
+        document.removeEventListener('mousedown', this.listenToMouseDown.bind(this), true);
+        document.removeEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
 
     private listenToMouseDown(event: Event): void {
