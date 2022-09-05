@@ -212,7 +212,14 @@ export default class AifexServiceHTTP implements AifexService {
 		modelId: string,
 		actions: Action[]
 	): Promise<[[string, number]]> {
-		let interactionList = actions.map((action) => new Action(action.kind, action.value?.split('?')[0], action.index))
+		let interactionList = actions.map((action) => {
+			if (action.value) {
+				return new Action(action.kind, action.value.split('?')[0], action.index)
+			} else {
+				return new Action(action.kind, undefined, action.index)
+			}
+			
+		})
 		const body = {
 			interactionList: interactionList,
 		};
@@ -221,6 +228,7 @@ export default class AifexServiceHTTP implements AifexService {
 			body: JSON.stringify(body),
 			headers: { 'Content-Type': 'application/json' },
 		};
+		console.log(option.body);
 		return fetch(
 			`${serverURL}/api/models/${modelId}/probabilities`,
 			option
