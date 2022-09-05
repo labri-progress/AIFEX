@@ -47,7 +47,7 @@ export default class RabbitDelegate {
                                         exploration.forEach((interaction: any) => {
                                             let value = interaction.kind;
                                             if (interaction.value !== undefined) {
-                                                value = value + "$" + interaction.value;
+                                                value = value + "$" + interaction.value.split('?')[0];
                                             }
                                             if (interaction.concreteType === "Action") {
                                                 seq.addStimulus(new Stimulus(value));
