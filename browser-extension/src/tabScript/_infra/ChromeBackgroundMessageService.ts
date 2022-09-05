@@ -1,5 +1,6 @@
 import Action from "../domain/Action";
 import BackgroundService from "../domain/BackgroundService";
+import { logger } from "../framework/Logger";
 
 
 export default class ChromeBackgroundMessageService  implements BackgroundService {

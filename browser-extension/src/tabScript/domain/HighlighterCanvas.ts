@@ -11,7 +11,7 @@ export default class HighlighterCanvas {
 
     constructor() {
         this._canvasMap = new Map();
-        this._canvasMap.set(1, this.buildCanvas(1))
+        this.buildCanvas(1)
         this.elementsToHighlight = new Map();
         this.elementToZindex = new Map();
         this.elementsToHighlightAnimated = new Set<HTMLElement | SVGElement>();
@@ -37,19 +37,20 @@ export default class HighlighterCanvas {
         }
     }
 
-    private buildCanvas(index: number): HTMLCanvasElement {
-        let canvas = document.createElement("canvas") as HTMLCanvasElement;
-        canvas.id = "aifex_canvas_" + index; 
-        canvas.style.zIndex = index.toString();
-        canvas.style.top = window.scrollY.toString() + "px";
-        canvas.style.left = window.scrollX.toString()+ "px"
-        canvas.style.pointerEvents = "none";
-        canvas.style.position = "absolute"
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        document.body.appendChild(canvas);
-        this._canvasMap.set(index, canvas);
-        return canvas;
+    private buildCanvas(index: number): void {
+        if (document.body) {
+            let canvas = document.createElement("canvas") as HTMLCanvasElement;
+            canvas.id = "aifex_canvas_" + index; 
+            canvas.style.zIndex = index.toString();
+            canvas.style.top = window.scrollY.toString() + "px";
+            canvas.style.left = window.scrollX.toString()+ "px"
+            canvas.style.pointerEvents = "none";
+            canvas.style.position = "absolute"
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            document.body.appendChild(canvas);
+            this._canvasMap.set(index, canvas);
+        }
     }
 
     public highlightElement(element: HTMLElement | SVGElement, color: string) {
@@ -103,24 +104,26 @@ export default class HighlighterCanvas {
                 continue;
             }
             const zIndex = this.getZIndex(element);
+            if (!this._canvasMap.has(zIndex)) {
+                this.buildCanvas(zIndex);
+            }
             let canvas = this._canvasMap.get(zIndex);
-            if (canvas === undefined) {
-                canvas = this.buildCanvas(zIndex);
-            }
-            element.setAttribute("aifex_canvas_used", zIndex.toString());
-            const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
-            if (ctx === null) {
-                continue;
-            }
+            if (canvas !== undefined) {
+                element.setAttribute("aifex_canvas_used", zIndex.toString());
+                const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
+                if (ctx === null) {
+                    continue;
+                }
 
-            ctx.beginPath();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = this.actionBorderSize;
-            ctx.rect(boundedBox.x- this.actionBorderSize/2, 
-                boundedBox.y - this.actionBorderSize/2, 
-                boundedBox.width + this.actionBorderSize/2,
-                boundedBox.height + this.actionBorderSize/2);
-            ctx.stroke();
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = this.actionBorderSize;
+                ctx.rect(boundedBox.x- this.actionBorderSize/2, 
+                    boundedBox.y - this.actionBorderSize/2, 
+                    boundedBox.width + this.actionBorderSize/2,
+                    boundedBox.height + this.actionBorderSize/2);
+                ctx.stroke();
+            }
         }
     }
 
@@ -132,47 +135,49 @@ export default class HighlighterCanvas {
                 continue;
             }
             const zIndex = this.getZIndex(element);
+            if (!this._canvasMap.has(zIndex)) {
+                this.buildCanvas(zIndex);
+            }
             let canvas = this._canvasMap.get(zIndex);
-            if (canvas === undefined) {
-                canvas = this.buildCanvas(zIndex);
-            }
-            const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
-            if (ctx === null) {
-                continue;
-            }
-           
-            let posx: number, posy: number;
-            let size = 8;
-            let totalSize = boundedBox.width * 2 + boundedBox.height * 2;
-            let position = totalSize * this.animationLoop / 100;
-            if (position < boundedBox.width) {
-                posx = boundedBox.x + position;
-                posy = boundedBox.y;
-            }
-            else if (position < boundedBox.width + boundedBox.height) {
-                let offset = position - boundedBox.width
-                posx = boundedBox.x + boundedBox.width;
-                posy = boundedBox.y + offset;
-            }
-            else if (position < boundedBox.width * 2 + boundedBox.height) {
-                let offset = position - boundedBox.width - boundedBox.height;
-                posx = boundedBox.x + boundedBox.width - offset;
-                posy = boundedBox.y + boundedBox.height;
-            } else {
-                let offset = position - boundedBox.width*2 - boundedBox.height
-                posx = boundedBox.x;
-                posy = boundedBox.y + boundedBox.height - offset;
-            }
-            ctx.beginPath();
-            ctx.arc(posx, posy, size, 0, 2 * Math.PI, false);
+            if (canvas !== undefined) {
+                const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
+                if (ctx === null) {
+                    continue;
+                }
+            
+                let posx: number, posy: number;
+                let size = 8;
+                let totalSize = boundedBox.width * 2 + boundedBox.height * 2;
+                let position = totalSize * this.animationLoop / 100;
+                if (position < boundedBox.width) {
+                    posx = boundedBox.x + position;
+                    posy = boundedBox.y;
+                }
+                else if (position < boundedBox.width + boundedBox.height) {
+                    let offset = position - boundedBox.width
+                    posx = boundedBox.x + boundedBox.width;
+                    posy = boundedBox.y + offset;
+                }
+                else if (position < boundedBox.width * 2 + boundedBox.height) {
+                    let offset = position - boundedBox.width - boundedBox.height;
+                    posx = boundedBox.x + boundedBox.width - offset;
+                    posy = boundedBox.y + boundedBox.height;
+                } else {
+                    let offset = position - boundedBox.width*2 - boundedBox.height
+                    posx = boundedBox.x;
+                    posy = boundedBox.y + boundedBox.height - offset;
+                }
+                ctx.beginPath();
+                ctx.arc(posx, posy, size, 0, 2 * Math.PI, false);
 
-            ctx.restore(); // restore original state
+                ctx.restore(); // restore original state
     
-            ctx.fillStyle = color;
-            ctx.fill();
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = "black";
-            ctx.stroke();
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "black";
+                ctx.stroke();
+            }
         }
     }
 

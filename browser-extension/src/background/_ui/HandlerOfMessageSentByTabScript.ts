@@ -1,4 +1,5 @@
 import Interface4TabScript from "../application/Interface4TabScript";
+import { logger } from "../Logger";
 import ExtensionCommunicationService from "./ExtensionCommunicationService";
 
 export default class HandlerOfMessageSentByTabScript {
@@ -16,7 +17,7 @@ export default class HandlerOfMessageSentByTabScript {
     private handleMessage(msg : any, sender : any, sendResponse : Function): boolean {
         switch (msg.kind) {   
             case "pushAction": {
-                console.log(`TabScript asks for ${msg.kind}`);
+                logger.debug(`TabScript asks for ${msg.kind}`);
                 const action = msg.action;
                 this._application.processNewAction(action.prefix, action.suffix)
                 .then(() => {

@@ -1,4 +1,5 @@
 import { querySelectorAllDeep } from 'query-selector-shadow-dom';
+import { logger } from '../framework/Logger';
 import BrowserService from './BrowserService';
 import HighlighterCanvas from './HighlighterCanvas';
 import State from './State';
@@ -46,7 +47,7 @@ export default class Highlighter {
             this._highlighterCanvas = new HighlighterCanvas();
         }
         
-        console.log("[TabScript] shows elements");
+        logger.debug("[TabScript] shows elements");
         this._lastElementWithAIFEXStyle.forEach(element => {
             element.removeAttribute("aifex_frequency");
             element.removeAttribute("aifex_style");
@@ -85,7 +86,7 @@ export default class Highlighter {
     }
 
     hide(): void {
-        console.log("[TabScript] does not show any element");
+        logger.debug("[TabScript] does not show any element");
         const domElements = querySelectorAllDeep("[aifex_style]")
         for (const domElement of domElements) {
             domElement.removeAttribute("aifex_frequency");

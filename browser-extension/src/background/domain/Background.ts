@@ -26,7 +26,7 @@ export default class Background {
     }
 
     connect(serverURL: string, sessionId: string, modelId: string): Promise<"Connected" | "Unauthorized" | "NotFound"> {
-        console.log("connect");
+        logger.info("connect");
         return Promise.all([this._aifexService.hasModel(serverURL, modelId), this._aifexService.getSession(serverURL, sessionId)])
             .then(([modelResult, sessionResult]) => {
                 if (modelResult === "Unauthorized" || sessionResult === "Unauthorized") { 
@@ -57,17 +57,17 @@ export default class Background {
     
 
     startExploration() : Promise<void> {
-        console.log('startExploration');
+        logger.info('startExploration');
         return this._browserService.getStateFromStorage()
             .then((state) => {
                 if (state == undefined || state.serverURL === undefined || state.sessionId === undefined) {
                     throw new Error("Not connected to a session")
                 }
                 if (state.isRecording) {
-                    console.log('Connected and recording');
+                    logger.debug('Connected and recording');
                     return Promise.resolve();
                 }
-                console.log('will create an empty exploration for testerName: ' + state.testerName);
+                logger.debug('will create an empty exploration for testerName: ' + state.testerName);
                 return this._aifexService.createEmptyExploration(state.serverURL, state.sessionId, state.testerName || "anonymous")
                     .then(explorationNumber => {
                         state.explorationNumber = explorationNumber;
@@ -76,7 +76,7 @@ export default class Background {
                         return this._browserService.setStateToStorage(state);
                     })
                     .then(() => {
-                        console.log('exploration created');
+                        logger.debug('exploration created');
                         return this.processNewAction("start");
                     })
             })  
@@ -96,7 +96,7 @@ export default class Background {
 
                     state.explorationLength ? state.explorationLength++ : state.explorationLength = 1;
                     state.actions.push(newAction);
-                    console.log(`processNewAction : ${newAction.kind} ${newAction.value}`);
+                    logger.debug(`processNewAction : ${newAction.kind} ${newAction.value}`);
                     const pushActionListPromise = this._aifexService.pushActionOrObservationList(
                         state.serverURL, 
                         state.sessionId, 
@@ -118,7 +118,7 @@ export default class Background {
                             if (probaResult.status === "fulfilled" && probaResult.value) {
                                 state.probabilities = probaResult.value;
                             }
-                            console.log(state);
+                            logger.debug(JSON.stringify(state));
                             return this._browserService.setStateToStorage(state);
                         })
                         .then(() => {})
@@ -158,7 +158,7 @@ export default class Background {
                 if (state && state.explorationNumber && state.isRecording) {
                     return this._browserService.takeScreenshot()
                         .then(image => {
-                            console.log("Take Screenshot ");
+                            logger.debug("Take Screenshot ");
                             let index = interactionIndex;
                             if (state.recordActionByAction && state.serverURL && state.sessionId && state.explorationNumber) {
                                 this._aifexService.addScreenshotList(
@@ -170,7 +170,7 @@ export default class Background {
                             }
                         })
                         .catch((error) => {
-                            console.log("cannot take screenshot");
+                            logger.debug("cannot take screenshot");
                             return Promise.resolve();
                         })
                 } else {

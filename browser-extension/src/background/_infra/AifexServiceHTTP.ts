@@ -3,6 +3,7 @@ import Session from "../domain/Session";
 import AifexPluginInfo from "../domain/AifexPluginInfo";
 import Action from "../domain/Action";
 import Screenshot from "../domain/Screenshot";
+import { logger } from "../Logger";
 
 const OK_STATUS = 200;
 const INVALID_PARAMETERS_STATUS = 400;
@@ -18,12 +19,11 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { "Content-Type": "application/json" },
 		})
 			.then(response => {
-				console.log(response);
 				if (response.ok) {
-					console.log('ok');
+					logger.info('ok');
 					return;
 				} else {
-					console.log('error');
+					logger.info('error');
 					throw new Error(response.statusText);
 				}
 			})
@@ -228,7 +228,7 @@ export default class AifexServiceHTTP implements AifexService {
 			body: JSON.stringify(body),
 			headers: { 'Content-Type': 'application/json' },
 		};
-		console.log(option.body);
+		logger.debug(option.body);
 		return fetch(
 			`${serverURL}/api/models/${modelId}/probabilities`,
 			option

@@ -3,6 +3,7 @@ import Action from "./Action";
 import getCssSelector from 'css-selector-generator';
 import BrowserService from "./BrowserService";
 import State from "./State";
+import { logger } from "../framework/Logger";
 
 export default class EventListener {
     private _backgroundService: BackgroundService;
@@ -30,13 +31,13 @@ export default class EventListener {
 
 
     private listen(): void {
-        console.log(`[TabScript] listening to events`);
+        logger.debug(`[TabScript] listening to events`);
         document.addEventListener('mousedown', this.listenToMouseDown.bind(this), true);
         document.addEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
 
     private unlisten(): void {
-        console.log("[TabScript] does not record event");
+        logger.debug("[TabScript] does not record event");
         document.removeEventListener('mousedown', this.listenToMouseDown.bind(this), true);
         document.removeEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
@@ -52,7 +53,7 @@ export default class EventListener {
                 
                 if (this._lastAction !== action.toString()) {
                     this._lastAction = action.toString();
-                    this._backgroundService.sendAction(action);
+                    this._backgroundService.sendAction(action).then(()=>{}).catch(()=>{});
                 }
             }
         }
@@ -111,7 +112,7 @@ export default class EventListener {
                 
                 if (this._lastAction !== action.toString()) {
                     this._lastAction = action.toString();
-                    this._backgroundService.sendAction(action);
+                    this._backgroundService.sendAction(action).then(()=>{}).catch(()=>{});
                 }
             }
         }
@@ -155,7 +156,7 @@ export default class EventListener {
                     });
                 } catch (e) {
                     suffix = "error";
-                    console.log(`[TabScript] exception while generating suffix : ${e}`);
+                    logger.debug(`[TabScript] exception while generating suffix : ${e}`);
                 }
 
                 const rect = event.target.getBoundingClientRect();

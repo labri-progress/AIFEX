@@ -1,7 +1,5 @@
 function sendMessage(message) {
-    //console.log('send message:', message);
     if (navigator.userAgent.toLowerCase().indexOf('chrome') !== -1) {
-        //console.log('chrome');
         return new Promise( (resolve, reject) => {
             chrome.runtime.sendMessage(message,{}, (response) => {
                 const error = chrome.runtime.lastError;
@@ -12,7 +10,6 @@ function sendMessage(message) {
             })
         })
     } else {
-        //console.log('firefox');
         return browser.runtime.sendMessage(message);
     }
 }

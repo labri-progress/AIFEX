@@ -18,10 +18,11 @@
             </div>
           </div>
 
-          <div class="form-group row" data-title="Select a configuration" data-intro="Choose a configuration depending on the events you want to trace !">
+          <input type="hidden" name="webSiteId" id="webSiteId" class="form-control" value="<%=JSON.parse(webSiteList)[0].id %>" form="createSessionWithEmptyAI" required></select>
+          <!-- <div class="form-group row" data-title="Select a configuration" data-intro="Choose a configuration depending on the events you want to trace !">
             <label for="webSiteId" class="col-sm-2 col-form-label">Configuration</label>
             <div class="col-sm-10">
-              <select name="webSiteId" id="webSiteId" class="form-control" form="createSessionWithEmptyAI" required>
+              <select name="webSiteId" id="webSiteId" class="form-control"  form="createSessionWithEmptyAI" required>
                 <% JSON.parse(webSiteList).forEach(function(webSite) { %>
                   <%if (webSite.name === defaultWebSiteName) { %>
                       <option value="<%=webSite.id %>" selected="selected"> <%=webSite.name %> </option>
@@ -32,6 +33,8 @@
               </select>
             </div>
           </div>
+          -->
+          
 
           <div class="form-group row" data-title="Set the base URL" data-intro="Set the URL where your explorations will start !">
             <label for="baseURL" class="col-sm-2 col-form-label">Exploration starting URL</label>
@@ -68,7 +71,9 @@ short description of the session (with Mark Down language)
             </div>
           </div> 
 
-          <div class="form-group row" data-title="Select a recording mode" data-intro="It's up to you if you want AIFEX to record your actions step by step or once all have been done !">
+          <input type="hidden" value="byinteraction" class="form-control" aria-label="Default select example" name="recordingMode" id="recordingMode" form="createSessionWithEmptyAI" required>
+
+          <!--<div class="form-group row" data-title="Select a recording mode" data-intro="It's up to you if you want AIFEX to record your actions step by step or once all have been done !">
             <label for="recordingMode" class="col-sm-2 col-form-label">Recording Mode</label>
             <div class="col-sm-10">
               <select class="form-control" aria-label="Default select example" name="recordingMode" id="recordingMode" form="createSessionWithEmptyAI" required>
@@ -79,6 +84,7 @@ short description of the session (with Mark Down language)
               <small class="form-text text-muted"> <b>By Interaction</b>, the exploration is always recorded, each new interaction is recorded.</small>
             </div>
           </div> 
+          -->
 
           <button type="submit" class="btn btn-primary" id="submit" data-title="It's done !" data-intro="Click the <em>Create</em> button and run your session !">Create</button>
         </form>

@@ -1,4 +1,5 @@
 import Interface4Popup from "../application/Interface4Popup";
+import { logger } from "../Logger";
 import ExtensionCommunicationService from "./ExtensionCommunicationService";
 
 export default class HandlerOfMessageSentByPopup {
@@ -36,9 +37,9 @@ export default class HandlerOfMessageSentByPopup {
 			}
 
             case "connect": {
-                console.log(`Popup asks for ${msg.kind}`);
+                logger.debug(`Popup asks for ${msg.kind}`);
                 if (!msg.url) {
-                    console.log(`connection refused`);
+                    logger.debug(`connection refused`);
                     sendResponse({error: "URL is missing"});
                     return true;
                 } else {
@@ -47,24 +48,24 @@ export default class HandlerOfMessageSentByPopup {
                         const sessionId = CONNECTION_URL.searchParams.get('sessionId');
                         const modelId = CONNECTION_URL.searchParams.get('modelId');
                         const serverURL = CONNECTION_URL.origin;
-                        console.log(`sessionId=${sessionId}, modelId=${modelId}, serverURL=${serverURL}`)
+                        logger.debug(`sessionId=${sessionId}, modelId=${modelId}, serverURL=${serverURL}`)
                         if (!sessionId || !modelId || ! serverURL) {
-                            console.log(`URL is invalid`);
+                            logger.debug(`URL is invalid`);
                             sendResponse({error: "URL is invalid"});
                             return true;
                         }
                         this._application
                             .connect(serverURL, sessionId, modelId)
                             .then((connexionResult) => {
-                                console.log(`connection : ${connexionResult}`);
+                                logger.debug(`connection : ${connexionResult}`);
                                 sendResponse(connexionResult);
                             })
                             .catch((error: string) => {
-                                console.log("Connection failed", new Error(error))
+                                logger.error("Connection failed", new Error(error))
                                 sendResponse({error:"Connection failed"})
                         });
                     } catch(error) {
-                        console.log("Invalid URL", new Error("url"))
+                        logger.error("Invalid URL", new Error("url"))
                         sendResponse({error})
                     }
                 }
@@ -72,37 +73,36 @@ export default class HandlerOfMessageSentByPopup {
             }
 
             case "startExploration": {
-                console.log(`Popup asks for ${msg.kind}`);
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .startExploration()
                     .then(() => {
-                        console.log(`start exploration`);
+                        logger.debug(`start exploration`);
                         sendResponse("started");
                     })
                     .catch((error : Error) => {
-                        console.log("popup asks to startExploration", error);
+                        logger.error("popup asks to startExploration", error);
                         sendResponse({error});
                     });
                 return true;
             }
 
             case "stopExploration": {
-                console.log(`Popup asks for ${msg.kind}`);
+                logger.info(`Popup asks for ${msg.kind}`);
                 this._application
                     .stopExploration()
                     .then(() => {
-                        console.log('stopped');
+                        logger.debug('stopped');
                         sendResponse("stopped");
                     })
                     .catch((error) => {
-                        console.log("popup asks to stopExploration", error);
+                        logger.error("popup asks to stopExploration", error);
                         sendResponse({error});
                     });
                 return true;
             }
 
             default : {
-                //console.log(`${msg.kind} is not considered to come from popup`);
                 return true;
             }
 
