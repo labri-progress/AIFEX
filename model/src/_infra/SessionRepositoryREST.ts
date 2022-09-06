@@ -24,7 +24,7 @@ export default class SessionRepositoryREST implements SessionRepository {
                         if (interaction.value === undefined) {
                             value = interaction.kind;
                         } else {
-                            value = interaction.kind + "$" + interaction.value.split('?')[0];
+                            value = interaction.kind + "$" + interaction.value.split('?left')[0];
                         }
                         if (interaction.concreteType === "Action") {
                             seq.addStimulus(new Stimulus(value));
