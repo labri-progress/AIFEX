@@ -8,12 +8,13 @@ export default class State {
     overlayType: OverlayType;
     actions: Action[];
     probabilities : [[string, number]] | undefined;
+    sessionBaseURL : string | undefined;
 
-
-    constructor(isActive: boolean, overlayType: OverlayType, showProbabilityPopup: boolean, actions: Action[]) {
-        this.isRecording = isActive;
-        this.overlayType = overlayType;
-        this.showProbabilityPopup = showProbabilityPopup;
-        this.actions = actions;
+    constructor() {
+        this.isRecording = false;
+        this.showProbabilityPopup = false;
+        this.overlayType = "rainbow";
+        this.probabilities = undefined;
+        this.actions = [];
     }
 }

@@ -8,6 +8,7 @@ export default class ChromeBrowserService  implements BrowserService {
             for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
                 if (key === "AIFEX_STATE") {
                     listener(oldValue, newValue);
+                    break;
                 }
             }
         });
@@ -16,6 +17,10 @@ export default class ChromeBrowserService  implements BrowserService {
     getStateFromStorage(): Promise<State> {
         return chrome.storage.local.get("AIFEX_STATE")
             .then( (result) => {
+                let state = result["AIFEX_STATE"];
+                if (!state) {
+                    state = new State();
+                }
                 return result["AIFEX_STATE"];
             });
     }

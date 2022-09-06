@@ -23,8 +23,12 @@ export default class EventListener {
         })
         this._browserService.getStateFromStorage()
             .then((state: State) => {
-                if (state.isRecording) {
-                    this.listen();
+                if (state.isRecording && state.sessionBaseURL && document.URL) {
+                    if (document.URL.startsWith(state.sessionBaseURL)) {
+                        this.listen();
+                    } else {
+                        logger.debug('wrong URL, no listen');
+                    }
                 }
             })
     }

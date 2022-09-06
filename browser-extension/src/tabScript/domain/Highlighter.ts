@@ -2,6 +2,7 @@ import { querySelectorAllDeep } from 'query-selector-shadow-dom';
 import { logger } from '../framework/Logger';
 import BrowserService from './BrowserService';
 import HighlighterCanvas from './HighlighterCanvas';
+import PageMutationHandler from './PageMutationHandler';
 import State from './State';
 
 const WARM_COLOR_THRESHOLD = 0.6;
@@ -23,22 +24,53 @@ export default class Highlighter {
         this._browserService = browserService;
         this._lastElementWithAIFEXStyle = new Set();
         this._browserService.addListenerToChangeInState((oldState, newState) => {
-            if (oldState.isRecording === true && newState.isRecording === false) {
+            if (newState.isRecording === false) {
+                logger.debug(`isRecording false`);
                 this.hide();
-            }
-            if (oldState.isRecording === false && newState.isRecording === true) {
-                this.show();
-            }
-            if (newState.actions.length > oldState.actions.length)  {
-                this.show();
+            } else {
+                logger.debug(`isRecording true`);
+                if (oldState.isRecording === false) {
+                    this.show();
+                }
+                else if (newState.probabilities) {
+                    if (oldState.probabilities) {
+                        if (newState.probabilities.length !== oldState.probabilities.length) {
+                            logger.debug(`probabilities  different size`);
+                            this.show();
+                        } else {
+                            for (let index = 0; index < newState.probabilities.length; index++) {
+                                if (newState.probabilities[index][0] !== oldState.probabilities[index][0] || newState.probabilities[index][1] !== oldState.probabilities[index][1]) {
+                                    logger.debug(`not same probabilities`);
+                                    this.show()
+                                }
+                            }
+                            logger.debug('same proba');
+                            logger.debug(`${newState.probabilities}`);
+                        }
+                    } else {
+                        this.show();
+                    }
+                } else {
+                    logger.debug('newState has no proba');
+                }
             }
         })
         this._browserService.getStateFromStorage()
             .then((state: State) => {
-                if (state.isRecording) {
-                    this.show();
+                if (state.isRecording && state.sessionBaseURL && document.URL) {
+                    if (document.URL.startsWith(state.sessionBaseURL)) {
+                        this.show();
+                    } else {
+                        logger.debug('wrong URL, no show');
+                    }
                 }
             })
+
+        
+        window.addEventListener("DOMContentLoaded",(_event) => {
+            let pmh = new PageMutationHandler(this.show.bind(this));
+            pmh.init()
+        });
         
     }
 
@@ -47,7 +79,7 @@ export default class Highlighter {
             this._highlighterCanvas = new HighlighterCanvas();
         }
         
-        logger.debug("[TabScript] shows elements");
+        logger.debug("shows elements");
         this._lastElementWithAIFEXStyle.forEach(element => {
             element.removeAttribute("aifex_frequency");
             element.removeAttribute("aifex_style");
@@ -60,7 +92,9 @@ export default class Highlighter {
                         let kindValue = locator.split('$');
                         if (kindValue.length > 1) {
                             let locator = kindValue[1];
+                            logger.debug(`${locator}`);
                             let elements = querySelectorAllDeep(locator);
+                            logger.debug(`there are ${elements.length} elements`);
                             elements.forEach((element) => {
                                 if (element instanceof HTMLElement || element instanceof SVGElement) {
                                     element.setAttribute("aifex_style", "true");
@@ -76,22 +110,32 @@ export default class Highlighter {
                                             element.setAttribute("aifex_frequency", "rarely")
                                             this._highlighterCanvas.highlightElement(element, rarelyColor)
                                         }
+                                    } else {
+                                        logger.debug(`there is no highlighterCanvas`);
                                     }
-                                }
+                                } 
                             })   
                         }
                     })
+                    if (this._highlighterCanvas) {
+                        this._highlighterCanvas.show();
+                    }
+                    
                 }
             })
     }
 
     hide(): void {
-        logger.debug("[TabScript] does not show any element");
+        logger.debug("does not show any element");
         const domElements = querySelectorAllDeep("[aifex_style]")
         for (const domElement of domElements) {
             domElement.removeAttribute("aifex_frequency");
             domElement.removeAttribute("aifex_style");
         }
+        if (this._highlighterCanvas) {
+            this._highlighterCanvas.hide();
+        }
+        
     }
 
 }

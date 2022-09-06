@@ -25,6 +25,7 @@ export default class State {
         this.recordActionByAction = true;
         this.popupPageKind = PopupPageKind.Home;
         this.actions = [];
+        this.probabilities = undefined;
     }
 
 }

@@ -139,14 +139,14 @@ export default class Background {
                     return Promise.resolve();
                 } 
                 
-                return this.processNewAction("end")
-                    .then(() => {
+                //return this.processNewAction("end")
+                //    .then(() => {
                         state.isRecording = false;  
                         state.explorationNumber = undefined;
                         state.explorationLength = undefined;
                         state.actions = [];
                         return this._browserService.setStateToStorage(state);
-                    })
+                //    })
 
             })
         
