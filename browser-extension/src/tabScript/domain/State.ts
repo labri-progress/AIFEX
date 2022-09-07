@@ -10,11 +10,12 @@ export default class State {
     probabilities : [[string, number]] | undefined;
     sessionBaseURL : string | undefined;
 
-    constructor() {
-        this.isRecording = false;
+    constructor(obj: any) {
+        this.isRecording = obj.isRecording || false;
         this.showProbabilityPopup = false;
         this.overlayType = "rainbow";
-        this.probabilities = undefined;
-        this.actions = [];
+        this.actions = obj.actions || [];;
+        this.probabilities = obj.probabilities;
+        this.sessionBaseURL = obj.sessionBaseURL;
     }
 }

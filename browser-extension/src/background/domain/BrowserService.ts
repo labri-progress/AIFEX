@@ -5,7 +5,7 @@ export default interface BrowserService {
 
     takeScreenshot(): Promise<string> ;
 
-    getStateFromStorage(): Promise<State | undefined>;
+    getStateFromStorage(): Promise<State>;
 
     setStateToStorage(state: State): Promise<void>;
 

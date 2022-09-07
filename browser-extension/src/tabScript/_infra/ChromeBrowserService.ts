@@ -17,11 +17,7 @@ export default class ChromeBrowserService  implements BrowserService {
     getStateFromStorage(): Promise<State> {
         return chrome.storage.local.get("AIFEX_STATE")
             .then( (result) => {
-                let state = result["AIFEX_STATE"];
-                if (!state) {
-                    state = new State();
-                }
-                return result["AIFEX_STATE"];
+                return new State(result["AIFEX_STATE"]);
             });
     }
 }

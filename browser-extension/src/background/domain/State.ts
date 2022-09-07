@@ -18,12 +18,20 @@ export default class State {
     public actions : Action[];
     public probabilities : [[string, number]] | undefined;
 
-    constructor() {
-        this.connectedToSession = false;
-        this.isRecording = false;
-        this.takeAScreenshotByAction = true;
-        this.recordActionByAction = true;
-        this.popupPageKind = PopupPageKind.Home;
+    constructor(obj: any) {
+        this.connectedToSession = obj.connectedToSession || false;
+        this.serverURL = obj.serverURL;
+        this.sessionId = obj.sessionId;
+        this.modelId = obj.modelId;
+        this.sessionBaseURL = obj.sessionBaseURL;
+        this.sessionDescription = obj.sessionDescription;
+        this.testerName = obj.testerName;
+        this.takeAScreenshotByAction = obj.takeAScreenshotByAction || false;
+        this.recordActionByAction  = true;
+        this.explorationNumber = obj.explorationNumber;
+        this.explorationLength = obj.explorationLength;
+        this.popupPageKind = obj.popupPageKind || PopupPageKind.Home;
+        this.isRecording = obj.isRecording === true ? true : false;
         this.actions = [];
         this.probabilities = undefined;
     }

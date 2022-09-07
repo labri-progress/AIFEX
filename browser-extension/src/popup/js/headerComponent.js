@@ -17,6 +17,8 @@
         state.explorationNumber = undefined;
         state.explorationLength = undefined;
         state.testerName = undefined;
+        state.probabilities = undefined;
+        state.actions = [];
         setStateToStorage(state)
             .then(() => {
                 getStateAndRender();

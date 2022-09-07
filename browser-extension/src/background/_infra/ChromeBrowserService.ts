@@ -24,10 +24,10 @@ export default class ChromeBrowserService implements BrowserService {
             });
     }
 
-    getStateFromStorage(): Promise<State | undefined> {
+    getStateFromStorage(): Promise<State> {
         return chrome.storage.local.get("AIFEX_STATE")
             .then( (result) => {
-                return result["AIFEX_STATE"];
+                return new State(result["AIFEX_STATE"]);
             });
 
     }

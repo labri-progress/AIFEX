@@ -35,8 +35,7 @@ export default class Background {
                     return "NotFound";
                 } else {
                     return this._browserService.getStateFromStorage()
-                        .then((stateFromStorage) => {
-                            let state = stateFromStorage || new State();
+                        .then((state) => {
                             state.sessionBaseURL = sessionResult.baseURL;
                             state.sessionId = sessionId;
                             state.modelId = modelId;
@@ -110,7 +109,10 @@ export default class Background {
                     }
 
                     if (state.takeAScreenshotByAction) {
+                        logger.debug('takeScreenShot');
                         promises.push(this.takeScreenShot(state.explorationLength));
+                    } else {
+                        logger.debug('no screenshot');
                     }
                     
                     return Promise.allSettled(promises)
@@ -158,15 +160,19 @@ export default class Background {
                 if (state && state.explorationNumber && state.isRecording) {
                     return this._browserService.takeScreenshot()
                         .then(image => {
-                            logger.debug("Take Screenshot ");
+                            logger.debug("Screenshot taken");
                             let index = interactionIndex;
-                            if (state.recordActionByAction && state.serverURL && state.sessionId && state.explorationNumber) {
+                            if (state.recordActionByAction && state.serverURL && state.sessionId && (state.explorationNumber !== undefined) ) {
+                                logger.debug('call to AIFEX addScreenshotList')
                                 this._aifexService.addScreenshotList(
                                     state.serverURL,
                                     state.sessionId,
                                     state.explorationNumber,
                                     [new Screenshot(image, state.explorationLength ||0)]
                                 );
+                            } else {
+                                logger.debug('no call to AIFEX addScreenshotList');
+                                logger.debug(`state.recordActionByAction: ${state.recordActionByAction}, state.serverURL:${state.serverURL}, state.sessionId: ${state.sessionId}, state.explorationNumber: ${state.explorationNumber}`);
                             }
                         })
                         .catch((error) => {
