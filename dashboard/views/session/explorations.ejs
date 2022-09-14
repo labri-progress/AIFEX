@@ -84,14 +84,16 @@
                                         </p>
                                         <% if (screenshot.screenshotList.find(sc=> sc.explorationNumber
                                                 == exploration.explorationNumber && sc.interactionIndex == intIndex)) { %>
-                                                <img  width="600" class="image-action" exploration-number="<%= exploration.explorationNumber %>" interaction-index="<%= intIndex %>"
-                                                overlay-left="<%= interaction.value ? interaction.value.split('?left=')[1].split('&')[0] : 0%>"
-                                                overlay-top="<%= interaction.value ? interaction.value.split('&top=')[1].split('&')[0] : 0%>"
-                                                overlay-width="<%= interaction.value ? interaction.value.split('&width=')[1].split('&')[0] : 0%>"
-                                                overlay-height="<%= interaction.value ? interaction.value.split('&height=')[1].split('&')[0] : 0%>"
-                                                overlay-screenwidth="<%= interaction.value ? interaction.value.split('&screenwidth=')[1].split('&')[0] : 0%>"
-                                                overlay-screenheight="<%= interaction.value ? interaction.value.split('&screenheight=')[1].split('&')[0] : 0%>"
-                                                    src="/static/screenshot/<%=session.id%>_<%=exploration.explorationNumber%>_<%=intIndex%>.jpg">
+                                                <div>
+                                                    <img  width="600" class="image-action" exploration-number="<%= exploration.explorationNumber %>" interaction-index="<%= intIndex %>"
+                                                    overlay-left="<%= interaction.value ? interaction.value.split('?left=')[1].split('&')[0] : 0%>"
+                                                    overlay-top="<%= interaction.value ? interaction.value.split('&top=')[1].split('&')[0] : 0%>"
+                                                    overlay-width="<%= interaction.value ? interaction.value.split('&width=')[1].split('&')[0] : 0%>"
+                                                    overlay-height="<%= interaction.value ? interaction.value.split('&height=')[1].split('&')[0] : 0%>"
+                                                    overlay-screenwidth="<%= interaction.value ? interaction.value.split('&screenwidth=')[1].split('&')[0] : 0%>"
+                                                    overlay-screenheight="<%= interaction.value ? interaction.value.split('&screenheight=')[1].split('&')[0] : 0%>"
+                                                        src="/static/screenshot/<%=session.id%>_<%=exploration.explorationNumber%>_<%=intIndex%>.jpg">
+                                                </div>
                                         <% } %>
                                     <%})%>
                                 </td>
@@ -155,13 +157,13 @@
                         }
 
                         //let oLeft = imageRectangle.x + (leftInImage / overlayRectangle.screenwidth) * img.width;
-                        let oLeft = leftRectRatio * image.width - 3 ;
+                        let oLeft = leftRectRatio * image.width - 0 ;
                         console.log(image.width);
                         console.log(oLeft);
                         overlay.style.left = parseInt(oLeft) + 'px'; 
 
                         //let oTop = imageRectangle.y + (topInImage / overlayRectangle.screenheight) * img.height;
-                        let oTop = topRectRatio * image.height - image.height - 9;
+                        let oTop = topRectRatio * image.height - image.height - 0;
                         overlay.style.top = parseInt(oTop) + 'px';
 
                         let oWidth = widthRectRatio * image.width;
