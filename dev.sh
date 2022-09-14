@@ -36,15 +36,6 @@ cd ..
 rm -rf .logs
 mkdir .logs
 
-echo ========================== BROWSER SCRIPT COMPILATION ==================================
-cd browser-script/ 
-npm install
-
-npm run development
-cd dist
-mv -f AIFEXScript.js ../../dashboard/public
-cd ../..
-
 
 echo ========================== CONTAINER DOWN ==================================
 if [ $removeVolumes = true ]

@@ -13,35 +13,48 @@ export default class EventListener {
     constructor(backgroundService: BackgroundService, browserService: BrowserService) {
         this._backgroundService = backgroundService;
         this._browserService = browserService;
+        
         this._browserService.addListenerToChangeInState((oldState, newState) => {
-            if (oldState.isRecording === true && newState.isRecording === false) {
-                this.unlisten();
-            }
-            if (oldState.isRecording === false && newState.isRecording === true) {
-                this.listen();
-            }
-        })
-        this._browserService.getStateFromStorage()
-            .then((state: State) => {
-                if (state.isRecording && state.sessionBaseURL && document.URL) {
-                    if (document.URL.startsWith(state.sessionBaseURL)) {
-                        this.listen();
+            logger.debug('change in state');
+            if (newState !== undefined) {
+                if (newState.isRecording === false && oldState !== undefined && oldState.isRecording === true) {
+                    this.unlisten();
+                }
+                if (newState.isRecording === true) {
+                    if (oldState === undefined || oldState.isRecording === false) {
+                        if (newState.sessionBaseURL !== undefined && document.URL && document.URL.startsWith(newState.sessionBaseURL)) {
+                            this.listen();
+                        } 
                     } else {
                         logger.debug('wrong URL, no listen');
                     }
                 }
+            }
+        })
+
+        this._browserService.getStateFromStorage()
+            .then((state: State) => {
+                if (state.isRecording === true) {
+                    if (state.sessionBaseURL !== undefined && document.URL && document.URL.startsWith(state.sessionBaseURL)) {
+                        this.listen();
+                    } 
+                }
+                
             })
+            .catch(e=> {
+                logger.debug('error while getting state');
+            }); 
     }
 
 
     private listen(): void {
-        logger.debug(`[TabScript] listening to events`);
+        logger.debug(`listening to events`);
         document.addEventListener('mousedown', this.listenToMouseDown.bind(this), true);
         document.addEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }
 
     private unlisten(): void {
-        logger.debug("[TabScript] does not record event");
+        logger.debug("does not record event");
         document.removeEventListener('mousedown', this.listenToMouseDown.bind(this), true);
         document.removeEventListener('keydown', this.listenToKeyDown.bind(this), true);
     }

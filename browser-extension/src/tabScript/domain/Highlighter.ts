@@ -23,55 +23,60 @@ export default class Highlighter {
     constructor(browserService : BrowserService) {
         this._browserService = browserService;
         this._lastElementWithAIFEXStyle = new Set();
-        this._browserService.addListenerToChangeInState((oldState, newState) => {
-            if (newState.isRecording === false) {
-                logger.debug(`isRecording false`);
-                this.hide();
-            } else {
-                logger.debug(`isRecording true`);
-                if (oldState.isRecording === false) {
-                    this.show();
-                }
-                else if (newState.probabilities) {
-                    if (oldState.probabilities) {
-                        if (newState.probabilities.length !== oldState.probabilities.length) {
-                            logger.debug(`probabilities  different size`);
-                            this.show();
-                        } else {
-                            for (let index = 0; index < newState.probabilities.length; index++) {
-                                if (newState.probabilities[index][0] !== oldState.probabilities[index][0] || newState.probabilities[index][1] !== oldState.probabilities[index][1]) {
-                                    logger.debug(`not same probabilities`);
-                                    this.show()
-                                }
-                            }
-                            logger.debug('same proba');
-                            logger.debug(`${newState.probabilities}`);
-                        }
-                    } else {
-                        this.show();
-                    }
-                } else {
-                    logger.debug('newState has no proba');
-                }
-            }
-        })
-        this._browserService.getStateFromStorage()
-            .then((state: State) => {
-                if (state.isRecording && state.sessionBaseURL && document.URL) {
-                    if (document.URL.startsWith(state.sessionBaseURL)) {
-                        this.show();
-                    } else {
-                        logger.debug('wrong URL, no show');
-                    }
-                }
-            })
 
-        
-        window.addEventListener("DOMContentLoaded",(_event) => {
-            let pmh = new PageMutationHandler(this.show.bind(this));
-            pmh.init()
+        this._browserService.addListenerToChangeInState((oldState, newState) => {
+            if (newState !== undefined) {
+                if (newState.isRecording === false && oldState !== undefined && oldState.isRecording === true) {
+                    this.hide();
+                } 
+                if (newState.isRecording === true) {
+                    if (newState.sessionBaseURL !== undefined && document.URL && document.URL.startsWith(newState.sessionBaseURL)) {
+                        if (oldState === undefined || oldState.isRecording === false) {
+                            this.show();
+                        }
+                        else if (newState.probabilities) {
+                            if (oldState.probabilities) {
+                                if (newState.probabilities.length !== oldState.probabilities.length) {
+                                    logger.debug(`probabilities  different size`);
+                                    this.show();
+                                } else {
+                                    for (let index = 0; index < newState.probabilities.length; index++) {
+                                        if (newState.probabilities[index][0] !== oldState.probabilities[index][0] || newState.probabilities[index][1] !== oldState.probabilities[index][1]) {
+                                            logger.debug(`not same probabilities`);
+                                            this.show();
+                                        }
+                                    }
+                                    logger.debug('same proba');
+                                    logger.debug(`${newState.probabilities}`);
+                                }
+                            } else {
+                                this.show();
+                            }
+                        } else {
+                            logger.debug('newState has no proba');
+                        }
+                    }
+                }
+            }  
         });
-        
+
+        window.addEventListener("DOMContentLoaded",(_event) => {
+            let pmh = new PageMutationHandler((() => {
+                this._browserService.getStateFromStorage()
+                    .then((state: State) => {
+                        if (state.isRecording && state.sessionBaseURL && document.URL) {
+                            if (document.URL.startsWith(state.sessionBaseURL)) {
+                                this.show();
+                            }
+                        }
+                    })
+                    .catch(e => {
+                        logger.debug('error while getting the state');
+                    })
+            }).bind(this));
+            pmh.init()
+        });      
+
     }
 
     show(): void {
@@ -123,6 +128,9 @@ export default class Highlighter {
                     
                 }
             })
+            .catch(e=> {
+                logger.debug('error while getting state');
+            }); 
     }
 
     hide(): void {

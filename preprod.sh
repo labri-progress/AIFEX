@@ -23,15 +23,6 @@ cd ..
 mv -f chromeExtension.zip ../dashboard/public
 cd ..
 
-echo ========================== BROWSER SCRIPT COMPILATION ==================================
-cd browser-script/ 
-npm install
-
-npm run production
-cd dist
-mv -f AIFEXScript.js ../../dashboard/public
-cd ../..
-
 
 
 echo ========================== CONTAINER DOWN ==================================

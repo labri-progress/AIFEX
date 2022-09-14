@@ -9,4 +9,6 @@ export default interface BrowserService {
 
     setStateToStorage(state: State): Promise<void>;
 
+    onExtensionDisconnect(listener : () => void) : void;
+
 }
