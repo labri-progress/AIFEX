@@ -28,7 +28,6 @@
               <h4 class="session-name"><%= sessionList[i].name ? sessionList[i].name : "Unamed" %></h4>
               <a class="session-action" href="/dashboard/session/update/<%=sessionId %>" data-toggle="tooltip" data-placement="top" title="Update session"><i class="fas fa-wrench"></i></a>
               <a class="session-action" sessionAction="download-session" sessionId="<%=sessionId %>" href="/" data-toggle="tooltip" data-placement="top" title="Download session"><i class="fas fa-download"></i></a>
-              <a class="session-action" sessionAction="download-session-gravity" sessionId="<%=sessionId %>" href="/" data-toggle="tooltip" data-placement="top" title="Export session for Gravity"><image width="17px" height="17px" src="/static/images/icons/gravity.svg"></image></a>
               <a class="session-action" href="/dashboard/session/remove/<%= connectionCodeList[i] %>" data-toggle="tooltip" data-placement="top" title="Remove session"><i class="fas fa-trash-alt"></i></a>
               <hr class="my-2"></hr>
               <div class="session-card-left-container">

@@ -117,7 +117,7 @@ video {
 
 .session-name {
     display: inline-block;
-    width: 80%;
+    width: 82%;
 }
 
 .session-action {
@@ -173,4 +173,11 @@ video {
 
 .copy-connection-code-component {
     cursor: pointer;
+}
+
+.overlay {
+    position: relative;
+    z-index: 2;
+    border: solid;
+    border-color: red;
 }
