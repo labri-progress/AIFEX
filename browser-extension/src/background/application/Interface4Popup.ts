@@ -12,4 +12,6 @@ export default interface Interface4Popup {
 
     stopExploration(): Promise<void>;
 
+    addObservationToExploration(kind: string , message: string): void;
+
 }

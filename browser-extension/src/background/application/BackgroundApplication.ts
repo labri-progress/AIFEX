@@ -2,6 +2,7 @@ import AifexService from "../domain/AifexService";
 import Background from "../domain/Background";
 import BrowserService from "../domain/BrowserService";
 import CompatibilityCheck from "../domain/CompatibilityCheck";
+import Observation from "../domain/Observation";
 import { PopupPageKind } from "../domain/PopupPageKind";
 import StateForPopup from "../domain/StateForPopup";
 import StateForTabScript from "../domain/StateForTabScript";
@@ -34,6 +35,10 @@ export default class BackgroundApplication implements Interface4Popup, Interface
 
 	stopExploration(): Promise<void> {
 		return this._background.stopExploration();
+	}
+
+	addObservationToExploration(kind: string , message: string): void{
+		this._background.addObservationToExploration(new Observation(kind, message));
 	}
 
 

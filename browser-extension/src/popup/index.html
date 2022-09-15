@@ -75,24 +75,21 @@
 
 
             <div class="aifex_component" id="observationSubComponent">
-                <h3>Post a Bug Report <span id="read-observation-button"><i class="fa fa-observationing"
-                            title="Read Observation"></i> Read existing bug reports !</span></h3>
+                <h3>Comment <span id="read-observation-button"><i class="fa fa-observationing"
+                            title="Read Observation"></i> Read existing comments !</span></h3>
 
                 <div id="observation-list"></div>
 
                 <button id="observation-button" class="aifex_large_button">
-                    <i class="fa fa-observation" title="Add a Observation"></i> <span>Add a new bug report</span>
+                    <i class="fa fa-observation" title="Add a Observation"></i> <span>Add a new comment</span>
                 </button>
                 <form id="observationForm">
 
                     <div class="aifex_form_element">
-                        <label htmlFor="observationType">Severity</label>
+                        <label htmlFor="observationType">Type</label>
                         <select class="custom-select" id="observationType">
-                            <option value="Blocker">Blocker</option>
-                            <option value="Critical">Critical</option>
-                            <option value="Major">Major</option>
-                            <option value="Minor">Minor</option>
-                            <option value="Trivial">Trivial</option>
+                            <option value="Comment">Comment</option>
+                            <option value="Bug">Bug</option>
                             <option value="Enhancement">Enhancement</option>
                         </select>
                     </div>
@@ -108,7 +105,7 @@
                     <div class="aifex_button_group">
                         <div id="observationIsSubmitted" class="aifex_checked_text">
                             <i class="fa fa-check" style="color: green;"></i>
-                            <span>Bug Report registered</span>
+                            <span>Comment registered</span>
                         </div>
                         <button type="submit" id="submit-observation" class="aifex_button">Submit</button>
                         <button id="clearObservation" class="aifex_button"> Clear</button>

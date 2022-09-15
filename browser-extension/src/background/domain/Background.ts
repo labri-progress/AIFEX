@@ -6,6 +6,7 @@ import { PopupPageKind } from "./PopupPageKind";
 import Action from "./Action";
 import State from "./State";
 import { logger } from "../Logger";
+import Observation from "./Observation";
 
 export default class Background {
 
@@ -186,4 +187,21 @@ export default class Background {
             })
         
     }
+
+    addObservationToExploration(observation: Observation): void {
+        return this._browserService.getStateFromStorage()
+            .then((state) => {
+                if (state.isRecording) {
+                        this._aifexService.pushActionOrObservationList(
+                            this._serverURL, 
+                            this._sessionId, 
+                            this._exploration.explorationNumber, 
+                            [observation])
+
+                    }
+                    this.refreshPopup()
+                }
+            })
+    }
+
 }
