@@ -4,12 +4,14 @@ export default class Observation {
     value: string;
     index: number | undefined;
     date: Date;
+    concreteType: string;
 
     constructor(kind: string, value: string, index?: number) {
         this.kind = kind;
         this.value = value;
         this.index = index;
         this.date = new Date();
+        this.concreteType = 'Observation';
     }
 
     toString(): string {

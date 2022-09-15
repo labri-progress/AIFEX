@@ -2,6 +2,7 @@ import Session from "./Session";
 import AifexPluginInfo from "./AifexPluginInfo";
 import Screenshot from "./Screenshot";
 import Action from "./Action";
+import Observation from "./Observation";
 
 
 export default interface AifexService {
@@ -15,7 +16,7 @@ export default interface AifexService {
 
 	createEmptyExploration(serverURL: string, sessionId: string, testerName :string): Promise<number>;
 
-	pushActionOrObservationList(serverURL: string, sessionId: string, explorationNumber: number, actions: Action[]): Promise<void>;
+	pushActionOrObservationList(serverURL: string, sessionId: string, explorationNumber: number, actionsOrObservations: Array<Action | Observation>): Promise<void>;
 
 	addScreenshotList(serverURL: string, sessionId: string, explorationNumber : number, list : Screenshot[]): Promise<void> ;
 

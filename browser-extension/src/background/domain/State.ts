@@ -1,4 +1,5 @@
 import Action from './Action';
+import Observation from './Observation';
 import {PopupPageKind} from './PopupPageKind';
 
 export default class State {
@@ -15,7 +16,7 @@ export default class State {
     public explorationLength : number | undefined;
     public popupPageKind : PopupPageKind;
     public isRecording : boolean;
-    public actions : Action[];
+    public actionsAndObservations : Array<Action | Observation>;
     public probabilities : [[string, number]] | undefined;
 
     constructor(obj: any) {
@@ -32,7 +33,7 @@ export default class State {
         this.explorationLength = obj.explorationLength;
         this.popupPageKind = obj.popupPageKind || PopupPageKind.Home;
         this.isRecording = obj.isRecording === true ? true : false;
-        this.actions = [];
+        this.actionsAndObservations = [];
         this.probabilities = undefined;
     }
 

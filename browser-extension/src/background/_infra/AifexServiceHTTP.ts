@@ -4,6 +4,7 @@ import AifexPluginInfo from "../domain/AifexPluginInfo";
 import Action from "../domain/Action";
 import Screenshot from "../domain/Screenshot";
 import { logger } from "../Logger";
+import Observation from "../domain/Observation";
 
 const OK_STATUS = 200;
 const INVALID_PARAMETERS_STATUS = 400;
@@ -144,9 +145,9 @@ export default class AifexServiceHTTP implements AifexService {
 	}
 
 	
-	pushActionOrObservationList(serverURL: string, sessionId: string, explorationNumber: number, actions: Action[]): Promise<void> {
+	pushActionOrObservationList(serverURL: string, sessionId: string, explorationNumber: number, actionsOrObservations: Array<Action|Observation>): Promise<void> {
 		const body = {
-			interactionList: actions
+			interactionList: actionsOrObservations
 		}
 		const option = {
 			method: "POST",

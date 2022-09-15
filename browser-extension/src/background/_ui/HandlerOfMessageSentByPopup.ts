@@ -105,9 +105,16 @@ export default class HandlerOfMessageSentByPopup {
             case "pushObservation": {
                 logger.info(`Popup asks for ${msg.kind}`);
                 const { type, value } = msg;
-                this._application.addObservationToExploration(type, value);
-                sendResponse("ok");
+                this._application.processNewObservation(type, value)
+                .then(() => {
+                    sendResponse("ok");
+                })
+                .catch((error) => {
+                    logger.error("popup asks to pushObservation", error);
+                    sendResponse({error});
+                });
                 return true;
+                
             }
 
             default : {

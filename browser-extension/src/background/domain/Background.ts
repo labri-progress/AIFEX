@@ -4,7 +4,6 @@ import CompatibilityCheck from "./CompatibilityCheck";
 import Screenshot from "./Screenshot";
 import { PopupPageKind } from "./PopupPageKind";
 import Action from "./Action";
-import State from "./State";
 import { logger } from "../Logger";
 import Observation from "./Observation";
 
@@ -44,7 +43,7 @@ export default class Background {
                             state.sessionDescription = sessionResult.description;
                             state.connectedToSession = true;
                             state.popupPageKind = PopupPageKind.ReadSessionDescription;
-                            state.actions = [];
+                            state.actionsAndObservations = [];
                             return this._browserService.setStateToStorage(state)
                                 .then(() => {
                                     return "Connected";
@@ -95,7 +94,7 @@ export default class Background {
                     const promises = [];
 
                     state.explorationLength ? state.explorationLength++ : state.explorationLength = 1;
-                    state.actions.push(newAction);
+                    state.actionsAndObservations.push(newAction);
                     logger.debug(`processNewAction : ${newAction.kind} ${newAction.value}`);
                     const pushActionListPromise = this._aifexService.pushActionOrObservationList(
                         state.serverURL, 
@@ -106,7 +105,14 @@ export default class Background {
                     promises.push(pushActionListPromise);
                     
                     if (state.modelId) {
-                        promises.push(this._aifexService.getProbabilities(state.serverURL, state.modelId, state.actions));
+                        let actions : Action[] = [];
+                        state.actionsAndObservations.forEach((actionOrObservation) => {
+                            if (actionOrObservation instanceof Action) {
+                                actions.push(actionOrObservation);
+                            }
+                        })
+
+                        promises.push(this._aifexService.getProbabilities(state.serverURL, state.modelId, actions));
                     }
 
                     if (state.takeAScreenshotByAction) {
@@ -142,14 +148,11 @@ export default class Background {
                     return Promise.resolve();
                 } 
                 
-                //return this.processNewAction("end")
-                //    .then(() => {
-                        state.isRecording = false;  
-                        state.explorationNumber = undefined;
-                        state.explorationLength = undefined;
-                        state.actions = [];
-                        return this._browserService.setStateToStorage(state);
-                //    })
+                state.isRecording = false;  
+                state.explorationNumber = undefined;
+                state.explorationLength = undefined;
+                state.actionsAndObservations = [];
+                return this._browserService.setStateToStorage(state);
 
             })
         
@@ -188,18 +191,37 @@ export default class Background {
         
     }
 
-    addObservationToExploration(observation: Observation): void {
+    processNewObservation(kind: string , message: string): Promise<void> {
         return this._browserService.getStateFromStorage()
             .then((state) => {
-                if (state.isRecording) {
-                        this._aifexService.pushActionOrObservationList(
-                            this._serverURL, 
-                            this._sessionId, 
-                            this._exploration.explorationNumber, 
-                            [observation])
-
+                if (state && state.isRecording && state.explorationNumber !== undefined && state.explorationLength !== undefined) {
+                    if (!state.serverURL ||  !state.sessionId) {
+                        throw new Error("Not connected to a session")
                     }
-                    this.refreshPopup()
+
+                    const newObservation = new Observation(kind, message, state.explorationLength);
+                    const promises = [];
+
+                    state.explorationLength ? state.explorationLength++ : state.explorationLength = 1;
+                    state.actionsAndObservations.push(newObservation);
+                    logger.debug(`processNewObsevation : ${newObservation.kind} ${newObservation.value}`);
+                    const pushActionListPromise = this._aifexService.pushActionOrObservationList(
+                        state.serverURL, 
+                        state.sessionId, 
+                        state.explorationNumber, 
+                        [newObservation])
+    
+                    promises.push(pushActionListPromise);
+                    
+                    
+                    return Promise.allSettled(promises)
+                        .then(([pushResult]) => {
+                            logger.debug(JSON.stringify(state));
+                            return this._browserService.setStateToStorage(state);
+                        })
+                        .then(() => {})
+                } else {
+                    return Promise.resolve();
                 }
             })
     }

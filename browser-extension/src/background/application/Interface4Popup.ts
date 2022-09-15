@@ -1,7 +1,4 @@
 import CompatibilityCheck from "../domain/CompatibilityCheck";
-import { PopupPageKind } from "../domain/PopupPageKind";
-import StateForPopup from "../domain/StateForPopup";
-
 export default interface Interface4Popup {
     
     makeCompatibilityCheck(serverURL: string): Promise<CompatibilityCheck>;
@@ -12,6 +9,6 @@ export default interface Interface4Popup {
 
     stopExploration(): Promise<void>;
 
-    addObservationToExploration(kind: string , message: string): void;
+    processNewObservation(kind: string , message: string): Promise<void>;
 
 }

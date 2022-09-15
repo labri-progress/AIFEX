@@ -1,4 +1,5 @@
 import Action from "./Action";
+import Observation from "./Observation";
 
 export type OverlayType = "rainbow" | "bluesky" | "shadow";
 
@@ -6,7 +7,7 @@ export default class State {
     isRecording: boolean;
     showProbabilityPopup: boolean;
     overlayType: OverlayType;
-    actions: Action[];
+    actions: Array<Action|Observation>;
     probabilities : [[string, number]] | undefined;
     sessionBaseURL : string | undefined;
 
