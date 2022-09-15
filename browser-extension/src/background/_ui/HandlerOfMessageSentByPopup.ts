@@ -102,6 +102,14 @@ export default class HandlerOfMessageSentByPopup {
                 return true;
             }
 
+            case "pushObservation": {
+                logger.info(`Popup asks for ${msg.kind}`);
+                const { type, value } = msg;
+                this._application.addObservationToExploration(type, value);
+                sendResponse("ok");
+                return true;
+            }
+
             default : {
                 return true;
             }

@@ -99,7 +99,7 @@
 
     function submitObservation(e) {
         e.preventDefault();
-        console.log('submit bug report');
+        console.log('submit comment');
 
         const type = document.getElementById('observationType').value;
         const value = document.getElementById('observationDescription').value;
