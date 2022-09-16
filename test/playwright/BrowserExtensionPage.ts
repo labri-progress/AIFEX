@@ -10,7 +10,7 @@ export default class BrowserExtensionPage {
     }
 
     async goto() {
-        await this._page.goto(`chrome-extension://${this._extensionId}/aifex_page/index.html`, {waitUntil:"domcontentloaded"});
+        await this._page.goto(`chrome-extension://${this._extensionId}/popup/index.html`, {waitUntil:"domcontentloaded"});
         return this.check();
     }
 
