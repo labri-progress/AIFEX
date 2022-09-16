@@ -16,7 +16,7 @@ export default class DashboardNewSessionPage {
     async skipTuto() {
         let skipButton = await this._page.$('.introjs-skipbutton');
         if (skipButton) {
-            skipButton.click();
+            await skipButton.click();
         }
     }
 

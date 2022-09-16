@@ -106,6 +106,7 @@ describe("Playwright", () => {
         const dap = new DashboardAccountPage(page, DASHBOARD_URL);
         await dap.goto();
         let beforeSessions = await dap.getSessions();
+        console.log(beforeSessions.length);
         await dap.startNewSession();
         
         const dnsp = new DashboardNewSessionPage(page, DASHBOARD_URL);
@@ -115,6 +116,7 @@ describe("Playwright", () => {
 
         await dap.goto();
         let afterSessions = await dap.getSessions();
+        console.log(afterSessions.length);
         expect(afterSessions.length).to.equal(beforeSessions.length + 1);
         await page.close();
     })
