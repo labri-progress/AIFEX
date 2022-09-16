@@ -1,12 +1,12 @@
 # AIFEX - Artificial Intelligence For Exploratory Testing
 
-AIFEX makes Exploratory Simpler and efficient.
+AIFEX makes Exploratory Simpler and more efficient.
 
-It starts and trains an AI model that will guide you while your are testing your web site.
+It starts and trains an AI model that will guide you while you are testing your website.
 
 ## Run the AIFEX server on Development Mode
 
-AIFEX is designed as a docker compose platform. 
+AIFEX is designed as a docker-compose platform. 
 
 To run it, you must install **docker** with **docker-compose**
 
@@ -23,7 +23,7 @@ To run it, you must install **docker** with **docker-compose**
 
 
 Edit **./prod.sh**:
-1. replace HOST_ADDR by your server name.
+replace HOST_ADDR with your server name.
 
 Then just execute (if you are using Windows, please use bash): 
 
@@ -41,14 +41,14 @@ Go to https://www.aifex.fr
 ## Look a the source code
 
 AIFEX is composed of two main components:
-* An extension for chrome or firefox that records tester's actions and that sends them to the Session and AI components (browser-extension directory).
-* A server that manages exploratory testing sessions. The server is composed on several containers:
-    * account : this container handles users' accounts.
-    * dashboard : a web server that provides HTML pages for starting new exploratory session and looking at some analytics.
-    * evaluator : this container helps tester to follow expected behavior when they test
-    * initialization : this container creates the anonymous account and adds some websites and sessions to it
+* An extension for chrome or firefox that records the tester's actions and that sends them to the Session and AI components (browser-extension directory).
+* A server that manages exploratory testing sessions. The server is composed of several containers:
+account: this container handles users' accounts.
+    * dashboard: a web server that provides HTML pages for starting a new exploratory session and looking at some analytics.
+    * evaluator: this container helps the tester to follow expected behavior when they test
+    * initialization: this container creates the anonymous account and adds some websites and sessions to it
     * model : this container manages AI that will guide testers
-    * printer : this container prints session into source code to replay them
+    * printer : this container prints sessions into source code to replay them
     * reverseproxy : this container is a reverse proxy (nginx)
     * session : this container manages sessions of exploratory testing
     * test : this container runs tests
