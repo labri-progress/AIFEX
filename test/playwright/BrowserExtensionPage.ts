@@ -11,12 +11,12 @@ export default class BrowserExtensionPage {
 
     async goto() {
         await this._page.goto(`chrome-extension://${this._extensionId}/popup/index.html`, {waitUntil:"domcontentloaded"});
-        return this.check();
+        return await this.check();
     }
 
     async check() {
-        await this._page.waitForSelector('#container');
-        return this._page.evaluate(() => {
+        await this._page.waitForSelector('#container', {state: 'attached'});
+        return await this._page.evaluate(() => {
             if (document.title !== 'AIFEX') {
                 return false;
             }
