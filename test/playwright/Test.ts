@@ -10,7 +10,6 @@ import DashboardSignInPage from "./DashboardSignInPage";
 import DashboardAccountPage from "./DashboardAccountPage";
 import path from "path";
 import DashboardNewSessionPage from "./DashboardNewSessionPage";
-import DashboardSessionPage from "./DashboardSessionPage";
 import fs from "fs";
 
 
@@ -112,10 +111,7 @@ describe("Playwright", () => {
         const dnsp = new DashboardNewSessionPage(page, DASHBOARD_URL);
         await dnsp.goto();
         await dnsp.skipTuto();
-        const webSites = await dnsp.getWebSites();
-        if (webSites.length > 0) {
-            await dnsp.createSession("test", webSites[webSites.length-1].value,"description", "https://www.aifex.fr/");
-        }
+        await dnsp.createSession("test", "https://www.aifex.fr/" ,"description", );
 
         await dap.goto();
         let afterSessions = await dap.getSessions();
@@ -143,10 +139,9 @@ describe("Playwright", () => {
                     // page.on('console', (consoleMessage) => {
                     //     console.log(`${consoleMessage.type()}: ${consoleMessage.text()}`);
                     // })
-                    await bep.createNewWindowsOnConnect(false);
                     await bep.joinSession();                    
                     await bep.connectSession(url);
-                    await bep.closeDescription();
+                    await bep.closeDescription('test');
                     await bep.startExploration();
                     await page.waitForTimeout(2000);
                     const pages = await browser.pages();
@@ -167,43 +162,6 @@ describe("Playwright", () => {
         }
         await page.close();
     })
-
-    it ("should set the testerName and create an exploration ", async () => {
-        let page = await browser.newPage();
-        const cep = new ChromeExtensionsPage(page);
-        await cep.goto();
-        let extensionId = await cep.getAIFEXExtensionId();
-        if (extensionId) {
-            let dap = new DashboardAccountPage(page, DASHBOARD_URL);
-            await dap.goto();
-            let sessions = await dap.getSessions();
-            if (sessions.length > 0) {
-                let numberOfExplorations = parseInt(sessions[sessions.length-1].numberOfExplorations);
-                let bep = new BrowserExtensionPage(page, extensionId);
-                let isBEP = await bep.goto();
-                if (isBEP) {
-                    await bep.setTesterName("playwright");
-                    await bep.startExploration();
-                    await page.waitForTimeout(2000);
-                    const pages = await browser.pages();
-                    await pages[0].click("body > div > div > div.text-center > a");
-                    bep = new BrowserExtensionPage(pages[0], extensionId);
-                    await bep.goto();
-                    await bep.stopExploration();
-                    page = await browser.newPage();
-                    dap = new DashboardAccountPage(page, DASHBOARD_URL);
-                    await dap.goto();
-                    sessions = await dap.getSessions();
-                    let newNumberOfExplorations = parseInt(sessions[sessions.length-1].numberOfExplorations);
-                    expect(newNumberOfExplorations).to.equal(numberOfExplorations + 1);
-                    
-                }
-            }
-        }
-        await page.close();
-    })
-
-
 
     after("closing browser", async () => {
         if (browser) {

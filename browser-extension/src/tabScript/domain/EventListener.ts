@@ -24,10 +24,10 @@ export default class EventListener {
                     if (oldState === undefined || oldState.isRecording === false) {
                         if (newState.sessionBaseURL !== undefined && document.URL && document.URL.startsWith(newState.sessionBaseURL)) {
                             this.listen();
-                        } 
-                    } else {
-                        logger.debug('wrong URL, no listen');
-                    }
+                        } else {
+                            logger.debug('wrong URL, no listen');
+                        }
+                    } 
                 }
             }
         })

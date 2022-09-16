@@ -43,26 +43,6 @@ export default class BrowserExtensionPage {
         })
     }
 
-    async closeDescription() {
-        await this._page.click("#sessionDescriptionButton");
-    }
-    
-    async createNewWindowsOnConnect(shouldCreate: boolean) {
-        await this._page.click('#config-button');
-        if (shouldCreate) {
-            await this._page.check('#shouldCreateNewWindowsOnConnect');
-        } else {
-            await this._page.uncheck('#shouldCreateNewWindowsOnConnect');
-        }
-        await this._page.click('#submitConfig');
-    }
-
-    async setTesterName(name : string) {
-        await this._page.click('#config-button');
-        await this._page.fill('#testerName', name);
-        await this._page.click('#submitConfig');
-    }
-
     async joinSession() {
         await this._page.click('#goToJoinSession');
     }
@@ -70,6 +50,11 @@ export default class BrowserExtensionPage {
     async connectSession(url : string) {
         await this._page.fill('#connexionURLInput', url);
         await this._page.click('#connexionButton');
+    }
+
+    async closeDescription(testerName : string) {
+        await this._page.fill('#testerNameInDescription', testerName);
+        await this._page.click("#sessionDescriptionButton");
     }
 
     async startExploration() {

@@ -20,33 +20,10 @@ export default class DashboardNewSessionPage {
         }
     }
 
-    async getWebSites() : Promise<{name:string, value:string}[]>{
-        return await this._page.evaluate(() => {
-            let webSiteId = document.getElementById('webSiteId');
-            if (webSiteId && webSiteId.children) {
-                let webSites : {name:string, value:string}[]= [];
-                for (let i = 0; i < webSiteId.children.length; i++) {
-                    let htmlOptionElement = webSiteId.children[i];
-                    if (htmlOptionElement instanceof HTMLOptionElement) {
-                        let webSiteName = htmlOptionElement.textContent;
-                        let webSiteValue = htmlOptionElement.value;
-                        if ( webSiteName !== null && webSiteValue !== null) {
-                            webSites.push({name:webSiteName, value:webSiteValue});
-                        }
-                    }
-                }
-                return webSites;
-            } else {
-                return [];
-            }
-        });
-    }
-
-    async createSession(name: string, webSite: string, description: string, baseURL: string) {
+    async createSession(name: string, baseURL: string, description: string ) {
         await this._page.fill('#name', name);
-        await this._page.selectOption('#webSiteId',webSite)
-        await this._page.fill('#description', description);
         await this._page.fill('#baseURL', baseURL);
+        await this._page.fill('#description', description);
         await this._page.click('#submit');
     }
 

@@ -17,10 +17,6 @@ export default class DashboardAccountPage {
         await this._page.click('#createSessionButton');
     }
 
-    async createNewWebSite() {
-        await this._page.click('#createWebListButton');
-    }
-
     async getSessions() {
         return await this._page.evaluate(() => {
             let results : {name: string, url: string, numberOfExplorations: string}[] = [];
