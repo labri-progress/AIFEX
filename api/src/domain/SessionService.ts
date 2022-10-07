@@ -18,6 +18,8 @@ export default interface SessionService {
 
     addExploration(sessionId: string, testerName: string, interactionList: (Action | Observation)[], startDate?: Date, stopDate?: Date): Promise<number>;
 
+    removeExploration(sessionId: string, explorationId: number): Promise<"ExplorationRemoved" | "ExplorationNotFound">;
+
     addScreenshots(screenshots: Screenshot[]): Promise<"ScreenshotsAdded">;
 
     findScreenshotsBySessionId(sessionId: string): Promise<Screenshot[]>;

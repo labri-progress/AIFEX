@@ -465,6 +465,47 @@ paths:
       security:
         - bearerAuth: []
 
+  /sessions/{sessionId}/explorations/{explorationNumber}:
+    delete:
+      description: remove an existing exploration
+      parameters:
+        - in: path
+          name: sessionId
+          schema:
+            type: string
+          required: true
+          description: Id of the session
+        - in: path
+          name: explorationNumber
+          schema:
+            type: integer
+          required: true
+          description: Exploration number in the session
+      responses:
+        '200':
+          description: The exploration has been removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  explorationNumber:                
+                    type: integer
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+
   /sessions/{sessionId}/explorations:
     post:
       description: add a new /explorations

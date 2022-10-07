@@ -318,7 +318,26 @@ export default class APIApplication {
                 }
                 if (isPublic || authorized || invited) {
                     return this._sessionService.addExploration(sessionId, testerName, interactionList, startDate, stopDate)
-                            .then((result) => result);
+                        .then((result) => result);
+                } else {
+                    return "Unauthorized";
+                }
+            });
+    }
+
+    removeExploration(sessionId: string, explorationId: number, token?: Token): Promise<"Unauthorized" | "ExplorationRemoved" | "ExplorationNotFound"> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._sessionService.removeExploration(sessionId, explorationId)
+                        .then((result) => result);
                 } else {
                     return "Unauthorized";
                 }

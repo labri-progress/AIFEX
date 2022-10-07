@@ -12,6 +12,12 @@ import { logger } from "../logger";
 
 const SESSION_URL: string = `http://${config.session.host}:${config.session.port}/session/`;
 
+const SUCCESS_STATUS = 200;
+const NOT_FOUND_STATUS = 404;
+const INVALID_PARAMETERS_STATUS = 400;
+const INTERNAL_SERVER_ERROR_STATUS = 500;
+
+
 export default class SessionServiceHTTP implements SessionService {
 
     ping() {
@@ -107,6 +113,25 @@ export default class SessionServiceHTTP implements SessionService {
                 if (response.ok) {
                     return response.json()
                 } else {
+                    throw new Error("Error"+response.statusText);
+                }
+            })
+    }
+
+    removeExploration(sessionId: string, explorationId: number): Promise<"ExplorationRemoved" | "ExplorationNotFound"> {
+        const RemoveExplorationURL = `http://${config.session.host}:${config.session.port}/session/${sessionId}/exploration/${explorationId}/remove`;
+        let optionRemoveExploration = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        }
+        return fetch(RemoveExplorationURL, optionRemoveExploration)
+            .then(response => {
+                if (response.ok) {
+                    return "ExplorationRemoved";
+                } else if (response.status === NOT_FOUND_STATUS) {
+                    return "ExplorationNotFound";
+                }
+                else {
                     throw new Error("Error"+response.statusText);
                 }
             })

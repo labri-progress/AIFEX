@@ -456,6 +456,35 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         }
     })
 
+    app.delete("/sessions/:sessionId/explorations/:expNum", (req, res) => {
+        const { sessionId, expNum } = req.params;
+        logger.info(`Remove the exploration ${expNum} from the session ${sessionId}`);
+        if (sessionId === undefined || expNum === undefined) {
+            logger.warn(`invalid parameters`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No expNum"});
+        } else {
+            if (parseInt(expNum) === NaN) {
+                logger.warn(`invalid expNum type`);
+                return res.status(INVALID_PARAMETERS_STATUS).json({message:"expNum must be an integer"});
+            }
+            api.removeExploration(sessionId, parseInt(expNum), req.token)
+                .then(explorationResult => {
+                    if (explorationResult === "Unauthorized") {
+                        return res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else if (explorationResult === "ExplorationNotFound") {
+                        return res.status(NOT_FOUND_STATUS).json({message:"ExplorationNotFound"});
+                    } else{
+                        logger.info("Exploration removed " + expNum);
+                        return res.json({expNum, sessionId});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    return res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
+        }
+    })
+
 
 
     app.post("/sessions/:sessionId/screenshots", (req, res) => {

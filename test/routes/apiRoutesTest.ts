@@ -14,7 +14,6 @@ before("Dropping database", async () => {
 
 describe("API", () => {
 
-    // tslint:disable-next-line: prefer-const
     let token: string | undefined;
     let webSiteId: string | undefined;
     let sessionId: string | undefined;
@@ -136,7 +135,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -174,7 +172,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -195,7 +192,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -233,7 +229,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -262,7 +257,6 @@ describe("API", () => {
             })
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -284,7 +278,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -316,7 +309,6 @@ describe("API", () => {
             })
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -342,7 +334,6 @@ describe("API", () => {
             })
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -364,7 +355,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -393,7 +383,6 @@ describe("API", () => {
             body: JSON.stringify(body)
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -450,7 +439,6 @@ describe("API", () => {
             body: JSON.stringify(body)
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -530,7 +518,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.eql(true);
                 return res.json();
             })
@@ -556,7 +543,6 @@ describe("API", () => {
             body: JSON.stringify(body)
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -576,7 +562,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -603,7 +588,6 @@ describe("API", () => {
             body: JSON.stringify(body)
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -619,7 +603,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -629,6 +612,38 @@ describe("API", () => {
                 expect(evaluatorCasted.description).to.eql("testing evaluator updated");
                 expect(evaluatorCasted.expression).to.eql("click => click => click");
             });
+    });
+
+    it("should remove the exploration of the session", () => {
+        const url = `${API_URL}/sessions/${sessionId}/explorations/0`;
+        return fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                expect(res.ok).to.be.true;
+            });
+    })
+
+    it("should get the session with removed exploration", () => {
+        const url = `${API_URL}/sessions/${sessionId}`;
+        return fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                expect(res.ok).to.eql(true);
+                return res.json();
+            })
+            .then((session) => {
+                expect(session.explorationList[0].isRemoved).to.be.true;
+            })
     });
 
     it("should remove the session", () => {
@@ -641,7 +656,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -661,7 +675,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 const FORBIDDEN_STATUS = 403;
                 expect(res.status).to.be.eql(FORBIDDEN_STATUS);
             })
@@ -678,7 +691,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -698,7 +710,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -719,7 +730,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 expect(res.ok).to.be.true;
                 return res.json();
             })
@@ -739,7 +749,6 @@ describe("API", () => {
             }
         })
             .then(res => {
-                // tslint:disable-next-line: no-unused-expression
                 const FORBIDDEN_STATUS = 403;
                 expect(res.status).to.be.eql(FORBIDDEN_STATUS);
             })
