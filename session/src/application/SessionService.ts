@@ -1,7 +1,7 @@
 import Action from "../domain/Action";
 import ActionInteraction from "../domain/ActionInteraction";
 import Observation from "../domain/Observation";
-import ObersationInteraction from "../domain/ObservationInteraction";
+import ObservationInteraction from "../domain/ObservationInteraction";
 import Exploration from "../domain/Exploration";
 import Interaction from "../domain/Interaction";
 import { RecordingMode } from "../domain/RecordingMode";
@@ -161,6 +161,18 @@ export default class SessionService {
             });
     }
 
+    public removeExploration(sessionId: string, explorationNumber: number): Promise<void> {
+        return this.mountSession(sessionId)
+            .then((session) => {
+                if (session) {
+                    session.removeExploration(explorationNumber);
+                    return this.sessionRepository.updateExplorationIsRemoved(sessionId, explorationNumber);
+                } else {
+                    throw new Error('wrong sessionId');
+                }
+            })
+    }
+
     public addExploration(sessionId: string,
                           testerName: string | undefined,
                           interactionListData: Array<{index: number, concreteType: "Action" | "Observation", kind: string, value: string, date?: Date}>,
@@ -200,10 +212,10 @@ export default class SessionService {
                             .sort((interA, interB) => interA.index - interB.index)
                             .forEach((interaction) => {
                                 if (interaction.concreteType === "Action") {
-                                    interactionList.push(new ActionInteraction(interaction.index, new Action(interaction.kind, interaction.value), interaction.date));
+                                    interactionList.push(new ActionInteraction(interaction.index, new Action(interaction.kind.toString(), interaction.value?interaction.value.toString():undefined), interaction.date));
                                 }
                                 if (interaction.concreteType === "Observation") {
-                                    interactionList.push(new ObersationInteraction(interaction.index, new Observation(interaction.kind, interaction.value), interaction.date));
+                                    interactionList.push(new ObservationInteraction(interaction.index, new Observation(interaction.kind.toString(), interaction.value.toString()), interaction.date));
                                 }
                             });
                         session.addInteractionListToExploration(explorationNumber, interactionList);
@@ -246,10 +258,10 @@ export default class SessionService {
                             .sort((interA, interB) => interA.index - interB.index)
                             .map((interaction) => {
                                 if (interaction.concreteType === "Action") {
-                                    return new ActionInteraction(interaction.index, new Action(interaction.kind, interaction.value), interaction.date);
+                                    return new ActionInteraction(interaction.index, new Action(interaction.kind.toString(), interaction.value?interaction.value.toString():undefined), interaction.date);
                                 }
                                 if (interaction.concreteType === "Observation") {
-                                    return new ObersationInteraction(interaction.index, new Observation(interaction.kind, interaction.value), interaction.date);
+                                    return new ObservationInteraction(interaction.index, new Observation(interaction.kind.toString(), interaction.value.toString()), interaction.date);
                                 }
                                 else {
                                     throw new Error(`Invalid Type of interaction ${interaction.concreteType}`)

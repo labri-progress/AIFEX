@@ -19,6 +19,8 @@ export default interface SessionRepository {
 
     updateExplorationIsStopped(sessionId: string, explorationNumber: number, stopDate: Date): Promise<void>;
 
+    updateExplorationIsRemoved(sessionId: string, explorationNumber: number): Promise<void>;
+
     findSessionById(sessionId: string): Promise<Session | undefined>;
 
 }

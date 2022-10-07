@@ -2,7 +2,7 @@ import amqp = require('amqplib');
 import EventStore from "../application/EventStore";
 import config from "./config";
 import ActionInteraction from "../domain/ActionInteraction";
-import ObersationInteraction from "../domain/ObservationInteraction";
+import ObservationInteraction from "../domain/ObservationInteraction";
 import Exploration from "../domain/Exploration";
 import { logger } from '../logger';
 
@@ -49,7 +49,7 @@ export default class EventStoreRabbit implements EventStore {
                     value : interaction.action.suffix,
                 });
             }
-            if (interaction instanceof ObersationInteraction) {
+            if (interaction instanceof ObservationInteraction) {
                 sequence.push({
                     concreteType : "Observation",
                     kind : interaction.observation.kind,

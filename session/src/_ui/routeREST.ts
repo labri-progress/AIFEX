@@ -100,6 +100,8 @@ export default function attachRoutes(app: Express, sessionService: SessionServic
                                 startDate: exploration.startDate,
                                 stopDate: exploration.stopDate,
                                 explorationNumber: exploration.explorationNumber,
+                                isStopped : exploration.isStopped === undefined ? false : exploration.isStopped,
+                                isRemoved : exploration.isRemoved === undefined ? false : exploration.isRemoved,
                                 interactionList: exploration.interactionList.map((interaction) => {
                                     if (interaction instanceof ActionInteraction) {
                                         return {
@@ -254,6 +256,42 @@ export default function attachRoutes(app: Express, sessionService: SessionServic
                 });
         }
     });
+
+    app.post(`/session/:sessionId/exploration/:exploNumber/remove`, (req, res) => {
+        const { sessionId, exploNumber } = req.params;
+        logger.info(`exploration/remove sessionId ${sessionId}, explorationNumber ${exploNumber}`);
+
+        if (sessionId === undefined) {
+            logger.warn(`sessionId must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("sessionId is undefined");
+            return;
+        }
+        if (exploNumber === undefined) {
+            logger.warn(`explorationNumber must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("explorationNumber is undefined");
+            return;
+        }
+        const explorationNumberAsNumber: number = parseInt(exploNumber);
+        if (isNaN(explorationNumberAsNumber)) {
+            logger.error(`exploration/remove ${explorationNumberAsNumber} is NaN`);
+            res.status(INVALID_PARAMETERS_STATUS).send("error");
+        } else {
+            sessionService.removeExploration(sessionId, explorationNumberAsNumber)
+                .then(() => {
+                    logger.debug(`exploration/remove exploration ${explorationNumberAsNumber} is removed`);
+                    res.sendStatus(SUCCESS_STATUS);
+                })
+                .catch((e) => {
+                    if ((e instanceof Error) && (e.message === 'wrong sessionId')) {
+                        logger.error('wrong sessionId');
+                        res.status(NOT_FOUND_STATUS).send("wrong sessionId");
+                    } else {
+                        logger.error(`exploration/remove error ${e}`);
+                        res.status(INTERNAL_SERVER_ERROR_STATUS).send("error");
+                    }
+                });
+        }
+    })
 
     app.post("/session/:sessionId/exploration/add", (req, res) => {
         const { sessionId } = req.params;

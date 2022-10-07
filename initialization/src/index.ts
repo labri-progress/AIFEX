@@ -313,6 +313,8 @@ async function addAllExplorationToSession(token, sessionId) {
     const explorationsDirectory = path.join(__dirname, "..","explorations");
     const explorationList = JSON.parse(fs.readFileSync(path.join(explorationsDirectory, "demo.json"), "utf8")).explorationList;
 
+    
+
     for (const exploration of explorationList) {
         const body = {
             testerName: exploration.testerName,

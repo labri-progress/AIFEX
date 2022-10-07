@@ -35,6 +35,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
             return session.id;
         });
     }
+
     updateSession(sessionId: string, name: string, webSiteId: string, baseURL: string, description: string, overlayType: SessionOverlayType, recordingMode: RecordingMode): Promise<void> {
         return SessionSchema.updateOne({_id: sessionId}, {$set: {name, webSiteId, baseURL, description, overlayType, recordingMode}})
         .exec().then(() => {});
@@ -58,6 +59,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
             explorationNumber,
             testerName: tester.name,
             isStopped: false,
+            isRemoved: false,
             interactionList : [],
             startDate
         }).
@@ -119,6 +121,16 @@ export default class SessionRepositoryMongo implements SessionRepository {
             .exec().then(() => {});
     }
 
+    public updateExplorationIsRemoved(sessionId: string, explorationNumber: number): Promise<void> {
+        return ExplorationSchema.updateOne({sessionId, explorationNumber},
+            {
+                $set : {
+                    isRemoved: true
+                },
+            })
+            .exec().then(() => {});
+    }
+
 
     public findSessionById(sessionId: string): Promise<Session | undefined> {
         let id: string;
@@ -160,7 +172,7 @@ export default class SessionRepositoryMongo implements SessionRepository {
                             .sort( (explA, explB) => explA.explorationNumber - explB.explorationNumber)
                             .forEach((explorationData: ExplorationDocument) => {
                                 const tester: Tester = new Tester(explorationData.testerName);
-                                const explorationNumber: number = session.startExploration(tester);
+                                const explorationNumber: number = session.startExploration(tester, explorationData.startDate);
                                 const interactionList : Interaction[] = [];
                                 explorationData.interactionList
                                 .filter((inter) => inter !== null && inter !== undefined)
@@ -180,6 +192,12 @@ export default class SessionRepositoryMongo implements SessionRepository {
                                     }
                                 });
                                 session.addInteractionListToExploration(explorationNumber, interactionList);
+                                if (explorationData.isStopped) {
+                                    session.stopExploration(explorationNumber);
+                                }
+                                if (explorationData.isRemoved) {
+                                    session.removeExploration(explorationNumber);
+                                }
                             });
                             return session;
                         });

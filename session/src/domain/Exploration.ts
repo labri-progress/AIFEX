@@ -12,6 +12,7 @@ export default class Exploration {
     private _interactionList: Interaction[];
     private _startDate : Date;
     private _stopDate : Date | undefined;
+    private _isRemoved : boolean;
 
     constructor(tester: Tester, explorationNumber: number, startDate?:Date) {
         this._tester = tester;
@@ -26,6 +27,7 @@ export default class Exploration {
         }
         this._explorationNumber = explorationNumber;
         this._isStopped = false;
+        this._isRemoved = false;
         this._interactionList = [];
     }
 
@@ -36,11 +38,18 @@ export default class Exploration {
         } else {
             this._stopDate = new Date();
         }
-        
+    }
+
+    public remove(): void {
+        this._isRemoved = true;
     }
 
     get isStopped(): boolean {
         return this._isStopped;
+    }
+
+    get isRemoved(): boolean {
+        return this._isRemoved;
     }
 
     get tester(): Tester {
@@ -63,6 +72,9 @@ export default class Exploration {
         if (this.isStopped) {
             throw new Error("cannot add action to exploration, exploration is stopped");
         }
+        if (this.isRemoved) {
+            throw new Error("cannot add action to exploration, exploration is removed");
+        }
         this._interactionList.push(new ActionInteraction(this._interactionList.length, action));
     }
 
@@ -70,12 +82,18 @@ export default class Exploration {
         if (this.isStopped) {
             throw new Error("cannot add observation to exploration, exploration is stopped");
         }
+        if (this.isRemoved) {
+            throw new Error("cannot add observation to exploration, exploration is removed");
+        }
         this._interactionList.push(new ObersationInteraction(this._interactionList.length, observation));
     }
 
     public addInteractionList(interactionList: Interaction[]): void {
         if (this.isStopped) {
             throw new Error("cannot add interaction to exploration, exploration is stopped");
+        }
+        if (this.isRemoved) {
+            throw new Error("cannot add interaction to exploration, exploration is removed");
         }
         this._interactionList.push(...interactionList);
     }

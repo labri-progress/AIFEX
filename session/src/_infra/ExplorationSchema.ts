@@ -13,7 +13,9 @@ const EXPLORATION_SCHEMA: Schema = new Schema({
     explorationNumber : Number,
     testerName : String,
     isStopped : Boolean,
+    isRemoved : Boolean,
     interactionList : [INTERACTION_SCHEMA],
+    startDate : Date
 },
 {
     timestamps: true,
@@ -25,6 +27,7 @@ export interface ExplorationDocument extends Document {
     explorationNumber : number,
     testerName : string,
     isStopped : boolean,
+    isRemoved : boolean,
     startDate: Date,
     interactionList : (ActionDocument | ObservationDocument)[],
 }

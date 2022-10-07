@@ -125,9 +125,20 @@ export default class Session {
         this._explorationList[explorationNumber].stop(stopDate);
     }
 
+    public removeExploration(explorationNumber: number): void {
+        if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
+            throw new Error("cannot stop exploration, wrong explorationNumber.");
+        }
+        this._explorationList[explorationNumber].remove();
+
+    }
+
     public addObservationToExploration(explorationNumber: number, observation: Observation): void {
         if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
             throw new Error("cannot add observation to exploration, wrong explorationNumber.");
+        }
+        if (this.explorationList[explorationNumber].isRemoved) {
+            throw new Error("cannot add observation to exploration, exploration is removed.");
         }
         const exploration = this._explorationList[explorationNumber];
         exploration.addObservation(observation);
@@ -137,6 +148,9 @@ export default class Session {
         if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
             throw new Error("cannot add interaction to exploration, wrong explorationNumber.");
         }
+        if (this.explorationList[explorationNumber].isRemoved) {
+            throw new Error("cannot add interaction to exploration, exploration is removed.");
+        }
         const exploration = this._explorationList[explorationNumber];
         exploration.addInteractionList(interactionList);
     }
@@ -144,6 +158,9 @@ export default class Session {
     public getInteractionListOfExploration(explorationNumber: number): Interaction[] {
         if (explorationNumber < 0 || explorationNumber >= this._explorationList.length) {
             throw new Error("cannot add return InteractionList to exploration, wrong explorationNumber.");
+        }
+        if (this.explorationList[explorationNumber].isRemoved) {
+            throw new Error("cannot return InteractionList to exploration, exploration is removed.");
         }
         return this._explorationList[explorationNumber].interactionList;
     }
