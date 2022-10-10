@@ -27,11 +27,11 @@
                             <th scope="col" align="center">Date</th>
                             <th scope="col" align="center">Tester</th>
                             <th scope="col" align="center">Exploration</th>
-                            <th scope="col" align="center">Video</th>
+                            <th scope="col" align="center">Delete</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% session.explorationList.sort((a, b)=> new Date(b.startDate) - new Date(a.startDate)).forEach((exploration, explIndex) => { %>
+                        <% session.explorationList.filter((e) => ! e.isRemoved).sort((a, b)=> new Date(b.startDate) - new Date(a.startDate)).forEach((exploration, explIndex) => { %>
                             <tr>
                                 <td>
                                     <%= exploration.explorationNumber %>
@@ -98,13 +98,7 @@
                                     <%})%>
                                 </td>
                                 <td>
-                                    <% if (video.videoList.some(vi=> vi == exploration.explorationNumber)) {
-                                        %>
-                                        <a href="/static/video/<%=session.id%>_<%=exploration.explorationNumber%>.webm"><i
-                                                class="fas fa-video" style="color:red"></i></a>
-                                        <% } else { %>
-                                            <i class="fas fa-video-slash"></i>
-                                            <% } %>
+                                    <a href="/dashboard/session/<%=connectionCode %>/explorations/<%=exploration.explorationNumber%>/delete"><i class="fas fa-trash-alt"></i></a>
                                 </td>
                             </tr>
                             <%})%>

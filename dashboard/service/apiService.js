@@ -363,6 +363,20 @@ module.exports.getSessions = function (token) {
         });
 }
 
+module.exports.removeExploration = function (token, sessionId, explorationNumber) {
+    const apiRemoveExplorationURL = 'http://' + config.api.host + ':' + config.api.port + '/sessions/' + sessionId + '/explorations/' + explorationNumber;
+    return fetch(apiRemoveExplorationURL, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('cannot remove exploration');
+        }
+    })
+}
+
 module.exports.getCrossEntropyBySession = function (token, sessionId) {
     const SESSION_URL = `http://${config.api.host}:${config.api.port}/models/cross_entropy/session/${sessionId}`;
     const body = {

@@ -32,7 +32,7 @@
               <div class="session-card-left-container">
                 <div class="session-exploration">
                   <div>#Exploration</div>
-                  <div class="session-value"><%= sessionList[i].explorationList.length %></div>
+                  <div class="session-value"><%= sessionList[i].explorationList.filter((e) => !e.isRemoved).length %></div>
                 </div>
                 <div class="session-configuration">
                   <div>Configuration</div>

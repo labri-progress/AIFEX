@@ -1,4 +1,4 @@
-const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId, getCrossEntropyBySession, updateSession} = require('../service/apiService');
+const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId, getCrossEntropyBySession, updateSession, removeExploration} = require('../service/apiService');
 const { sessionToGravity } = require("../service/gravityService");
 
 const logger = require('../logger');
@@ -172,6 +172,21 @@ module.exports = function attachRoutes(app, config) {
                 logger.error(e);
                 let message = 'Cannot view the session';
                 res.render('error.ejs', { message, error: e, account: req.session })
+            });
+    });
+
+    app.get('/dashboard/session/:connectionCode/explorations/:explorationNumber/delete', (req, res) => {
+        const { connectionCode, explorationNumber } = req.params;
+        const [sessionId, modelId] = connectionCode.split('$');
+        logger.info(`GET delete exploration (explorationNumber = ${explorationNumber}) of session (sessionId = ${sessionId}), (modelId = ${modelId})`);
+        removeExploration(req.session.jwt, sessionId, explorationNumber)
+            .then(() => {
+                res.redirect(`/dashboard/session/${connectionCode}/explorations`);
+            })
+            .catch(e => {
+                let message = 'Cannot fetch the explorations';
+                logger.error(message);
+                res.render('error.ejs', { message, account: req.session, error: e })
             });
     });
 

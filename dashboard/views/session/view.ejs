@@ -30,7 +30,7 @@
                 
             
 
-            <%if (session.explorationList.length === 0) { %>
+            <%if (session.explorationList.filter((e) => ! e.isRemoved).length === 0) { %>
                 <div class="alert alert-warning" role="alert">
                     <strong>Warning!</strong> No exploration performed yet.
                 </div>
@@ -43,8 +43,8 @@
                                 <a href="/dashboard/session/<%=connectionCode %>/explorations"><canvas id="explorationChart"></canvas></a>
                                 <script>
                                     const explorationChartCanvas = document.getElementById('explorationChart');
-                                    const numbOfExplorationWithBugReport = <%= session.explorationList.map(explo => explo.interactionList.some(inter => inter.concreteType !== 'Action')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
-                                    const numbOfExplorationWithoutBugReport = <%= session.explorationList.length %> - numbOfExplorationWithBugReport;
+                                    const numbOfExplorationWithBugReport = <%= session.explorationList.filter((e) => ! e.isRemoved).map(explo => explo.interactionList.some(inter => inter.concreteType !== 'Action')).reduce((prev,cur) => cur?prev+1:prev,0) %>;
+                                    const numbOfExplorationWithoutBugReport = <%= session.explorationList.filter((e) => ! e.isRemoved).length %> - numbOfExplorationWithBugReport;
                                     const explorationChart = new Chart(explorationChartCanvas, {
                                         type: 'doughnut',
                                         data: {                    
@@ -70,7 +70,7 @@
                                                 },
                                                 title: {
                                                     display: true,
-                                                    text: '<%= session.explorationList.length %> Explorations',
+                                                    text: '<%= session.explorationList.filter(e => ! e.isRemoved).length %> Explorations',
                                                     font: {
                                                         size: 26
                                                     }
@@ -131,7 +131,7 @@
                                                 },
                                                 title: {
                                                     display: true,
-                                                    text: '<%= session.explorationList.map(explo => explo.interactionList.filter(interaction => interaction.concreteType === "Observation")).reduce((acc, curr) => acc+curr.length, 0) %> Bug Reports',
+                                                    text: '<%= session.explorationList.filter((e) => ! e.isRemoved).map(explo => explo.interactionList.filter(interaction => interaction.concreteType === "Observation")).reduce((acc, curr) => acc+curr.length, 0) %> Reports',
                                                     font: {
                                                         size: 26
                                                     }
