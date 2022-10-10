@@ -161,7 +161,7 @@ export default class Background {
     private takeScreenShot(interactionIndex: number | undefined): Promise<void> {
         return this._browserService.getStateFromStorage()
             .then((state) => {
-                if (state && state.explorationNumber && state.isRecording) {
+                if (state && state.explorationNumber !== undefined && state.isRecording) {
                     return this._browserService.takeScreenshot()
                         .then(image => {
                             logger.debug("Screenshot taken");

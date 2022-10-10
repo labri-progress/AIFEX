@@ -29,8 +29,8 @@ export default class ChromeBrowserService implements BrowserService {
         logger.debug(`get state`);
         return chrome.storage.local.get("AIFEX_STATE")
             .then( (result) => {
-                logger.debug(`result: ${result}`);
                 if (result  && result["AIFEX_STATE"]) {
+                    logger.debug(`state: ${JSON.stringify(result["AIFEX_STATE"])}`);
                     return new State(result["AIFEX_STATE"]);
                 } else {
                     return new State({});

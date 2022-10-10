@@ -78,10 +78,23 @@ export default class Highlighter {
                     })
                 }
             }).bind(this));
-            pmh.init()
+            pmh.init();
+            this._browserService.getStateFromStorage()
+            .then((state: State) => {
+                if (state.isRecording && state.sessionBaseURL && document.URL) {
+                    if (document.URL.startsWith(state.sessionBaseURL)) {
+                        this.show(state);
+                    }
+                }
+            })
+            .catch(e => {
+                logger.debug('error while getting the state');
+            })
         });      
 
     }
+
+    
 
     show(state: State): void {
         this._isShowing = true;

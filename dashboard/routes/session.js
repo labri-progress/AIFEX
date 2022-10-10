@@ -198,7 +198,7 @@ module.exports = function attachRoutes(app, config) {
 
         Promise.all([getSessionById(req.session.jwt,sessionId), getScreenshotsBySessionId(req.session.jwt,sessionId), getVideosBySessionId(req.session.jwt,sessionId)])
             .then(([session, screenshot, video]) => {
-                logger.debug(`video: ${JSON.stringify(video)}`);
+                logger.debug(`video: ${JSON.stringify(screenshot)}`);
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
 

@@ -33,7 +33,7 @@ export default class State {
         this.explorationLength = obj.explorationLength;
         this.popupPageKind = obj.popupPageKind || PopupPageKind.Home;
         this.isRecording = obj.isRecording === true ? true : false;
-        this.actionsAndObservations = [];
+        this.actionsAndObservations = obj.actionsAndObservations === undefined ? [] : obj.actionsAndObservations;
         this.probabilities = undefined;
     }
 
