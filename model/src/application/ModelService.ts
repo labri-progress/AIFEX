@@ -8,6 +8,7 @@ import FISModel from "../domain/FISModel";
 import CSPModel from "../domain/CSPModel";
 import Model from "../domain/Model";
 import SPModel from "../domain/SPModel";
+import { logger } from "../logger";
 
 const CACHE_SIZE = 5;
 
@@ -99,7 +100,13 @@ export default class ModelService {
             return model.getLinkedSessionIdList().includes(sessionId);
         });
         if (modelInCache) {
-            modelInCache.learnSequence(sequence);
+            const context = sequence.getContext();
+            if (context.length > 0) {
+                const stimulus = context.pop();
+                if (stimulus) {
+                    modelInCache.addStimulusKnowingContext(stimulus, modelInCache.fitContextToDepth(sequence.getContext()));
+                }
+            }
         }
     }
 

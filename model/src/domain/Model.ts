@@ -3,6 +3,7 @@ import NoteDistribution from "./NoteDistribution";
 import Stimulus from "./Stimulus";
 import Ngram from "./Ngram";
 import { generate } from "shortid";
+import Note from "./Note";
 
 const MAX_DEPTH = 10;
 
@@ -37,6 +38,8 @@ export default abstract class Model {
     private _sessionIdList: string[];
 
     public abstract learnSequence(sequence: Sequence): void;
+    public abstract addStimulusKnowingContext(stimulus: Stimulus, context: Stimulus[]): void;
+    public abstract addNoteKnowingContext(note: Note, context: Stimulus[]): void;
     public abstract getNoteDistributionListMap(sequence: Sequence): Map<string, NoteDistribution[]>;
     public abstract getStimulusProbabilityMap(sequence: Sequence): Map<string, number>;
     public abstract getAllNgram(): Ngram[];
@@ -93,7 +96,7 @@ export default abstract class Model {
         return coverages;
     }
 
-    protected fitContextToDepth(context: Stimulus[]): Stimulus[] {
+    public fitContextToDepth(context: Stimulus[]): Stimulus[] {
         if (context.length < (this.depth)) {
             return context;
         } else {

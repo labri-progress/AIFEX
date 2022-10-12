@@ -37,7 +37,6 @@ export default class CSPModel extends Model  {
             if (last instanceof Note) {
                 this.addNoteKnowingContext(last, this.fitContextToDepth(prefix.getContext()));
             } else if (last instanceof Stimulus) {
-                this.contextOccurs(context);
                 this.addStimulusKnowingContext(last, this.fitContextToDepth(prefix.getContext()));
             }
             sequence = prefix;
@@ -108,15 +107,16 @@ export default class CSPModel extends Model  {
         tree.contextOccurs(context);
     }
 
-    private addStimulusKnowingContext(stimulus: Stimulus, context: Stimulus[]): void {
+    addStimulusKnowingContext(stimulus: Stimulus, context: Stimulus[]): void {
         if (context.length !== 0) {
+            this.contextOccurs(context);
             const lastStimulusOfSequence = context[context.length - 1];
             const tree = this.findTreeByStimulus(lastStimulusOfSequence);
             tree.learnStimulusKnowingContext(stimulus, context);
         }
     }
 
-    private addNoteKnowingContext(note: Note, context: Stimulus[]): void {
+    addNoteKnowingContext(note: Note, context: Stimulus[]): void {
         if (context.length === 0) { return; }
         const lastStimulusOfSequence = context[context.length - 1];
         const tree = this.findTreeByStimulus(lastStimulusOfSequence);

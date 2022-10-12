@@ -4,6 +4,7 @@ import Stimulus from "./Stimulus";
 import Model from "./Model";
 import Ngram from "./Ngram";
 import ItemSet from "./ItemSet";
+import Note from "./Note";
 
 
 export default class FISModel extends Model {
@@ -74,6 +75,14 @@ export default class FISModel extends Model {
                 }
             }
         })
+    }
+
+    public addStimulusKnowingContext(stimulus: Stimulus, context: Stimulus[]): void {
+        throw new Error("Method not implemented.");
+    }
+    
+    public addNoteKnowingContext(note: Note, context: Stimulus[]): void {
+        throw new Error("Method not implemented.");
     }
 
     public getStimulusProbabilityMap(sequence: Sequence): Map<string, number> {

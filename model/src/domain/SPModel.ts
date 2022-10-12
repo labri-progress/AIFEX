@@ -8,6 +8,7 @@ import TreeSP from "./TreeSP";
 
 
 export default class SPModel extends Model {
+    
     private _treeRoot: TreeSP;
 
     constructor(depth: number, id?: string) {
@@ -42,6 +43,14 @@ export default class SPModel extends Model {
             }
             this._treeRoot.successorOccurs(interactions);
         });
+    }
+
+    public addStimulusKnowingContext(stimulus: Stimulus, context: Stimulus[]): void {
+        throw new Error("Method not implemented.");
+    }
+    
+    public addNoteKnowingContext(note: Note, context: Stimulus[]): void {
+        throw new Error("Method not implemented.");
     }
 
     public getNoteDistributionListMap(sequence: Sequence): Map<string, NoteDistribution[]> {
