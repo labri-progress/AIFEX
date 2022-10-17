@@ -221,7 +221,7 @@ export default class SessionService {
                         session.addInteractionListToExploration(explorationNumber, interactionList);
                     }
                     if (this.eventStore) {
-                        this.eventStore.notifySessionExploration(sessionId, session.explorationList[explorationNumber]);
+                        this.eventStore.notifySessionExploration(sessionId, session.explorationList[explorationNumber], undefined);
                     }
 
                     return this.sessionRepository.addExploration(sessionId, explorationNumber, tester, explorationStartDate)
