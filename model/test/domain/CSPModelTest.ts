@@ -90,6 +90,28 @@ describe("#learn", () => {
 
     });
 
+    it("should learn new stimulus with good occurences", () => {
+        const m = new CSPModel(3);
+        const seq1 = new Sequence();
+        seq1.addStimulus(new Stimulus("start"));
+        seq1.addStimulus(new Stimulus("home"));
+        seq1.addStimulus(new Stimulus("main"));
+        m.learnSequence(seq1);
+
+        seq1.addStimulus(new Stimulus("click1"));
+        seq1.addStimulus(new Stimulus("click2"));
+
+        m.learnNewStimulusAndNotesInSequence(seq1, [new Stimulus("click1"), new Stimulus("click2") ]);
+
+        let click1Tree = m.getTreeByStimulus(new Stimulus("click1"));
+        let click2Tree = m.getTreeByStimulus(new Stimulus("click2"));
+        if (click1Tree && click2Tree) {
+            expect(click1Tree.occurence).to.equal(1);
+            expect(click2Tree.occurence).to.equal(1);
+        }
+        expect(m.getAllNgram()).to.have.lengthOf(12);
+    });
+
     it("should return good ngram", () => {
         const m = new CSPModel(3);
         const seq1 = new Sequence();

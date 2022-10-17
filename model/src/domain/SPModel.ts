@@ -45,12 +45,13 @@ export default class SPModel extends Model {
         });
     }
 
-    public addStimulusKnowingContext(stimulus: Stimulus, context: Stimulus[]): void {
-        throw new Error("Method not implemented.");
-    }
-    
-    public addNoteKnowingContext(note: Note, context: Stimulus[]): void {
-        throw new Error("Method not implemented.");
+    public learnNewStimulusAndNotesInSequence(sequence: Sequence, newStimulusAndNotes: Array<Stimulus|Note>): void  {
+        if (newStimulusAndNotes.length === 0) {
+            this.learnSequence(sequence);
+        } else {
+            //TODO
+            throw new Error("Method not implemented.");
+        }
     }
 
     public getNoteDistributionListMap(sequence: Sequence): Map<string, NoteDistribution[]> {

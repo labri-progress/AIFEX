@@ -269,8 +269,8 @@ export default class SessionService {
                             });
                         session.addInteractionListToExploration(explorationNumber, interactionList);
                         if (this.eventStore) {
-                            this.eventStore.notifySessionExploration(sessionId, session.explorationList[explorationNumber]);
-                        }          
+                            this.eventStore.notifySessionExploration(sessionId, session.explorationList[explorationNumber], interactionList);
+                        }
                         return this.sessionRepository.updateInteractionListOfExploration(sessionId, explorationNumber, interactionList)
                         .then( () => {
                             const interactionList = session.explorationList[explorationNumber].interactionList;

@@ -9,6 +9,8 @@ import CSPModel from "../domain/CSPModel";
 import Model from "../domain/Model";
 import SPModel from "../domain/SPModel";
 import { logger } from "../logger";
+import Stimulus from "../domain/Stimulus";
+import Note from "../domain/Note";
 
 const CACHE_SIZE = 5;
 
@@ -95,18 +97,12 @@ export default class ModelService {
             });
     }
 
-    public hasNewSequence(sessionId: string, sequence: Sequence): void {
+    public hasNewSequence(sessionId: string, sequence: Sequence, newStimulusAndNotes: Array<Stimulus | Note>): void {
         const modelInCache = this.mountedModelList.find( (model) => {
             return model.getLinkedSessionIdList().includes(sessionId);
         });
         if (modelInCache) {
-            const context = sequence.getContext();
-            if (context.length > 0) {
-                const stimulus = context.pop();
-                if (stimulus) {
-                    modelInCache.addStimulusKnowingContext(stimulus, modelInCache.fitContextToDepth(sequence.getContext()));
-                }
-            }
+            modelInCache.learnNewStimulusAndNotesInSequence(sequence, newStimulusAndNotes);
         }
     }
 

@@ -5,6 +5,7 @@ import ActionInteraction from "../domain/ActionInteraction";
 import ObservationInteraction from "../domain/ObservationInteraction";
 import Exploration from "../domain/Exploration";
 import { logger } from '../logger';
+import Interaction from '../domain/Interaction';
 
 const QUEUE_NAME = 'aifex-session';
 
@@ -34,7 +35,7 @@ export default class EventStoreRabbit implements EventStore {
             })
     }
 
-    public notifySessionExploration(sessionId: string, exploration: Exploration): Promise<void> {
+    public notifySessionExploration(sessionId: string, exploration: Exploration, interactionList: Interaction[] | undefined): Promise<void> {
         const sequence: {
             concreteType: string,
             kind: string,
@@ -56,11 +57,40 @@ export default class EventStoreRabbit implements EventStore {
                     value : interaction.observation.value,
                 });
             }
-
         });
+
+        const newInteractions: {
+            concreteType: string,
+            kind: string,
+            value: string | undefined,
+        }[] = [];
+
+        let interactions = exploration.interactionList;
+        if (interactionList) {
+            interactions = interactionList;
+        }
+
+        interactions.forEach((interaction) => {
+            if (interaction instanceof ActionInteraction) {
+                newInteractions.push({
+                    concreteType : "Action",
+                    kind : interaction.action.prefix,
+                    value : interaction.action.suffix,
+                });
+            }
+            if (interaction instanceof ObservationInteraction) {
+                newInteractions.push({
+                    concreteType : "Observation",
+                    kind : interaction.observation.kind,
+                    value : interaction.observation.value,
+                });
+            }
+        });
+
 
         const msg = {
             exploration: sequence,
+            newInteractions,
             kind: "exploration",
             sessionId,
             explorationNumber: exploration.explorationNumber,

@@ -55,8 +55,22 @@ export default class RabbitDelegate {
                                                 seq.addNote(new Note(value));
                                             }
                                         });
+                                        let newInteractions : Array<Stimulus | Note> = [];
+                                        if (data.newInteractions !== undefined) {
+                                            data.newInteractions.forEach((interaction: any) => {
+                                                let value = interaction.kind;
+                                                if (interaction.value !== undefined) {
+                                                    value = value + "$" + interaction.value.split('?left')[0];
+                                                }
+                                                if (interaction.concreteType === "Action") {
+                                                    newInteractions.push(new Stimulus(value));
+                                                } else if (interaction.concreteType === "Observation") {
+                                                    newInteractions.push(new Note(value));
+                                                }
+                                            });
+                                        }
                                         logger.debug(`Received sequence: ${JSON.stringify(seq)}`);
-                                        subscriber.hasNewSequence(data.sessionId, seq);
+                                        subscriber.hasNewSequence(data.sessionId, seq, newInteractions);
                                         break;
                                     }
                                     default:

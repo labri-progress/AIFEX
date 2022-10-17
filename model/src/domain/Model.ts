@@ -38,8 +38,7 @@ export default abstract class Model {
     private _sessionIdList: string[];
 
     public abstract learnSequence(sequence: Sequence): void;
-    public abstract addStimulusKnowingContext(stimulus: Stimulus, context: Stimulus[]): void;
-    public abstract addNoteKnowingContext(note: Note, context: Stimulus[]): void;
+    public abstract learnNewStimulusAndNotesInSequence(sequence: Sequence, newStimulusAndNotes: Array<Stimulus|Note>): void;
     public abstract getNoteDistributionListMap(sequence: Sequence): Map<string, NoteDistribution[]>;
     public abstract getStimulusProbabilityMap(sequence: Sequence): Map<string, number>;
     public abstract getAllNgram(): Ngram[];
@@ -96,7 +95,7 @@ export default abstract class Model {
         return coverages;
     }
 
-    public fitContextToDepth(context: Stimulus[]): Stimulus[] {
+    protected fitContextToDepth(context: Stimulus[]): Stimulus[] {
         if (context.length < (this.depth)) {
             return context;
         } else {

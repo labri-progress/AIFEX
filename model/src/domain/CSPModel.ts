@@ -37,10 +37,30 @@ export default class CSPModel extends Model  {
             if (last instanceof Note) {
                 this.addNoteKnowingContext(last, this.fitContextToDepth(prefix.getContext()));
             } else if (last instanceof Stimulus) {
+                this.contextOccurs(context);
                 this.addStimulusKnowingContext(last, this.fitContextToDepth(prefix.getContext()));
             }
             sequence = prefix;
         }
+    }
+
+    public learnNewStimulusAndNotesInSequence(sequence: Sequence, newStimulusAndNotes: Array<Stimulus|Note>): void  {
+        if (newStimulusAndNotes.length === 0) {
+            this.learnSequence(sequence);
+        } else {
+            let prefix = sequence.getInteractions().slice(0, sequence.length - newStimulusAndNotes.length);
+            let prefixContext = this.fitContextToDepth(prefix);
+            newStimulusAndNotes.forEach((stimulusOrNote) => {
+                if (stimulusOrNote instanceof Stimulus) {
+                    this.contextOccurs(this.fitContextToDepth(prefixContext.concat(stimulusOrNote)));
+                    this.addStimulusKnowingContext(stimulusOrNote, prefixContext);
+                    prefixContext = this.fitContextToDepth(prefixContext.concat([stimulusOrNote]));
+                } else if (stimulusOrNote instanceof Note) {
+                    this.addNoteKnowingContext(stimulusOrNote, prefixContext);
+                }
+            });
+        }
+
     }
 
     public getNoteDistributionListMap(sequence: Sequence): Map<string, NoteDistribution[]> {
@@ -107,16 +127,15 @@ export default class CSPModel extends Model  {
         tree.contextOccurs(context);
     }
 
-    addStimulusKnowingContext(stimulus: Stimulus, context: Stimulus[]): void {
+    private addStimulusKnowingContext(stimulus: Stimulus, context: Stimulus[]): void {
         if (context.length !== 0) {
-            this.contextOccurs(context);
             const lastStimulusOfSequence = context[context.length - 1];
             const tree = this.findTreeByStimulus(lastStimulusOfSequence);
             tree.learnStimulusKnowingContext(stimulus, context);
         }
     }
 
-    addNoteKnowingContext(note: Note, context: Stimulus[]): void {
+    private addNoteKnowingContext(note: Note, context: Stimulus[]): void {
         if (context.length === 0) { return; }
         const lastStimulusOfSequence = context[context.length - 1];
         const tree = this.findTreeByStimulus(lastStimulusOfSequence);
