@@ -5,12 +5,12 @@ export default class Session {
     private _id: string;
     private _baseURL: string;
     private _name: string;
-    private _explorations: Action[];
+    private _explorations: Array<Array<Action>>;
 
     constructor(id: string,
         baseURL: string,
         name: string,
-        explorations: Action[]) 
+        explorations: Array<Array<Action>>) 
     {
         this._id = id;
         this._baseURL = baseURL;
@@ -30,7 +30,7 @@ export default class Session {
         return this._name;
     }
 
-    get explorations(): Action[] {
+    get explorations(): Array<Array<Action>> {
         return this._explorations.slice();
     }
 

@@ -15,12 +15,13 @@ export default class SessionRepositoryREST implements SessionRepository {
                 return response.json();
             })
             .then( (sessionData: any) => {
-                let explorations = sessionData.explorationList.map((exploration : any, explorationNumber : any) => {
-                    return exploration.interactionList
+                let explorations : Array<Array<Action>> = sessionData.explorationList.map((exploration : any, explorationNumber : any) => {
+                    let interactions : Action[] = exploration.interactionList
                         .filter((interaction: any) => interaction.concreteType ==="Action")
                         .map((interaction : any) => {
                             return new Action(interaction.kind, interaction.value);
                         });
+                    return interactions;
                 });
                 return new Session(sessionData.id, sessionData.baseURL, sessionData.name, explorations);
             });
