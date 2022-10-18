@@ -24,6 +24,10 @@ const config = {
     evaluator: {
         host: "evaluator",
         port: 80
+    },
+    generator: {
+        host: "generator",
+        port: 80
     }
 }
 

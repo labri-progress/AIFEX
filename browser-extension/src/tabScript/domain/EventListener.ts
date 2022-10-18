@@ -73,6 +73,7 @@ export default class EventListener {
                     this._backgroundService.sendAction(action).then(()=>{}).catch(()=>{});
                 }
             }
+            unsafeEvent.explored = true;
         }
     }
 
@@ -132,6 +133,7 @@ export default class EventListener {
                     this._backgroundService.sendAction(action).then(()=>{}).catch(()=>{});
                 }
             }
+            unsafeEvent.explored = true;
         }
     }
 

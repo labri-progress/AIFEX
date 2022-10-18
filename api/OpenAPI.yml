@@ -1254,6 +1254,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/Message'
 
+  /generator/session/{sessionId}/all-actions:
+    get:
+        description: generate tests that cover all actions of a session
+        parameters:
+          - in: path
+            name: sessionId
+            schema:
+              type: string
+            required: true
+            description: Id of the session
+        responses:
+         '200':
+            description: The tests
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    sessionId:
+                      type: string
+                    tests:
+                      type: string
+         '403':
+            description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Message'
+         '404':
+            description: NotFound
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Message'
+        security:
+          - bearerAuth: []
+
+
+
 components:
   schemas:
     Message:

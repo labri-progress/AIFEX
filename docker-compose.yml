@@ -58,6 +58,16 @@ services:
       - "session"
     restart: always
 
+  generator:
+    build:
+      context: generator/
+      dockerfile: ./Dockerfile.prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    depends_on:
+      - "mongo"
+      - "session"
+    restart: always
   api:
     build:
       context: api/

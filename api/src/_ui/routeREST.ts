@@ -1088,4 +1088,28 @@ export default function attachRoutes(app: Application, api: APIApplication) {
         });
     })
 
+    app.get("/generator/session/:sessionId/all-actions", (req, res) => {
+        const { sessionId } = req.params;
+        logger.info(`generate test for all actions for (sessionId : ${sessionId})`);
+        if (sessionId === undefined) {
+            logger.warn("sessionId is required")
+            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
+        }
+        api.generateTests(sessionId, req.token)
+        .then((tests: string) => {
+            if (tests === "Unauthorized") {
+                return res.sendStatus(NOT_FOUND_STATUS);
+            } else {
+                return res.json({
+                    sessionId,
+                    tests
+                })
+
+            }
+        }) .catch((e: Error) => {
+            logger.error(`error:${e}`);
+            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+        });
+    })
+
 }

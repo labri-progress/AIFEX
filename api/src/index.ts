@@ -7,6 +7,7 @@ import SessionServiceHTTP from "./_infra/SessionServiceHTTP";
 import APIApplication from "./application/APIApplication";
 import ModelServiceHTTP from "./_infra/ModelServiceHTTP";
 import EvaluatorServiceHTTP from "./_infra/EvaluatorServiceHTTP";
+import GeneratorServiceHTTP from "./_infra/GeneratorServiceHTTP";
 
 // Init Services
 
@@ -15,7 +16,8 @@ const webSiteService = new WebSiteServiceHTTP();
 const sessionService = new SessionServiceHTTP();
 const modelService = new ModelServiceHTTP();
 const evaluatorService = new EvaluatorServiceHTTP();
-const API = new APIApplication(accountService, webSiteService, sessionService, modelService, evaluatorService);
+const generatorService = new GeneratorServiceHTTP();
+const API = new APIApplication(accountService, webSiteService, sessionService, modelService, evaluatorService, generatorService);
 
 // Create RESTServer
 

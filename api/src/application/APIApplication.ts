@@ -23,6 +23,7 @@ import { RecordingMode } from "../domain/RecordingMode";
 import { SessionOverlayType } from "../domain/SessionOverlayType";
 import { debug } from "console";
 import { logger } from "../logger";
+import GeneratorService from "../domain/GeneratorService";
 
 export default class APIApplication {
 
@@ -32,13 +33,15 @@ export default class APIApplication {
     private _sessionService: SessionService;
     private _modelService: ModelService;
     private _evaluatorService: EvaluatorService;
+    private _generatorService: GeneratorService;
 
-    constructor(accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService, modelService: ModelService, evaluatorService: EvaluatorService) {
+    constructor(accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService, modelService: ModelService, evaluatorService: EvaluatorService, generatorService: GeneratorService) {
         this._accountService = accountService;
         this._webSiteService = webSiteService;
         this._sessionService = sessionService;
         this._modelService = modelService;
-        this._evaluatorService = evaluatorService
+        this._evaluatorService = evaluatorService;
+        this._generatorService = generatorService;
     }
 
     ping() {
@@ -772,6 +775,31 @@ export default class APIApplication {
                 if (isPublic || authorized || invited) {
                     return this._evaluatorService.evaluate(sessionId, actionList)
                         .then((result) => result);
+                } else {
+                    return "Unauthorized";
+                }
+            });   
+    }
+
+    generateTests(sessionId: string, token?: Token): Promise<string | "Unauthorized"> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._generatorService.generateTest(sessionId)
+                        .then((result) => {
+                            if (result === undefined) {
+                                return "Unauthorized";
+                            } else {
+                                return result;
+                            }
+                        });
                 } else {
                     return "Unauthorized";
                 }

@@ -63,6 +63,21 @@ services:
       - ./account/src/:/app/src
       - ./.logs/:/app/logs
 
+  generator:
+    build:
+      context: generator/
+      dockerfile: ./Dockerfile.dev
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    ports:
+      - 5006:80
+    volumes:
+      - ./generator/src/:/app/src
+      - ./.logs/:/app/logs
+    depends_on:
+      - "mongo"
+      - "session"
+    restart: always
 
   dashboard:
     build:
