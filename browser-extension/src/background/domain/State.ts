@@ -2,6 +2,8 @@ import Action from './Action';
 import Observation from './Observation';
 import {PopupPageKind} from './PopupPageKind';
 
+export type OverlayType = "rainbow" | "bluesky" | "shadow";
+
 export default class State {
     public connectedToSession : boolean;
     public serverURL : string | undefined;
@@ -18,6 +20,7 @@ export default class State {
     public isRecording : boolean;
     public actionsAndObservations : Array<Action | Observation>;
     public probabilities : [[string, number]] | undefined;
+    public overlayType: OverlayType;
 
     constructor(obj: any) {
         this.connectedToSession = obj.connectedToSession || false;
@@ -35,6 +38,7 @@ export default class State {
         this.isRecording = obj.isRecording === true ? true : false;
         this.actionsAndObservations = obj.actionsAndObservations === undefined ? [] : obj.actionsAndObservations;
         this.probabilities = undefined;
+        this.overlayType = "rainbow";
     }
 
 }

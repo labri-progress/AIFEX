@@ -28,34 +28,39 @@ export default class Highlighter {
 
         this._browserService.addListenerToChangeInState((oldState, newState) => {
             if (newState !== undefined) {
-                if (newState.isRecording === false && oldState !== undefined && oldState.isRecording === true) {
+                if (newState.overlayType === "shadow") {
                     this.hide();
-                } 
-                if (newState.isRecording === true) {
-                    if (newState.sessionBaseURL !== undefined && document.URL && document.URL.startsWith(newState.sessionBaseURL)) {
-                        if (oldState === undefined || oldState.isRecording === false) {
-                            this.show(newState);
+                } else {
+                    if (newState.isRecording === false) {
+                        if (oldState !== undefined && oldState.isRecording === true) {
+                            this.hide();
                         }
-                        else if (newState.probabilities) {
-                            if (oldState.probabilities) {
-                                if (newState.probabilities.length !== oldState.probabilities.length) {
-                                    logger.debug(`probabilities  different size`);
-                                    this.show(newState);
-                                } else {
-                                    for (let index = 0; index < newState.probabilities.length; index++) {
-                                        if (newState.probabilities[index][0] !== oldState.probabilities[index][0] || newState.probabilities[index][1] !== oldState.probabilities[index][1]) {
-                                            logger.debug(`not same probabilities`);
-                                            this.show(newState);
-                                        }
-                                    }
-                                    logger.debug('same proba');
-                                    logger.debug(`${newState.probabilities}`);
-                                }
-                            } else {
+                    } else {
+                        if (newState.sessionBaseURL !== undefined && document.URL && document.URL.startsWith(newState.sessionBaseURL)) {
+                            if (oldState === undefined || oldState.isRecording === false || oldState.overlayType === "shadow") {
                                 this.show(newState);
                             }
-                        } else {
-                            logger.debug('newState has no proba');
+                            else if (newState.probabilities) {
+                                if (oldState.probabilities) {
+                                    if (newState.probabilities.length !== oldState.probabilities.length) {
+                                        logger.debug(`probabilities  different size`);
+                                        this.show(newState);
+                                    } else {
+                                        for (let index = 0; index < newState.probabilities.length; index++) {
+                                            if (newState.probabilities[index][0] !== oldState.probabilities[index][0] || newState.probabilities[index][1] !== oldState.probabilities[index][1]) {
+                                                logger.debug(`not same probabilities`);
+                                                this.show(newState);
+                                            }
+                                        }
+                                        logger.debug('same proba');
+                                        logger.debug(`${newState.probabilities}`);
+                                    }
+                                } else {
+                                    this.show(newState);
+                                }
+                            } else {
+                                logger.debug('newState has no proba');
+                            }
                         }
                     }
                 }
@@ -67,7 +72,7 @@ export default class Highlighter {
                 if (this._isShowing) {
                     this._browserService.getStateFromStorage()
                     .then((state: State) => {
-                        if (state.isRecording && state.sessionBaseURL && document.URL) {
+                        if (state.overlayType === "rainbow" && state.isRecording && state.sessionBaseURL && document.URL) {
                             if (document.URL.startsWith(state.sessionBaseURL)) {
                                 this.show(state);
                             }
@@ -81,7 +86,7 @@ export default class Highlighter {
             pmh.init();
             this._browserService.getStateFromStorage()
             .then((state: State) => {
-                if (state.isRecording && state.sessionBaseURL && document.URL) {
+                if (state.overlayType === "rainbow" && state.isRecording && state.sessionBaseURL && document.URL) {
                     if (document.URL.startsWith(state.sessionBaseURL)) {
                         this.show(state);
                     }

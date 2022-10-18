@@ -1,15 +1,16 @@
 (() => {
-    let component = document.getElementById('makeExplorationComponent');
-    let makeExplorationTitle = document.getElementById('makeExplorationTitle');
-    let playButton = document.getElementById('play-button');
-    let stopButton = document.getElementById('stop-button');
-    let observationButton = document.getElementById('observation-button');
-    let observationSubComponent = document.getElementById('observationSubComponent');
-    let submitObservationButton = document.getElementById('submit-observation');
-    let observationForm = document.getElementById('observationForm');
-    let readObservationButton = document.getElementById('read-observation-button');
-    let observationList = document.getElementById('observation-list');
-
+    const component = document.getElementById('makeExplorationComponent');
+    const makeExplorationTitle = document.getElementById('makeExplorationTitle');
+    const playButton = document.getElementById('play-button');
+    const stopButton = document.getElementById('stop-button');
+    const observationButton = document.getElementById('observation-button');
+    const observationSubComponent = document.getElementById('observationSubComponent');
+    const submitObservationButton = document.getElementById('submit-observation');
+    const observationForm = document.getElementById('observationForm');
+    const readObservationButton = document.getElementById('read-observation-button');
+    const observationList = document.getElementById('observation-list');
+    const configurationSubComponent = document.getElementById('configurationComponent');
+    const overlayTypeCheckInput = document.getElementById('overlayType');
     let readObservationIsVisible = false;
     let addObservationIsVisible = false;
 
@@ -25,6 +26,12 @@
             stopButton.style.display = 'flex';
             observationSubComponent.style.display = 'flex';
             observationForm.style.display = 'none';
+            configurationSubComponent.style.display = 'flex';
+            if (state.overlayType === 'rainbow') {
+                overlayTypeCheckInput.checked = true;
+            } else {
+                overlayTypeCheckInput.checked = false;
+            }
 
             if (state.lastInteractionObservation) {
                 document.getElementById("observationType").value = state.lastInteractionObservation.kind;
@@ -50,6 +57,7 @@
             playButton.style.display = 'flex';
             stopButton.style.display = 'none';
             observationSubComponent.style.display = 'none';
+            configurationSubComponent.style.display = 'none';
         }
         
     }
@@ -161,11 +169,21 @@
         }
     }
 
+    function showOverlay() {
+        if (overlayTypeCheckInput.checked) {
+            state.overlayType = "rainbow";
+        } else {
+            state.overlayType = "shadow";
+        }
+        setStateToStorage(state);
+    }
+
     playButton.addEventListener('click', startExploration);
     stopButton.addEventListener('click', stopExploration);
     observationButton.addEventListener('click', openObservationView);
     submitObservationButton.addEventListener('click', submitObservation);
     readObservationButton.addEventListener('click', readObservations);
+    overlayTypeCheckInput.addEventListener('click', showOverlay);
 
     addComponent(render);
 
