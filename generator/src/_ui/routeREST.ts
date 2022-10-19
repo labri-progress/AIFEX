@@ -22,7 +22,7 @@ export default function attachRoutes(app: Express, generatorService: GeneratorSe
             } else {
                 res.json({
                     sessionId: req.params.sessionId,
-                    tests
+                    tests: tests.map(test => test.map(action => action.kind + "$" + action.value).join("->")).join("\n")                    
                 });
             }
         }).catch(err => {
