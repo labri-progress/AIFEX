@@ -1,7 +1,7 @@
 import Action from "./Action";
 import Session from "./Session";
 
-export function actionsStatistics(session: Session): Map<Action, number> {
+export function computeActionsStatistics(session: Session): Map<Action, number> {
     const statistics: Map<Action, number> = new Map();
     session.explorations.forEach(exploration => {
         exploration.forEach(action => {
@@ -14,4 +14,17 @@ export function actionsStatistics(session: Session): Map<Action, number> {
         });
     });
     return statistics;
+}
+
+export function getAllActions(session: Session): Action[] {
+    const actions: Action[] = [];
+    session.explorations.forEach(exploration => {
+        exploration.forEach(action => {
+            if (!actions.includes(action)) {
+                actions.push(action);
+            }
+        });
+    });
+    return actions;
+
 }

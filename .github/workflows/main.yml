@@ -14,6 +14,21 @@ jobs:
             node-version: '14.x'
     - name: install-typescript
       run: npm install -g typescript
+    - name: account
+      working-directory: ./account
+      run: |
+        npm install
+        tsc
+    - name: api
+      working-directory: ./api
+      run: |
+        npm install
+        tsc
+    - name: generator
+      working-directory: ./generator
+      run: |
+        npm install
+        tsc
     - name: model-compile
       working-directory: ./model
       run: |
@@ -47,7 +62,41 @@ jobs:
       - name: run unit tests
         working-directory: ./session
         run: npm test
-        
+  
+  account-unit-test:
+    name: Account Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+            node-version: '14.x'
+      - name: install test dependencies
+        working-directory: ./account
+        run: |
+          npm install
+          npm install -g mocha
+      - name: run unit tests
+        working-directory: ./account
+        run: npm test
+
+  generator-unit-test:
+    name: Account Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+            node-version: '14.x'
+      - name: install test dependencies
+        working-directory: ./generator
+        run: |
+          npm install
+          npm install -g mocha
+      - name: run unit tests
+        working-directory: ./generator
+        run: npm test
+
   model-unit-test:
     name: Model Unit Tests
     runs-on: ubuntu-latest
@@ -117,7 +166,7 @@ jobs:
       - name: build docker compose
         run: docker-compose -f docker-compose.yml -f docker-compose.github.yml up --build --no-start
       - name: start all but test
-        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml start mongo rabbitmq website session model dashboard evaluator account api reverseproxy
+        run: docker-compose -f docker-compose.yml -f docker-compose.github.yml start mongo rabbitmq website session model dashboard evaluator account api generator reverseproxy
       - name: install test dependencies
         working-directory: ./test
         run: |
