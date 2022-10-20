@@ -28,6 +28,7 @@ export default class EventListener {
                 this.listen();
             })
         } else {
+            this._explorationNumber = explorationNumber;
             this.listen();
         }        
             
@@ -52,6 +53,7 @@ export default class EventListener {
                 if (this._lastAction !== action.toString()) {
                     this._lastAction = action.toString();
                     if (this._explorationNumber !== undefined) {
+                        logger.debug(`action : ${action.toString()}`);
                         this._aifexService.sendAction(this._explorationNumber, action, this._serverURL, this._sessionId).then(()=>{}).catch(()=>{});
                     }
                 }

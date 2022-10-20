@@ -1,7 +1,10 @@
 const fetch = require('node-fetch');
 
-const DASHBOARD_URL = 'https://www.aifex.fr/browser-script';
-const CONNEXION_URL = 'https://www.aifex.fr/join?sessionId=dbrbk1-UK&modelId=7AvsC3ypo';
+//const DASHBOARD_URL = 'https://www.aifex.fr/browser-script';
+//const CONNEXION_URL = 'https://www.aifex.fr/join?sessionId=dbrbk1-UK&modelId=7AvsC3ypo';
+
+const DASHBOARD_URL = 'http://localhost/browser-script';
+const CONNEXION_URL = 'http://localhost/join?sessionId=ZQZ8DtnOW&modelId=LSssXkXXa';
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
