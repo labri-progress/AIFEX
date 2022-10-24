@@ -68,7 +68,7 @@
                                                 </span>
                                                 <% if (interaction.value !==undefined) { %>
                                                     <span class="value">
-                                                        <%= interaction.value.split('?left')[0] %>
+                                                        <%= interaction.value.split('?href')[0] %>
                                                     </span>
                                                     <%}%>
                                                         <span class="date">(time : <%= (new
@@ -86,7 +86,7 @@
                                                 == exploration.explorationNumber && sc.interactionIndex == intIndex)) { %>
                                                 <div>
                                                     <img  width="600" class="image-action" exploration-number="<%= exploration.explorationNumber %>" interaction-index="<%= intIndex %>"
-                                                    overlay-left="<%= interaction.value ? interaction.value.split('?left=')[1].split('&')[0] : 0%>"
+                                                    overlay-left="<%= interaction.value ? interaction.value.split('&left=')[1].split('&')[0] : 0%>"
                                                     overlay-top="<%= interaction.value ? interaction.value.split('&top=')[1].split('&')[0] : 0%>"
                                                     overlay-width="<%= interaction.value ? interaction.value.split('&width=')[1].split('&')[0] : 0%>"
                                                     overlay-height="<%= interaction.value ? interaction.value.split('&height=')[1].split('&')[0] : 0%>"

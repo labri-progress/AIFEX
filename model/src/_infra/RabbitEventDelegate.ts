@@ -47,7 +47,7 @@ export default class RabbitDelegate {
                                         exploration.forEach((interaction: any) => {
                                             let value = interaction.kind;
                                             if (interaction.value !== undefined) {
-                                                value = value + "$" + interaction.value.split('?left')[0];
+                                                value = value + "$" + interaction.value.split('?href')[0];
                                             }
                                             if (interaction.concreteType === "Action") {
                                                 seq.addStimulus(new Stimulus(value));
@@ -60,7 +60,7 @@ export default class RabbitDelegate {
                                             data.newInteractions.forEach((interaction: any) => {
                                                 let value = interaction.kind;
                                                 if (interaction.value !== undefined) {
-                                                    value = value + "$" + interaction.value.split('?left')[0];
+                                                    value = value + "$" + interaction.value.split('?href')[0];
                                                 }
                                                 if (interaction.concreteType === "Action") {
                                                     newInteractions.push(new Stimulus(value));
