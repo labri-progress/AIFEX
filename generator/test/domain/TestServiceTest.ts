@@ -3,7 +3,7 @@ const expect = chai.expect;
 import "mocha";
 import Action from "../../src/domain/Action";
 import Session from "../../src/domain/Session";
-import { computeCoverageScore, computeMinimalExplorationsCoveringAllActions, roundForMinimalExplorationsCoveringAllActions} from "../../src/domain/TestService";
+import { computeCoverageScore, computeMinimalExplorationsCoveringAllActions, minimizationRound} from "../../src/domain/TestService";
 
 describe("computeCoverageScore", () => {
     it("should return 0 (empty, empty)", () => {
@@ -31,31 +31,31 @@ describe("computeCoverageScore", () => {
         expect(score).to.equal(0.5);
     });
 });
-describe("roundForMinimalExplorationsCoveringAllActions", () => {
+describe("minimizationRound", () => {
     it("should return empty sets", () => {
-        const roundResult = roundForMinimalExplorationsCoveringAllActions([], []);
-        expect(roundResult.explorationToKeep.length).to.equal(0);
-        expect(roundResult.lastExplorations.length).to.equal(0);
-        expect(roundResult.lastActionsToCover.length).to.equal(0);
+        const roundResult = minimizationRound([], []);
+        expect(roundResult.test.length).to.equal(0);
+        expect(roundResult.lastingTests.length).to.equal(0);
+        expect(roundResult.lastingActions.length).to.equal(0);
     });
     it("should return the good exploration (start, start)", () => {
         const start = new Action("start");
-        const roundResult = roundForMinimalExplorationsCoveringAllActions([[start]], [start]);
-        expect(roundResult.explorationToKeep.length).to.equal(1);
-        expect(roundResult.explorationToKeep[0]).to.equal(start);
-        expect(roundResult.lastExplorations.length).to.equal(0);
-        expect(roundResult.lastActionsToCover.length).to.equal(0);
+        const roundResult = minimizationRound([[start]], [start]);
+        expect(roundResult.test.length).to.equal(1);
+        expect(roundResult.test[0]).to.equal(start);
+        expect(roundResult.lastingTests.length).to.equal(0);
+        expect(roundResult.lastingActions.length).to.equal(0);
     });
     it("should return the good exploration", () => {
         const start = new Action("start");
         const home = new Action("home");
         const end = new Action("end");
-        const roundResult = roundForMinimalExplorationsCoveringAllActions([[start, home, end], [start, home], [start]], [start, home]);
-        expect(roundResult.explorationToKeep.length).to.equal(2);
-        expect(roundResult.explorationToKeep[0]).to.equal(start);
-        expect(roundResult.explorationToKeep[1]).to.equal(home);
-        expect(roundResult.lastExplorations.length).to.equal(2);
-        expect(roundResult.lastActionsToCover.length).to.equal(0);
+        const roundResult = minimizationRound([[start, home, end], [start, home], [start]], [start, home]);
+        expect(roundResult.test.length).to.equal(2);
+        expect(roundResult.test[0]).to.equal(start);
+        expect(roundResult.test[1]).to.equal(home);
+        expect(roundResult.lastingTests.length).to.equal(2);
+        expect(roundResult.lastingActions.length).to.equal(0);
     });
 });
 describe("computeMinimalExplorationsCoveringAllActions", () => {
