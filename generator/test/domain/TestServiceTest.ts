@@ -23,12 +23,12 @@ describe("computeCoverageScore", () => {
     it("should return 1 (start, start)", () => {
         const start = new Action("start");
         const score = computeCoverageScore([start], [start]);
-        expect(score).to.equal(1);
+        expect(score).to.equal(1.2);
     });
     it("should return 0.5 (start - start, start)", () => {
         const start = new Action("start");
         const score = computeCoverageScore([start, start], [start]);
-        expect(score).to.equal(0.5);
+        expect(score).to.equal(0.6);
     });
 });
 describe("minimizationRound", () => {
