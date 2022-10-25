@@ -1,0 +1,13 @@
+<% let selector = action.value ? action.value.split('?href')[0] : undefined;
+if (action.kind.toLowerCase() === 'click') {
+    if (selector) { %>
+    // Action-<%=ia%>
+    await page.click('<%= selector %>');
+    <% } 
+} else if (action.kind.toLowerCase() === 'edit') {
+    if (selector) { %>
+    // Action-<%=ia%>
+    const VALUE_FOR_ACTION_<%=ia%> = 'TODO';
+    await page.fill('<%= selector %>', VALUE_FOR_ACTION_<%=ia%>);
+    <% }
+} %> 

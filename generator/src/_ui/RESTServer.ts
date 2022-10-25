@@ -21,6 +21,8 @@ export default class RESTServer {
     public start():void {
         // Create server
         const app: Express = express();
+        app.set('view engine', 'ejs');
+        app.set('views', path.join(__dirname, '../domain/views'))
         const port = process.env.PORT || this.port;
         const server = http.createServer(app);
 

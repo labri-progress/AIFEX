@@ -1,0 +1,21 @@
+it('test-<%= i+1 %> should pass ', async () => {
+    <% let action = test.find((action) => { 
+        if (action.value) {
+            let hrefValue = action.value.split('?href=')[1];
+            if (hrefValue) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    });
+    let href = action.value.split('?href=')[1].split('&')[0]; %>
+
+    await page.goto('<%= href %>');
+
+    <% test.forEach((action, ia) => { %>
+    <%- include('testAction', {action, ia}); %>
+    <% }); %>
+});
