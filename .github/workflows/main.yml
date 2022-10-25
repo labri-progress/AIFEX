@@ -81,7 +81,7 @@ jobs:
         run: npm test
 
   generator-unit-test:
-    name: Account Unit Tests
+    name: Generator Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
