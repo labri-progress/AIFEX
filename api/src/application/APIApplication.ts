@@ -562,6 +562,25 @@ export default class APIApplication {
             });
     }
 
+    computeActionOccurences(modelId: string, token?: Token): Promise<"Unauthorized" | Map<string,number>> {
+        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Model, modelId), this.getAccount(token)])
+            .then(([isPublic, maybeAccount]) => {
+                let authorized = false;
+                let invited = false;
+                if (maybeAccount !== "Unauthorized") {
+                    const account: Account = maybeAccount;
+                    authorized = account.authorizationSet.some((authorization) => authorization.key === modelId && authorization.kind === Kind.Model);
+                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === modelId && invitation.authorization.kind === Kind.Model);
+                }
+                if (isPublic || authorized || invited) {
+                    return this._modelService.computeActionOccurences(modelId)
+                            .then((result) => result);
+                } else {
+                    return "Unauthorized";
+                }
+            });
+    }
+
     getObservationDistributions(modelId: string, interactionList: (Action | Observation)[], token?: Token): Promise<"Unauthorized" | Map<string,ObservationDistribution[]>> {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Model, modelId), this.getAccount(token)])
             .then(([isPublic, maybeAccount]) => {

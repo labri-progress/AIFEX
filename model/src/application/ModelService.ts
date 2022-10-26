@@ -117,6 +117,17 @@ export default class ModelService {
             });
     }
 
+    public getStimulusOccurenceMap(modelId: string): Promise<Map<string, number>> {
+        return this.mountModel(modelId)
+            .then((model) => {
+                if (model) {
+                    return model.getStimulusOccurenceMap();
+                } else {
+                    return new Map();
+                }
+            });
+    }
+
     public getNoteDistributionListMap(modelId: string, sequence: Sequence): Promise<Map<string, NoteDistribution[]>> {
         return this.mountModel(modelId)
             .then((model) => {

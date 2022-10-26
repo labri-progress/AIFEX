@@ -749,7 +749,30 @@ export default function attachRoutes(app: Application, api: APIApplication) {
                     res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
                 });
         }
+    });
 
+    app.get("/models/:modelId/action-occurences", (req, res) => {
+        const modelId = req.params.modelId;
+        logger.info(`get action occurences`);
+        
+        if (modelId === undefined ) {
+            logger.warn(`modelId is undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).json({message:"No modelId"});
+        } else {
+            api.computeActionOccurences(modelId, req.token)
+                .then(occurences => {
+                    if (occurences === "Unauthorized") {
+                        res.status(FORBIDDEN_STATUS).json({message:"Unauthorized"});
+                    } else {
+                        logger.info("occurences are computed");
+                        res.json({occurences:Array.from(occurences)});
+                    }
+                })
+                .catch((e) => {
+                    logger.error(`error:${e}`);
+                    res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
+                });
+        }
     });
 
     app.post("/models/:modelId/observation-distributions", (req, res) => {

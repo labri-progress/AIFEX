@@ -251,5 +251,34 @@ export default class AifexServiceHTTP implements AifexService {
 			})
 	}
 
+	getOccurences(
+		serverURL: string,
+		modelId: string
+	): Promise<[[string, number]]> {
+		const option = {
+			method: "GET",
+			headers: { 'Content-Type': 'application/json' },
+		};
+		return fetch(
+			`${serverURL}/api/models/${modelId}/action-occurrences`,
+			option
+		)
+			.then((response) => {
+				if (response.status === OK_STATUS) {
+					return response
+						.json()
+						.then((jsonMap) => {
+							return jsonMap.occurences;
+						});
+				} else if (response.status === INVALID_PARAMETERS_STATUS) {
+					return Promise.reject(`modelId is malformed`);
+				} else if (response.status === INTERNAL_SERVER_ERROR_STATUS) {
+					return Promise.reject(`server error`);
+				} else {
+					return [];
+				}	
+			})
+	}
+
 	
 }

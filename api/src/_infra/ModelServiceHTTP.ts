@@ -169,4 +169,27 @@ export default class ModelServiceHTTP implements ModelService {
                 }
             })
     }
+
+    computeActionOccurences(modelId: string): Promise<Map<string, number>> {
+        const StimulusOccurenceMapURL = MODEL_URL + modelId + '/getstimulusoccurencemap';
+        let option = {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        }
+        return fetch(StimulusOccurenceMapURL, option)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                        .then(json => {
+                            let probMap : Map<string,number> = new Map();
+                            json.forEach((proba: [string, number])  => {
+                                probMap.set(proba[0], proba[1]);
+                            });
+                            return probMap;
+                        });
+                } else {
+                    return new Map();
+                }
+            })
+    }
 }

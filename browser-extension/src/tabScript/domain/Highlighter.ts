@@ -117,7 +117,7 @@ export default class Highlighter {
             state.probabilities.forEach(([locator, proba]) => {
                 let kindValue = locator.split('$');
                 if (kindValue.length > 1) {
-                    let locator = kindValue[1];
+                    let locator = kindValue[1].split('?href=')[0];
                     logger.debug(`${locator}`);
                     let elements = querySelectorAllDeep(locator);
                     logger.debug(`there are ${elements.length} elements`);
@@ -125,17 +125,17 @@ export default class Highlighter {
                         if (element instanceof HTMLElement || element instanceof SVGElement) {
                             element.setAttribute("aifex_style", "true");
                             if (this._highlighterCanvas) {
-                                if (proba > WARM_COLOR_THRESHOLD) {
+                                //if (proba > WARM_COLOR_THRESHOLD) {
                                     element.setAttribute("aifex_frequency", "often")
                                     this._highlighterCanvas.highlightElement(element, oftenColor)
-                                } else if (proba > MEDIUM_COLOL_THRESHOLD && element.getAttribute("aifex_frequency") !== "often") {
-                                    element.setAttribute("aifex_frequency", "sometimes")
-                                    this._highlighterCanvas.highlightElement(element, sometimesColor)
+                                // } else if (proba > MEDIUM_COLOL_THRESHOLD && element.getAttribute("aifex_frequency") !== "often") {
+                                //     element.setAttribute("aifex_frequency", "sometimes")
+                                //     this._highlighterCanvas.highlightElement(element, sometimesColor)
                 
-                                } else if (proba > COLD_COLOR_THRESHOLD && element.getAttribute("aifex_frequency") !== "often" && element.getAttribute("aifex_frequency") !== "sometimes") {
-                                    element.setAttribute("aifex_frequency", "rarely")
-                                    this._highlighterCanvas.highlightElement(element, rarelyColor)
-                                }
+                                // } else if (proba > COLD_COLOR_THRESHOLD && element.getAttribute("aifex_frequency") !== "often" && element.getAttribute("aifex_frequency") !== "sometimes") {
+                                //     element.setAttribute("aifex_frequency", "rarely")
+                                //     this._highlighterCanvas.highlightElement(element, rarelyColor)
+                                // }
                             } else {
                                 logger.debug(`there is no highlighterCanvas`);
                             }

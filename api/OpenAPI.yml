@@ -781,6 +781,41 @@ paths:
       security:
         - bearerAuth: []
 
+  /models/{modelId}/action-occurences:
+    get:
+      description: get actions occurences of the model
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: Id of the model
+      responses:
+        '200':
+          description: The computed occurences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  occurences:                  
+                      type: array
+                      items:
+                        type: array
+                        items:
+                          oneOf:
+                            - type: string
+                            - type: integer
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - bearerAuth: []
+
   /models/cross_entropy/session/{sessionId}:
     post:
       description: get crossentropy evolution of the explorations of a session

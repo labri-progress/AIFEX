@@ -22,4 +22,6 @@ export default interface ModelService {
 
     getAllNgram(modelId: string): Promise<Ngram[]>;
 
+    computeActionOccurences(modelId: string): Promise<Map<string, number>>;
+
 }

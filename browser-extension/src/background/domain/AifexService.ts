@@ -24,4 +24,6 @@ export default interface AifexService {
 
 	getProbabilities(serverURL: string, modelId: string, actions: Action[]): Promise<[[string, number]]>;
 
+	getOccurences(serverURL: string, modelId: string): Promise<[[string, number]]>;
+
 }

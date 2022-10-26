@@ -17,8 +17,8 @@
             <div class="card card-body">
 
             <div id="connection-mode" class="session-card">
-                <h4>Explore your WebSite</h4>
-                <div>Copy this connection code in the AIFEX browser extension</div>
+                <h4>Make some explorations</h4>
+                <div>Use our AIFEX browser extension to make some new explorations (you will have to use this connection code) </div>
                 <div id="copy-connection-code" class="copy-connection-code-component" connexion_code="<%=serverURL%>" title="Copy in clipboard" data-toggle="tooltip" data-placement="top">
                     <span class="copy-connection-code-button"><i class="fas fa-lg fa-copy copy-icon"></i></span>
                     <span class="copy-connection-code-text">Connection code</span>
@@ -151,6 +151,14 @@
                 <div class="row">
                     <div class="col-sm-12 justify-content-center">
                         <%- include ('./crossEntropy', {account}) %>
+                    </div>
+                </div>
+
+                <br></br>
+
+                <div class="row">
+                    <div class="col-sm-12 justify-content-center">
+                        <textarea name="test-code" rows="15" cols="60" id="test-code" required><%=tests%></textarea>
                     </div>
                 </div>
 

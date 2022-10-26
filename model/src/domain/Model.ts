@@ -43,6 +43,17 @@ export default abstract class Model {
     public abstract getStimulusProbabilityMap(sequence: Sequence): Map<string, number>;
     public abstract getAllNgram(): Ngram[];
 
+    public getStimulusOccurenceMap(): Map<string, number> {
+        const occurenceMap = new Map();
+        const ngrams = this.getAllNgram();
+        ngrams.forEach((ngram) => {
+            if (ngram.n === 1) {
+                occurenceMap.set(ngram.key, ngram.occurence);
+            }
+        });
+        return occurenceMap;
+    }
+
     public linkWithSession(sessionId: string): void {
         if (!this._sessionIdList.includes(sessionId)) {
             this._sessionIdList.push(sessionId);

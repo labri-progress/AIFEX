@@ -12,10 +12,6 @@ it('test-<%= i+1 %> should pass ', async () => {
         }
     });
     let href = action.value.split('?href=')[1].split('&')[0]; %>
-
     await page.goto('<%= href %>');
-
-    <% test.forEach((action, ia) => { %>
-    <%- include('testAction', {action, ia}); %>
-    <% }); %>
+    <% test.forEach((action, ia) => { %><%- include('testAction', {action, ia}); %><% }); %>
 });

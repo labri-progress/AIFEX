@@ -112,7 +112,8 @@ export default class Background {
                             }
                         })
 
-                        promises.push(this._aifexService.getProbabilities(state.serverURL, state.modelId, actions));
+                        //promises.push(this._aifexService.getProbabilities(state.serverURL, state.modelId, actions));
+                        promises.push(this._aifexService.getOccurences(state.serverURL, state.modelId));
                     }
 
                     if (state.takeAScreenshotByAction) {

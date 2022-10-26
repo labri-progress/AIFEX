@@ -1,4 +1,4 @@
-const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId, getCrossEntropyBySession, updateSession, removeExploration} = require('../service/apiService');
+const { getWebSites, createSession, removeSession, createModel, linkModelToSession, getScreenshotsBySessionId, getSessionById, getModelById, getVideosBySessionId, getAllNgrams, isAuthorizationPublic, makeConnexionCodePublic, revokePublicConnexionCode , getEvaluatorBySessionId, getCrossEntropyBySession, updateSession, removeExploration, generateTests} = require('../service/apiService');
 const { sessionToGravity } = require("../service/gravityService");
 
 const logger = require('../logger');
@@ -149,9 +149,10 @@ module.exports = function attachRoutes(app, config) {
             getVideosBySessionId(req.session.jwt,sessionId), 
             isAuthorizationPublic("Session",sessionId), 
             getEvaluatorBySessionId(req.session.jwt, sessionId), 
-            getCrossEntropyBySession(req.session.jwt, sessionId)
+            getCrossEntropyBySession(req.session.jwt, sessionId),
+            generateTests(req.session.jwt, sessionId)
         ])
-            .then(([session, model, screenshot, video, isSessionPublic, evaluator, crossEntropy]) => {
+            .then(([session, model, screenshot, video, isSessionPublic, evaluator, crossEntropy, tests]) => {
                 const participants = Array.from(session.explorationList.reduce((acc, curr) => acc.add(curr.testerName), new Set()))
                 session.participants = participants;
                 res.render('session/view.ejs', {
@@ -165,7 +166,8 @@ module.exports = function attachRoutes(app, config) {
                     screenshot,
                     video,
                     isSessionPublic,
-                    crossEntropy
+                    crossEntropy,
+                    tests: tests.tests
                 });
             })
             .catch(e => {

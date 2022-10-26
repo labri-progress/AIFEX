@@ -657,6 +657,22 @@ module.exports.revokePublicConnexionCode = function (token, sessionId, modelId, 
 }
 
 
+module.exports.generateTests = function (token, sessionId) {
+    let generateTestsURL = 'http://' + config.api.host + ':' + config.api.port + '/generator/session/' + sessionId + '/all-actions';
+    let generateTests = fetch(generateTestsURL, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` }
+    });
+    return generateTests
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('cannot generate tests');
+            }
+        });
+}
+
 
 
 

@@ -154,6 +154,27 @@ export default function attachRoutes(app: Express, modelService: ModelService): 
             });
     });
 
+    app.get("/model/:modelId/getstimulusoccurencemap", (req, res) => {
+        const { modelId } = req.params;
+        logger.info(`getstimulusoccurencemap for modelId:${modelId}`);
+
+        if (modelId === undefined) {
+            logger.warn(`modelId must not be undefined`);
+            res.status(INVALID_PARAMETERS_STATUS).send("modelId is undefined");
+            return;
+        }
+        modelService.getStimulusOccurenceMap(modelId)
+            .then((occurenceMap) => {
+                let resultAsArray = Array.from(occurenceMap);
+                logger.debug(`return occurenceMap:`+JSON.stringify(resultAsArray));
+                return res.json(resultAsArray);
+            })
+            .catch((e) => {
+                logger.error(`getstimulusoccurencemap error ${e}`);
+                res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: e.message });
+            });
+    });
+
     app.post("/model/:modelId/getobservationdistributions", (req, res) => {
         const { interactionList } = req.body;
         const { modelId } = req.params;
