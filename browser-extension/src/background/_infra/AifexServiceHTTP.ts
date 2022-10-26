@@ -260,7 +260,7 @@ export default class AifexServiceHTTP implements AifexService {
 			headers: { 'Content-Type': 'application/json' },
 		};
 		return fetch(
-			`${serverURL}/api/models/${modelId}/action-occurrences`,
+			`${serverURL}/api/models/${modelId}/action-occurences`,
 			option
 		)
 			.then((response) => {
