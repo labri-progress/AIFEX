@@ -26,4 +26,5 @@ afterEach(async () => {
   await page.close();
 });
 
-<% tests.forEach((test,i) => { %><%- include('testCase', {test, i}); %><% }); %>
+<% tests.forEach((test,i) => { %><%- include('testCase', {test, i}); %>
+<% }); %>

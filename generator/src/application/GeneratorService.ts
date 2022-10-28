@@ -36,6 +36,7 @@ export default class GeneratorService {
                         if (actionStat) {
                             const THRESHOLD = 0.8; // 80% of the actions (occurences)
                             if (((currentCoverageInPercent + actionStat) / totalOccurence)  < 0.8) {
+                                currentCoverageInPercent += actionStat;
                                 actionsToCover.push(action);
                             }
                         }
@@ -49,7 +50,7 @@ export default class GeneratorService {
                         tests.push(path);
                     });
                     logger.debug(`there are ${tests.length} tests`);
-                    
+
                     logger.debug(`now we minimize`);
                     return minimizeTests(tests, actionsToCover);
                 } else {
