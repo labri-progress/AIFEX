@@ -19,23 +19,37 @@ export default class GeneratorService {
                     return Promise.resolve(undefined);
                 }
                 const stats = computeActionsStatistics(session);
-                const actionsSorted = (new Array(...stats.entries())).sort((a, b) => a[1] - b[1]).map(([ac,nu]) => ac);
-                if (actionsSorted.length > 0) {
-                    logger.debug(`there are ${actionsSorted.length} actions`);
-                    logger.debug(`the first one is ${actionsSorted[0].kind}`);
-                    logger.debug(`the second one is ${actionsSorted[1].kind}`);
+                if (stats.size > 0) {
                     const eg = new EventGraph();
                     session.explorations.forEach((exploration) => eg.addExploration(exploration));
                     logger.debug(`the EventGraph has ${eg.actions.size} actions`);
-                    const tests : Action[][] = [];
-                    const MAX_NB_ACTIONS = 4;
-                    const actionsToCover = actionsSorted.slice(0, MAX_NB_ACTIONS)
+
+                    let totalOccurence= 0;
+                    stats.forEach((stat) => {totalOccurence += stat});
+                    const actionsSorted = (new Array(...stats.entries())).sort((a, b) => a[1] - b[1]).map(([ac,nu]) => ac);
+                    logger.debug(`there are ${actionsSorted.length} actions`);
+                    
+                    const actionsToCover : Action[] = []
+                    let currentCoverageInPercent = 0;
+                    actionsSorted.forEach((action) => {
+                        const actionStat = stats.get(action);
+                        if (actionStat) {
+                            const THRESHOLD = 0.8; // 80% of the actions (occurences)
+                            if (((currentCoverageInPercent + actionStat) / totalOccurence)  < 0.8) {
+                                actionsToCover.push(action);
+                            }
+                        }
+                    });
                     logger.debug(`there are ${actionsToCover.length} actions to cover`);
+
+                    const tests : Action[][] = [];
                     actionsToCover.forEach((action) => {
                         const path = eg.shortPathToTarget(action);
                         logger.debug(`the path is ${path.map((a) => `${a.kind}$${a.value?.split('?href')[0]}` ).join(' -> ')}`);
                         tests.push(path);
                     });
+                    logger.debug(`there are ${tests.length} tests`);
+                    
                     logger.debug(`now we minimize`);
                     return minimizeTests(tests, actionsToCover);
                 } else {

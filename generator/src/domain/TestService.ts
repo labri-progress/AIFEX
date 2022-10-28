@@ -33,7 +33,7 @@ export function computeCoverageScore(test: Action[], actionsToCover: Action[]): 
     if (test.length !== 0) {
         const BONUS_MULTI_COVERED_ACTIONS = 1.20;
         actionsToCover.forEach(action => {
-            if (test.some((testAction) => sameAction(testAction, action))) {
+            if (test.some((testAction) => testAction.isEqualTo(action))) {
                 score += 1;
                 score = score * BONUS_MULTI_COVERED_ACTIONS;
             }
@@ -52,20 +52,9 @@ export function minimizationRound(tests: Action[][], actionsToCover: Action[]): 
         const indexOfMaxScore = scores.indexOf(maxScore);
         const test = tests[indexOfMaxScore];
         const lastingTests = tests.filter((test, index) => index !== indexOfMaxScore);
-        const lastingActions = actionsToCover.filter(action => !test.some(testAction => sameAction(testAction,action)));
+        const lastingActions = actionsToCover.filter(action => !test.some(testAction => testAction.isEqualTo(action)));
         return {test, lastingTests, lastingActions};
     }
 }
 
-function sameAction(action1: Action, action2: Action): boolean {
-    return actionKey(action1) === actionKey(action2);
-}
-
-function actionKey(action: Action) {
-    let key = action.kind;
-    if (action.value !== undefined) {
-        key += '$' + action.value.split('?href')[0];
-    }
-    return key;
-}
 

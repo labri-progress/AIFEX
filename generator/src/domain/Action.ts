@@ -8,4 +8,16 @@ export default class Action {
         this.kind = kind;
         this.value = value;
     }
+
+    get key(): string {
+        let key = this.kind;
+        if (this.value !== undefined) {
+            key += '$' + this.value.split('?href')[0];
+        }
+        return key;
+    }
+
+    isEqualTo(other: Action): boolean {
+        return this.key === other.key;
+    }
 }
