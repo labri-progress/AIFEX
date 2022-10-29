@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 
 const DASHBOARD_URL = 'https://www.aifex.fr/browser-script';
-const CONNEXION_URL = 'https://www.aifex.fr/join?sessionId=1kY5WJGwe&modelId=Le8Pplzkb';
+const CONNEXION_URL = 'https://www.aifex.fr/join?sessionId=7r1BH5nE7&modelId=gOP4akH6n';
 
 //const DASHBOARD_URL = 'http://localhost/browser-script';
 //const CONNEXION_URL = 'http://localhost/join?sessionId=ZQZ8DtnOW&modelId=LSssXkXXa';

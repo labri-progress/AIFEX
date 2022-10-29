@@ -13,14 +13,6 @@ export default class EventGraph {
         this.addExploration([new Action('start')]);
     }
 
-    private actionToKey(action: Action): string {
-        if (action.value) {
-            return action.kind + "$" + action.value.split('?')[0];
-        } else {
-            return action.kind;
-        }
-    }
-
     get adjMatrix(): boolean[][] {
         return this._adjMatrix.slice();
     }
@@ -36,10 +28,10 @@ export default class EventGraph {
     addExploration(actions: Action[]): void {
         let lastActionIndex : number | undefined = undefined
         actions.forEach((action) => {
-            let actionIndex = this._indexes.get(this.actionToKey(action));
+            let actionIndex = this._indexes.get(action.key);
             if (actionIndex === undefined) {
                 actionIndex = this._adjMatrix.length;
-                this._indexes.set(this.actionToKey(action), actionIndex);
+                this._indexes.set(action.key, actionIndex);
                 this._actions.set(actionIndex, action);
                 this._adjMatrix.push([]);
             }
@@ -52,10 +44,8 @@ export default class EventGraph {
     }
 
     dijkstra(start: Action, end: Action): Action[] {
-        const startKey = this.actionToKey(start);
-        const endKey = this.actionToKey(end);
-        const startIdx = this._indexes.get(startKey);
-        const endIdx = this._indexes.get(endKey);
+        const startIdx = this._indexes.get(start.key);
+        const endIdx = this._indexes.get(end.key);
         if (startIdx === undefined || endIdx === undefined) {
             return [];
         }

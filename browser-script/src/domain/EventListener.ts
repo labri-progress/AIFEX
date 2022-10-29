@@ -169,7 +169,7 @@ export default class EventListener {
 
                 const rect = event.target.getBoundingClientRect();
                 if (rect) {
-                    suffix +=`?left=${rect.left}&top=${rect.top}&right=${rect.right}&bottom=${rect.bottom}&width=${rect.width}&height=${rect.height}&screenwidth=${window.innerWidth}&screenheight=${window.innerHeight}`;
+                    suffix +=`&left=${rect.left}&top=${rect.top}&right=${rect.right}&bottom=${rect.bottom}&width=${rect.width}&height=${rect.height}&screenwidth=${window.innerWidth}&screenheight=${window.innerHeight}`;
                 }
                 return suffix;
             }

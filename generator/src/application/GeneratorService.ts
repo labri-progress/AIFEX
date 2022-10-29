@@ -27,7 +27,7 @@ export default class GeneratorService {
                     let totalOccurence= 0;
                     stats.forEach((stat) => {totalOccurence += stat});
                     const actionsSorted = (new Array(...stats.entries())).sort((a, b) => a[1] - b[1]).map(([ac,nu]) => ac);
-                    logger.debug(`there are ${actionsSorted.length} actions`);
+                    logger.debug(`there are ${actionsSorted.length} sorted actions`);
                     
                     const actionsToCover : Action[] = []
                     let currentCoverageInPercent = 0;

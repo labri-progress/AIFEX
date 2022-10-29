@@ -72,11 +72,8 @@ export default class Background {
                         state.explorationNumber = explorationNumber;
                         state.explorationLength = 0;
                         state.isRecording = true;
-                        return this._browserService.setStateToStorage(state);
-                    })
-                    .then(() => {
                         logger.debug('exploration created');
-                        return this.processNewAction("start");
+                        return this._browserService.setStateToStorage(state);
                     })
             })  
     }
