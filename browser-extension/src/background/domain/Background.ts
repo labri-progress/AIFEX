@@ -67,12 +67,26 @@ export default class Background {
                     return Promise.resolve();
                 }
                 logger.debug('will create an empty exploration for testerName: ' + state.testerName);
-                return this._aifexService.createEmptyExploration(state.serverURL, state.sessionId, state.testerName || "anonymous")
-                    .then(explorationNumber => {
-                        state.explorationNumber = explorationNumber;
-                        state.explorationLength = 0;
-                        state.isRecording = true;
-                        logger.debug('exploration created');
+                let promises = [];
+
+                promises.push(this._aifexService.createEmptyExploration(state.serverURL, state.sessionId, state.testerName || "anonymous"));
+                if (state.modelId) {
+                    promises.push(this._aifexService.getOccurences(state.serverURL, state.modelId));
+                }
+                
+                return Promise.allSettled(promises)
+                    .then((results) => {
+                        if (results[0] && results[0].status === "fulfilled" && results[0].value && typeof results[0].value === "number" ) {
+                            state.explorationNumber = results[0].value;
+                            state.explorationLength = 0;
+                            state.isRecording = true;
+                            logger.debug('exploration created');
+                        }
+                        if (results[1] && results[1].status === "fulfilled" && results[1].value && results[1].value instanceof Array<[string,number]>) {
+                            state.probabilities = results[1].value;
+                            logger.debug('get some probabilities');
+                        }
+                        
                         return this._browserService.setStateToStorage(state);
                     })
             })  

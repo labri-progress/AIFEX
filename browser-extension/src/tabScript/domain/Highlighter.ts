@@ -114,6 +114,7 @@ export default class Highlighter {
         });
 
         if (state.probabilities) {
+            logger.debug(`proba : ${state.probabilities.map(([key,proba]) => key).join(' ; ')}`);
             state.probabilities.forEach(([locator, proba]) => {
                 let kindValue = locator.split('$');
                 if (kindValue.length > 1) {
