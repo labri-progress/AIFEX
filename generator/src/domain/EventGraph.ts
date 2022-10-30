@@ -1,16 +1,17 @@
-import { logger } from "../logger";
 import Action from "./Action";
 
 export default class EventGraph {
     private _adjMatrix: boolean[][];
     private _indexes: Map<string, number>;
     private _actions: Map<number, Action>;
+    private _root : Action;
 
     constructor() {
         this._adjMatrix = [];
         this._indexes = new Map();
         this._actions = new Map();
-        this.addExploration([new Action('start')]);
+        this._root = new Action('__root__');
+        this.addExploration([this._root]);
     }
 
     get adjMatrix(): boolean[][] {
@@ -26,7 +27,7 @@ export default class EventGraph {
     }
 
     addExploration(actions: Action[]): void {
-        let lastActionIndex : number | undefined = undefined
+        let lastActionIndex : number | undefined = this._indexes.get(this._root.key);
         actions.forEach((action) => {
             let actionIndex = this._indexes.get(action.key);
             if (actionIndex === undefined) {
@@ -82,9 +83,9 @@ export default class EventGraph {
     }
 
     shortPathToTarget(target: Action) : Action[] {
-        return this.dijkstra(new Action('start'), target); 
+        let pathFromRoot = this.dijkstra(this._root, target);
+        pathFromRoot.shift();
+        return  pathFromRoot;
     }
-
-
 
 }

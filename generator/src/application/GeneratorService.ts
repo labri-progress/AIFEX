@@ -19,10 +19,11 @@ export default class GeneratorService {
                     return Promise.resolve(undefined);
                 }
                 const stats = computeActionsStatistics(session);
+                logger.debug(`there are ${stats.size} actions in statistics`);
                 if (stats.size > 0) {
                     const eg = new EventGraph();
                     session.explorations.forEach((exploration) => eg.addExploration(exploration));
-                    logger.debug(`the EventGraph has ${eg.actions.size} actions`);
+                    logger.debug(`the EventGraph has ${eg.actions.size} actions (including the root of the graph)`);
 
                     let totalOccurence= 0;
                     stats.forEach((stat) => {totalOccurence += stat});
