@@ -2,12 +2,14 @@
 if (action.kind.toLowerCase() === 'click') {
     if (selector) { %>
     // Action-<%=ia%>
-    await page.click('<%= selector %>');<% 
+    const action<%=ia%>Selector = <%= selector %>;
+    await page.click(action<%=ia%>Selector);<% 
     } 
 } else if (action.kind.toLowerCase() === 'edit') {
     if (selector) { %>
     // Action-<%=ia%>
+    const action<%=ia%>Selector = <%= selector %>;
     const VALUE_FOR_ACTION_<%=ia%> = 'TODO';
-    await page.fill('<%= selector %>', VALUE_FOR_ACTION_<%=ia%>);<%
+    await page.fill(action<%=ia%>Selector, VALUE_FOR_ACTION_<%=ia%>);<%
     }
 } %> 
