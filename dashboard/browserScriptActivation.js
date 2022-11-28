@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 // const CONNEXION_URL = 'https://www.aifex.fr/join?sessionId=7r1BH5nE7&modelId=gOP4akH6n';
 
 const DASHBOARD_URL = 'http://localhost/browser-script';
-const CONNEXION_URL = 'http://localhost/join?sessionId=Go2VSRt2s&modelId=6WgFMT5nl';
+const CONNEXION_URL = 'http://localhost/join?sessionId=bYP0rqXY1&modelId=Gmv428F9t';
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
