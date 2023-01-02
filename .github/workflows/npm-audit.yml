@@ -50,21 +50,6 @@ jobs:
       run: |
         npm audit
 
-  evaluator-npm-audit:
-    name: Evaluator NPM version check
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
-    - name: evaluator-npm-install
-      working-directory: ./evaluator
-      run: |
-        npm install 
-    - name: evaluator-npm-audit
-      working-directory: ./evaluator
-      run: |
-        npm audit
-
   dashboard-npm-audit:
     name: Dashboard NPM version check
     runs-on: ubuntu-latest
