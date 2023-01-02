@@ -192,7 +192,7 @@ export default class HighlighterCanvas {
                 let index = window.getComputedStyle(elementIt).zIndex;
                 if (index !== "auto") {
                     let indexInt = Number.parseInt(index)
-                    if (indexInt !== NaN && indexInt !== undefined && indexInt > maxIndex) {
+                    if (indexInt !== undefined && indexInt > maxIndex) {
                         this.elementToZindex.set(element, indexInt+1)
                         maxIndex = indexInt;
                     }

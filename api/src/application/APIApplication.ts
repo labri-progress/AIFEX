@@ -16,9 +16,6 @@ import Video from "../domain/Video";
 import ObservationDistribution from "../domain/ObservationDistribution";
 import Ngram from "../domain/Ngram";
 import Observation from "../domain/Observation";
-import EvaluatorService from "../domain/EvaluatorService";
-import Evaluator from "../domain/Evaluator";
-import Evaluation from "../domain/Evaluation";
 import { RecordingMode } from "../domain/RecordingMode";
 import { SessionOverlayType } from "../domain/SessionOverlayType";
 import { logger } from "../logger";
@@ -31,15 +28,13 @@ export default class APIApplication {
     private _webSiteService: WebSiteService;
     private _sessionService: SessionService;
     private _modelService: ModelService;
-    private _evaluatorService: EvaluatorService;
     private _generatorService: GeneratorService;
 
-    constructor(accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService, modelService: ModelService, evaluatorService: EvaluatorService, generatorService: GeneratorService) {
+    constructor(accountService: AccountService, webSiteService: WebSiteService, sessionService: SessionService, modelService: ModelService, generatorService: GeneratorService) {
         this._accountService = accountService;
         this._webSiteService = webSiteService;
         this._sessionService = sessionService;
         this._modelService = modelService;
-        this._evaluatorService = evaluatorService;
         this._generatorService = generatorService;
     }
 
@@ -698,106 +693,6 @@ export default class APIApplication {
         })
     }
 
-    expressionToDot(expression: string) {
-        return this._evaluatorService.expressionToDot(expression);
-    }
-
-    evaluateSequenceByExpression(expression: string, actionList: Action[]): Promise<Evaluation>  {
-        return this._evaluatorService.evaluateSequenceByExpression(expression, actionList);
-    }
-
-    removeEvaluator(sessionId: string, token?: Token): Promise<"Unauthorized" | void> {
-        let authorized: boolean;
-        let invited: boolean;
-        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
-            .then(([isPublic, maybeAccount]) => {
-                if (maybeAccount !== "Unauthorized") {
-                    const account: Account = maybeAccount;
-                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                }
-                if (isPublic || authorized || invited) {
-                    return this._evaluatorService.removeEvaluator(sessionId).then(() =>{})
-                }
-                return "Unauthorized";
-            })
-    }
-
-    createEvaluator(sessionId: string, description: string, expression: string, token?: Token): Promise<"Unauthorized" | void>  {
-        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
-        .then(([isPublic, maybeAccount]) => {
-            let authorized = false;
-            let invited = false;
-            if (maybeAccount !== "Unauthorized") {
-                const account: Account = maybeAccount;
-                authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-            }
-            logger.debug(`Application createEvaluator ${isPublic} ${authorized}  ${invited}`)
-
-            if (isPublic || authorized || invited) {
-
-                return this._evaluatorService.createEvaluator(sessionId, description, expression).then(() =>{})
-            }
-            return "Unauthorized";
-        });    
-    }
-
-    updateEvaluator(sessionId: string, description: string, expression: string, token?: Token ): Promise<"Unauthorized" | void>  {
-        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
-        .then(([isPublic, maybeAccount]) => {
-            let authorized = false;
-            let invited = false;
-            if (maybeAccount !== "Unauthorized") {
-                const account: Account = maybeAccount;
-                authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-            }
-            if (isPublic || authorized || invited) {
-                return this._evaluatorService.updateEvaluator(sessionId, description, expression).then(() =>{});
-            } else {
-                return "Unauthorized";
-            }
-        });        
-    }
-
-    getEvaluator(sessionId: string, token?: Token): Promise<Evaluator | undefined | "Unauthorized"> {
-        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
-            .then(([isPublic, maybeAccount]) => {
-                let authorized = false;
-                let invited = false;
-                if (maybeAccount !== "Unauthorized") {
-                    const account: Account = maybeAccount;
-                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                }
-                if (isPublic || authorized || invited) {
-                    return this._evaluatorService.getEvaluator(sessionId)
-                        .then((result) => result);
-                } else {
-                    return "Unauthorized";
-                }
-            });   
-    }
-
-    evaluateSequence(sessionId: string, actionList: Action[], token?: Token): Promise<Evaluation | "Unauthorized"> {
-        return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])
-            .then(([isPublic, maybeAccount]) => {
-                let authorized = false;
-                let invited = false;
-                if (maybeAccount !== "Unauthorized") {
-                    const account: Account = maybeAccount;
-                    authorized = account.authorizationSet.some((authorization) => authorization.key === sessionId && authorization.kind === Kind.Session);
-                    invited = account.receivedInvitationSet.some((invitation) => invitation.authorization.key === sessionId && invitation.authorization.kind === Kind.Session);
-                }
-                if (isPublic || authorized || invited) {
-                    return this._evaluatorService.evaluate(sessionId, actionList)
-                        .then((result) => result);
-                } else {
-                    return "Unauthorized";
-                }
-            });   
-    }
 
     generateTests(sessionId: string, token?: Token): Promise<string | "Unauthorized"> {
         return Promise.all([this._accountService.isAuthorizationPublic(Kind.Session, sessionId), this.getAccount(token)])

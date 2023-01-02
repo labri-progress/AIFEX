@@ -47,16 +47,6 @@ services:
       - "mongo"
     restart: always
 
-  evaluator:
-    build:
-      context: evaluator/
-      dockerfile: ./Dockerfile.prod
-    environment:
-      - NODE_ENV=${NODE_ENV}
-    depends_on:
-      - "mongo"
-      - "session"
-    restart: always
 
   generator:
     build:

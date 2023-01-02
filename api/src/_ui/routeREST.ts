@@ -4,7 +4,6 @@ import { logger } from "../logger";
 import Token from "../domain/Token";
 import APIApplication from '../application/APIApplication';
 import { Kind } from '../domain/Kind';
-import Evaluation from '../domain/Evaluation';
 import Action from '../domain/Action';
 import Video from "../domain/Video";
 
@@ -431,10 +430,6 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             logger.warn(`invalid parameters`);
             res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No expNum or No interactionList"});
         } else {
-            if (parseInt(expNum) === NaN) {
-                logger.warn(`invalid expNum type`);
-                return res.status(INVALID_PARAMETERS_STATUS).json({message:"expNum must be an integer"});
-            }
             if (!Array.isArray(interactionList)) {
                 logger.warn(`interactionList must be an array`);
                 return res.status(INVALID_PARAMETERS_STATUS).json({message:"interactionList must be an array"});
@@ -462,10 +457,6 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             logger.warn(`invalid parameters`);
             res.status(INVALID_PARAMETERS_STATUS).json({message:"No sessionId or No expNum"});
         } else {
-            if (parseInt(expNum) === NaN) {
-                logger.warn(`invalid expNum type`);
-                return res.status(INVALID_PARAMETERS_STATUS).json({message:"expNum must be an integer"});
-            }
             api.removeExploration(sessionId, parseInt(expNum), req.token)
                 .then(explorationResult => {
                     if (explorationResult === "Unauthorized") {
@@ -936,179 +927,6 @@ export default function attachRoutes(app: Application, api: APIApplication) {
             }
         }
     });
-
-    app.get("/evaluator/:sessionId", (req, res) => {
-        const { sessionId } = req.params;
-        logger.info(`getEvaluator for sessionId ${sessionId}`);
-        if (sessionId === undefined) {
-            logger.warn("sessionId is required")
-            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
-        }
-        return api.getEvaluator(sessionId, req.token)
-            .then((evaluator) => {
-                if (evaluator === "Unauthorized") {
-                    return res.status(FORBIDDEN_STATUS).json({message: "Unauthorized"})
-                }
-                if (evaluator === undefined) {
-                    return res.status(NOT_FOUND_STATUS).json({message: "No Evaluator found for session"})
-                }
-                else {
-                    return res.json({
-                        id: evaluator.id,
-                        description: evaluator.description,
-                        expression: evaluator.expression,
-                        sessionId: evaluator.sessionId
-                    })
-                }
-            })
-            .catch((e: Error) => {
-                logger.error(`error:${e}`);
-                res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-            });
-        });
-
-    app.post("/evaluator/", (req, res) => {
-        const { sessionId, description, expression } = req.body;
-        logger.info(`create evaluator`);
-        logger.debug(`sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
-        if (sessionId === undefined) {
-            logger.warn("sessionId is required")
-            return res.status(INVALID_PARAMETERS_STATUS).json({message: "session is required"});
-        }
-        if (typeof expression === undefined) {
-            logger.warn(`expression is required`);
-            return res.status(INVALID_PARAMETERS_STATUS).json({message: "expression is required"});
-        }
-        if (typeof description === undefined) {
-            logger.warn(`description is required`);
-            return res.status(INVALID_PARAMETERS_STATUS).json({message: "description is required"});
-        }
-
-        if (expression.length === 0) {
-            logger.warn(`expression must not be empty`);
-            return res.status(INVALID_PARAMETERS_STATUS).json({message: "expression must not be empty"});
-        }
-        api.createEvaluator(sessionId, description, expression, req.token).then((result) => {
-            if (result === "Unauthorized") {
-                return res.sendStatus(FORBIDDEN_STATUS)
-            } else {
-                return res.json({message: "Evaluator created"});
-            }
-        })
-        .catch((e: Error) => {
-            logger.error(`${e}`);
-            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-        });
-    });
-
-    app.patch("/evaluator/:sessionId", (req, res) => {
-        const { sessionId } = req.params
-        const { description, expression } = req.body;
-        logger.info(`update evaluator`);
-        logger.debug(`sessionId:${sessionId}, description: ${description}, expression: ${expression})`);
-        if (sessionId === undefined) {
-            logger.warn("sessionId is required")
-            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
-        }
-        api.updateEvaluator(sessionId, description, expression, req.token).then((response) => {
-            if (response === "Unauthorized") {
-                logger.warn("update is Unauthorized")
-                return res.sendStatus(FORBIDDEN_STATUS)
-            }
-            logger.debug("evaluator is updated")
-            return res.send({sessionId: sessionId});
-        })
-        .catch((e: Error) => {
-            logger.error(`error:${e}`);
-            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-        });
-    });
-
-
-    app.post("/evaluator/evaluate", (req, res) => {
-        const { sessionId, actionList } = req.body;
-        logger.info(`evaluate sequence`);
-        logger.debug(`sessionId : ${sessionId}, actionList : ${JSON.stringify(actionList)})`);
-        if (sessionId === undefined) {
-            logger.warn("sessionId is required")
-            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
-        }
-        if (!Array.isArray(actionList)) {
-            logger.warn("actionList must be an array")
-            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
-        }
-
-        api.evaluateSequence(
-            sessionId, 
-            actionList.map((actionData, index) => new Action(index, actionData.prefix, actionData.suffix)), 
-            req.token
-            ).then((evaluation: Evaluation | "Unauthorized") => {
-                if (evaluation === "Unauthorized") {
-                    return res.sendStatus(FORBIDDEN_STATUS)
-                }
-                return res.json(evaluation);
-        }) .catch((e: Error) => {
-            logger.error(`error:${e}`);
-            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-        });
-    });
-
-    app.post("/evaluator/evaluate-expression", (req, res) => {
-        const { expression, actionList } = req.body;
-        logger.info(`evaluate sequence`);
-        logger.debug(`expression : ${expression}, actionList : ${JSON.stringify(actionList)})`);
-        if (expression === undefined) {
-            logger.warn("expression is required")
-            return res.status(INVALID_PARAMETERS_STATUS).send("expression is required");
-        }
-        if (!Array.isArray(actionList)) {
-            logger.warn("actionList must be an array")
-            return res.status(INVALID_PARAMETERS_STATUS).send("actionList muse be an array");
-        }
-
-        api.evaluateSequenceByExpression (
-            expression, 
-            actionList.map((actionData, index) => new Action(index, actionData.prefix, actionData.suffix))
-            ).then((evaluation: Evaluation) => {
-            return res.json(evaluation);
-        }) .catch((e: Error) => {
-            logger.error(`error:${e}`);
-            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-        });
-    });
-
-    app.delete("/evaluator/:sessionId", (req, res) => {
-        const { sessionId } = req.params;
-        logger.info(`remove evaluator for (sessionId : ${sessionId})`);
-        if (sessionId === undefined) {
-            logger.warn("sessionId is required")
-            return res.status(INVALID_PARAMETERS_STATUS).send("sessionId is required");
-        }
-        api.removeEvaluator(sessionId, req.token)
-        .then(() => {
-            return res.json({sessionId})
-        }) .catch((e: Error) => {
-            logger.error(`error:${e}`);
-            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-        });
-    });
-
-    app.post("/evaluator/expressionToDot", (req, res) => {
-        const { expression } = req.body;
-        logger.info(`expression to dot`);
-        logger.debug(`expression: ${expression}`);
-        if (!expression) {
-            logger.warn("expression parameter is required", expression)
-            return res.status(INTERNAL_SERVER_ERROR_STATUS).send("Invalid parameters");
-        }
-
-        api.expressionToDot(expression).then((data: any) => {
-            return res.json(data)
-        }) .catch((e: Error) => {
-            logger.error(`error:${e}`);
-            res.status(INTERNAL_SERVER_ERROR_STATUS).json({ error: e });
-        });
-    })
 
     app.get("/generator/session/:sessionId/all-actions", (req, res) => {
         const { sessionId } = req.params;

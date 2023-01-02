@@ -24,7 +24,7 @@
     "@types/mocha": "^9.0.0",
     "@types/morgan": "^1.9.3",
     "@types/multer": "^1.4.7",
-    "@types/node": "16.11.13",
+    "@types/node": "18.11.18",
     "@types/node-fetch": "^2.5.10",
     "@types/shortid": "0.0.29",
     "@types/source-map-support": "^0.5.4",
@@ -42,7 +42,7 @@
     "shortid": "^2.2.16",
     "source-map-support": "^0.5.20",
     "ts-node": "^10.9.1",
-    "typescript": "^4.7.4",
+    "typescript": "^4.9.4",
     "winston": "^3.3.3"
   },
   "optionalDependencies": {

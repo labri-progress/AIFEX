@@ -54,17 +54,6 @@ services:
       - 5004:80
     restart: always
 
-  evaluator:
-    build:
-      context: evaluator/
-      dockerfile: ./Dockerfile.prod
-    environment:
-      - NODE_ENV=github
-    depends_on:
-      - "mongo"
-      - "session"
-    restart: always
-
   dashboard:
     build:
       context: dashboard/
