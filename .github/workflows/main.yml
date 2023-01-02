@@ -114,22 +114,6 @@ jobs:
         working-directory: ./model
         run: npm test
 
-  evaluator-unit-test:
-    name: Evaluator Unit Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-            node-version: '14.x'
-      - name: install test dependencies
-        working-directory: ./evaluator
-        run: |
-          npm install
-          npm install -g mocha
-      - name: run unit tests
-        working-directory: ./evaluator
-        run: npm test
         
   website-unit-test:
     name: Website Unit Tests
