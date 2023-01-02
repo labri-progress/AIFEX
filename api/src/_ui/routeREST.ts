@@ -7,7 +7,6 @@ import { Kind } from '../domain/Kind';
 import Evaluation from '../domain/Evaluation';
 import Action from '../domain/Action';
 import Video from "../domain/Video";
-import { type } from "os";
 
 const INVALID_PARAMETERS_STATUS = 400;
 const FORBIDDEN_STATUS = 403;

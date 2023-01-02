@@ -21,7 +21,6 @@ import Evaluator from "../domain/Evaluator";
 import Evaluation from "../domain/Evaluation";
 import { RecordingMode } from "../domain/RecordingMode";
 import { SessionOverlayType } from "../domain/SessionOverlayType";
-import { debug } from "console";
 import { logger } from "../logger";
 import GeneratorService from "../domain/GeneratorService";
 
